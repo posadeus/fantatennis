@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: API to retrieve tennis players ranking
+  version: 1.0.0
+paths:
+  /players:
+    get:
+      operationId: players
+      summary: Returns players ranking
+      description: Returns an ordered list based on ranking.
+      tags:
+        - Ranking
+      responses:
+        '200':
+          description: Ranking returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RankedPlayer'
+        '500':
+          description: Error during the retrieving
+
+components:
+  schemas:
+    RankedPlayer:
+      type: object
+      properties:
+        id:
+          type: integer
+          default: 0
+          description: PLayer's unique ID
+        name:
+          type: string
+          default: ""
+          description: Player's name
+        surname:
+          type: string
+          default: ""
+          description: Player's surname
+        age:
+          type: integer
+          default: 0
+          description: Player's age
+        rank:
+          type: integer
+          description: Player's ranking
+        points:
+          type: integer
+          description: Player's points
+      required:
+        - id
+        - name
+        - surname
+        - age
+        - rank
+        - points

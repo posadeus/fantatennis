@@ -1,0 +1,200 @@
+openapi: 3.0.0
+info:
+  title: API to retrieve player's info
+  version: 1.0.0
+paths:
+  /player/{id}:
+    get:
+      operationId: player
+      summary: Returns player's info
+      description: Returns player's info
+      tags:
+        - Player
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Player's unique ID to search.
+      responses:
+        '200':
+          description: Player's info obtained successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '404':
+          description: Player not found
+        '500':
+          description: Error returning the player
+
+components:
+  schemas:
+    Player:
+      type: object
+      properties:
+        id:
+          type: integer
+          default: 0
+          description: Player's unique ID
+        name:
+          type: string
+          default: ""
+          description: Player's name
+        surname:
+          type: string
+          default: ""
+          description: Player's surname
+        age:
+          type: integer
+          default: 0
+          description: Player's age
+        turnedProYear:
+          type: integer
+          default: 0
+          description: Player's turning pro year
+        weight:
+          $ref: '#/components/schemas/Weight'
+        height:
+          $ref: '#/components/schemas/Height'
+        country:
+          $ref: '#/components/schemas/Country'
+        birthplace:
+          $ref: '#/components/schemas/Birthplace'
+        plays:
+          $ref: '#/components/schemas/Plays'
+        single:
+          $ref: '#/components/schemas/Category'
+        double:
+          $ref: '#/components/schemas/Category'
+      required:
+        - id
+        - name
+        - surname
+        - age
+        - country
+        - single
+        - double
+
+    Weight:
+      type: object
+      properties:
+        kg:
+          type: integer
+          description: Player's weight in Kg
+        lb:
+          type: integer
+          description: Player's weight in lb
+      required:
+        - kg
+        - lb
+
+    Height:
+      type: object
+      properties:
+        cm:
+          type: integer
+          description: Player's height in cm
+        feet:
+          $ref: '#/components/schemas/Feet'
+      required:
+        - cm
+        - feet
+
+    Feet:
+      type: object
+      properties:
+        ft:
+          type: integer
+          description: Feet measure
+        in:
+          type: integer
+          description: In measure
+      required:
+        - ft
+        - in
+
+    Country:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Origin country's name
+        flag:
+          type: string
+          description: Country's flag link
+      required:
+        - name
+        - flag
+
+    Birthplace:
+      type: object
+      properties:
+        city:
+          type: string
+          description: Born town's name
+        country:
+          type: string
+          description: Born country's name
+      required:
+        - city
+        - country
+
+    Plays:
+      type: object
+      properties:
+        hand:
+          type: string
+          description: Preferred hand
+        backhand:
+          type: string
+          description: Backhand type
+      required:
+        - hand
+        - backhand
+
+    Category:
+      type: object
+      properties:
+        career:
+          $ref: '#/components/schemas/Result'
+        ytd:
+          $ref: '#/components/schemas/Result'
+      required:
+        - career
+        - ytd
+
+    Result:
+      type: object
+      properties:
+        rank:
+          type: integer
+          description: Player's ranking
+        bestRank:
+          type: integer
+          description: Best ranking
+        points:
+          type: integer
+          default: 0
+          description: Points
+        wonGames:
+          type: integer
+          default: 0
+          description: Won games
+        lostGames:
+          type: integer
+          default: 0
+          description: Lost games
+        titles:
+          type: integer
+          default: 0
+          description: Won titles
+        prizeMoney:
+          type: string
+          description: Won money
+      required:
+        - bestRank
+        - wonGames
+        - lostGames
+        - titles
