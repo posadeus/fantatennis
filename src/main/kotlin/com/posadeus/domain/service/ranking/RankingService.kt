@@ -1,10 +1,10 @@
 package com.posadeus.domain.service.ranking
 
-import com.posadeus.controller.model.ranking.RankedPlayer
+import com.posadeus.domain.model.Ranking
 
 class RankingService {
 
-  fun retrieveRankedPlayer(): List<RankedPlayer> {
+  fun retrieveRankedPlayer(): Ranking {
     TODO("Not yet implemented")
   }
 }

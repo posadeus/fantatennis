@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.controller.model.ranking.RankedPlayer
 import com.posadeus.controller.ranking.RankingController
+import com.posadeus.domain.model.EmptyRanking
+import com.posadeus.domain.model.RankedPlayers
 import com.posadeus.domain.service.ranking.RankingService
 import io.mockk.every
 import io.mockk.mockk
@@ -47,15 +49,29 @@ class RankingControllerTest {
                                      age = 29,
                                      rank = 3,
                                      points = 786)
+    val ranking = RankedPlayers(listOf(rankedPlayer1, rankedPlayer2, rankedPlayer3))
     val expected = listOf(rankedPlayer1, rankedPlayer2, rankedPlayer3)
 
-    every { service.retrieveRankedPlayer() } returns expected
+    every { service.retrieveRankedPlayer() } returns ranking
 
     mvc.perform(MockMvcRequestBuilders.get(RANKING_ENDPOINT)
                     .contentType(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.print())
         .andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.content().json(toJson(expected)))
+  }
+
+  @Test
+  fun `500 response`() {
+
+    val ranking = EmptyRanking
+
+    every { service.retrieveRankedPlayer() } returns ranking
+
+    mvc.perform(MockMvcRequestBuilders.get(RANKING_ENDPOINT)
+                    .contentType(MediaType.APPLICATION_JSON))
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isInternalServerError)
   }
 
   @Throws(JsonProcessingException::class)
