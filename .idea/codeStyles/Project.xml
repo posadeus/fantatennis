@@ -1,8 +1,11 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <JetCodeStyleSettings>
-      <option name="WRAP_EXPRESSION_BODY_FUNCTIONS" value="2" />
+      <option name="WRAP_ELVIS_EXPRESSIONS" value="0" />
     </JetCodeStyleSettings>
+    <editorconfig>
+      <option name="ENABLED" value="false" />
+    </editorconfig>
     <codeStyleSettings language="kotlin">
       <option name="RIGHT_MARGIN" value="120" />
       <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
