@@ -4,5 +4,5 @@ import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingResponse
 
 interface AtpTourClient {
 
-  fun retrieveRanking(positions: Int): List<AtpTourRankingResponse>
+  fun retrieveRanking(positions: Int): AtpTourRankingResponse
 }

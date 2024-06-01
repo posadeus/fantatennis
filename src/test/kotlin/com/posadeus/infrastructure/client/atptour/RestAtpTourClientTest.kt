@@ -4,7 +4,9 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.posadeus.infrastructure.client.atptour.impl.RestAtpTourClient
-import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingResponseBuilder
+import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingErrorResponse
+import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingOkResponseBuilder
+import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingsOkResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -39,7 +41,7 @@ class RestAtpTourClientTest {
 
     val positions = 2
 
-    val element1 = AtpTourRankingResponseBuilder()
+    val element1 = AtpTourRankingOkResponseBuilder()
         .withRankNo(1)
         .withName("Novak Djokovic")
         .withPoints("9,960")
@@ -51,7 +53,7 @@ class RestAtpTourClientTest {
         .withPlayerId("D643")
         .withPlayerProfileUrl("/en/players/novak-djokovic/d643/overview")
         .build()
-    val element2 = AtpTourRankingResponseBuilder()
+    val element2 = AtpTourRankingOkResponseBuilder()
         .withRankNo(2)
         .withName("Jannik Sinner")
         .withPoints("8,770")
@@ -63,7 +65,7 @@ class RestAtpTourClientTest {
         .withPlayerId("S0AG")
         .withPlayerProfileUrl("/en/players/jannik-sinner/s0ag/overview")
         .build()
-    val expected = listOf(element1, element2)
+    val expected = AtpTourRankingsOkResponse(listOf(element1, element2))
 
     wireMock.stubFor(get(urlPathEqualTo("$PATH$positions"))
                          .withQueryParam("v", equalTo("1"))
@@ -72,9 +74,22 @@ class RestAtpTourClientTest {
     assertThat(client.retrieveRanking(positions)).isEqualTo(expected)
   }
 
+  @Test
+  fun `ranking endpoint generates error`() {
+
+    val expected = AtpTourRankingErrorResponse
+
+    wireMock.stubFor(get(urlPathEqualTo("$PATH$ANY_POSITION"))
+                         .withQueryParam("v", equalTo("1"))
+                         .willReturn(serverError()))
+
+    assertThat(client.retrieveRanking(ANY_POSITION)).isEqualTo(expected)
+  }
+
   companion object {
 
     private const val PATH = "/en/-/www/rank/sglroll/"
+    private const val ANY_POSITION = 1
 
     private const val RANKING_2_OK_RESPONSE =
         """
