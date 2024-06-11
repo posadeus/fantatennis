@@ -1,6 +1,8 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <option name="AUTODETECT_INDENTS" value="false" />
     <JetCodeStyleSettings>
+      <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="3" />
       <option name="WRAP_ELVIS_EXPRESSIONS" value="0" />
     </JetCodeStyleSettings>
     <editorconfig>
