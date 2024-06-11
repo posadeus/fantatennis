@@ -1,0 +1,111 @@
+### Localhost Ranking
+GET http://localhost:8080/players
+
+
+## ---------------------------------------------------------------------------------------------------------------------
+
+### Live Matches
+## scoringTournamentLevel: tour/challenger (required)
+GET https://app.atptour.com/api/v2/gateway/livematches/website?scoringTournamentLevel=tour
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Live Matches by Tournament
+## /LiveMatches/{{year}}/{{tournamentId}}
+## year: 2024/2023/...
+## tournamentId: 416/520/...
+GET https://www.atptour.com/en/-/www/LiveMatches/2024/520
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Live Matches by Tournament
+## /LiveMatches/{{year}}/{{tournamentId}}
+## year: 2024/2023/...
+## tournamentId: 416/520/...
+GET https://www.atptour.com/en/-/www/results/2024/520
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Ranking
+## /sglroll/{{numOfPositionsToReturn}}?v=1
+## numOfPositionsToReturn: 1/2/../100/...
+GET https://www.atptour.com/en/-/www/rank/sglroll/2?v=1
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Player
+## /hero/{{playerId}}?v=1
+## playerId: s0ag (Sinner) / d643 (Djokovic)
+GET https://www.atptour.com/en/-/www/players/hero/s0ag?v=1
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Player activity
+## /sgl/{{playerId}}/?v=1
+## playerId: s0ag (Sinner) / d643 (Djokovic)
+GET https://www.atptour.com/en/-/www/activity/sgl/s0ag/?v=1
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Player Activity Short
+## /sgl/{{playerId}}/{{numOfActivitiesToReturn}}?v=1
+## playerId: s0ag (Sinner) / d643 (Djokovic)
+## numOfActivitiesToReturn: 1/2/../5/...
+GET https://www.atptour.com/en/-/www/activity/last/s0ag/5?v=1
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Player Stats Generic
+## /stats/{{playerId}}/{{year}}/{{surface}}
+## playerId: s0ag (Sinner) / d643 (Djokovic)
+## year: 2024/2023/...
+## surface: Grass/Clay/Hard/Carpet
+GET https://www.atptour.com/en/-/www/stats/s0ag/all/all?v=1
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Player Ranking History
+## /history/{{playerId}}?v=1
+## playerId: s0ag (Sinner) / d643 (Djokovic)
+GET https://www.atptour.com/en/-/www/rank/history/s0ag?v=1
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Match Stats
+## /MatchStats/{{year}}/{{tournamentId}}/{{matchId}}
+## year: 2024/2023/...
+## tournamentId: 520 (Roland Garros) / ...
+## matchId: MD005/... (taking from Live Matches API) - MD Man Double / MS Man Single - The number is the num of the match 001 is the final, 127 is the last of 64esimi 64 il primo dei 64esimi
+GET https://www.atptour.com/-/Hawkeye/MatchStats/2024/580/MS064
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Tournament Calendar Year
+## /calendar/{{tournamentLevel}}
+## tournamentLevel: tour/challenger
+GET https://www.atptour.com/en/-/tournaments/calendar/tour
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Tournament Overview
+## /profile/{{tournamentId}}/overview
+## tournamentId: 416/520/...
+GET https://www.atptour.com/en/-/tournaments/profile/416/overview
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Tournament Top Seed
+## /tournaments/{{tournamentId}}/{{year}}/topseeds
+## tournamentId: 416/520/...
+## year: 2024/2023/...
+GET https://www.atptour.com/en/-/tournaments/416/2024/topseeds
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### Tournament Top Prize And Points
+## /tournaments/{{tournamentId}}/{{year}}/prizeandpoints
+## tournamentId: 416/520/...
+## year: 2024/2023/...
+GET https://www.atptour.com/en/-/tournaments/416/2024/prizeandpoints
+Accept: application/json, text/plain, */*
+User-Agent: *
