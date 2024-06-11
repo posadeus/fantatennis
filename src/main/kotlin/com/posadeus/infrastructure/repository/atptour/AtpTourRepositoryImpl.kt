@@ -22,9 +22,7 @@ class AtpTourRepositoryImpl(private val atpTourClient: AtpTourClient) : AtpTourR
           atpTourRankingResponse.ranking
               .map {
                 RankedPlayer(id = it.playerId,
-                             name = it.name,
-                             surname = it.name,
-                             age = 0,
+                             fullName = it.name,
                              rank = it.rankNo,
                              points = it.points.replace(",", "").toInt())
               }

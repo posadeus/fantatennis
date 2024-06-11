@@ -32,21 +32,15 @@ class RankingControllerTest {
   fun `200 response`() {
 
     val rankedPlayer1 = RankedPlayer(id = "123",
-                                     name = "PLAYER1_NAME",
-                                     surname = "PLAYER1_SURNAME",
-                                     age = 20,
+                                     fullName = "PLAYER1_NAME",
                                      rank = 1,
                                      points = 1000)
     val rankedPlayer2 = RankedPlayer(id = "456",
-                                     name = "PLAYER2_NAME",
-                                     surname = "PLAYER2_SURNAME",
-                                     age = 26,
+                                     fullName = "PLAYER2_NAME",
                                      rank = 2,
                                      points = 987)
     val rankedPlayer3 = RankedPlayer(id = "789",
-                                     name = "PLAYER3_NAME",
-                                     surname = "PLAYER3_SURNAME",
-                                     age = 29,
+                                     fullName = "PLAYER3_NAME",
                                      rank = 3,
                                      points = 786)
     val ranking = RankedPlayers(listOf(rankedPlayer1, rankedPlayer2, rankedPlayer3))

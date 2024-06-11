@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * @param surname Player's surname
  * @param age Player's age
  * @param country
- * @param single
+ * @param single 
  * @param double 
  * @param turnedProYear Player's turning pro year
  * @param weight
  * @param height
- * @param birthplace
+ * @param birthplace 
  * @param plays 
  */
 data class Player(

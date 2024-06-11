@@ -13,7 +13,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class AtpTourRepositoryTest {
+class AtpTourRepositoryImplTest {
 
   private val client: AtpTourClient = mockk()
 
@@ -33,9 +33,7 @@ class AtpTourRepositoryTest {
                                                                                    playerId = "AN_ID",
                                                                                    playerProfileUrl = "")))
     val expected = RankedPlayers(listOf(RankedPlayer(id = "AN_ID",
-                                                     name = "A_NAME",
-                                                     surname = "A_NAME",
-                                                     age = 0,
+                                                     fullName = "A_NAME",
                                                      rank = 1,
                                                      points = 10000)))
 

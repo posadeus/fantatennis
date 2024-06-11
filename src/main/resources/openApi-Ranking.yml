@@ -31,18 +31,10 @@ components:
           type: string
           default: 0
           description: Player's unique ID
-        name:
+        fullName:
           type: string
           default: ""
           description: Player's name
-        surname:
-          type: string
-          default: ""
-          description: Player's surname
-        age:
-          type: integer
-          default: 0
-          description: Player's age
         rank:
           type: integer
           description: Player's ranking
@@ -51,8 +43,6 @@ components:
           description: Player's points
       required:
         - id
-        - name
-        - surname
-        - age
+        - fullName
         - rank
         - points
