@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod
 @RequestMapping("\${api.base-path:}")
 interface RankingApi {
 
-  @RequestMapping(
-      method = [RequestMethod.GET],
-      value = ["/players"],
-      produces = ["application/json"]
-  )
-  fun players(): ResponseEntity<List<RankedPlayer>>
+    @RequestMapping(
+        method = [RequestMethod.GET],
+        value = ["/players"],
+        produces = ["application/json"]
+    )
+    fun players(): ResponseEntity<List<RankedPlayer>>
 }

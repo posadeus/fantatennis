@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: fanta-tennis
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate: DEBUG
+
+api:
+  base-path: /
+
+client:
+  atp-tour:
+    uri: https://www.atptour.com
+    http:
+      connection-timeout: 2000
+      connection-request-timeout: 2000
+
+  atp-tour-app:
+    uri: https://app.atptour.com/api
+    http:
+      connection-timeout: 2000
+      connection-request-timeout: 2000

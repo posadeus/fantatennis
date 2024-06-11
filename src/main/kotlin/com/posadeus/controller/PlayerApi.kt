@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod
 @RequestMapping("\${api.base-path:}")
 interface PlayerApi {
 
-  @RequestMapping(
-      method = [RequestMethod.GET],
-      value = ["/player/{id}"],
-      produces = ["application/json"]
-  )
-  fun player(@PathVariable("id") id: Int): ResponseEntity<Player>
+    @RequestMapping(
+        method = [RequestMethod.GET],
+        value = ["/player/{id}"],
+        produces = ["application/json"]
+    )
+    fun player(@PathVariable("id") id: Int): ResponseEntity<Player>
 }
