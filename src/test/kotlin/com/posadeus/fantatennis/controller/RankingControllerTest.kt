@@ -1,8 +1,7 @@
-package com.posadeus.controller
+package com.posadeus.fantatennis.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.posadeus.fantatennis.controller.RankingApi
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
 import com.posadeus.fantatennis.controller.ranking.RankingController
 import com.posadeus.fantatennis.domain.model.EmptyRanking

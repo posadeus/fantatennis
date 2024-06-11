@@ -1,13 +1,10 @@
-package com.posadeus.infrastructure.client.atptour
+package com.posadeus.fantatennis.infrastructure.client.atptour
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
-import com.posadeus.fantatennis.infrastructure.client.atptour.AtpTourClient
 import com.posadeus.fantatennis.infrastructure.client.atptour.impl.RestAtpTourClient
-import com.posadeus.fantatennis.infrastructure.client.atptour.model.AtpTourRankingErrorResponse
-import com.posadeus.fantatennis.infrastructure.client.atptour.model.AtpTourRankingsOkResponse
-import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingOkResponseBuilder
+import com.posadeus.fantatennis.infrastructure.client.atptour.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.springframework.web.client.RestTemplate

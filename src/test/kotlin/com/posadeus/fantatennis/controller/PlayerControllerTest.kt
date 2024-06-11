@@ -1,8 +1,7 @@
-package com.posadeus.controller
+package com.posadeus.fantatennis.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.posadeus.fantatennis.controller.PlayerApi
 import com.posadeus.fantatennis.controller.model.player.*
 import com.posadeus.fantatennis.controller.player.PlayerController
 import com.posadeus.fantatennis.domain.model.*

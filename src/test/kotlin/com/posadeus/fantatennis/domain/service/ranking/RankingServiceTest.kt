@@ -1,10 +1,9 @@
-package com.posadeus.domain.service.ranking
+package com.posadeus.fantatennis.domain.service.ranking
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
 import com.posadeus.fantatennis.domain.infrastructure.AtpTourRepository
 import com.posadeus.fantatennis.domain.model.EmptyRanking
 import com.posadeus.fantatennis.domain.model.RankedPlayers
-import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
