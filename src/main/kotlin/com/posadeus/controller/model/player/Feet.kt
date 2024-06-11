@@ -3,7 +3,7 @@ package com.posadeus.controller.model.player
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
+ * 
  * @param ft Feet measure
  * @param &#x60;in&#x60; In measure
  */

@@ -3,7 +3,7 @@ package com.posadeus.controller.model.player
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
+ * 
  * @param kg Player's weight in Kg
  * @param lb Player's weight in lb
  */

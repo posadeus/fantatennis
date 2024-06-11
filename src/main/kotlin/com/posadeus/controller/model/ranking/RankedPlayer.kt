@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
  *
- * @param id PLayer's unique ID
+ * @param id Player's unique ID
  * @param name Player's name
  * @param surname Player's surname
  * @param age Player's age
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
  */
 data class RankedPlayer(
 
-    @get:JsonProperty("id", required = true) val id: Int = 0,
+    @get:JsonProperty("id", required = true) val id: String = "0",
 
     @get:JsonProperty("name", required = true) val name: String = "",
 

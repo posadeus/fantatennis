@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 /**
  *
  * @param career
- * @param ytd
+ * @param ytd 
  */
 data class Category(
 

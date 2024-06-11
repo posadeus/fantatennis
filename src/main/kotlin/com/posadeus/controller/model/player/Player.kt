@@ -3,19 +3,19 @@ package com.posadeus.controller.model.player
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
+ * 
  * @param id Player's unique ID
  * @param name Player's name
  * @param surname Player's surname
  * @param age Player's age
  * @param country
  * @param single
- * @param double
+ * @param double 
  * @param turnedProYear Player's turning pro year
  * @param weight
  * @param height
  * @param birthplace
- * @param plays
+ * @param plays 
  */
 data class Player(
 

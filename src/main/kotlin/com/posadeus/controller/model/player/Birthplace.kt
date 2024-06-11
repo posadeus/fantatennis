@@ -3,7 +3,7 @@ package com.posadeus.controller.model.player
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
+ * 
  * @param city Born town's name
  * @param country Born country's name
  */

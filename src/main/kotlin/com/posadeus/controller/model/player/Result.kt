@@ -3,7 +3,7 @@ package com.posadeus.controller.model.player
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
+ * 
  * @param bestRank Best ranking
  * @param wonGames Won games
  * @param lostGames Lost games

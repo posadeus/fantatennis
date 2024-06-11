@@ -3,9 +3,9 @@ package com.posadeus.controller.model.player
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
+ * 
  * @param cm Player's height in cm
- * @param feet
+ * @param feet 
  */
 data class Height(
 

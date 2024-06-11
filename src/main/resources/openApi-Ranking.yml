@@ -28,9 +28,9 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
           default: 0
-          description: PLayer's unique ID
+          description: Player's unique ID
         name:
           type: string
           default: ""

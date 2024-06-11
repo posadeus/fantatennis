@@ -3,7 +3,7 @@ package com.posadeus.controller.model.player
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- *
+ * 
  * @param name Origin country's name
  * @param flag Country's flag link
  */
