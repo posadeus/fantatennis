@@ -5,18 +5,30 @@ import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingErrorRespo
 import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingOkResponse
 import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingResponse
 import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingsOkResponse
-import org.springframework.web.client.RestOperations
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder.fromHttpUrl
 
 class RestAtpTourClient(private val baseUrl: String,
-                        private val restClient: RestOperations) : AtpTourClient {
+                        private val restTemplate: RestTemplate) : AtpTourClient {
 
   override fun retrieveRanking(positions: Int): AtpTourRankingResponse {
 
     try {
 
-      val response = restClient.getForEntity(composeUrl(baseUrl, positions),
-                                             Array::class.java)
+      val headers = HttpHeaders()
+      headers.accept = listOf(MediaType.APPLICATION_JSON, MediaType(MediaType.TEXT_PLAIN), MediaType(MediaType.ALL))
+      headers.add(HttpHeaders.USER_AGENT, "*")
+
+      val requestEntity: HttpEntity<String> = HttpEntity(headers)
+
+      val response = restTemplate.exchange(composeUrl(baseUrl, positions),
+                                           HttpMethod.GET,
+                                           requestEntity,
+                                           Array::class.java)
 
       return convert(response.body!!)
     }

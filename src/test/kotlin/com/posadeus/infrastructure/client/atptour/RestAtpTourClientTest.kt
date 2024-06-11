@@ -69,6 +69,8 @@ class RestAtpTourClientTest {
 
     wireMock.stubFor(get(urlPathEqualTo("$PATH$positions"))
                          .withQueryParam("v", equalTo("1"))
+                         .withHeader("Accept", equalTo("application/json, text/plain, */*"))
+                         .withHeader("User-Agent", equalTo("*"))
                          .willReturn(okJson(RANKING_2_OK_RESPONSE)))
 
     assertThat(client.retrieveRanking(positions)).isEqualTo(expected)
