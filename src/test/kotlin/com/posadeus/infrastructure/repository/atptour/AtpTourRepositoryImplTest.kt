@@ -1,13 +1,12 @@
 package com.posadeus.infrastructure.repository.atptour
 
-import com.posadeus.controller.model.ranking.RankedPlayer
-import com.posadeus.domain.infrastructure.AtpTourRepository
-import com.posadeus.domain.model.EmptyRanking
-import com.posadeus.domain.model.RankedPlayers
-import com.posadeus.infrastructure.client.atptour.AtpTourClient
-import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingErrorResponse
-import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingOkResponse
-import com.posadeus.infrastructure.client.atptour.model.AtpTourRankingsOkResponse
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.domain.infrastructure.AtpTourRepository
+import com.posadeus.fantatennis.domain.model.EmptyRanking
+import com.posadeus.fantatennis.domain.model.RankedPlayers
+import com.posadeus.fantatennis.infrastructure.client.atptour.AtpTourClient
+import com.posadeus.fantatennis.infrastructure.client.atptour.model.*
+import com.posadeus.fantatennis.infrastructure.repository.atptour.AtpTourRepositoryImpl
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

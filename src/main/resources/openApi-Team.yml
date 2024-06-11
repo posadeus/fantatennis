@@ -1,0 +1,71 @@
+openapi: 3.0.0
+info:
+  title: Team
+  version: 1.0.0
+paths:
+  /team/{teamId}:
+    get:
+      operationId: team
+      summary: Returns your team players
+      description: Returns an ordered list based on your player points.
+      tags:
+        - Team
+      parameters:
+        - in: path
+          name: teamId
+          schema:
+            type: string
+          required: true
+          description: ID of the team
+      responses:
+        '200':
+          description: Team found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+        '500':
+          description: Error during team retrieval
+
+components:
+  schemas:
+    Team:
+      type: object
+      properties:
+        players:
+          $ref: '#/components/schemas/TeamPlayers'
+        totalScore:
+          type: integer
+          default: 0
+          description: Total team's score
+      required:
+        - players
+        - totalScore
+
+    TeamPlayers:
+      type: array
+      items:
+        $ref: '#/components/schemas/TeamPlayer'
+
+    TeamPlayer:
+      type: object
+      properties:
+        fullName:
+          type: string
+          default: ""
+          description: Player's full name
+        fantaPoints:
+          type: integer
+          default: 0
+          description: Player's fanta-points
+        playing:
+          type: string
+          description: Player's actual tournament played
+        chosen:
+          type: boolean
+          default: false
+          description: TRUE if player has been chosen for the tournament
+      required:
+        - fullName
+        - fantaPoints
+        - chosen

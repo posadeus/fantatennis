@@ -2,15 +2,11 @@ package com.posadeus.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.posadeus.controller.model.player.Category
-import com.posadeus.controller.model.player.Country
-import com.posadeus.controller.model.player.Player
-import com.posadeus.controller.model.player.Result
-import com.posadeus.controller.player.PlayerController
-import com.posadeus.domain.model.ErrorPlayer
-import com.posadeus.domain.model.FoundPlayer
-import com.posadeus.domain.model.NoPlayer
-import com.posadeus.domain.service.player.PlayerService
+import com.posadeus.fantatennis.controller.PlayerApi
+import com.posadeus.fantatennis.controller.model.player.*
+import com.posadeus.fantatennis.controller.player.PlayerController
+import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.service.player.PlayerService
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test

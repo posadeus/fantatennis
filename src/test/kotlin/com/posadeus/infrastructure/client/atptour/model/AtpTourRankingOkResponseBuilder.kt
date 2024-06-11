@@ -1,5 +1,7 @@
 package com.posadeus.infrastructure.client.atptour.model
 
+import com.posadeus.fantatennis.infrastructure.client.atptour.model.AtpTourRankingOkResponse
+
 class AtpTourRankingOkResponseBuilder(private var rankNo: Int = 0,
                                       private var name: String = "",
                                       private var points: String = "0,0",

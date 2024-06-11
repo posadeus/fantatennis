@@ -2,11 +2,12 @@ package com.posadeus.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.posadeus.controller.model.ranking.RankedPlayer
-import com.posadeus.controller.ranking.RankingController
-import com.posadeus.domain.model.EmptyRanking
-import com.posadeus.domain.model.RankedPlayers
-import com.posadeus.domain.service.ranking.RankingService
+import com.posadeus.fantatennis.controller.RankingApi
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.controller.ranking.RankingController
+import com.posadeus.fantatennis.domain.model.EmptyRanking
+import com.posadeus.fantatennis.domain.model.RankedPlayers
+import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test

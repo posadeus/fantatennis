@@ -158,8 +158,8 @@
               <output>src/main/kotlin</output>
               <generateSupportingFiles>false</generateSupportingFiles>
               <configOptions>
-                <apiPackage>com.posadeus.controller</apiPackage>
-                <modelPackage>com.posadeus.controller.model.ranking</modelPackage>
+                <apiPackage>com.posadeus.fantatennis.controller</apiPackage>
+                <modelPackage>com.posadeus.fantatennis.controller.model.ranking</modelPackage>
                 <documentationProvider>none</documentationProvider>
                 <exceptionHandler>false</exceptionHandler>
                 <gradleBuildFile>false</gradleBuildFile>
@@ -187,8 +187,8 @@
               <output>src/main/kotlin</output>
               <generateSupportingFiles>false</generateSupportingFiles>
               <configOptions>
-                <apiPackage>com.posadeus.controller</apiPackage>
-                <modelPackage>com.posadeus.controller.model.player</modelPackage>
+                <apiPackage>com.posadeus.fantatennis.controller</apiPackage>
+                <modelPackage>com.posadeus.fantatennis.controller.model.player</modelPackage>
                 <documentationProvider>none</documentationProvider>
                 <exceptionHandler>false</exceptionHandler>
                 <gradleBuildFile>false</gradleBuildFile>
@@ -202,6 +202,37 @@
               </configOptions>
             </configuration>
           </execution>
+
+          <execution>
+
+            <id>GENERATE TEAM-API</id>
+
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorName>kotlin-spring</generatorName>
+              <library>spring-boot</library>
+              <inputSpec>${project.basedir}/src/main/resources/openApi-Team.yml</inputSpec>
+              <output>src/main/kotlin</output>
+              <generateSupportingFiles>false</generateSupportingFiles>
+              <configOptions>
+                <apiPackage>com.posadeus.fantatennis.controller</apiPackage>
+                <modelPackage>com.posadeus.fantatennis.controller.model.team</modelPackage>
+                <documentationProvider>none</documentationProvider>
+                <exceptionHandler>false</exceptionHandler>
+                <gradleBuildFile>false</gradleBuildFile>
+                <sourceFolder>/</sourceFolder>
+                <interfaceOnly>true</interfaceOnly>
+                <useBeanValidation>false</useBeanValidation>
+                <useSpringBoot3>true</useSpringBoot3>
+                <serializableModel>true</serializableModel>
+                <skipDefaultInterface>true</skipDefaultInterface>
+                <useTags>true</useTags>
+              </configOptions>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
 
