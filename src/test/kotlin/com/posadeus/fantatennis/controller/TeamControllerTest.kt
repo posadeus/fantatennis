@@ -29,7 +29,7 @@ class TeamControllerTest {
       .build()
 
   @Test
-  fun `200 response`() {
+  fun `200 response - valid team`() {
 
     val expected = TeamDto(A_LIST_OF_PLAYERS)
     val team = FoundTeam(expected)
@@ -41,6 +41,19 @@ class TeamControllerTest {
         .andDo(print())
         .andExpect(status().isOk)
         .andExpect(content().json(toJson(expected)))
+  }
+
+  @Test
+  fun `200 response - empty team`() {
+
+    val team = EmptyTeam
+
+    every { service.getTeam(A_USER_ID, A_TEAM_ID) } returns team
+
+    mvc.perform(get("/$A_USER_ID$TEAM_ENDPOINT$A_TEAM_ID")
+                    .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isNoContent)
   }
 
   @Test

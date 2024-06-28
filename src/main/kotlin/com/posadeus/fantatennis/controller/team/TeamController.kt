@@ -13,6 +13,7 @@ class TeamController(private val service: TeamService) : TeamApi {
   override fun team(userId: Long, teamId: String): ResponseEntity<TeamDto> =
       when (val team = service.getTeam(userId, teamId)) {
         is FoundTeam -> ResponseEntity.ok(team.team)
+        is EmptyTeam -> ResponseEntity.noContent().build()
         is UserIdNotFoundTeam, TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
         is ErrorTeam -> ResponseEntity.internalServerError().build()
       }

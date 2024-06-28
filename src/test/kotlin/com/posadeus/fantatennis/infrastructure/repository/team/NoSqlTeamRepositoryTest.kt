@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.team
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
+import com.posadeus.fantatennis.domain.model.EmptyTeam
 import com.posadeus.fantatennis.domain.model.FoundTeam
 import com.posadeus.fantatennis.infrastructure.client.firebase.FirebaseClient
 import com.posadeus.fantatennis.infrastructure.client.firebase.model.TeamOkResponse
@@ -45,6 +46,20 @@ class NoSqlTeamRepositoryTest {
                                 chosen = false,
                                 playing = null)
     val expected = FoundTeam(TeamDto(listOf(player1, player2)))
+
+    every { client.retrieveTeam(A_USER_ID, A_TEAM_ID) } returns clientResponse
+
+    assertThat(repository.getTeam(A_USER_ID, A_TEAM_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `team retrieved but is empty`() {
+
+    val clientResponse = TeamOkResponse(userId = A_USER_ID,
+                                        teamId = A_TEAM_ID,
+                                        players = null)
+
+    val expected = EmptyTeam
 
     every { client.retrieveTeam(A_USER_ID, A_TEAM_ID) } returns clientResponse
 

@@ -20,5 +20,5 @@ class NoSqlTeamRepository(private val client: FirebaseClient) : TeamRepository {
                                 playing = it.playing)
           }
           ?.let { FoundTeam(TeamDto(it)) }
-      ?: ErrorTeam // FIXME EmptyTeam could be an option
+      ?: EmptyTeam
 }
