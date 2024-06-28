@@ -3,7 +3,7 @@ info:
   title: Team
   version: 1.0.0
 paths:
-  /team/{teamId}:
+  /{userId}/team/{teamId}:
     get:
       operationId: team
       summary: Returns your team players
@@ -11,6 +11,12 @@ paths:
       tags:
         - Team
       parameters:
+        - in: path
+          name: userId
+          schema:
+            type: long
+          required: true
+          description: ID of the user
         - in: path
           name: teamId
           schema:
@@ -23,17 +29,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Team'
+                $ref: '#/components/schemas/TeamDto'
         '500':
           description: Error during team retrieval
 
 components:
   schemas:
-    Team:
+    TeamDto:
       type: object
       properties:
         players:
-          $ref: '#/components/schemas/TeamPlayers'
+          $ref: '#/components/schemas/TeamPlayersDto'
         totalScore:
           type: integer
           default: 0
@@ -42,12 +48,12 @@ components:
         - players
         - totalScore
 
-    TeamPlayers:
+    TeamPlayersDto:
       type: array
       items:
-        $ref: '#/components/schemas/TeamPlayer'
+        $ref: '#/components/schemas/TeamPlayerDto'
 
-    TeamPlayer:
+    TeamPlayerDto:
       type: object
       properties:
         fullName:
