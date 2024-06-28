@@ -80,6 +80,30 @@ class NoSqlTeamRepositoryTest {
     assertThat(repository.getTeam(A_USER_ID, A_TEAM_ID)).isEqualTo(expected)
   }
 
+  @Test
+  fun `user not found by client`() {
+
+    val clientResponse = UserNotFoundResponse
+
+    val expected = UserIdNotFoundTeam
+
+    every { client.retrieveTeam(A_USER_ID, A_TEAM_ID) } returns clientResponse
+
+    assertThat(repository.getTeam(A_USER_ID, A_TEAM_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `error by client`() {
+
+    val clientResponse = ErrorTeamResponse
+
+    val expected = ErrorTeam
+
+    every { client.retrieveTeam(A_USER_ID, A_TEAM_ID) } returns clientResponse
+
+    assertThat(repository.getTeam(A_USER_ID, A_TEAM_ID)).isEqualTo(expected)
+  }
+
   companion object {
 
     private const val A_USER_ID = 1234L

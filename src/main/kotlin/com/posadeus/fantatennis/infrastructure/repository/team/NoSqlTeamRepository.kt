@@ -17,6 +17,8 @@ class NoSqlTeamRepository(private val client: FirebaseClient) : TeamRepository {
 
         is TeamOkResponse -> convertTeamOkResponse(teamResponse)
         is TeamNotFoundResponse -> TeamIdNotFoundTeam
+        is UserNotFoundResponse -> UserIdNotFoundTeam
+        is ErrorTeamResponse -> ErrorTeam
       }
 
   private fun convertTeamOkResponse(teamResponse: TeamOkResponse) =

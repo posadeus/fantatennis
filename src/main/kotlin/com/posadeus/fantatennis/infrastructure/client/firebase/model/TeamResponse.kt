@@ -8,3 +8,5 @@ data class TeamOkResponse(val userId: Long,
                           val players: List<TeamPlayerResponse>?) : TeamResponse
 
 data object TeamNotFoundResponse : TeamResponse
+data object UserNotFoundResponse : TeamResponse
+data object ErrorTeamResponse : TeamResponse
