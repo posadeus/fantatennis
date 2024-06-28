@@ -14,11 +14,21 @@ class NoSqlTeamRepository(private val client: FirebaseClient) : TeamRepository {
 
   private fun convert(team: TeamOkResponse): Team =
       team.players
-          ?.map { TeamPlayerDto(fullName = "${it.firstName} ${it.lastname}",
-                                fantaPoints = it.fantaPoints,
-                                chosen = it.chosen,
-                                playing = it.playing)
+          ?.map {
+            TeamPlayerDto(fullName = "${it.firstName} ${it.lastname}",
+                          fantaPoints = it.fantaPoints,
+                          chosen = it.chosen,
+                          playing = it.playing)
           }
-          ?.let { FoundTeam(TeamDto(it)) }
+          ?.let {
+            FoundTeam(TeamDto(players = it,
+                              totalScore = it.sumOf { player -> player.fantaPoints },
+                              completed = it.size == TEAM_SIZE))
+          }
       ?: EmptyTeam
+
+  companion object {
+
+    private const val TEAM_SIZE = 8
+  }
 }

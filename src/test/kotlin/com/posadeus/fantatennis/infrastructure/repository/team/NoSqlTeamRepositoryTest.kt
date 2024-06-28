@@ -24,6 +24,7 @@ class NoSqlTeamRepositoryTest {
 
     val clientResponse = TeamOkResponse(userId = A_USER_ID,
                                         teamId = A_TEAM_ID,
+                                        isTeamCompleted = false,
                                         players = listOf(TeamPlayerResponse(playerId = "PLAYER_1_ID",
                                                                             lastname = "FULL_NAME",
                                                                             firstName = "PLAYER_1",
@@ -45,7 +46,9 @@ class NoSqlTeamRepositoryTest {
                                 fantaPoints = 22,
                                 chosen = false,
                                 playing = null)
-    val expected = FoundTeam(TeamDto(listOf(player1, player2)))
+    val expected = FoundTeam(TeamDto(players = listOf(player1, player2),
+                                     totalScore = 34,
+                                     completed = false))
 
     every { client.retrieveTeam(A_USER_ID, A_TEAM_ID) } returns clientResponse
 
@@ -57,6 +60,7 @@ class NoSqlTeamRepositoryTest {
 
     val clientResponse = TeamOkResponse(userId = A_USER_ID,
                                         teamId = A_TEAM_ID,
+                                        isTeamCompleted = false,
                                         players = null)
 
     val expected = EmptyTeam
