@@ -44,9 +44,14 @@ components:
           type: integer
           default: 0
           description: Total team's score
+        completed:
+          type: boolean
+          default: false
+          description: True if the team has the correct number of players
       required:
         - players
         - totalScore
+        - completed
 
     TeamPlayersDto:
       type: array

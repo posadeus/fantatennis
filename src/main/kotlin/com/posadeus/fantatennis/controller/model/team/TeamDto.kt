@@ -6,11 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
  * 
  * @param players 
  * @param totalScore Total team's score
+ * @param completed True if the team has the correct number of players
  */
 data class TeamDto(
 
     @get:JsonProperty("players", required = true) val players: List<TeamPlayerDto>,
 
-    @get:JsonProperty("totalScore", required = true) val totalScore: Int = 0
+    @get:JsonProperty("totalScore", required = true) val totalScore: Int = 0,
+
+    @get:JsonProperty("completed", required = true) val completed: Boolean = false
 )
 
