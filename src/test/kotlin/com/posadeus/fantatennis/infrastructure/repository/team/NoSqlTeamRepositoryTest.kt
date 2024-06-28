@@ -3,11 +3,9 @@ package com.posadeus.fantatennis.infrastructure.repository.team
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
-import com.posadeus.fantatennis.domain.model.EmptyTeam
-import com.posadeus.fantatennis.domain.model.FoundTeam
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.client.firebase.FirebaseClient
-import com.posadeus.fantatennis.infrastructure.client.firebase.model.TeamOkResponse
-import com.posadeus.fantatennis.infrastructure.client.firebase.model.TeamPlayerResponse
+import com.posadeus.fantatennis.infrastructure.client.firebase.model.*
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -20,7 +18,7 @@ class NoSqlTeamRepositoryTest {
   private val repository: TeamRepository = NoSqlTeamRepository(client)
 
   @Test
-  fun `team retrieved from DB`() {
+  fun `team retrieved from client`() {
 
     val clientResponse = TeamOkResponse(userId = A_USER_ID,
                                         teamId = A_TEAM_ID,
@@ -64,6 +62,18 @@ class NoSqlTeamRepositoryTest {
                                         players = null)
 
     val expected = EmptyTeam
+
+    every { client.retrieveTeam(A_USER_ID, A_TEAM_ID) } returns clientResponse
+
+    assertThat(repository.getTeam(A_USER_ID, A_TEAM_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `team not found by client`() {
+
+    val clientResponse = TeamNotFoundResponse
+
+    val expected = TeamIdNotFoundTeam
 
     every { client.retrieveTeam(A_USER_ID, A_TEAM_ID) } returns clientResponse
 
