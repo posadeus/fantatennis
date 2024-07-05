@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.client.firebase.FirebaseClient
+import com.posadeus.fantatennis.infrastructure.client.firebase.TeamClient
 import com.posadeus.fantatennis.infrastructure.client.firebase.model.*
 import io.mockk.every
 import io.mockk.mockk
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 class NoSqlTeamRepositoryTest {
 
-  private val client: FirebaseClient = mockk()
+  private val client: TeamClient = mockk()
 
   private val repository: TeamRepository = NoSqlTeamRepository(client)
 

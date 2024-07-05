@@ -4,10 +4,10 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.client.firebase.FirebaseClient
+import com.posadeus.fantatennis.infrastructure.client.firebase.TeamClient
 import com.posadeus.fantatennis.infrastructure.client.firebase.model.*
 
-class NoSqlTeamRepository(private val client: FirebaseClient) : TeamRepository {
+class NoSqlTeamRepository(private val client: TeamClient) : TeamRepository {
 
   override fun getTeam(userId: String, teamId: String): Team =
       convert(client.retrieveTeam(userId, teamId))
