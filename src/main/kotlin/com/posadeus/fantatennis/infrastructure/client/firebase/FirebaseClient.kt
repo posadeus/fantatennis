@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.infrastructure.client.firebase.model.TeamRespons
 
 interface FirebaseClient {
 
-  fun retrieveTeam(userId: Long, teamId: String): TeamResponse {
+  fun retrieveTeam(userId: String, teamId: String): TeamResponse {
     TODO("Not yet implemented")
   }
 }

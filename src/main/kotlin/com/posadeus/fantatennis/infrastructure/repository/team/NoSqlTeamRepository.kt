@@ -9,7 +9,7 @@ import com.posadeus.fantatennis.infrastructure.client.firebase.model.*
 
 class NoSqlTeamRepository(private val client: FirebaseClient) : TeamRepository {
 
-  override fun getTeam(userId: Long, teamId: String): Team =
+  override fun getTeam(userId: String, teamId: String): Team =
       convert(client.retrieveTeam(userId, teamId))
 
   private fun convert(teamResponse: TeamResponse): Team =

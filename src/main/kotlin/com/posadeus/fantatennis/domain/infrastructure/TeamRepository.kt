@@ -4,5 +4,5 @@ import com.posadeus.fantatennis.domain.model.Team
 
 interface TeamRepository {
 
-  fun getTeam(userId: Long, teamId: String): Team
+  fun getTeam(userId: String, teamId: String): Team
 }

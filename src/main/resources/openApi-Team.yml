@@ -14,7 +14,7 @@ paths:
         - in: path
           name: userId
           schema:
-            type: long
+            type: string
           required: true
           description: ID of the user
         - in: path
