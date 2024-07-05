@@ -68,7 +68,14 @@
       <version>5.2.3</version>
     </dependency>
 
-    <!-- TEST -->
+    <!-- FIREBASE -->
+    <dependency>
+      <groupId>com.google.firebase</groupId>
+      <artifactId>firebase-admin</artifactId>
+      <version>9.3.0</version>
+    </dependency>
+
+      <!-- TEST -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
