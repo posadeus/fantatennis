@@ -13,7 +13,7 @@ data class TeamPlayerDto(
 
     @get:JsonProperty("fullName", required = true) val fullName: String = "",
 
-    @get:JsonProperty("fantaPoints", required = true) val fantaPoints: Int = 0,
+    @get:JsonProperty("fantaPoints", required = true) val fantaPoints: Double,
 
     @get:JsonProperty("chosen", required = true) val chosen: Boolean = false,
 

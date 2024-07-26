@@ -17,9 +17,9 @@ class TeamServiceTest {
   @Test
   fun `retrieve a team`() {
 
-    every { repository.getTeam(A_USER_ID, A_TEAM_ID) } returns A_TEAM
+    every { repository.getTeam(A_TEAM_ID) } returns A_TEAM
 
-    assertThat(service.getTeam(A_USER_ID, A_TEAM_ID)).isEqualTo(A_TEAM)
+    assertThat(service.getTeam(A_TEAM_ID)).isEqualTo(A_TEAM)
   }
 
   companion object {
@@ -27,6 +27,6 @@ class TeamServiceTest {
     private const val A_USER_ID = "A_USER_ID"
     private const val A_TEAM_ID = "A_TEAM_ID"
 
-    private val A_TEAM = FoundTeam(TeamDto(emptyList()))
+    private val A_TEAM = FoundTeam(TeamDto(emptyList(), 20.0, false))
   }
 }

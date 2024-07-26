@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class TeamController(private val service: TeamService) : TeamApi {
 
-  override fun team(userId: String, teamId: String): ResponseEntity<TeamDto> =
-      when (val team = service.getTeam(userId, teamId)) {
+  override fun team(teamId: String): ResponseEntity<TeamDto> =
+      when (val team = service.getTeam(teamId)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)
         is EmptyTeam -> ResponseEntity.noContent().build()
-        is UserIdNotFoundTeam, TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
+        is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
         is ErrorTeam -> ResponseEntity.internalServerError().build()
       }
 }

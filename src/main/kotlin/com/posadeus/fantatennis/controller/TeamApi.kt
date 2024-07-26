@@ -15,8 +15,8 @@ interface TeamApi {
 
     @RequestMapping(
             method = [RequestMethod.GET],
-            value = ["/{userId}/team/{teamId}"],
+            value = ["/team/{teamId}"],
             produces = ["application/json"]
     )
-    fun team( @PathVariable("userId") userId: String, @PathVariable("teamId") teamId: String): ResponseEntity<TeamDto>
+    fun team( @PathVariable("teamId") teamId: String): ResponseEntity<TeamDto>
 }

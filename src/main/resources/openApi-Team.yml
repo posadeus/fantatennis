@@ -3,7 +3,7 @@ info:
   title: Team
   version: 1.0.0
 paths:
-  /{userId}/team/{teamId}:
+  /team/{teamId}:
     get:
       operationId: team
       summary: Returns your team players
@@ -11,12 +11,6 @@ paths:
       tags:
         - Team
       parameters:
-        - in: path
-          name: userId
-          schema:
-            type: string
-          required: true
-          description: ID of the user
         - in: path
           name: teamId
           schema:
@@ -41,7 +35,7 @@ components:
         players:
           $ref: '#/components/schemas/TeamPlayersDto'
         totalScore:
-          type: integer
+          type: double
           default: 0
           description: Total team's score
         completed:
@@ -66,7 +60,7 @@ components:
           default: ""
           description: Player's full name
         fantaPoints:
-          type: integer
+          type: double
           default: 0
           description: Player's fanta-points
         playing:

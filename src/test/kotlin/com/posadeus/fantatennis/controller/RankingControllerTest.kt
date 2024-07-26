@@ -74,6 +74,6 @@ class RankingControllerTest {
 
   companion object {
 
-    private const val RANKING_ENDPOINT = "/players"
+    private const val RANKING_ENDPOINT = "/players/ranking"
   }
 }

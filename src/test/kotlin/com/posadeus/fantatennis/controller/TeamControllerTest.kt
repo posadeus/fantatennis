@@ -31,12 +31,12 @@ class TeamControllerTest {
   @Test
   fun `200 response - valid team`() {
 
-    val expected = TeamDto(A_LIST_OF_PLAYERS)
+    val expected = TeamDto(A_LIST_OF_PLAYERS, A_TOTAL_SCORE, ANY_COMPLETED)
     val team = FoundTeam(expected)
 
-    every { service.getTeam(A_USER_ID, A_TEAM_ID) } returns team
+    every { service.getTeam(A_TEAM_ID) } returns team
 
-    mvc.perform(get("/$A_USER_ID$TEAM_ENDPOINT$A_TEAM_ID")
+    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
                     .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk)
@@ -48,25 +48,12 @@ class TeamControllerTest {
 
     val team = EmptyTeam
 
-    every { service.getTeam(A_USER_ID, A_TEAM_ID) } returns team
+    every { service.getTeam(A_TEAM_ID) } returns team
 
-    mvc.perform(get("/$A_USER_ID$TEAM_ENDPOINT$A_TEAM_ID")
+    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
                     .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isNoContent)
-  }
-
-  @Test
-  fun `400 response - UserId NOT FOUND`() {
-
-    val team = UserIdNotFoundTeam
-
-    every { service.getTeam(A_USER_ID, A_TEAM_ID) } returns team
-
-    mvc.perform(get("/$A_USER_ID$TEAM_ENDPOINT$A_TEAM_ID")
-                    .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isBadRequest)
   }
 
   @Test
@@ -74,9 +61,9 @@ class TeamControllerTest {
 
     val team = TeamIdNotFoundTeam
 
-    every { service.getTeam(A_USER_ID, A_TEAM_ID) } returns team
+    every { service.getTeam(A_TEAM_ID) } returns team
 
-    mvc.perform(get("/$A_USER_ID$TEAM_ENDPOINT$A_TEAM_ID")
+    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
                     .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isBadRequest)
@@ -87,9 +74,9 @@ class TeamControllerTest {
 
     val team = ErrorTeam
 
-    every { service.getTeam(A_USER_ID, A_TEAM_ID) } returns team
+    every { service.getTeam(A_TEAM_ID) } returns team
 
-    mvc.perform(get("/$A_USER_ID$TEAM_ENDPOINT$A_TEAM_ID")
+    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
                     .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isInternalServerError)
@@ -101,9 +88,10 @@ class TeamControllerTest {
 
   companion object {
 
-    private const val TEAM_ENDPOINT = "/team/"
+    private const val TEAM_ENDPOINT = "team/"
     private const val A_TEAM_ID = "A_TEAM_ID"
-    private const val A_USER_ID = "A_USER_ID"
+    private const val A_TOTAL_SCORE = 33.3
+    private const val ANY_COMPLETED = true
 
     private val A_LIST_OF_PLAYERS = emptyList<TeamPlayerDto>()
   }

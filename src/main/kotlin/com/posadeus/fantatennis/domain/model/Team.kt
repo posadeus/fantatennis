@@ -7,5 +7,4 @@ sealed interface Team
 data class FoundTeam(val team: TeamDto) : Team
 data object EmptyTeam : Team
 data object TeamIdNotFoundTeam : Team
-data object UserIdNotFoundTeam : Team
 data object ErrorTeam : Team

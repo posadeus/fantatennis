@@ -3,7 +3,7 @@ info:
   title: API to retrieve tennis players ranking
   version: 1.0.0
 paths:
-  /players:
+  /players/ranking:
     get:
       operationId: players
       summary: Returns players ranking

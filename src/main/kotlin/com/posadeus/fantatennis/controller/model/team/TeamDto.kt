@@ -12,7 +12,7 @@ data class TeamDto(
 
     @get:JsonProperty("players", required = true) val players: List<TeamPlayerDto>,
 
-    @get:JsonProperty("totalScore", required = true) val totalScore: Int = 0,
+    @get:JsonProperty("totalScore", required = true) val totalScore: Double,
 
     @get:JsonProperty("completed", required = true) val completed: Boolean = false
 )
