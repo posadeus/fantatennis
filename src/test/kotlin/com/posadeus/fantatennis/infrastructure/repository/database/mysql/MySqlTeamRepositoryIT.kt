@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
-import com.posadeus.fantatennis.domain.model.FoundTeam
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -37,20 +37,20 @@ class MySqlTeamRepositoryIT {
   @Test
   fun `team retrieved from DB`() {
 
-    val teamResponse = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
-                                             chosen = true),
-                                  TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
+    val teamRecords = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
+                                        chosen = true),
+                             TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
                                              chosen = false))
-    val playersResponse = listOf(PlayerEntity(id = "A_PLAYER_ID_1",
-                                              atpTourId = "AN_ATP_TOUR_ID_1",
-                                              fantaPoints = 12.0,
-                                              fullName = "A_FULL_NAME_1"),
-                                 PlayerEntity(id = "A_PLAYER_ID_2",
+    val playerRecords = listOf(PlayerEntity(id = "A_PLAYER_ID_1",
+                                            atpTourId = "AN_ATP_TOUR_ID_1",
+                                            fantaPoints = 12.0,
+                                            fullName = "A_FULL_NAME_1"),
+                               PlayerEntity(id = "A_PLAYER_ID_2",
                                               atpTourId = "AN_ATP_TOUR_ID_2",
                                               fantaPoints = 22.2,
                                               fullName = "A_FULL_NAME_2"))
-    teamDao.saveAll(teamResponse)
-    playerDao.saveAll(playersResponse)
+    teamDao.saveAll(teamRecords)
+    playerDao.saveAll(playerRecords)
 
     val player1 = TeamPlayerDto(fullName = "A_FULL_NAME_1",
                                 fantaPoints = 12.0,
@@ -61,6 +61,49 @@ class MySqlTeamRepositoryIT {
     val expected = FoundTeam(team = TeamDto(players = listOf(player1, player2),
                                             totalScore = 34.2,
                                             completed = false))
+
+    assertThat(mySqlTeamRepository.getTeam("A_TEAM_ID")).isEqualTo(expected)
+  }
+
+  @Test
+  fun `teamDao is empty`() {
+
+    val expected = EmptyTeam
+
+    assertThat(mySqlTeamRepository.getTeam("A_TEAM_ID")).isEqualTo(expected)
+  }
+
+  @Test
+  fun `playersDao is empty`() {
+
+    val teamRecords = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
+                                        chosen = true),
+                             TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
+                                         chosen = false))
+
+    teamDao.saveAll(teamRecords)
+
+    val expected = ErrorTeam
+
+    assertThat(mySqlTeamRepository.getTeam("A_TEAM_ID")).isEqualTo(expected)
+  }
+
+  @Test
+  fun `playersDao doesn't contains all the players`() {
+
+    val teamRecords = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
+                                        chosen = true),
+                             TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
+                                         chosen = false))
+     val playerRecord = PlayerEntity(id = "A_PLAYER_ID_1",
+                                     atpTourId = "AN_ATP_TOUR_ID_1",
+                                     fantaPoints = 12.0,
+                                     fullName = "A_FULL_NAME_1")
+
+    teamDao.saveAll(teamRecords)
+    playerDao.save(playerRecord)
+
+    val expected = ErrorTeam
 
     assertThat(mySqlTeamRepository.getTeam("A_TEAM_ID")).isEqualTo(expected)
   }
