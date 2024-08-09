@@ -1,0 +1,73 @@
+package com.posadeus.fantatennis.infrastructure.repository.database.mysql
+
+import com.posadeus.fantatennis.controller.model.team.TeamDto
+import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
+import com.posadeus.fantatennis.domain.model.FoundTeam
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
+
+@ExtendWith(SpringExtension::class)
+@DataJpaTest
+@ContextConfiguration(classes = [com.posadeus.fantatennis.app.Application::class])
+@ComponentScan(basePackages = ["com.posadeus.fantatennis.app.configuration.infrastructure.mysql"])
+class MySqlTeamRepositoryIT {
+
+  @Autowired
+  private lateinit var teamDao: MySqlTeamDao
+  @Autowired
+  private lateinit var playerDao: MySqlPlayerDao
+
+  @Autowired
+  private lateinit var mySqlTeamRepository: MySqlTeamRepository
+
+  @BeforeEach
+  fun setUp() {
+
+    deleteAll()
+  }
+
+  @Test
+  fun `team retrieved from DB`() {
+
+    val teamResponse = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
+                                             chosen = true),
+                                  TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
+                                             chosen = false))
+    val playersResponse = listOf(PlayerEntity(id = "A_PLAYER_ID_1",
+                                              atpTourId = "AN_ATP_TOUR_ID_1",
+                                              fantaPoints = 12.0,
+                                              fullName = "A_FULL_NAME_1"),
+                                 PlayerEntity(id = "A_PLAYER_ID_2",
+                                              atpTourId = "AN_ATP_TOUR_ID_2",
+                                              fantaPoints = 22.2,
+                                              fullName = "A_FULL_NAME_2"))
+    teamDao.saveAll(teamResponse)
+    playerDao.saveAll(playersResponse)
+
+    val player1 = TeamPlayerDto(fullName = "A_FULL_NAME_1",
+                                fantaPoints = 12.0,
+                                chosen = true)
+    val player2 = TeamPlayerDto(fullName = "A_FULL_NAME_2",
+                                fantaPoints = 22.2,
+                                chosen = false)
+    val expected = FoundTeam(team = TeamDto(players = listOf(player1, player2),
+                                            totalScore = 34.2,
+                                            completed = false))
+
+    assertThat(mySqlTeamRepository.getTeam("A_TEAM_ID")).isEqualTo(expected)
+  }
+
+  private fun deleteAll() {
+
+    teamDao.deleteAll()
+    playerDao.deleteAll()
+  }
+}

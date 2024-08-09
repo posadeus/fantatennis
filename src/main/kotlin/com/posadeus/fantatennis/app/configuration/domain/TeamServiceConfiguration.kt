@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration
 open class TeamServiceConfiguration {
 
   @Bean
-  open fun teamService(firebaseTeamRepository: TeamRepository): TeamService =
-      TeamService(firebaseTeamRepository)
+  open fun teamService(mySqlTeamRepository: TeamRepository): TeamService =
+      TeamService(mySqlTeamRepository)
 }

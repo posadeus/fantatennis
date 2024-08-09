@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.T
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.TeamKeyEmbedded
 import org.springframework.data.repository.CrudRepository
 
-interface MySqlTeamDao : CrudRepository<List<TeamEntity>, TeamKeyEmbedded> {
+interface MySqlTeamDao : CrudRepository<TeamEntity, TeamKeyEmbedded> {
 
   fun findByIdTeamId(teamId: String): List<TeamEntity>
 }
