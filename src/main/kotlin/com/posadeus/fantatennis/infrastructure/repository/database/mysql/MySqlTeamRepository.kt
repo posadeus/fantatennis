@@ -4,16 +4,22 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
 import com.posadeus.fantatennis.domain.model.*
+import org.slf4j.LoggerFactory
 
 class MySqlTeamRepository(private val teamDao: MySqlTeamDao,
                           private val playerDao: MySqlPlayerDao) : TeamRepository {
+
+  private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
   override fun getTeam(teamId: String): Team {
 
     val teamEntities = teamDao.findByIdTeamId(teamId).associateBy { it.id.playerId }
 
-    if (teamEntities.isEmpty())
+    if (teamEntities.isEmpty()) {
+
+      logger.error("Team $teamId not found")
       return EmptyTeam
+    }
 
     val players = playerDao.findAllById(teamEntities.keys)
         .map {
@@ -22,8 +28,11 @@ class MySqlTeamRepository(private val teamDao: MySqlTeamDao,
                         chosen = teamEntities[it.id]!!.chosen)
         }
 
-    if (players.isEmpty() || players.size != teamEntities.keys.size)
+    if (players.isEmpty() || players.size != teamEntities.keys.size) {
+
+      logger.error("Player.size: ${players.size}, expected size: ${teamEntities.keys.size}")
       return ErrorTeam
+    }
 
     return FoundTeam(team = TeamDto(players = players,
                                     totalScore = players.sumOf { it.fantaPoints },
