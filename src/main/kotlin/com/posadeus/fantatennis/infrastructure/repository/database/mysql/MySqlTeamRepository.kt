@@ -3,8 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
-import com.posadeus.fantatennis.domain.model.FoundTeam
-import com.posadeus.fantatennis.domain.model.Team
+import com.posadeus.fantatennis.domain.model.*
 
 class MySqlTeamRepository(private val teamDao: MySqlTeamDao,
                           private val playerDao: MySqlPlayerDao) : TeamRepository {
@@ -12,14 +11,19 @@ class MySqlTeamRepository(private val teamDao: MySqlTeamDao,
   override fun getTeam(teamId: String): Team {
 
     val teamEntities = teamDao.findByIdTeamId(teamId).associateBy { it.id.playerId }
-    val playerEntities = playerDao.findAllById(teamEntities.keys)
 
-    val players = playerEntities
+    if (teamEntities.isEmpty())
+      return EmptyTeam
+
+    val players = playerDao.findAllById(teamEntities.keys)
         .map {
           TeamPlayerDto(fullName = it.fullName,
                         fantaPoints = it.fantaPoints,
                         chosen = teamEntities[it.id]!!.chosen)
         }
+
+    if (players.isEmpty() || players.size != teamEntities.keys.size)
+      return ErrorTeam
 
     return FoundTeam(team = TeamDto(players = players,
                                     totalScore = players.sumOf { it.fantaPoints },

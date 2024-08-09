@@ -3,11 +3,10 @@ package com.posadeus.fantatennis.infrastructure.repository.mysql
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
-import com.posadeus.fantatennis.domain.model.FoundTeam
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -44,6 +43,54 @@ class MySqlTeamRepositoryTest {
     val expected = FoundTeam(team = TeamDto(players = listOf(player1, player2),
                                             totalScore = 34.2,
                                             completed = false))
+
+    every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
+    every { mySqlPlayerDao.findAllById(setOf(A_PLAYER_ID_1, A_PLAYER_ID_2)) } returns playersResponse
+
+    assertThat(repository.getTeam(A_TEAM_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `teamResponse is empty`() {
+
+    val teamResponse = emptyList<TeamEntity>()
+    val expected = EmptyTeam
+
+    every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
+
+    assertThat(repository.getTeam(A_TEAM_ID)).isEqualTo(expected)
+
+    verify { mySqlPlayerDao wasNot called }
+  }
+
+  @Test
+  fun `playersResponse is empty`() {
+
+    val teamResponse = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+                                         chosen = true),
+                              TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                                         chosen = false))
+    val expected = ErrorTeam
+
+    every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
+    every { mySqlPlayerDao.findAllById(setOf(A_PLAYER_ID_1, A_PLAYER_ID_2)) } returns emptyList()
+
+    assertThat(repository.getTeam(A_TEAM_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `playersResponse doesn't contains all the players`() {
+
+    val teamResponse = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+                                         chosen = true),
+                              TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                                         chosen = false))
+     val playersResponse = listOf(PlayerEntity(id = A_PLAYER_ID_1,
+                                              atpTourId = AN_ATP_TOUR_ID_1,
+                                              fantaPoints = 12.0,
+                                              fullName = A_FULL_NAME_1))
+
+    val expected = ErrorTeam
 
     every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
     every { mySqlPlayerDao.findAllById(setOf(A_PLAYER_ID_1, A_PLAYER_ID_2)) } returns playersResponse
