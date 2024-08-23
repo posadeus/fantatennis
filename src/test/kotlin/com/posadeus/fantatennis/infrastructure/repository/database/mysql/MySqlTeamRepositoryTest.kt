@@ -1,10 +1,9 @@
-package com.posadeus.fantatennis.infrastructure.repository.mysql
+package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
@@ -86,9 +85,9 @@ class MySqlTeamRepositoryTest {
                               TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
                                          chosen = false))
      val playersResponse = listOf(PlayerEntity(id = A_PLAYER_ID_1,
-                                              atpTourId = AN_ATP_TOUR_ID_1,
-                                              fantaPoints = 12.0,
-                                              fullName = A_FULL_NAME_1))
+                                               atpTourId = AN_ATP_TOUR_ID_1,
+                                               fantaPoints = 12.0,
+                                               fullName = A_FULL_NAME_1))
 
     val expected = ErrorTeam
 
