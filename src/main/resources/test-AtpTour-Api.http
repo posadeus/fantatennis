@@ -26,6 +26,33 @@ GET https://www.atptour.com/en/-/www/results/2024/520
 Accept: application/json, text/plain, */*
 User-Agent: *
 
+### Results by Tournament (TENNIS TV)
+## /tournaments/{{tournamentId}}/{{year}}/draws
+## tournamentId: 416/520/...
+## year: 2024/2023/...
+GET https://api.tennistv.com/tennis/v1/tournaments/6116/2024/draws
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### All Tournaments (TENNIS TV)
+GET https://api.tennistv.com/tennis/v1/tournaments?from=2024-01-01&to=2024-12-31&size=200
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+### ITF TOURNAMENTS
+POST https://www.itftennis.com/tennis/api/TournamentApi/GetDrawsheet
+Content-Type: application/json
+Accept: application/json, text/plain, */*
+User-Agent: *
+
+{
+  "tournamentId": 1100195867,
+  "tourType": "N",
+  "weekNumber": 0,
+  "matchTypeCode": "S",
+  "eventClassificationCode": "M"
+}
+
 ### Ranking
 ## /sglroll/{{numOfPositionsToReturn}}?v=1
 ## numOfPositionsToReturn: 1/2/../100/...
