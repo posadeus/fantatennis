@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.ranking
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
-import com.posadeus.fantatennis.domain.infrastructure.AtpTourRepository
+import com.posadeus.fantatennis.domain.infrastructure.RankingRepository
 import com.posadeus.fantatennis.domain.model.EmptyRanking
 import com.posadeus.fantatennis.domain.model.RankedPlayers
 import io.mockk.every
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class RankingServiceTest {
 
-  private val repository: AtpTourRepository = mockk()
+  private val repository: RankingRepository = mockk()
 
   private val service = RankingService(repository)
 

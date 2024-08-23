@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.infrastructure
 
 import com.posadeus.fantatennis.domain.model.Ranking
 
-interface AtpTourRepository {
+interface RankingRepository {
 
   fun retrieveRanking(positions: Int): Ranking
 }

@@ -1,10 +1,10 @@
 package com.posadeus.fantatennis.domain.service.ranking
 
-import com.posadeus.fantatennis.domain.infrastructure.AtpTourRepository
+import com.posadeus.fantatennis.domain.infrastructure.RankingRepository
 import com.posadeus.fantatennis.domain.model.Ranking
 
-class RankingService(private val atpTourRepository: AtpTourRepository) {
+class RankingService(private val rankingRepository: RankingRepository) {
 
   fun retrieveRankedPlayer(): Ranking =
-      atpTourRepository.retrieveRanking(200)
+      rankingRepository.retrieveRanking(200)
 }

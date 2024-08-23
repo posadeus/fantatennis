@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.atptour
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
-import com.posadeus.fantatennis.domain.infrastructure.AtpTourRepository
+import com.posadeus.fantatennis.domain.infrastructure.RankingRepository
 import com.posadeus.fantatennis.domain.model.EmptyRanking
 import com.posadeus.fantatennis.domain.model.RankedPlayers
 import com.posadeus.fantatennis.infrastructure.client.atptour.AtpTourClient
@@ -11,11 +11,11 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class AtpTourRepositoryImplTest {
+class AtpTourRankingRepositoryTest {
 
   private val client: AtpTourClient = mockk()
 
-  private val repository: AtpTourRepository = AtpTourRepositoryImpl(client)
+  private val repository: RankingRepository = AtpTourRankingRepository(client)
 
   @Test
   fun `client success, returned converted successful response`() {
