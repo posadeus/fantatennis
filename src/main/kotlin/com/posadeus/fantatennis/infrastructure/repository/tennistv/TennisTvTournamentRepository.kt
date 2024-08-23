@@ -6,6 +6,7 @@ import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TennisTvTournamentErrorResponse
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TennisTvTournamentOkResponse
 
+// TODO: to add Spring configuration
 class TennisTvTournamentRepository(private val client: TennisTvClient) : TournamentRepository {
 
   override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo =
