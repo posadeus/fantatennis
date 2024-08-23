@@ -32,8 +32,8 @@ client:
       connection-timeout: 2000
       connection-request-timeout: 2000
 
-  atp-tour-app:
-    uri: https://app.atptour.com/api
+  tennis-tv:
+    uri: https://api.tennistv.com/tennis
     http:
       connection-timeout: 2000
       connection-request-timeout: 2000
