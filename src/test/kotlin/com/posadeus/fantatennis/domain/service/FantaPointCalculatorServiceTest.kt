@@ -1,6 +1,5 @@
 package com.posadeus.fantatennis.domain.service
 
-import com.posadeus.fantatennis.domain.infrastructure.PlayerRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
 import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
 import com.posadeus.fantatennis.domain.model.DomainPlayer
@@ -12,10 +11,8 @@ import org.junit.jupiter.api.Test
 class FantaPointCalculatorServiceTest {
 
   private val tournamentRepository: TournamentRepository = mockk()
-  private val playerRepository: PlayerRepository = mockk()
 
-  private val service = FantaPointCalculatorService(tournamentRepository,
-                                                    playerRepository)
+  private val service = FantaPointCalculatorService(tournamentRepository)
 
   @Test
   fun `calculate points for 1000 tournamentType tournament from zero points`() {
@@ -32,20 +29,6 @@ class FantaPointCalculatorServiceTest {
                                                 tournamentType = "1000",
                                                 participants = participants,
                                                 winners = winners)
-    val players = setOf(DomainPlayer(id = "PlayerId1",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
-                        DomainPlayer(id = "PlayerId2",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
-                        DomainPlayer(id = "PlayerId3",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
-                        DomainPlayer(id = "PlayerId4",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
-                        DomainPlayer(id = "PlayerId5",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
-                        DomainPlayer(id = "PlayerId6",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
-                        DomainPlayer(id = "PlayerId7",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))))
 
     val expected = setOf(DomainPlayer(id = "PlayerId1",
                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
@@ -63,7 +46,6 @@ class FantaPointCalculatorServiceTest {
                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 4.0))))
 
     every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
-    every { playerRepository.getPlayers() } returns players
 
     assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
