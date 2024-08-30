@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.domain.service
+package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -7,11 +7,11 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class FantaPointCalculatorServiceTest {
+class PlayerFantaPointServiceTest {
 
   private val tournamentRepository: TournamentRepository = mockk()
 
-  private val service = FantaPointCalculatorService(tournamentRepository)
+  private val service = PlayerFantaPointService(tournamentRepository)
 
   @Test
   fun `calculate points for 1000 tournamentType tournament`() {
@@ -46,7 +46,7 @@ class FantaPointCalculatorServiceTest {
 
     every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
@@ -82,7 +82,7 @@ class FantaPointCalculatorServiceTest {
 
     every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
@@ -118,7 +118,7 @@ class FantaPointCalculatorServiceTest {
 
     every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
@@ -130,7 +130,7 @@ class FantaPointCalculatorServiceTest {
 
     every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
   companion object {

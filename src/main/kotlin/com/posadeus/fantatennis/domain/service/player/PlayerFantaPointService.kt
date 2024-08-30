@@ -1,20 +1,20 @@
-package com.posadeus.fantatennis.domain.service
+package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
 import com.posadeus.fantatennis.domain.model.*
 
-class FantaPointCalculatorService(private val tournamentRepository: TournamentRepository) {
+class PlayerFantaPointService(private val tournamentRepository: TournamentRepository) {
 
-  fun calculate(tournamentId: Int, year: Int): Set<DomainPlayer> =
+  fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<DomainPlayer> =
       when (val tournamentInfo = tournamentRepository.retrieveTournamentInfo(tournamentId, year)) {
 
         is CompleteTournamentInfo -> {
 
           when (tournamentInfo.tournamentType) {
 
-            "1000" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules1000)
-            "500" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules500)
-            "250" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules250)
+            "1000" -> getScores(tournamentInfo, year, tournamentId, scoresRules1000)
+            "500" -> getScores(tournamentInfo, year, tournamentId, scoresRules500)
+            "250" -> getScores(tournamentInfo, year, tournamentId, scoresRules250)
             else -> emptySet()
           }
         }
@@ -22,10 +22,10 @@ class FantaPointCalculatorService(private val tournamentRepository: TournamentRe
         is ErrorTournamentInfo -> emptySet()
       }
 
-  private fun domainPlayers(tournamentInfo: CompleteTournamentInfo,
-                            year: Int,
-                            tournamentId: Int,
-                            scoreRules: Map<String, Double>): Set<DomainPlayer> {
+  private fun getScores(tournamentInfo: CompleteTournamentInfo,
+                        year: Int,
+                        tournamentId: Int,
+                        scoreRules: Map<String, Double>): Set<DomainPlayer> {
 
     val scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
     val scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Second Round"]!! }
