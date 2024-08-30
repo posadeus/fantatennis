@@ -86,6 +86,42 @@ class FantaPointCalculatorServiceTest {
     assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
+  @Test
+  fun `calculate points for 250 tournamentType tournament`() {
+
+    val participants = setOf("PlayerId1", "PlayerId2", "PlayerId3", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7")
+    val winners = mapOf("Final" to setOf("PlayerId4"),
+                        "Semifinals" to setOf("PlayerId1", "PlayerId4"),
+                        "Quarterfinals" to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
+                        "Third Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
+                        "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
+                        "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
+
+    val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
+                                                tournamentType = "250",
+                                                participants = participants,
+                                                winners = winners)
+
+    val expected = setOf(DomainPlayer(id = "PlayerId1",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 7.0))),
+                         DomainPlayer(id = "PlayerId2",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 4.0))),
+                         DomainPlayer(id = "PlayerId3",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
+                         DomainPlayer(id = "PlayerId4",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 10.0))),
+                         DomainPlayer(id = "PlayerId5",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 2.0))),
+                         DomainPlayer(id = "PlayerId6",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
+                         DomainPlayer(id = "PlayerId7",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 1.0))))
+
+    every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
+
+    assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
   companion object {
 
     private const val A_TOURNAMENT_ID = 123

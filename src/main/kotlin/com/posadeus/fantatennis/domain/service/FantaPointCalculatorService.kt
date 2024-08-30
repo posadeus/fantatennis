@@ -44,6 +44,23 @@ class FantaPointCalculatorService(private val tournamentRepository: TournamentRe
           .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
           .toSet()
     }
+    else if (tournamentInfo.tournamentType == "250") {
+
+      val scoresFirstRound = tournamentInfo.participants.associateWith { scoresRules250["First Round"]!! }
+      val scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoresRules250["Second Round"]!! }
+      val scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoresRules250["Third Round"]!! }
+      val scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoresRules250["Quarterfinals"]!! }
+      val scoresSemifinals = tournamentInfo.winners["Quarterfinals"]!!.associateWith { scoresRules250["Semifinals"]!! }
+      val scoresRunnerUp = tournamentInfo.winners["Semifinals"]!!.associateWith { scoresRules250["RunnerUp"]!! }
+      val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoresRules250["Winner"]!! }
+
+      val scoresByPlayer =
+          scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
+
+      return scoresByPlayer
+          .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
+          .toSet()
+    }
 
     return emptySet()
   }
