@@ -7,11 +7,11 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class PlayerFantaPointServiceTest {
+class PlayerFantaPointCalculatorServiceTest {
 
   private val tournamentRepository: TournamentRepository = mockk()
 
-  private val service = PlayerFantaPointService(tournamentRepository)
+  private val service = PlayerFantaPointCalculatorService(tournamentRepository)
 
   @Test
   fun `calculate points for 1000 tournamentType tournament`() {
