@@ -1,22 +1,26 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
-import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
-import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.*
 
 class FantaPointCalculatorService(private val tournamentRepository: TournamentRepository) {
 
-  fun calculate(tournamentId: Int, year: Int): Set<DomainPlayer> {
+  fun calculate(tournamentId: Int, year: Int): Set<DomainPlayer> =
+      when (val tournamentInfo = tournamentRepository.retrieveTournamentInfo(tournamentId, year)) {
 
-    val tournamentInfo = tournamentRepository.retrieveTournamentInfo(tournamentId, year) as CompleteTournamentInfo
+        is CompleteTournamentInfo -> {
 
-    return when (tournamentInfo.tournamentType) {
-      "1000" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules1000)
-      "500" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules500)
-      "250" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules250)
-      else -> emptySet()
-    }
-  }
+          when (tournamentInfo.tournamentType) {
+
+            "1000" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules1000)
+            "500" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules500)
+            "250" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules250)
+            else -> emptySet()
+          }
+        }
+
+        is ErrorTournamentInfo -> emptySet()
+      }
 
   private fun domainPlayers(tournamentInfo: CompleteTournamentInfo,
                             year: Int,

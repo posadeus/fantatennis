@@ -1,8 +1,7 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
-import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
-import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.*
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -116,6 +115,18 @@ class FantaPointCalculatorServiceTest {
                                       tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
                          DomainPlayer(id = "PlayerId7",
                                       tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 1.0))))
+
+    every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
+
+    assertThat(service.calculate(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `error from repository`() {
+
+    val tournamentInfo = ErrorTournamentInfo
+
+    val expected = emptySet<DomainPlayer>()
 
     every { tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
