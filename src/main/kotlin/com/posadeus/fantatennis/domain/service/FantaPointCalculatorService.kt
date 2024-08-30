@@ -10,59 +10,33 @@ class FantaPointCalculatorService(private val tournamentRepository: TournamentRe
 
     val tournamentInfo = tournamentRepository.retrieveTournamentInfo(tournamentId, year) as CompleteTournamentInfo
 
-    if (tournamentInfo.tournamentType == "1000") {
-
-      val scoresFirstRound = tournamentInfo.participants.associateWith { scoresRules1000["First Round"]!! }
-      val scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoresRules1000["Second Round"]!! }
-      val scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoresRules1000["Third Round"]!! }
-      val scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoresRules1000["Quarterfinals"]!! }
-      val scoresSemifinals = tournamentInfo.winners["Quarterfinals"]!!.associateWith { scoresRules1000["Semifinals"]!! }
-      val scoresRunnerUp = tournamentInfo.winners["Semifinals"]!!.associateWith { scoresRules1000["RunnerUp"]!! }
-      val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoresRules1000["Winner"]!! }
-
-      val scoresByPlayer =
-          scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
-
-      return scoresByPlayer
-          .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
-          .toSet()
+    return when (tournamentInfo.tournamentType) {
+      "1000" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules1000)
+      "500" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules500)
+      "250" -> domainPlayers(tournamentInfo, year, tournamentId, scoresRules250)
+      else -> emptySet()
     }
-    else if (tournamentInfo.tournamentType == "500") {
+  }
 
-      val scoresFirstRound = tournamentInfo.participants.associateWith { scoresRules500["First Round"]!! }
-      val scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoresRules500["Second Round"]!! }
-      val scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoresRules500["Third Round"]!! }
-      val scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoresRules500["Quarterfinals"]!! }
-      val scoresSemifinals = tournamentInfo.winners["Quarterfinals"]!!.associateWith { scoresRules500["Semifinals"]!! }
-      val scoresRunnerUp = tournamentInfo.winners["Semifinals"]!!.associateWith { scoresRules500["RunnerUp"]!! }
-      val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoresRules500["Winner"]!! }
+  private fun domainPlayers(tournamentInfo: CompleteTournamentInfo,
+                            year: Int,
+                            tournamentId: Int,
+                            scoreRules: Map<String, Double>): Set<DomainPlayer> {
 
-      val scoresByPlayer =
-          scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
+    val scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
+    val scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Second Round"]!! }
+    val scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Third Round"]!! }
+    val scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+    val scoresSemifinals = tournamentInfo.winners["Quarterfinals"]!!.associateWith { scoreRules["Semifinals"]!! }
+    val scoresRunnerUp = tournamentInfo.winners["Semifinals"]!!.associateWith { scoreRules["RunnerUp"]!! }
+    val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoreRules["Winner"]!! }
 
-      return scoresByPlayer
-          .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
-          .toSet()
-    }
-    else if (tournamentInfo.tournamentType == "250") {
+    val scoresByPlayer =
+        scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
 
-      val scoresFirstRound = tournamentInfo.participants.associateWith { scoresRules250["First Round"]!! }
-      val scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoresRules250["Second Round"]!! }
-      val scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoresRules250["Third Round"]!! }
-      val scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoresRules250["Quarterfinals"]!! }
-      val scoresSemifinals = tournamentInfo.winners["Quarterfinals"]!!.associateWith { scoresRules250["Semifinals"]!! }
-      val scoresRunnerUp = tournamentInfo.winners["Semifinals"]!!.associateWith { scoresRules250["RunnerUp"]!! }
-      val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoresRules250["Winner"]!! }
-
-      val scoresByPlayer =
-          scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
-
-      return scoresByPlayer
-          .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
-          .toSet()
-    }
-
-    return emptySet()
+    return scoresByPlayer
+        .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
+        .toSet()
   }
 
   companion object {
