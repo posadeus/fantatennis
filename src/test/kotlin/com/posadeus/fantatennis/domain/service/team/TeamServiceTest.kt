@@ -24,7 +24,6 @@ class TeamServiceTest {
 
   companion object {
 
-    private const val A_USER_ID = "A_USER_ID"
     private const val A_TEAM_ID = "A_TEAM_ID"
 
     private val A_TEAM = FoundTeam(TeamDto(emptyList(), 20.0, false))
