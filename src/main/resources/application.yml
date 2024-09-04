@@ -22,8 +22,9 @@ logging:
           client:
             RestTemplate: DEBUG
 
-api:
-  base-path: fanta-tennis/
+server:
+  servlet:
+    context-path: /fanta-tennis
 
 client:
   atp-tour:
