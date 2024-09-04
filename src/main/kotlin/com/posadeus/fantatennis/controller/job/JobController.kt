@@ -4,7 +4,9 @@ import com.posadeus.fantatennis.controller.JobApi
 import com.posadeus.fantatennis.domain.service.player.PlayerFantaPointCalculatorService
 import com.posadeus.fantatennis.domain.service.player.PlayerFantaPointPersistenceService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.RestController
 
+@RestController
 class JobController(private val calculatorService: PlayerFantaPointCalculatorService,
                     private val persistenceService: PlayerFantaPointPersistenceService) : JobApi {
 
