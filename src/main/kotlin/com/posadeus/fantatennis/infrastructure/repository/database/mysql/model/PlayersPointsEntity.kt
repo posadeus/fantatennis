@@ -4,8 +4,8 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "PLAYERS_POINTS")
-data class PlayersPointsEntity(@EmbeddedId val id: PlayersPointsEmbedded,
+data class PlayersPointsEntity(@EmbeddedId val id: PlayersPointsKeyEmbedded,
                                @Column(name = "FANTA_POINTS") val fantaPoints: Double) {
 
-    constructor() : this(PlayersPointsEmbedded(), 0.0)
+    constructor() : this(PlayersPointsKeyEmbedded(), 0.0)
 }
