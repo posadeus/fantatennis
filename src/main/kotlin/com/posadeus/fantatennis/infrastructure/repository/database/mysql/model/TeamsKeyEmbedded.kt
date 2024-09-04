@@ -5,8 +5,8 @@ import jakarta.persistence.Embeddable
 import java.io.Serializable
 
 @Embeddable
-data class TeamKeyEmbedded(@Column(name = "TEAM_ID") val teamId: String,
-                           @Column(name = "PLAYER_ID")val playerId: String) : Serializable {
+data class TeamsKeyEmbedded(@Column(name = "TEAM_ID") val teamId: String,
+                            @Column(name = "PLAYER_ID")val playerId: String) : Serializable {
 
     constructor() : this("", "")
 }

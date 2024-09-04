@@ -22,9 +22,9 @@ class MySqlTeamRepositoryTest {
   @Test
   fun `team retrieved from DB`() {
 
-    val teamResponse = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+    val teamResponse = listOf(TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
                                           chosen = true),
-                              TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                              TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
                                           chosen = false))
     val playersResponse = listOf(PlayersEntity(id = A_PLAYER_ID_1,
                                                atpTourId = AN_ATP_TOUR_ID_1,
@@ -67,9 +67,9 @@ class MySqlTeamRepositoryTest {
   @Test
   fun `playersResponse is empty`() {
 
-    val teamResponse = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+    val teamResponse = listOf(TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
                                           chosen = true),
-                              TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                              TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
                                           chosen = false))
     val expected = ErrorTeam
 
@@ -82,9 +82,9 @@ class MySqlTeamRepositoryTest {
   @Test
   fun `playersResponse doesn't contains all the players`() {
 
-    val teamResponse = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+    val teamResponse = listOf(TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
                                           chosen = true),
-                              TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                              TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
                                           chosen = false))
      val playersResponse = listOf(PlayersEntity(id = A_PLAYER_ID_1,
                                                 atpTourId = AN_ATP_TOUR_ID_1,

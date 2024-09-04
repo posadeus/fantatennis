@@ -4,8 +4,8 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "TEAMS")
-data class TeamsEntity(@EmbeddedId val id: TeamKeyEmbedded,
+data class TeamsEntity(@EmbeddedId val id: TeamsKeyEmbedded,
                        @Column(name = "CHOSEN") val chosen: Boolean) {
 
-    constructor() : this(TeamKeyEmbedded(), false)
+    constructor() : this(TeamsKeyEmbedded(), false)
 }

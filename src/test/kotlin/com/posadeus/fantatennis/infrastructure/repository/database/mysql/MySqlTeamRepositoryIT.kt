@@ -39,9 +39,9 @@ class MySqlTeamRepositoryIT {
   @Test
   fun `team retrieved from DB`() {
 
-    val teamRecords = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
+    val teamRecords = listOf(TeamsEntity(id = TeamsKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
                                          chosen = true),
-                             TeamsEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
+                             TeamsEntity(id = TeamsKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
                                          chosen = false))
     val playerRecords = listOf(PlayersEntity(id = "A_PLAYER_ID_1",
                                              atpTourId = "AN_ATP_TOUR_ID_1",
@@ -78,9 +78,9 @@ class MySqlTeamRepositoryIT {
   @Test
   fun `playersDao is empty`() {
 
-    val teamRecords = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
+    val teamRecords = listOf(TeamsEntity(id = TeamsKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
                                          chosen = true),
-                             TeamsEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
+                             TeamsEntity(id = TeamsKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
                                          chosen = false))
 
     teamDao.saveAll(teamRecords)
@@ -93,9 +93,9 @@ class MySqlTeamRepositoryIT {
   @Test
   fun `playersDao doesn't contains all the players`() {
 
-    val teamRecords = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
+    val teamRecords = listOf(TeamsEntity(id = TeamsKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_1"),
                                          chosen = true),
-                             TeamsEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
+                             TeamsEntity(id = TeamsKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
                                          chosen = false))
      val playerRecord = PlayersEntity(id = "A_PLAYER_ID_1",
                                       atpTourId = "AN_ATP_TOUR_ID_1",
