@@ -3,8 +3,8 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlPlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlTeamDao
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +25,7 @@ class MySqlTeamRepositoryIT {
   @Autowired
   private lateinit var teamDao: MySqlTeamDao
   @Autowired
-  private lateinit var playerDao: MySqlPlayerDao
+  private lateinit var playerDao: PlayersDao
 
   @Autowired
   private lateinit var mySqlTeamRepository: MySqlTeamRepository

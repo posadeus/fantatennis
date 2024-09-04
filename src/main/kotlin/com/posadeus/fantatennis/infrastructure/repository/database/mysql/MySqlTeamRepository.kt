@@ -4,12 +4,12 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlPlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlTeamDao
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersDao
 import org.slf4j.LoggerFactory
 
 class MySqlTeamRepository(private val teamDao: MySqlTeamDao,
-                          private val playerDao: MySqlPlayerDao) : TeamRepository {
+                          private val playerDao: PlayersDao) : TeamRepository {
 
   private val logger = LoggerFactory.getLogger(this::class.simpleName)
 
