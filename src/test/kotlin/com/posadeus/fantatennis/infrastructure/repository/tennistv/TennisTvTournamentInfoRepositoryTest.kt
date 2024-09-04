@@ -49,6 +49,31 @@ class TennisTvTournamentInfoRepositoryTest {
   }
 
   @Test
+  fun `get tournament information - winner against bye`() {
+
+    val clientResponse = aClientResponseWith(arrayOf(aRound("ROUND_2",
+                                                            "A_WINNER",
+                                                            "ANOTHER_WINNER"),
+                                                     aRound("ROUND_1",
+                                                            "A_WINNER",
+                                                            "FIRST_ROUND_LOSER_1",
+                                                            aResultTeamPlayer()
+                                                                .withPlayerId("ANOTHER_WINNER")
+                                                                .build(),
+                                                            null)))
+    val participants = setOf("A_WINNER", "FIRST_ROUND_LOSER_1", "ANOTHER_WINNER")
+
+    val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
+                                          participants = participants,
+                                          winners = mapOf("ROUND_2" to setOf("A_WINNER"),
+                                                          "ROUND_1" to setOf("A_WINNER", "ANOTHER_WINNER")))
+
+    every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
+
+    assertThat(tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
   fun `tournament error from client`() {
 
     val expected = ErrorTournamentInfo
@@ -88,6 +113,17 @@ class TennisTvTournamentInfoRepositoryTest {
           .withFixtures(arrayOf(aFixture(fixtureWinner, fixtureLoser)))
           .build()
 
+  private fun aRound(roundName: String,
+                     fixture1Winner: String,
+                     fixture1Loser: String,
+                     resultTeamPlayer1: ResultTeamPlayer,
+                     resultTeamPlayer2: ResultTeamPlayer?) =
+      aRound()
+          .withRoundName(roundName)
+          .withFixtures(arrayOf(aFixture(fixture1Winner, fixture1Loser),
+                                aFixtureWithoutAMatch(resultTeamPlayer1, resultTeamPlayer2)))
+          .build()
+
   private fun aFixture(winner: String, loser: String) =
       aFixture()
           .withMatch(aMatch().withWinningPlayerId(winner).build())
@@ -101,6 +137,20 @@ class TennisTvTournamentInfoRepositoryTest {
                                               .withPlayer(aResultTeamPlayer()
                                                               .withPlayerId(loser)
                                                               .build())
+                                              .build())
+                          .build())
+          .build()
+
+  private fun aFixtureWithoutAMatch(resultTeamPlayer1: ResultTeamPlayer, resultTeamPlayer2: ResultTeamPlayer?) =
+      aFixture()
+          .withMatch(null)
+          .withWinner(1)
+          .withResult(aResult()
+                          .withTeamTop(aResultTeam()
+                                           .withPlayer(resultTeamPlayer1)
+                                           .build())
+                          .withTeamBottom(aResultTeam()
+                                              .withPlayer(resultTeamPlayer2)
                                               .build())
                           .build())
           .build()

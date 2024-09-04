@@ -3,8 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.tennistv
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
-import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TennisTvTournamentErrorResponse
-import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TennisTvTournamentOkResponse
+import com.posadeus.fantatennis.infrastructure.client.tennistv.model.*
 
 class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : TournamentInfoRepository {
 
@@ -22,10 +21,7 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
     val winners = tournament.Rounds
         .associate { round ->
           (round.RoundName
-              to round.Fixtures
-              .filter { it.Match?.WinningPlayerId != null && it.Match.WinningPlayerId.isNotBlank() }
-              .map { it.Match?.WinningPlayerId!! }
-              .toSet())
+              to winners(round.Fixtures))
         }
 
     val participants =
@@ -37,5 +33,20 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
     return CompleteTournamentInfo(tournamentId = tournamentId,
                                   participants = participants,
                                   winners = winners)
+  }
+
+  private fun winners(round: Array<Fixture>): Set<PlayerId> {
+
+    val winnersVsOpponent = round
+        .filter { it.Match?.WinningPlayerId != null && it.Match.WinningPlayerId.isNotBlank() }
+        .map { it.Match?.WinningPlayerId!! }
+        .toSet()
+
+    val winnersVsBye = round
+        .filter { it.Match == null && it.Winner != null }
+        .map { it.Result?.TeamTop?.Player?.PlayerId ?: it.Result?.TeamBottom?.Player?.PlayerId!! }
+        .toSet()
+
+    return winnersVsOpponent union winnersVsBye
   }
 }

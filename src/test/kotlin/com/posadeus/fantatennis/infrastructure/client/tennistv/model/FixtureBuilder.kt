@@ -26,6 +26,11 @@ class FixtureBuilder(private var MatchCode: String? = null,
     return this
   }
 
+  fun withWinner(Winner: Int?): FixtureBuilder {
+    this.Winner = Winner
+    return this
+  }
+
   fun build() = Fixture(MatchCode,
                         Result,
                         DrawLineTop,

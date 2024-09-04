@@ -5,7 +5,7 @@ import com.posadeus.fantatennis.infrastructure.client.tennistv.model.ResultTeamP
 class ResultTeamBuilder(private var Player: ResultTeamPlayer? = aResultTeamPlayer().build(),
                         private var Partner: Any? = null) {
 
-  fun withPlayer(Player: ResultTeamPlayer): ResultTeamBuilder {
+  fun withPlayer(Player: ResultTeamPlayer?): ResultTeamBuilder {
     this.Player = Player
     return this
   }
