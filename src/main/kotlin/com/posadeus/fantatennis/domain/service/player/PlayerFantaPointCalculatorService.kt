@@ -35,10 +35,26 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: To
                         tournamentId: Int,
                         scoreRules: Map<String, Double>): Set<DomainPlayer> {
 
-    val scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
-    val scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Second Round"]!! }
-    val scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Third Round"]!! }
-    val scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+    val scoresFirstRound: Map<PlayerId, Double>
+    val scoresSecondRound: Map<PlayerId, Double>
+    val scoresThirdRound: Map<PlayerId, Double>
+    val scoresQuarterfinals: Map<PlayerId, Double>
+
+    if (tournamentInfo.winners["Third Round"] != null) {
+
+      scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
+      scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Second Round"]!! }
+      scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+    }
+    else {
+
+      scoresFirstRound = emptyMap()
+      scoresSecondRound = tournamentInfo.participants.associateWith { scoreRules["Second Round"]!! }
+      scoresThirdRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresQuarterfinals = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+    }
+
     val scoresSemifinals = tournamentInfo.winners["Quarterfinals"]!!.associateWith { scoreRules["Semifinals"]!! }
     val scoresRunnerUp = tournamentInfo.winners["Semifinals"]!!.associateWith { scoreRules["RunnerUp"]!! }
     val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoreRules["Winner"]!! }
