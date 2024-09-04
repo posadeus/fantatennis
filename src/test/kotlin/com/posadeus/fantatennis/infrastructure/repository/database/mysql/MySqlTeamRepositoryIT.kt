@@ -43,14 +43,14 @@ class MySqlTeamRepositoryIT {
                                         chosen = true),
                              TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
                                              chosen = false))
-    val playerRecords = listOf(PlayerEntity(id = "A_PLAYER_ID_1",
-                                            atpTourId = "AN_ATP_TOUR_ID_1",
-                                            fantaPoints = 12.0,
-                                            fullName = "A_FULL_NAME_1"),
-                               PlayerEntity(id = "A_PLAYER_ID_2",
-                                              atpTourId = "AN_ATP_TOUR_ID_2",
-                                              fantaPoints = 22.2,
-                                              fullName = "A_FULL_NAME_2"))
+    val playerRecords = listOf(PlayersEntity(id = "A_PLAYER_ID_1",
+                                             atpTourId = "AN_ATP_TOUR_ID_1",
+                                             fantaPoints = 12.0,
+                                             fullName = "A_FULL_NAME_1"),
+                               PlayersEntity(id = "A_PLAYER_ID_2",
+                                             atpTourId = "AN_ATP_TOUR_ID_2",
+                                             fantaPoints = 22.2,
+                                             fullName = "A_FULL_NAME_2"))
     teamDao.saveAll(teamRecords)
     playerDao.saveAll(playerRecords)
 
@@ -97,10 +97,10 @@ class MySqlTeamRepositoryIT {
                                         chosen = true),
                              TeamEntity(id = TeamKeyEmbedded(teamId = "A_TEAM_ID", playerId = "A_PLAYER_ID_2"),
                                          chosen = false))
-     val playerRecord = PlayerEntity(id = "A_PLAYER_ID_1",
-                                     atpTourId = "AN_ATP_TOUR_ID_1",
-                                     fantaPoints = 12.0,
-                                     fullName = "A_FULL_NAME_1")
+     val playerRecord = PlayersEntity(id = "A_PLAYER_ID_1",
+                                      atpTourId = "AN_ATP_TOUR_ID_1",
+                                      fantaPoints = 12.0,
+                                      fullName = "A_FULL_NAME_1")
 
     teamDao.saveAll(teamRecords)
     playerDao.save(playerRecord)

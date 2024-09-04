@@ -26,14 +26,14 @@ class MySqlTeamRepositoryTest {
                                          chosen = true),
                               TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
                                          chosen = false))
-    val playersResponse = listOf(PlayerEntity(id = A_PLAYER_ID_1,
-                                              atpTourId = AN_ATP_TOUR_ID_1,
-                                              fantaPoints = 12.0,
-                                              fullName = A_FULL_NAME_1),
-                                 PlayerEntity(id = A_PLAYER_ID_2,
-                                              atpTourId = AN_ATP_TOUR_ID_2,
-                                              fantaPoints = 22.2,
-                                              fullName = A_FULL_NAME_2))
+    val playersResponse = listOf(PlayersEntity(id = A_PLAYER_ID_1,
+                                               atpTourId = AN_ATP_TOUR_ID_1,
+                                               fantaPoints = 12.0,
+                                               fullName = A_FULL_NAME_1),
+                                 PlayersEntity(id = A_PLAYER_ID_2,
+                                               atpTourId = AN_ATP_TOUR_ID_2,
+                                               fantaPoints = 22.2,
+                                               fullName = A_FULL_NAME_2))
 
     val player1 = TeamPlayerDto(fullName = A_FULL_NAME_1,
                                 fantaPoints = 12.0,
@@ -86,10 +86,10 @@ class MySqlTeamRepositoryTest {
                                          chosen = true),
                               TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
                                          chosen = false))
-     val playersResponse = listOf(PlayerEntity(id = A_PLAYER_ID_1,
-                                               atpTourId = AN_ATP_TOUR_ID_1,
-                                               fantaPoints = 12.0,
-                                               fullName = A_FULL_NAME_1))
+     val playersResponse = listOf(PlayersEntity(id = A_PLAYER_ID_1,
+                                                atpTourId = AN_ATP_TOUR_ID_1,
+                                                fantaPoints = 12.0,
+                                                fullName = A_FULL_NAME_1))
 
     val expected = ErrorTeam
 
