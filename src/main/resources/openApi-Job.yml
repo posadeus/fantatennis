@@ -1,0 +1,30 @@
+openapi: 3.0.0
+info:
+  title: API to update data with scheduled jobs
+  version: 1.0.0
+paths:
+  /job/points/{tournamentId}/{year}:
+    post:
+      operationId: updatePlayersFantaPoints
+      summary: Update Players fanta points
+      description: Update Players fanta points
+      tags:
+        - Job
+      parameters:
+        - in: path
+          name: tournamentId
+          schema:
+            type: integer
+          required: true
+          description: Tournament's unique ID to update.
+        - in: path
+          name: year
+          schema:
+            type: integer
+          required: true
+          description: Year to update.
+      responses:
+        '204':
+          description: Players fanta points updated successfully
+        '500':
+          description: Error during the process

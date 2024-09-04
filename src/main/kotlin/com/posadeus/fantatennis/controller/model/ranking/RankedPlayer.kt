@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.controller.model.ranking
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 /**
  * 
@@ -18,5 +19,10 @@ data class RankedPlayer(
     @get:JsonProperty("rank", required = true) val rank: Int,
 
     @get:JsonProperty("points", required = true) val points: Int
-)
+    ) : Serializable{
+
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+}
 

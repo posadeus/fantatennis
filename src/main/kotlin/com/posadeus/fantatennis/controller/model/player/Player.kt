@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.controller.model.player
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.io.Serializable
 
 /**
  * 
@@ -42,5 +43,10 @@ data class Player(
     @get:JsonProperty("birthplace") val birthplace: Birthplace? = null,
 
     @get:JsonProperty("plays") val plays: Plays? = null
-)
+    ) : Serializable{
+
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+}
 

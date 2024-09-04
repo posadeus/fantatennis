@@ -282,6 +282,35 @@
             </configuration>
           </execution>
 
+          <execution>
+
+            <id>GENERATE JOB-API</id>
+
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorName>kotlin-spring</generatorName>
+              <library>spring-boot</library>
+              <inputSpec>${project.basedir}/src/main/resources/openApi-Job.yml</inputSpec>
+              <output>src/main/kotlin</output>
+              <generateSupportingFiles>false</generateSupportingFiles>
+              <configOptions>
+                <apiPackage>com.posadeus.fantatennis.controller</apiPackage>
+                <documentationProvider>none</documentationProvider>
+                <exceptionHandler>false</exceptionHandler>
+                <gradleBuildFile>false</gradleBuildFile>
+                <sourceFolder>/</sourceFolder>
+                <interfaceOnly>true</interfaceOnly>
+                <useBeanValidation>false</useBeanValidation>
+                <useSpringBoot3>true</useSpringBoot3>
+                <serializableModel>true</serializableModel>
+                <skipDefaultInterface>true</skipDefaultInterface>
+                <useTags>true</useTags>
+              </configOptions>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
 
