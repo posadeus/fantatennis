@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @DataJpaTest
 @ContextConfiguration(classes = [com.posadeus.fantatennis.app.Application::class])
 @ComponentScan(basePackages = ["com.posadeus.fantatennis.app.configuration.infrastructure.mysql"])
-class MySqlPlayerPointsRepositoryConfigurationIT {
+class MySqlPlayerPointsRepositoryIT {
 
   @Autowired
   private lateinit var playersPointsDao: PlayersPointsDao

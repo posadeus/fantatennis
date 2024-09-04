@@ -8,7 +8,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.P
 import io.mockk.*
 import org.junit.jupiter.api.Test
 
-class MySqlPlayerPointsRepositoryConfigurationTest {
+class MySqlPlayerPointsRepositoryTest {
 
   private val playersPointsDao: PlayersPointsDao = mockk()
 
