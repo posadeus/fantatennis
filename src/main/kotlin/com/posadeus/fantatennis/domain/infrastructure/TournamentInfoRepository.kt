@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.infrastructure
 
 import com.posadeus.fantatennis.domain.model.TournamentInfo
 
-interface TournamentRepository {
+interface TournamentInfoRepository {
 
   fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo
 }

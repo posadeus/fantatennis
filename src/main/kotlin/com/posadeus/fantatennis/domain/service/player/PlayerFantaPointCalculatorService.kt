@@ -1,12 +1,12 @@
 package com.posadeus.fantatennis.domain.service.player
 
-import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
+import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.*
 
-class PlayerFantaPointCalculatorService(private val tournamentRepository: TournamentRepository) {
+class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: TournamentInfoRepository) {
 
   fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<DomainPlayer> =
-      when (val tournamentInfo = tournamentRepository.retrieveTournamentInfo(tournamentId, year)) {
+      when (val tournamentInfo = tournamentInfoRepository.retrieveTournamentInfo(tournamentId, year)) {
 
         is CompleteTournamentInfo -> {
 

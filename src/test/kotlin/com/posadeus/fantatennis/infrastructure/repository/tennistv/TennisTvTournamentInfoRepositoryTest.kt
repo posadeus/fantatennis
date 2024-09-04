@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.tennistv
 
-import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
+import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
 import com.posadeus.fantatennis.domain.model.ErrorTournamentInfo
 import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
@@ -19,11 +19,11 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class TennisTvTournamentRepositoryTest {
+class TennisTvTournamentInfoRepositoryTest {
 
   private val client: TennisTvClient = mockk()
 
-  private val tournamentRepository: TournamentRepository = TennisTvTournamentRepository(client)
+  private val tournamentInfoRepository: TournamentInfoRepository = TennisTvTournamentInfoRepository(client)
 
   @Test
   fun `get tournament information`() {
@@ -47,7 +47,7 @@ class TennisTvTournamentRepositoryTest {
 
     every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
 
-    assertThat(tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
@@ -57,7 +57,7 @@ class TennisTvTournamentRepositoryTest {
 
     every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns TennisTvTournamentErrorResponse
 
-    assertThat(tournamentRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
   private fun aClientResponseWith(tournamentPoints: String,

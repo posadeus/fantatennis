@@ -1,12 +1,12 @@
 package com.posadeus.fantatennis.infrastructure.repository.tennistv
 
-import com.posadeus.fantatennis.domain.infrastructure.TournamentRepository
+import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TennisTvTournamentErrorResponse
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TennisTvTournamentOkResponse
 
-class TennisTvTournamentRepository(private val client: TennisTvClient) : TournamentRepository {
+class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : TournamentInfoRepository {
 
   override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo =
       when (val response = client.retrieveTournamentInfo(tournamentId, year)) {
