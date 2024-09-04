@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersPointsEmbedded
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersPointsEntity
 import io.mockk.*

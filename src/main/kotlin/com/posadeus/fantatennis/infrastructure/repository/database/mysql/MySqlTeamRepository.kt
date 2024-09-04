@@ -4,6 +4,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlPlayerDao
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlTeamDao
 import org.slf4j.LoggerFactory
 
 class MySqlTeamRepository(private val teamDao: MySqlTeamDao,

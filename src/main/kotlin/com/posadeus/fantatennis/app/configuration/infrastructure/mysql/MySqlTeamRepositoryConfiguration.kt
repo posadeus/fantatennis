@@ -1,6 +1,8 @@
 package com.posadeus.fantatennis.app.configuration.infrastructure.mysql
 
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.*
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlTeamRepository
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlPlayerDao
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlTeamDao
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
