@@ -38,20 +38,31 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: To
     val scoresFirstRound: Map<PlayerId, Double>
     val scoresSecondRound: Map<PlayerId, Double>
     val scoresThirdRound: Map<PlayerId, Double>
+    val scoresFourthRound: Map<PlayerId, Double>
     val scoresQuarterfinals: Map<PlayerId, Double>
 
-    if (tournamentInfo.winners["Third Round"] != null) {
+    if (tournamentInfo.winners["Fourth Round"] != null) {
 
-      scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
-      scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Second Round"]!! }
-      scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["Qualified"]!! }
+      scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["First Round"]!! }
+      scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Second Round"]!! }
+      scoresFourthRound = tournamentInfo.winners["Third Round"]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresQuarterfinals = tournamentInfo.winners["Fourth Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+    }
+    else if (tournamentInfo.winners["Third Round"] != null) {
+
+      scoresFirstRound = emptyMap()
+      scoresSecondRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
+      scoresThirdRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Second Round"]!! }
+      scoresFourthRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Third Round"]!! }
       scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
     }
     else {
 
       scoresFirstRound = emptyMap()
-      scoresSecondRound = tournamentInfo.participants.associateWith { scoreRules["Second Round"]!! }
-      scoresThirdRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresSecondRound = emptyMap()
+      scoresThirdRound = tournamentInfo.participants.associateWith { scoreRules["Second Round"]!! }
+      scoresFourthRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Third Round"]!! }
       scoresQuarterfinals = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
     }
 
@@ -60,7 +71,7 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: To
     val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoreRules["Winner"]!! }
 
     val scoresByPlayer =
-        scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
+        scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresFourthRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
 
     return scoresByPlayer
         .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
@@ -75,20 +86,23 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: To
                                         "Quarterfinals" to 8.0,
                                         "Third Round" to 4.0,
                                         "Second Round" to 2.0,
-                                        "First Round" to 1.0)
+                                        "First Round" to 1.0,
+                                        "Qualified" to 0.0)
     private val scoresRules500 = mapOf("Winner" to 20.0,
                                        "RunnerUp" to 14.0,
                                        "Semifinals" to 8.0,
                                        "Quarterfinals" to 4.0,
                                        "Third Round" to 2.0,
                                        "Second Round" to 1.0,
-                                       "First Round" to 0.0)
+                                       "First Round" to 0.0,
+                                        "Qualified" to 0.0)
     private val scoresRules250 = mapOf("Winner" to 10.0,
                                        "RunnerUp" to 7.0,
                                        "Semifinals" to 4.0,
                                        "Quarterfinals" to 2.0,
                                        "Third Round" to 1.0,
                                        "Second Round" to 0.0,
-                                       "First Round" to 0.0)
+                                       "First Round" to 0.0,
+                                        "Qualified" to 0.0)
   }
 }
