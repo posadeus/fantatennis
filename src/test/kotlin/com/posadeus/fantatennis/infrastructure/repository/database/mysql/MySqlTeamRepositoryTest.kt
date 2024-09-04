@@ -22,10 +22,10 @@ class MySqlTeamRepositoryTest {
   @Test
   fun `team retrieved from DB`() {
 
-    val teamResponse = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
-                                         chosen = true),
-                              TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
-                                         chosen = false))
+    val teamResponse = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+                                          chosen = true),
+                              TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                                          chosen = false))
     val playersResponse = listOf(PlayersEntity(id = A_PLAYER_ID_1,
                                                atpTourId = AN_ATP_TOUR_ID_1,
                                                fantaPoints = 12.0,
@@ -54,7 +54,7 @@ class MySqlTeamRepositoryTest {
   @Test
   fun `teamResponse is empty`() {
 
-    val teamResponse = emptyList<TeamEntity>()
+    val teamResponse = emptyList<TeamsEntity>()
     val expected = EmptyTeam
 
     every { teamsDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
@@ -67,10 +67,10 @@ class MySqlTeamRepositoryTest {
   @Test
   fun `playersResponse is empty`() {
 
-    val teamResponse = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
-                                         chosen = true),
-                              TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
-                                         chosen = false))
+    val teamResponse = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+                                          chosen = true),
+                              TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                                          chosen = false))
     val expected = ErrorTeam
 
     every { teamsDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
@@ -82,10 +82,10 @@ class MySqlTeamRepositoryTest {
   @Test
   fun `playersResponse doesn't contains all the players`() {
 
-    val teamResponse = listOf(TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
-                                         chosen = true),
-                              TeamEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
-                                         chosen = false))
+    val teamResponse = listOf(TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_1),
+                                          chosen = true),
+                              TeamsEntity(id = TeamKeyEmbedded(teamId = A_TEAM_ID, playerId = A_PLAYER_ID_2),
+                                          chosen = false))
      val playersResponse = listOf(PlayersEntity(id = A_PLAYER_ID_1,
                                                 atpTourId = AN_ATP_TOUR_ID_1,
                                                 fantaPoints = 12.0,
