@@ -35,7 +35,6 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
             .toSet()
 
     return CompleteTournamentInfo(tournamentId = tournamentId,
-                                  tournamentType = tournament.Breakdown.first().Points,
                                   participants = participants,
                                   winners = winners)
   }

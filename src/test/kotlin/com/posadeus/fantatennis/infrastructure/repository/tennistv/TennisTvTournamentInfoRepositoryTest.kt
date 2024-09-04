@@ -28,8 +28,7 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `get tournament information`() {
 
-    val clientResponse = aClientResponseWith(A_TOURNAMENT_TYPE,
-                                             arrayOf(aRound("ROUND_2",
+    val clientResponse = aClientResponseWith(arrayOf(aRound("ROUND_2",
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER"),
                                                      aRound("ROUND_1",
@@ -40,7 +39,6 @@ class TennisTvTournamentInfoRepositoryTest {
     val participants = setOf("A_WINNER", "ANOTHER_WINNER", "FIRST_ROUND_LOSER_1", "FIRST_ROUND_LOSER_2")
 
     val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
-                                          tournamentType = A_TOURNAMENT_TYPE,
                                           participants = participants,
                                           winners = mapOf("ROUND_2" to setOf("A_WINNER"),
                                                           "ROUND_1" to setOf("A_WINNER", "ANOTHER_WINNER")))
@@ -60,13 +58,11 @@ class TennisTvTournamentInfoRepositoryTest {
     assertThat(tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
-  private fun aClientResponseWith(tournamentPoints: String,
-                                  rounds: Array<Round>) =
+  private fun aClientResponseWith(rounds: Array<Round>) =
       TennisTvTournamentOkResponseBuilder()
           .withTournament(aTournamentResponse()
                               .withMS(aMS()
                                           .withBreakdown(arrayOf(aBreakdown()
-                                                                     .withPoints(tournamentPoints)
                                                                      .build()))
                                           .withRounds(rounds)
                                           .build())
@@ -113,6 +109,5 @@ class TennisTvTournamentInfoRepositoryTest {
 
     private const val A_TOURNAMENT_ID = 123
     private const val A_YEAR = 2000
-    private const val A_TOURNAMENT_TYPE = "A_TOURNAMENT_TYPE"
   }
 }

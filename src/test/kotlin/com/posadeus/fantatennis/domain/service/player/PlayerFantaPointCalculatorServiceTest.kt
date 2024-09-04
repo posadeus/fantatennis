@@ -31,7 +31,6 @@ class PlayerFantaPointCalculatorServiceTest {
                                         tennisTvId = A_TOURNAMENT_ID,
                                         points = 1000))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
-                                                tournamentType = "1000",
                                                 participants = participants,
                                                 winners = winners)
 
@@ -71,7 +70,6 @@ class PlayerFantaPointCalculatorServiceTest {
                                         tennisTvId = A_TOURNAMENT_ID,
                                         points = 500))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
-                                                tournamentType = "500",
                                                 participants = participants,
                                                 winners = winners)
 
@@ -111,7 +109,6 @@ class PlayerFantaPointCalculatorServiceTest {
                                         tennisTvId = A_TOURNAMENT_ID,
                                         points = 250))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
-                                                tournamentType = "250",
                                                 participants = participants,
                                                 winners = winners)
 

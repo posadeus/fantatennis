@@ -6,11 +6,6 @@ class BreakdownBuilder(private var Id: Int? = null,
                        private var PrizeMoney: String? = null,
                        private var Points: String = "1000") {
 
-  fun withPoints(Points: String): BreakdownBuilder {
-    this.Points = Points
-    return this
-  }
-
   fun build() = Breakdown(Id,
                           RoundIdModernized,
                           Name,
