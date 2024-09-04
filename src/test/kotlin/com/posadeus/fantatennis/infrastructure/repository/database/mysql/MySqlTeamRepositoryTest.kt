@@ -4,8 +4,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.MySqlTeamDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersDao
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TeamsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Test
 
 class MySqlTeamRepositoryTest {
 
-  private val mySqlTeamDao: MySqlTeamDao = mockk()
+  private val teamsDao: TeamsDao = mockk()
   private val playersDao: PlayersDao = mockk()
 
-  private val repository: TeamRepository = MySqlTeamRepository(mySqlTeamDao,
+  private val repository: TeamRepository = MySqlTeamRepository(teamsDao,
                                                                playersDao)
 
   @Test
@@ -45,7 +45,7 @@ class MySqlTeamRepositoryTest {
                                             totalScore = 34.2,
                                             completed = false))
 
-    every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
+    every { teamsDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
     every { playersDao.findAllById(setOf(A_PLAYER_ID_1, A_PLAYER_ID_2)) } returns playersResponse
 
     assertThat(repository.getTeam(A_TEAM_ID)).isEqualTo(expected)
@@ -57,7 +57,7 @@ class MySqlTeamRepositoryTest {
     val teamResponse = emptyList<TeamEntity>()
     val expected = EmptyTeam
 
-    every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
+    every { teamsDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
 
     assertThat(repository.getTeam(A_TEAM_ID)).isEqualTo(expected)
 
@@ -73,7 +73,7 @@ class MySqlTeamRepositoryTest {
                                          chosen = false))
     val expected = ErrorTeam
 
-    every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
+    every { teamsDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
     every { playersDao.findAllById(setOf(A_PLAYER_ID_1, A_PLAYER_ID_2)) } returns emptyList()
 
     assertThat(repository.getTeam(A_TEAM_ID)).isEqualTo(expected)
@@ -93,7 +93,7 @@ class MySqlTeamRepositoryTest {
 
     val expected = ErrorTeam
 
-    every { mySqlTeamDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
+    every { teamsDao.findByIdTeamId(A_TEAM_ID) } returns teamResponse
     every { playersDao.findAllById(setOf(A_PLAYER_ID_1, A_PLAYER_ID_2)) } returns playersResponse
 
     assertThat(repository.getTeam(A_TEAM_ID)).isEqualTo(expected)

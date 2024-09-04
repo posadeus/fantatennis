@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface MySqlTeamDao : CrudRepository<TeamEntity, TeamKeyEmbedded> {
+interface TeamsDao : CrudRepository<TeamEntity, TeamKeyEmbedded> {
 
   fun findByIdTeamId(teamId: String): List<TeamEntity>
 }
