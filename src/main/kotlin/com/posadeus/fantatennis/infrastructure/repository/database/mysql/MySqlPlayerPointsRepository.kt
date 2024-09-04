@@ -19,7 +19,7 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
         player.tournamentPoints.flatMap { tournament ->
           val year = tournament.key
           tournament.value.map {
-            PlayersPointsEntity(PlayersPointsEmbedded(year, it.key.toString(), playerId), it.value)
+            PlayersPointsEntity(PlayersPointsEmbedded(year, it.key, playerId), it.value)
           }
         }
       }.toSet()
