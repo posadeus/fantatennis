@@ -1,26 +1,34 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
+import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 
-class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: TournamentInfoRepository) {
+class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: TournamentInfoRepository,
+                                        private val tournamentsRepository: TournamentsRepository) {
 
-  fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<DomainPlayer> =
-      when (val tournamentInfo = tournamentInfoRepository.retrieveTournamentInfo(tournamentId, year)) {
+  fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<DomainPlayer> {
 
-        is CompleteTournamentInfo -> {
+    val tournament = tournamentsRepository.readTournaments().associateBy { it.id }[tournamentId]
+    val tennisTvId = tournament?.tennisTvId
+                     ?: return emptySet()
 
-          when (tournamentInfo.tournamentType) {
+    return when (val tournamentInfo = tournamentInfoRepository.retrieveTournamentInfo(tennisTvId, year)) {
 
-            "1000" -> getScores(tournamentInfo, year, tournamentId, scoresRules1000)
-            "500" -> getScores(tournamentInfo, year, tournamentId, scoresRules500)
-            "250" -> getScores(tournamentInfo, year, tournamentId, scoresRules250)
-            else -> emptySet()
-          }
+      is CompleteTournamentInfo -> {
+
+        when (tournament.points) {
+
+          1000 -> getScores(tournamentInfo, year, tournamentId, scoresRules1000)
+          500 -> getScores(tournamentInfo, year, tournamentId, scoresRules500)
+          250 -> getScores(tournamentInfo, year, tournamentId, scoresRules250)
+          else -> emptySet()
         }
-
-        is ErrorTournamentInfo -> emptySet()
       }
+
+      is ErrorTournamentInfo -> emptySet()
+    }
+  }
 
   private fun getScores(tournamentInfo: CompleteTournamentInfo,
                         year: Int,

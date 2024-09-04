@@ -34,10 +34,10 @@ class MySqlTournamentsRepositoryTest {
                                                        surface = ANOTHER_SURFACE))
 
     val expected = listOf(Tournament(id = AN_ID,
-                                     atpTourId = AN_ATP_TOUR_ID,
+                                     tennisTvId = A_TENNIS_TV_ID,
                                      points = A_POINTS),
                           Tournament(id = ANOTHER_ID,
-                                     atpTourId = ANOTHER_ATP_TOUR_ID,
+                                     tennisTvId = ANOTHER_TENNIS_TV_ID,
                                      points = ANOTHER_POINTS))
 
     every { dao.findAll() } returns tournamentsEntities

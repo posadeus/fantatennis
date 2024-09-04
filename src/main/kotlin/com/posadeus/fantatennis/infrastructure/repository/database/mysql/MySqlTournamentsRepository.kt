@@ -14,7 +14,7 @@ class MySqlTournamentsRepository(private val dao: TournamentsDao) : TournamentsR
       tournamentsEntities
           .map {
             Tournament(id = it.id,
-                       atpTourId = it.atpTourId,
+                       tennisTvId = it.tennisTvId,
                        points = it.points)
           }
 }

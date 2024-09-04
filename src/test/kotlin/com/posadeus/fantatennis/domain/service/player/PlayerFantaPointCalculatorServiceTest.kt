@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
+import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import io.mockk.every
 import io.mockk.mockk
@@ -10,8 +11,10 @@ import org.junit.jupiter.api.Test
 class PlayerFantaPointCalculatorServiceTest {
 
   private val tournamentInfoRepository: TournamentInfoRepository = mockk()
+  private val tournamentsRepository: TournamentsRepository = mockk()
 
-  private val service = PlayerFantaPointCalculatorService(tournamentInfoRepository)
+  private val service = PlayerFantaPointCalculatorService(tournamentInfoRepository,
+                                                          tournamentsRepository)
 
   @Test
   fun `calculate points for 1000 tournamentType tournament`() {
@@ -24,29 +27,33 @@ class PlayerFantaPointCalculatorServiceTest {
                         "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
                         "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
+    val tournaments = listOf(Tournament(id = AN_ID,
+                                        tennisTvId = A_TOURNAMENT_ID,
+                                        points = 1000))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 tournamentType = "1000",
                                                 participants = participants,
                                                 winners = winners)
 
     val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 28.0))),
                          DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
                          DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 1.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
                          DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 40.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 40.0))),
                          DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 8.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
                          DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 2.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
                          DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 4.0))))
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
 
+    every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(AN_ID, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
@@ -60,29 +67,33 @@ class PlayerFantaPointCalculatorServiceTest {
                         "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
                         "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
+    val tournaments = listOf(Tournament(id = AN_ID,
+                                        tennisTvId = A_TOURNAMENT_ID,
+                                        points = 500))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 tournamentType = "500",
                                                 participants = participants,
                                                 winners = winners)
 
     val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 14.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 14.0))),
                          DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 8.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
                          DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
                          DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 20.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 20.0))),
                          DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 4.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
                          DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 1.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
                          DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 2.0))))
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))))
 
+    every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(AN_ID, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
@@ -96,46 +107,56 @@ class PlayerFantaPointCalculatorServiceTest {
                         "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
                         "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
+    val tournaments = listOf(Tournament(id = AN_ID,
+                                        tennisTvId = A_TOURNAMENT_ID,
+                                        points = 250))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 tournamentType = "250",
                                                 participants = participants,
                                                 winners = winners)
 
     val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 7.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 7.0))),
                          DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 4.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
                          DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
                          DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 10.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 10.0))),
                          DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 2.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
                          DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 0.0))),
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
                          DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 1.0))))
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))))
 
+    every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(AN_ID, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
   fun `error from repository`() {
 
+    val tournaments = listOf(Tournament(id = AN_ID,
+                                        tennisTvId = A_TOURNAMENT_ID,
+                                        points = ANY_POINTS))
     val tournamentInfo = ErrorTournamentInfo
 
     val expected = emptySet<DomainPlayer>()
 
+    every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
-    assertThat(service.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(service.calculateFantaPointsFor(AN_ID, A_YEAR)).isEqualTo(expected)
   }
 
   companion object {
 
+    private const val AN_ID = 1
     private const val A_TOURNAMENT_ID = 123
     private const val A_YEAR = 2222
+    private const val ANY_POINTS = 1000
   }
 }
