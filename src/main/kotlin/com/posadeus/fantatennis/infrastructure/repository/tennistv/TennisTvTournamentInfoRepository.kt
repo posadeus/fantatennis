@@ -2,8 +2,11 @@ package com.posadeus.fantatennis.infrastructure.repository.tennistv
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Round
+import com.posadeus.fantatennis.domain.model.Round.*
 import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.*
+import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedRoundException
 
 class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : TournamentInfoRepository {
 
@@ -20,7 +23,7 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
 
     val winners = tournament.Rounds
         .associate { round ->
-          (round.RoundName
+          (toRound(round.RoundName)
               to winners(round.Fixtures))
         }
 
@@ -34,6 +37,18 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
                                   participants = participants,
                                   winners = winners)
   }
+
+  private fun toRound(roundName: String): Round =
+      when (roundName) {
+        "Final" -> F
+        "Semifinals" -> SF
+        "Quarterfinals" -> QF
+        "Fourth Round" -> R4
+        "Third Round" -> R3
+        "Second Round" -> R2
+        "First Round" -> R1
+        else -> throw UnexpectedRoundException()
+      }
 
   private fun winners(round: Array<Fixture>): Set<AtpPlayerId> {
 

@@ -3,6 +3,8 @@ package com.posadeus.fantatennis.infrastructure.repository.wimbledon
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
 import com.posadeus.fantatennis.domain.model.ErrorTournamentInfo
+import com.posadeus.fantatennis.domain.model.Round.R1
+import com.posadeus.fantatennis.domain.model.Round.R2
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.WimbledonClient
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.*
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonMatchBuilder.Companion.aWimbledonMatch
@@ -34,8 +36,8 @@ class WimbledonTournamentInfoRepositoryTest {
     val participants = setOf("A_WINNER_ID", "FIRST_ROUND_LOSER_1", "FIRST_ROUND_LOSER_2", "ANOTHER_WINNER_ID")
     val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                           participants = participants,
-                                          winners = mapOf("2R" to setOf("A_WINNER_ID"),
-                                                          "1R" to setOf("A_WINNER_ID", "ANOTHER_WINNER_ID")))
+                                          winners = mapOf(R2 to setOf("A_WINNER_ID"),
+                                                          R1 to setOf("A_WINNER_ID", "ANOTHER_WINNER_ID")))
 
     every { client.retrieveDraws(A_YEAR) } returns clientResponse
 

@@ -1,7 +1,6 @@
 package com.posadeus.fantatennis.domain.model
 
 typealias AtpPlayerId = String
-typealias Round = String
 
 sealed interface TournamentInfo
 

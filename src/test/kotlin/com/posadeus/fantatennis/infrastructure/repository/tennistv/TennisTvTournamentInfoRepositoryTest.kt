@@ -3,6 +3,8 @@ package com.posadeus.fantatennis.infrastructure.repository.tennistv
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
 import com.posadeus.fantatennis.domain.model.ErrorTournamentInfo
+import com.posadeus.fantatennis.domain.model.Round.R1
+import com.posadeus.fantatennis.domain.model.Round.R2
 import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.*
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.BreakdownBuilder.Companion.aBreakdown
@@ -28,10 +30,10 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `get tournament information`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aRound("ROUND_2",
+    val clientResponse = aClientResponseWith(arrayOf(aRound("Second Round",
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER"),
-                                                     aRound("ROUND_1",
+                                                     aRound("First Round",
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER",
                                                             "FIRST_ROUND_LOSER_1",
@@ -40,8 +42,8 @@ class TennisTvTournamentInfoRepositoryTest {
 
     val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                           participants = participants,
-                                          winners = mapOf("ROUND_2" to setOf("A_WINNER"),
-                                                          "ROUND_1" to setOf("A_WINNER", "ANOTHER_WINNER")))
+                                          winners = mapOf(R2 to setOf("A_WINNER"),
+                                                          R1 to setOf("A_WINNER", "ANOTHER_WINNER")))
 
     every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
 
@@ -51,10 +53,10 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `get tournament information - winner against bye`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aRound("ROUND_2",
+    val clientResponse = aClientResponseWith(arrayOf(aRound("Second Round",
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER"),
-                                                     aRound("ROUND_1",
+                                                     aRound("First Round",
                                                             "A_WINNER",
                                                             "FIRST_ROUND_LOSER_1",
                                                             aResultTeamPlayer()
@@ -65,8 +67,8 @@ class TennisTvTournamentInfoRepositoryTest {
 
     val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                           participants = participants,
-                                          winners = mapOf("ROUND_2" to setOf("A_WINNER"),
-                                                          "ROUND_1" to setOf("A_WINNER", "ANOTHER_WINNER")))
+                                          winners = mapOf(R2 to setOf("A_WINNER"),
+                                                          R1 to setOf("A_WINNER", "ANOTHER_WINNER")))
 
     every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
 

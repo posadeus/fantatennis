@@ -2,8 +2,10 @@ package com.posadeus.fantatennis.infrastructure.repository.wimbledon
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Round.*
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.WimbledonClient
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.*
+import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedRoundException
 
 class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : TournamentInfoRepository {
 
@@ -23,7 +25,7 @@ class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : T
         .toSet()
 
     val winners = wimbledonResponse.matches
-        .map { Pair(it.roundNameShort, chooseWinner(it)) }
+        .map { Pair(toRound(it.roundNameShort), chooseWinner(it)) }
         .groupBy { it.first }
         .mapValues { entry -> entry.value
             .mapNotNull { it.second }
@@ -35,6 +37,18 @@ class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : T
                                   participants = participants,
                                   winners = winners)
   }
+
+  private fun toRound(roundNameShort: String): Round =
+      when (roundNameShort) {
+        "F" -> F
+        "SF" -> SF
+        "QF" -> QF
+        "4R" -> R4
+        "3R" -> R3
+        "2R" -> R2
+        "1R" -> R1
+        else -> throw UnexpectedRoundException()
+      }
 
   private fun chooseWinner(wimbledonMatch: WimbledonMatch): String? =
       when (wimbledonMatch.winner) {

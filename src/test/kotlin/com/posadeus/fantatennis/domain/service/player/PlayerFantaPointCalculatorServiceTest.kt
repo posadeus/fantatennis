@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.domain.service.player
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Round.*
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -20,12 +21,12 @@ class PlayerFantaPointCalculatorServiceTest {
   fun `calculate points for 1000 points tournament`() {
 
     val participants = setOf("PlayerId1", "PlayerId2", "PlayerId3", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7")
-    val winners = mapOf("Final" to setOf("PlayerId4"),
-                        "Semifinals" to setOf("PlayerId1", "PlayerId4"),
-                        "Quarterfinals" to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
-                        "Third Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
-                        "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
-                        "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
+    val winners = mapOf(F to setOf("PlayerId4"),
+                        SF to setOf("PlayerId1", "PlayerId4"),
+                        QF to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
+                        R3 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
+                        R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
+                        R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
@@ -59,13 +60,13 @@ class PlayerFantaPointCalculatorServiceTest {
   fun `calculate points for 1000 points tournament with fourth round`() {
 
     val participants = setOf("PlayerId1", "PlayerId2", "PlayerId3", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7", "PlayerId8")
-    val winners = mapOf("Final" to setOf("PlayerId4"),
-                        "Semifinals" to setOf("PlayerId1", "PlayerId4"),
-                        "Quarterfinals" to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
-                        "Fourth Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
-                        "Third Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId8"),
-                        "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7", "PlayerId8"),
-                        "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7", "PlayerId8"))
+    val winners = mapOf(F to setOf("PlayerId4"),
+                        SF to setOf("PlayerId1", "PlayerId4"),
+                        QF to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
+                        R4 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
+                        R3 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId8"),
+                        R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7", "PlayerId8"),
+                        R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7", "PlayerId8"))
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
@@ -101,12 +102,12 @@ class PlayerFantaPointCalculatorServiceTest {
   fun `calculate points for 500 points tournament`() {
 
     val participants = setOf("PlayerId1", "PlayerId2", "PlayerId3", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7")
-    val winners = mapOf("Final" to setOf("PlayerId4"),
-                        "Semifinals" to setOf("PlayerId1", "PlayerId4"),
-                        "Quarterfinals" to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
-                        "Third Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
-                        "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
-                        "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
+    val winners = mapOf(F to setOf("PlayerId4"),
+                        SF to setOf("PlayerId1", "PlayerId4"),
+                        QF to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
+                        R3 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
+                        R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
+                        R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
@@ -140,12 +141,12 @@ class PlayerFantaPointCalculatorServiceTest {
   fun `calculate points for 250 points tournament`() {
 
     val participants = setOf("PlayerId1", "PlayerId2", "PlayerId3", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7")
-    val winners = mapOf("Final" to setOf("PlayerId4"),
-                        "Semifinals" to setOf("PlayerId1", "PlayerId4"),
-                        "Quarterfinals" to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
-                        "Third Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
-                        "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
-                        "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
+    val winners = mapOf(F to setOf("PlayerId4"),
+                        SF to setOf("PlayerId1", "PlayerId4"),
+                        QF to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
+                        R3 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
+                        R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
+                        R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
@@ -179,11 +180,11 @@ class PlayerFantaPointCalculatorServiceTest {
   fun `calculate points for 250 points tournament without third round`() {
 
     val participants = setOf("PlayerId1", "PlayerId2", "PlayerId3", "PlayerId4", "PlayerId5", "PlayerId6")
-    val winners = mapOf("Final" to setOf("PlayerId4"),
-                        "Semifinals" to setOf("PlayerId1", "PlayerId4"),
-                        "Quarterfinals" to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
-                        "Second Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
-                        "First Round" to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6"))
+    val winners = mapOf(F to setOf("PlayerId4"),
+                        SF to setOf("PlayerId1", "PlayerId4"),
+                        QF to setOf("PlayerId1", "PlayerId2", "PlayerId4"),
+                        R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
+                        R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6"))
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,

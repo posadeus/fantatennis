@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.domain.service.player
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Round.*
 
 class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: TournamentInfoRepository,
                                         private val tournamentsRepository: TournamentsRepository) {
@@ -41,34 +42,34 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: To
     val scoresFourthRound: Map<AtpPlayerId, Double>
     val scoresQuarterfinals: Map<AtpPlayerId, Double>
 
-    if (tournamentInfo.winners["Fourth Round"] != null) {
+    if (tournamentInfo.winners[R4] != null) {
 
       scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["Qualified"]!! }
-      scoresSecondRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["First Round"]!! }
-      scoresThirdRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Second Round"]!! }
-      scoresFourthRound = tournamentInfo.winners["Third Round"]!!.associateWith { scoreRules["Third Round"]!! }
-      scoresQuarterfinals = tournamentInfo.winners["Fourth Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+      scoresSecondRound = tournamentInfo.winners[R1]!!.associateWith { scoreRules["First Round"]!! }
+      scoresThirdRound = tournamentInfo.winners[R2]!!.associateWith { scoreRules["Second Round"]!! }
+      scoresFourthRound = tournamentInfo.winners[R3]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresQuarterfinals = tournamentInfo.winners[R4]!!.associateWith { scoreRules["Quarterfinals"]!! }
     }
-    else if (tournamentInfo.winners["Third Round"] != null) {
+    else if (tournamentInfo.winners[R3] != null) {
 
       scoresFirstRound = emptyMap()
       scoresSecondRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
-      scoresThirdRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Second Round"]!! }
-      scoresFourthRound = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Third Round"]!! }
-      scoresQuarterfinals = tournamentInfo.winners["Third Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+      scoresThirdRound = tournamentInfo.winners[R1]!!.associateWith { scoreRules["Second Round"]!! }
+      scoresFourthRound = tournamentInfo.winners[R2]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresQuarterfinals = tournamentInfo.winners[R3]!!.associateWith { scoreRules["Quarterfinals"]!! }
     }
     else {
 
       scoresFirstRound = emptyMap()
       scoresSecondRound = emptyMap()
       scoresThirdRound = tournamentInfo.participants.associateWith { scoreRules["Second Round"]!! }
-      scoresFourthRound = tournamentInfo.winners["First Round"]!!.associateWith { scoreRules["Third Round"]!! }
-      scoresQuarterfinals = tournamentInfo.winners["Second Round"]!!.associateWith { scoreRules["Quarterfinals"]!! }
+      scoresFourthRound = tournamentInfo.winners[R1]!!.associateWith { scoreRules["Third Round"]!! }
+      scoresQuarterfinals = tournamentInfo.winners[R2]!!.associateWith { scoreRules["Quarterfinals"]!! }
     }
 
-    val scoresSemifinals = tournamentInfo.winners["Quarterfinals"]!!.associateWith { scoreRules["Semifinals"]!! }
-    val scoresRunnerUp = tournamentInfo.winners["Semifinals"]!!.associateWith { scoreRules["RunnerUp"]!! }
-    val scoresWinner = tournamentInfo.winners["Final"]!!.associateWith { scoreRules["Winner"]!! }
+    val scoresSemifinals = tournamentInfo.winners[QF]!!.associateWith { scoreRules["Semifinals"]!! }
+    val scoresRunnerUp = tournamentInfo.winners[SF]!!.associateWith { scoreRules["RunnerUp"]!! }
+    val scoresWinner = tournamentInfo.winners[F]!!.associateWith { scoreRules["Winner"]!! }
 
     val scoresByPlayer =
         scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresFourthRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
