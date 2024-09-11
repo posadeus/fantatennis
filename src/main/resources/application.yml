@@ -38,3 +38,9 @@ client:
     http:
       connection-timeout: 2000
       connection-request-timeout: 2000
+
+  wimbledon:
+    uri: https://www.wimbledon.com
+    http:
+      connection-timeout: 2000
+      connection-request-timeout: 2000
