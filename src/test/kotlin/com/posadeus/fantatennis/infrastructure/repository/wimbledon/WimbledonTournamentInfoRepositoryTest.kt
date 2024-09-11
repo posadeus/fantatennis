@@ -2,10 +2,10 @@ package com.posadeus.fantatennis.infrastructure.repository.wimbledon
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
+import com.posadeus.fantatennis.domain.model.ErrorTournamentInfo
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.WimbledonClient
-import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonMatch
+import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.*
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonMatchBuilder.Companion.aWimbledonMatch
-import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonOkResponse
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonOkResponseBuilder.Companion.aWimbledonOkResponse
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonTeamBuilder.Companion.aWimbledonTeam
 import io.mockk.every
@@ -38,6 +38,16 @@ class WimbledonTournamentInfoRepositoryTest {
                                                           "1R" to setOf("A_WINNER_ID", "ANOTHER_WINNER_ID")))
 
     every { client.retrieveDraws(A_YEAR) } returns clientResponse
+
+    assertThat(repository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `tournament error from client`() {
+
+    val expected = ErrorTournamentInfo
+
+    every { client.retrieveDraws(A_YEAR) } returns WimbledonErrorResponse
 
     assertThat(repository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }

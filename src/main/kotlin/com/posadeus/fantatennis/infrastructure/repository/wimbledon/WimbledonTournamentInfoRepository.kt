@@ -1,20 +1,18 @@
 package com.posadeus.fantatennis.infrastructure.repository.wimbledon
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
-import com.posadeus.fantatennis.domain.model.CompleteTournamentInfo
-import com.posadeus.fantatennis.domain.model.TournamentInfo
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.WimbledonClient
-import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonMatch
-import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.WimbledonOkResponse
+import com.posadeus.fantatennis.infrastructure.client.wimbledon.model.*
 
 class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : TournamentInfoRepository {
 
-  override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo {
+  override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo =
+      when (val wimbledonResponse = client.retrieveDraws(year)) {
 
-    val wimbledonResponse = client.retrieveDraws(year) as WimbledonOkResponse
-
-    return convert(tournamentId, wimbledonResponse)
-  }
+        is WimbledonOkResponse -> convert(tournamentId, wimbledonResponse)
+        is WimbledonErrorResponse -> ErrorTournamentInfo
+      }
 
   private fun convert(tournamentId: Int, wimbledonResponse: WimbledonOkResponse): CompleteTournamentInfo {
 
