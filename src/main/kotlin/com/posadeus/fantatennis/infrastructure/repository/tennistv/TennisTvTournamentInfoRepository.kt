@@ -35,7 +35,7 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
                                   winners = winners)
   }
 
-  private fun winners(round: Array<Fixture>): Set<PlayerId> {
+  private fun winners(round: Array<Fixture>): Set<AtpPlayerId> {
 
     val winnersVsOpponent = round
         .filter { it.Match?.WinningPlayerId != null && it.Match.WinningPlayerId.isNotBlank() }

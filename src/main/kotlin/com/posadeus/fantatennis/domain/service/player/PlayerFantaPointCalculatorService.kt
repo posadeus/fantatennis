@@ -35,11 +35,11 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: To
                         tournamentId: Int,
                         scoreRules: Map<String, Double>): Set<DomainPlayer> {
 
-    val scoresFirstRound: Map<PlayerId, Double>
-    val scoresSecondRound: Map<PlayerId, Double>
-    val scoresThirdRound: Map<PlayerId, Double>
-    val scoresFourthRound: Map<PlayerId, Double>
-    val scoresQuarterfinals: Map<PlayerId, Double>
+    val scoresFirstRound: Map<AtpPlayerId, Double>
+    val scoresSecondRound: Map<AtpPlayerId, Double>
+    val scoresThirdRound: Map<AtpPlayerId, Double>
+    val scoresFourthRound: Map<AtpPlayerId, Double>
+    val scoresQuarterfinals: Map<AtpPlayerId, Double>
 
     if (tournamentInfo.winners["Fourth Round"] != null) {
 
