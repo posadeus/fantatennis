@@ -44,3 +44,9 @@ client:
     http:
       connection-timeout: 2000
       connection-request-timeout: 2000
+
+  us-open:
+    uri: https://www.usopen.org
+    http:
+      connection-timeout: 2000
+      connection-request-timeout: 2000
