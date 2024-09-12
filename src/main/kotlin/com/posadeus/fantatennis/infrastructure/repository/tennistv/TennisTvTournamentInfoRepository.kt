@@ -44,12 +44,12 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
   private fun toRound(roundName: String): Round =
       when (roundName) {
         "Final" -> F
-        "Semifinals" -> SF
-        "Quarterfinals" -> QF
+        "Semifinals", "Semifinal" -> SF
+        "Quarterfinals", "Quarterfinal" -> QF
         "Fourth Round" -> R4
         "Third Round" -> R3
-        "Second Round" -> R2
-        "First Round" -> R1
+        "Second Round", "Round of 16" -> R2
+        "First Round", "Round of 28" -> R1
         else -> throw UnexpectedRoundException()
       }
 

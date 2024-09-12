@@ -5,7 +5,7 @@ import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Round.*
 
-class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: List<TournamentInfoRepository>,
+class PlayerFantaPointCalculatorService(private val tournamentInfoRepositories: List<TournamentInfoRepository>,
                                         private val tournamentsRepository: TournamentsRepository) {
 
   fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<DomainPlayer> {
@@ -15,7 +15,7 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: Li
                      ?: return emptySet()
 
     val tournamentInfo =
-        tournamentInfoRepository
+        tournamentInfoRepositories
             .first { it.canProcess(tennisTvId) }
             .retrieveTournamentInfo(tennisTvId, year)
 
@@ -25,6 +25,7 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: Li
 
         when (tournament.points) {
 
+          2000 -> getScores(tournamentInfo, year, tournamentId, scoresRules2000)
           1000 -> getScores(tournamentInfo, year, tournamentId, scoresRules1000)
           500 -> getScores(tournamentInfo, year, tournamentId, scoresRules500)
           250 -> getScores(tournamentInfo, year, tournamentId, scoresRules250)
@@ -85,6 +86,15 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: Li
   }
 
   companion object {
+
+    private val scoresRules2000 = mapOf("Winner" to 80.0,
+                                        "RunnerUp" to 56.0,
+                                        "Semifinals" to 32.0,
+                                        "Quarterfinals" to 16.0,
+                                        "Third Round" to 8.0,
+                                        "Second Round" to 4.0,
+                                        "First Round" to 2.0,
+                                        "Qualified" to 0.0)
 
     private val scoresRules1000 = mapOf("Winner" to 40.0,
                                         "RunnerUp" to 28.0,
