@@ -61,5 +61,5 @@ class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : T
       }
 
   private fun toAtpId(wimbledonId: String): String =
-      wimbledonId.removePrefix("atp")
+      wimbledonId.removePrefix("atp").uppercase()
 }

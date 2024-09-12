@@ -39,7 +39,7 @@ class WimbledonTournamentInfoRepositoryTest {
   fun `get tournament information`() {
 
     val clientResponse = aClientResponseWith("1R",
-                                             "atpA_WINNER_ID",
+                                             "atpA_WINNER_id",
                                              "atpANOTHER_WINNER_ID",
                                              "atpFIRST_ROUND_LOSER_1",
                                              "atpFIRST_ROUND_LOSER_2",
