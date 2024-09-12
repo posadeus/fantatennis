@@ -20,12 +20,19 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.test.assertTrue
 
 class TennisTvTournamentInfoRepositoryTest {
 
   private val client: TennisTvClient = mockk()
 
   private val tournamentInfoRepository: TournamentInfoRepository = TennisTvTournamentInfoRepository(client)
+
+  @Test
+  fun `can process`() {
+
+    assertTrue { tournamentInfoRepository.canProcess(ANY_TOURNAMENT_ID) }
+  }
 
   @Test
   fun `get tournament information`() {
@@ -160,6 +167,7 @@ class TennisTvTournamentInfoRepositoryTest {
   companion object {
 
     private const val A_TOURNAMENT_ID = 123
+    private const val ANY_TOURNAMENT_ID = 2345
     private const val A_YEAR = 2000
   }
 }

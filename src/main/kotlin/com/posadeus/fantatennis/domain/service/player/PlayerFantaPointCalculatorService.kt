@@ -5,7 +5,7 @@ import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Round.*
 
-class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: TournamentInfoRepository,
+class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: List<TournamentInfoRepository>,
                                         private val tournamentsRepository: TournamentsRepository) {
 
   fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<DomainPlayer> {
@@ -14,7 +14,12 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepository: To
     val tennisTvId = tournament?.tennisTvId
                      ?: return emptySet()
 
-    return when (val tournamentInfo = tournamentInfoRepository.retrieveTournamentInfo(tennisTvId, year)) {
+    val tournamentInfo =
+        tournamentInfoRepository
+            .first { it.canProcess(tennisTvId) }
+            .retrieveTournamentInfo(tennisTvId, year)
+
+    return when (tournamentInfo) {
 
       is CompleteTournamentInfo -> {
 

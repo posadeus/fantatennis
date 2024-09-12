@@ -14,12 +14,26 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class WimbledonTournamentInfoRepositoryTest {
 
   private val client: WimbledonClient = mockk()
 
   private val repository: TournamentInfoRepository = WimbledonTournamentInfoRepository(client)
+
+  @Test
+  fun `can process`() {
+
+    assertTrue { repository.canProcess(540) }
+  }
+
+  @Test
+  fun `cannot process`() {
+
+    assertFalse { repository.canProcess(NOT_540_TOURNAMENT_ID) }
+  }
 
   @Test
   fun `get tournament information`() {
@@ -34,14 +48,14 @@ class WimbledonTournamentInfoRepositoryTest {
                                              "atpANOTHER_WINNER_ID")
 
     val participants = setOf("A_WINNER_ID", "FIRST_ROUND_LOSER_1", "FIRST_ROUND_LOSER_2", "ANOTHER_WINNER_ID")
-    val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
+    val expected = CompleteTournamentInfo(tournamentId = 540,
                                           participants = participants,
                                           winners = mapOf(R2 to setOf("A_WINNER_ID"),
                                                           R1 to setOf("A_WINNER_ID", "ANOTHER_WINNER_ID")))
 
     every { client.retrieveDraws(A_YEAR) } returns clientResponse
 
-    assertThat(repository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(repository.retrieveTournamentInfo(540, A_YEAR)).isEqualTo(expected)
   }
 
   @Test
@@ -51,7 +65,7 @@ class WimbledonTournamentInfoRepositoryTest {
 
     every { client.retrieveDraws(A_YEAR) } returns WimbledonErrorResponse
 
-    assertThat(repository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+    assertThat(repository.retrieveTournamentInfo(540, A_YEAR)).isEqualTo(expected)
   }
 
   private fun aClientResponseWith(firstRoundId: String,
@@ -102,7 +116,7 @@ class WimbledonTournamentInfoRepositoryTest {
 
   companion object {
 
-    private const val A_TOURNAMENT_ID = 123
+    private const val NOT_540_TOURNAMENT_ID = 123
     private const val A_YEAR = 2024
   }
 }

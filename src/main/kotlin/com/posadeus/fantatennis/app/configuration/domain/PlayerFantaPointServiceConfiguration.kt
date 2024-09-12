@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration
 open class PlayerFantaPointServiceConfiguration {
 
   @Bean
-  open fun playerFantaPointCalculatorService(dispatcherTournamentInfoRepository: TournamentInfoRepository,
+  open fun playerFantaPointCalculatorService(tournamentInfoRepositories: List<TournamentInfoRepository>,
                                              mySqlTournamentsRepository: TournamentsRepository): PlayerFantaPointCalculatorService =
-      PlayerFantaPointCalculatorService(dispatcherTournamentInfoRepository,
+      PlayerFantaPointCalculatorService(tournamentInfoRepositories,
                                         mySqlTournamentsRepository)
 
   @Bean

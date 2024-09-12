@@ -9,6 +9,9 @@ import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedRo
 
 class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : TournamentInfoRepository {
 
+  override fun canProcess(tournamentId: Int): Boolean =
+      tournamentId == 540
+
   override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo =
       when (val wimbledonResponse = client.retrieveDraws(year)) {
 
