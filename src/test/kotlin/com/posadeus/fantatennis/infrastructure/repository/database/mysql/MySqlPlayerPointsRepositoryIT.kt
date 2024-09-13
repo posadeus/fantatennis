@@ -1,9 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.model.DomainPlayer
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersPointsDao
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersPointsEntity
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersPointsKeyEmbedded
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,6 +23,12 @@ class MySqlPlayerPointsRepositoryIT {
   private lateinit var playersPointsDao: PlayersPointsDao
 
   @Autowired
+  private lateinit var playersDao: PlayersDao
+
+  @Autowired
+  private lateinit var tournamentsDao: TournamentsDao
+
+  @Autowired
   private lateinit var mySqlPlayerPointsRepository: MySqlPlayerPointsRepository
 
   @BeforeEach
@@ -37,16 +42,36 @@ class MySqlPlayerPointsRepositoryIT {
 
     assertThat(playersPointsDao.findAll()).isEqualTo(arrayListOf<PlayersPointsEntity>())
 
+    val player1 = PlayersEntity("AN_ID")
+    val player2 = PlayersEntity("ANOTHER_ID")
+
+    playersDao.saveAll(listOf(player1, player2))
+
+    val tournament = TournamentsEntity(1234)
+
+    tournamentsDao.save(tournament)
+
     val players = setOf(DomainPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 10.0))),
                         DomainPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 13.0))))
 
-    val entity1 = PlayersPointsEntity(PlayersPointsKeyEmbedded(2222, 1234, "AN_ID"), 10.0)
-    val entity2 = PlayersPointsEntity(PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID"), 13.0)
-    val expected = arrayListOf(entity1, entity2)
+    val playersPointsKeyEmbedded1 = PlayersPointsKeyEmbedded(2222, 1234, "AN_ID")
+    val playersPointsKeyEmbedded2 = PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID")
+    val entity1 = PlayersPointsEntity(playersPointsKeyEmbedded1, 10.0, player1, tournament)
+    val entity2 = PlayersPointsEntity(playersPointsKeyEmbedded2, 13.0, player2, tournament)
 
     mySqlPlayerPointsRepository.save(players)
 
-    assertThat(playersPointsDao.findAll()).isEqualTo(expected)
+    val result = playersPointsDao.findAll().toList()
+
+    assertThat(result[0].id).isEqualTo(entity1.id)
+    assertThat(result[0].fantaPoints).isEqualTo(entity1.fantaPoints)
+    assertThat(result[0].tournament.id).isEqualTo(entity1.tournament.id)
+    assertThat(result[0].player.id).isEqualTo(entity1.player.id)
+
+    assertThat(result[1].id).isEqualTo(entity2.id)
+    assertThat(result[1].fantaPoints).isEqualTo(entity2.fantaPoints)
+    assertThat(result[1].tournament.id).isEqualTo(entity2.tournament.id)
+    assertThat(result[1].player.id).isEqualTo(entity2.player.id)
   }
 
   @Test
@@ -54,28 +79,53 @@ class MySqlPlayerPointsRepositoryIT {
 
     assertThat(playersPointsDao.findAll()).isEqualTo(arrayListOf<PlayersPointsEntity>())
 
-    val entity1 = PlayersPointsEntity(PlayersPointsKeyEmbedded(2222, 1234, "AN_ID"), 10.0)
-    val entity2 = PlayersPointsEntity(PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID"), 13.0)
-    val playersPointsEntities = arrayListOf(entity1, entity2)
+    val player1 = PlayersEntity("AN_ID")
+    val player2 = PlayersEntity("ANOTHER_ID")
+
+    playersDao.saveAll(listOf(player1, player2))
+
+    val tournament = TournamentsEntity(1234)
+
+    tournamentsDao.save(tournament)
+
+    val playersPointsKeyEmbedded1 = PlayersPointsKeyEmbedded(2222, 1234, "AN_ID")
+    val playersPointsKeyEmbedded2 = PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID")
+    val entity1 = PlayersPointsEntity(playersPointsKeyEmbedded1, 10.0, player1, tournament)
+    val entity2 = PlayersPointsEntity(playersPointsKeyEmbedded2, 13.0, player2, tournament)
+    val playersPointsEntities = listOf(entity1, entity2)
 
     playersPointsDao.saveAll(playersPointsEntities)
 
-    assertThat(playersPointsDao.findAll()).isEqualTo(playersPointsEntities)
+    val result = playersPointsDao.findAll().toList()
+
+    assertThat(result[0].id).isEqualTo(entity1.id)
+    assertThat(result[0].fantaPoints).isEqualTo(entity1.fantaPoints)
+    assertThat(result[0].tournament.id).isEqualTo(entity1.tournament.id)
+    assertThat(result[0].player.id).isEqualTo(entity1.player.id)
+
+    assertThat(result[1].id).isEqualTo(entity2.id)
+    assertThat(result[1].fantaPoints).isEqualTo(entity2.fantaPoints)
+    assertThat(result[1].tournament.id).isEqualTo(entity2.tournament.id)
+    assertThat(result[1].player.id).isEqualTo(entity2.player.id)
 
     val players = setOf(DomainPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 15.0))),
                         DomainPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 22.22))))
 
     mySqlPlayerPointsRepository.save(players)
 
-    val entityUpdated1 = PlayersPointsEntity(PlayersPointsKeyEmbedded(2222, 1234, "AN_ID"), 15.0)
-    val entityUpdated2 = PlayersPointsEntity(PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID"), 22.22)
-    val expected = arrayListOf(entityUpdated1, entityUpdated2)
+    val entityUpdated1 = PlayersPointsEntity(playersPointsKeyEmbedded1, 15.0, player1, tournament)
+    val entityUpdated2 = PlayersPointsEntity(playersPointsKeyEmbedded2, 22.22, player2, tournament)
 
-    assertThat(playersPointsDao.findAll()).isEqualTo(expected)
+    val updateResult = playersPointsDao.findAll().toList()
+
+    assertThat(updateResult[0].fantaPoints).isEqualTo(entityUpdated1.fantaPoints)
+    assertThat(updateResult[1].fantaPoints).isEqualTo(entityUpdated2.fantaPoints)
   }
 
   private fun deleteAll() {
 
     playersPointsDao.deleteAll()
+    playersDao.deleteAll()
+    tournamentsDao.deleteAll()
   }
 }

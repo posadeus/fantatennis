@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface TeamsDao : CrudRepository<TeamsEntity, TeamsKeyEmbedded> {
 
-  fun findByIdTeamId(teamId: String): List<TeamsEntity>
+  fun findByIdTeamId(teamId: Int): List<TeamsEntity>
 }

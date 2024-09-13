@@ -3,8 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersPointsDao
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersPointsEntity
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersPointsKeyEmbedded
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 
 class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao): PlayerPointsRepository {
 
@@ -19,7 +18,12 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
         player.tournamentPoints.flatMap { tournament ->
           val year = tournament.key
           tournament.value.map {
-            PlayersPointsEntity(PlayersPointsKeyEmbedded(year, it.key, playerId), it.value)
+            PlayersPointsEntity(id = PlayersPointsKeyEmbedded(tournamentYear = year,
+                                                              tournamentId = it.key,
+                                                              playerId = playerId),
+                                fantaPoints = it.value,
+                                player = PlayersEntity(id = playerId),
+                                tournament = TournamentsEntity(id = it.key))
           }
         }
       }.toSet()
