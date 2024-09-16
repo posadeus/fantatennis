@@ -13,6 +13,6 @@ data class FantaTeamsEntity(
     @Column(name = "OWNER_ID")
     val ownerId: String = "",
 
-    @OneToMany(mappedBy = "fantaTeams", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val teams: List<TeamsEntity> = mutableListOf()
+    @OneToMany(mappedBy = "fantaTeam", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    val teams: List<TeamsEntity> = emptyList()
 ) : Serializable

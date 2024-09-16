@@ -10,10 +10,12 @@ import java.util.*
 @Repository
 interface FantaTournamentsTeamsDao : CrudRepository<FantaTournamentsTeamsEntity, Long> {
 
-  @Query("SELECT new com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.FantaTournamentsTeamsDto(ftt.fantaTeam.teamId, ft.startingTournament, ft.endingTournament, ft.year) \n" +
-         "FROM FantaTournamentsTeamsEntity ftt \n" +
-         "JOIN FantaTournamentsEntity ft ON ftt.tournament.id = ft.id \n" +
-         "WHERE ftt.fantaTeam.teamId = :teamId")
+  @Query("""
+      SELECT new com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.FantaTournamentsTeamsDto(ftt.fantaTeam.teamId, ft.startingTournament, ft.endingTournament, ft.year)
+      FROM FantaTournamentsTeamsEntity ftt
+      JOIN FantaTournamentsEntity ft ON ftt.tournament.id = ft.id
+      WHERE ftt.fantaTeam.teamId = :teamId
+         """)
   fun findTournamentByTeamId(@Param("teamId") teamId: Int): Optional<FantaTournamentsTeamsDto>
 }
 

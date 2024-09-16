@@ -6,7 +6,4 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TeamsDao : CrudRepository<TeamsEntity, TeamsKeyEmbedded> {
-
-  fun findByIdTeamId(teamId: Int): List<TeamsEntity>
-}
+interface TeamsDao : CrudRepository<TeamsEntity, TeamsKeyEmbedded>

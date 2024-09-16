@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
-import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import org.assertj.core.api.Assertions.assertThat
@@ -27,6 +27,12 @@ class MySqlPlayerPointsRepositoryIT {
 
   @Autowired
   private lateinit var tournamentsDao: TournamentsDao
+
+  @Autowired
+  private lateinit var fantaTeamsDao: FantaTeamsDao
+
+  @Autowired
+  private lateinit var teamsDao: TeamsDao
 
   @Autowired
   private lateinit var mySqlPlayerPointsRepository: MySqlPlayerPointsRepository
@@ -122,10 +128,55 @@ class MySqlPlayerPointsRepositoryIT {
     assertThat(updateResult[1].fantaPoints).isEqualTo(entityUpdated2.fantaPoints)
   }
 
+  @Test
+  fun `retrieve totalPoints for each player of a team`() {
+
+    assertThat(playersPointsDao.findAll()).isEqualTo(arrayListOf<PlayersPointsEntity>())
+
+    val player1 = PlayersEntity("AN_ID")
+    val player2 = PlayersEntity("ANOTHER_ID")
+
+    playersDao.saveAll(listOf(player1, player2))
+
+    val tournament = TournamentsEntity(1234)
+
+    tournamentsDao.save(tournament)
+
+    val playersPointsKeyEmbedded1 = PlayersPointsKeyEmbedded(2222, 1234, "AN_ID")
+    val playersPointsKeyEmbedded2 = PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID")
+    val entity1 = PlayersPointsEntity(playersPointsKeyEmbedded1, 10.0, player1, tournament)
+    val entity2 = PlayersPointsEntity(playersPointsKeyEmbedded2, 13.0, player2, tournament)
+    val playersPointsEntities = listOf(entity1, entity2)
+
+    playersPointsDao.saveAll(playersPointsEntities)
+
+    val fantaTeam = FantaTeamsEntity(teamId = 1)
+
+    fantaTeamsDao.save(fantaTeam)
+
+    val team1 = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "AN_ID"), player = player1, fantaTeam = fantaTeam)
+    val team2 = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "ANOTHER_ID"), player = player1, fantaTeam = fantaTeam)
+
+    teamsDao.saveAll(listOf(team1, team2))
+
+    val tournamentByTeam = TournamentByTeam(teamId = 1,
+                                            startingTournamentId = 1234,
+                                            endingTournamentId = 1234,
+                                            tournamentYear = 2222)
+
+    val playerPoints1 = PlayerPoints(playerId = "ANOTHER_ID", totalPoints = 13.0)
+    val playerPoints2 = PlayerPoints(playerId = "AN_ID", totalPoints = 10.0)
+    val expected = TeamOrderedPlayerPoints(listOf(playerPoints1, playerPoints2))
+
+    assertThat(mySqlPlayerPointsRepository.retrieve(tournamentByTeam)).isEqualTo(expected)
+  }
+
   private fun deleteAll() {
 
     playersPointsDao.deleteAll()
     playersDao.deleteAll()
     tournamentsDao.deleteAll()
+    teamsDao.deleteAll()
+    fantaTeamsDao.deleteAll()
   }
 }

@@ -1,10 +1,12 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
-import com.posadeus.fantatennis.domain.model.DomainPlayer
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersPointsDao
+import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class MySqlPlayerPointsRepositoryTest {
@@ -13,22 +15,55 @@ class MySqlPlayerPointsRepositoryTest {
 
   private val repository: PlayerPointsRepository = MySqlPlayerPointsRepository(playersPointsDao)
 
-  @Test
-  fun `save players`() {
+  @Nested
+  inner class SavePlayerPointsTest {
 
-    val players = setOf(DomainPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 10.0))),
-                        DomainPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 13.0))))
+    @Test
+    fun `save players`() {
 
-    val playersPointsKeyEmbedded1 = PlayersPointsKeyEmbedded(2222, 1234, "AN_ID")
-    val playersPointsKeyEmbedded2 = PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID")
-    val entity1 = PlayersPointsEntity(playersPointsKeyEmbedded1, 10.0, PlayersEntity("AN_ID"), TournamentsEntity(1234))
-    val entity2 = PlayersPointsEntity(playersPointsKeyEmbedded2, 13.0, PlayersEntity("ANOTHER_ID"), TournamentsEntity(1234))
-    val playersPointsEntities = setOf(entity1, entity2)
+      val players = setOf(DomainPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 10.0))),
+                          DomainPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 13.0))))
 
-    every { playersPointsDao.saveAll(playersPointsEntities) } returns playersPointsEntities
+      val playersPointsKeyEmbedded1 = PlayersPointsKeyEmbedded(2222, 1234, "AN_ID")
+      val playersPointsKeyEmbedded2 = PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID")
+      val entity1 =
+          PlayersPointsEntity(playersPointsKeyEmbedded1, 10.0, PlayersEntity("AN_ID"), TournamentsEntity(1234))
+      val entity2 =
+          PlayersPointsEntity(playersPointsKeyEmbedded2, 13.0, PlayersEntity("ANOTHER_ID"), TournamentsEntity(1234))
+      val playersPointsEntities = setOf(entity1, entity2)
 
-    repository.save(players)
+      every { playersPointsDao.saveAll(playersPointsEntities) } returns playersPointsEntities
 
-    verify { playersPointsDao.saveAll(playersPointsEntities) }
+      repository.save(players)
+
+      verify { playersPointsDao.saveAll(playersPointsEntities) }
+    }
+  }
+
+  @Nested
+  inner class RetrievePlayerPointsTest {
+
+    @Test
+    fun `retrieve players points`() {
+
+      val tournamentByTeam = TournamentByTeam(teamId = 123,
+                                              startingTournamentId = 1,
+                                              endingTournamentId = 28,
+                                              tournamentYear = 2020)
+
+      val teamTournamentDto = TeamTournamentDto(teamId = 123,
+                                                startingTournamentId = 1,
+                                                endingTournamentId = 28,
+                                                tournamentYear = 2020)
+      val fantaTeamPlayersPointsDto = listOf(TeamPlayerPointsDto(playerId = "A_PLAYER_ID", totalScore = 20.0),
+                                             TeamPlayerPointsDto(playerId = "ANOTHER_PLAYER_ID", totalScore = 17.0))
+
+      val expected = TeamOrderedPlayerPoints(listOf(PlayerPoints(playerId = "A_PLAYER_ID", totalPoints = 20.0),
+                                                    PlayerPoints(playerId = "ANOTHER_PLAYER_ID", totalPoints = 17.0)))
+
+      every { playersPointsDao.findPlayersPointsByTeamTournamentDto(teamTournamentDto) } returns fantaTeamPlayersPointsDto
+
+      assertThat(repository.retrieve(tournamentByTeam)).isEqualTo(expected)
+    }
   }
 }

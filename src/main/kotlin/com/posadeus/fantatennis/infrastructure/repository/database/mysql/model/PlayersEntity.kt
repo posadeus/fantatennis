@@ -16,6 +16,6 @@ data class PlayersEntity(
     @Column(name = "FULL_NAME")
     val fullName: String = "",
 
-    @OneToMany(mappedBy = "players", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "player", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val teams: List<TeamsEntity> = emptyList()
 ) : Serializable
