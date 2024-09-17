@@ -31,7 +31,7 @@ class TeamControllerTest {
   @Test
   fun `200 response - valid team`() {
 
-    val expected = TeamDto(A_LIST_OF_PLAYERS, A_TOTAL_SCORE, ANY_COMPLETED)
+    val expected = TeamDto(A_LIST_OF_PLAYERS, A_TOTAL_SCORE)
     val team = FoundTeam(expected)
 
     every { service.getTeam(A_TEAM_ID) } returns team
@@ -89,9 +89,8 @@ class TeamControllerTest {
   companion object {
 
     private const val TEAM_ENDPOINT = "team/"
-    private const val A_TEAM_ID = "A_TEAM_ID"
+    private const val A_TEAM_ID = 1
     private const val A_TOTAL_SCORE = 33.3
-    private const val ANY_COMPLETED = true
 
     private val A_LIST_OF_PLAYERS = emptyList<TeamPlayerDto>()
   }
