@@ -21,6 +21,7 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
       teamPlayerPoints
           .map {
             PlayerPoints(playerId = it.playerId,
+                         playerName = it.playerName,
                          totalPoints = it.totalScore)
           }
 

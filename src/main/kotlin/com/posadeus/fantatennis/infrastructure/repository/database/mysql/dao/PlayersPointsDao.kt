@@ -11,7 +11,11 @@ import org.springframework.stereotype.Repository
 interface PlayersPointsDao : CrudRepository<PlayersPointsEntity, PlayersPointsKeyEmbedded> {
 
   @Query("""
-      SELECT new com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TeamPlayerPointsDto(pp.id.playerId, SUM(pp.fantaPoints))
+      SELECT new com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TeamPlayerPointsDto(
+        pp.id.playerId, 
+        pp.player.fullName,
+        SUM(pp.fantaPoints)
+      )
       FROM PlayersPointsEntity pp 
       WHERE pp.id.tournamentYear = :#{#filter.tournamentYear}
       AND pp.id.tournamentId BETWEEN :#{#filter.startingTournamentId} AND :#{#filter.endingTournamentId}
@@ -32,4 +36,5 @@ data class TeamTournamentDto(val teamId: Int,
                              val tournamentYear: Int)
 
 data class TeamPlayerPointsDto(val playerId: String,
+                               val playerName: String,
                                val totalScore: Double = 0.00)

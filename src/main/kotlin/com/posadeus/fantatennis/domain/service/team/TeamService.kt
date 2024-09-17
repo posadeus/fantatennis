@@ -16,7 +16,7 @@ class TeamService(private val fantaTournamentsTeamsRepository: FantaTournamentsT
 
     val retrieve = playerPointsRepository.retrieve(retrieveTournamentByTeamId)
 
-    return retrieve.playerPoints.map { TeamPlayerDto(fullName = "", fantaPoints = it.totalPoints) }
+    return retrieve.playerPoints.map { TeamPlayerDto(fullName = it.playerName, fantaPoints = it.totalPoints) }
         .let { TeamDto(it, it.sumOf { it.fantaPoints }) }
         .let { FoundTeam(it) }
   }

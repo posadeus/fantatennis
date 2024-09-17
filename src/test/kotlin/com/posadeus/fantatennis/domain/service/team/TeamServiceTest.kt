@@ -25,12 +25,12 @@ class TeamServiceTest {
                                             startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                             endingTournamentId = AN_ENDING_TOURNAMENT_ID,
                                             tournamentYear = A_TOURNAMENT_YEAR)
-    val playerPoints1 = PlayerPoints(playerId = A_PLAYER_ID, totalPoints = 20.0)
-    val playerPoints2 = PlayerPoints(playerId = ANOTHER_PLAYER_ID, totalPoints = 18.0)
+    val playerPoints1 = PlayerPoints(playerId = A_PLAYER_ID, playerName = "A_PLAYER_NAME_1", totalPoints = 20.0)
+    val playerPoints2 = PlayerPoints(playerId = ANOTHER_PLAYER_ID, playerName = "A_PLAYER_NAME_2", totalPoints = 18.0)
     val teamOrderedPlayerPoints = TeamOrderedPlayerPoints(listOf(playerPoints1, playerPoints2))
 
-    val teamPlayerDto1 = TeamPlayerDto(fullName = "", fantaPoints = 20.0)
-    val teamPlayerDto2 = TeamPlayerDto(fullName = "", fantaPoints = 18.0)
+    val teamPlayerDto1 = TeamPlayerDto(fullName = "A_PLAYER_NAME_1", fantaPoints = 20.0)
+    val teamPlayerDto2 = TeamPlayerDto(fullName = "A_PLAYER_NAME_2", fantaPoints = 18.0)
     val expected = FoundTeam(TeamDto(listOf(teamPlayerDto1, teamPlayerDto2), 38.0))
 
     every { fantaTournamentsTeamsRepository.retrieveTournamentByTeamId(A_TEAM_ID) } returns tournamentByTeam

@@ -26,10 +26,11 @@ class MySqlPlayerPointsRepositoryTest {
 
       val playersPointsKeyEmbedded1 = PlayersPointsKeyEmbedded(2222, 1234, "AN_ID")
       val playersPointsKeyEmbedded2 = PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID")
-      val entity1 =
-          PlayersPointsEntity(playersPointsKeyEmbedded1, 10.0, PlayersEntity("AN_ID"), TournamentsEntity(1234))
-      val entity2 =
-          PlayersPointsEntity(playersPointsKeyEmbedded2, 13.0, PlayersEntity("ANOTHER_ID"), TournamentsEntity(1234))
+      val player1 = PlayersEntity(id = "AN_ID")
+      val player2 = PlayersEntity(id = "ANOTHER_ID")
+      val tournament = TournamentsEntity(1234)
+      val entity1 = PlayersPointsEntity(playersPointsKeyEmbedded1, 10.0, player1, tournament)
+      val entity2 = PlayersPointsEntity(playersPointsKeyEmbedded2, 13.0, player2, tournament)
       val playersPointsEntities = setOf(entity1, entity2)
 
       every { playersPointsDao.saveAll(playersPointsEntities) } returns playersPointsEntities
@@ -50,16 +51,23 @@ class MySqlPlayerPointsRepositoryTest {
                                               startingTournamentId = 1,
                                               endingTournamentId = 28,
                                               tournamentYear = 2020)
-
       val teamTournamentDto = TeamTournamentDto(teamId = 123,
                                                 startingTournamentId = 1,
                                                 endingTournamentId = 28,
                                                 tournamentYear = 2020)
-      val fantaTeamPlayersPointsDto = listOf(TeamPlayerPointsDto(playerId = "A_PLAYER_ID", totalScore = 20.0),
-                                             TeamPlayerPointsDto(playerId = "ANOTHER_PLAYER_ID", totalScore = 17.0))
+      val fantaTeamPlayersPointsDto = listOf(TeamPlayerPointsDto(playerId = "A_PLAYER_ID",
+                                                                 playerName = "A_FULL_NAME_1",
+                                                                 totalScore = 20.0),
+                                             TeamPlayerPointsDto(playerId = "ANOTHER_PLAYER_ID",
+                                                                 playerName = "A_FULL_NAME_2",
+                                                                 totalScore = 17.0))
 
-      val expected = TeamOrderedPlayerPoints(listOf(PlayerPoints(playerId = "A_PLAYER_ID", totalPoints = 20.0),
-                                                    PlayerPoints(playerId = "ANOTHER_PLAYER_ID", totalPoints = 17.0)))
+      val expected = TeamOrderedPlayerPoints(listOf(PlayerPoints(playerId = "A_PLAYER_ID",
+                                                                 playerName = "A_FULL_NAME_1",
+                                                                 totalPoints = 20.0),
+                                                    PlayerPoints(playerId = "ANOTHER_PLAYER_ID",
+                                                                 playerName = "A_FULL_NAME_2",
+                                                                 totalPoints = 17.0)))
 
       every { playersPointsDao.findPlayersPointsByTeamTournamentDto(teamTournamentDto) } returns fantaTeamPlayersPointsDto
 

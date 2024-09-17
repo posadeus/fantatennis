@@ -7,7 +7,7 @@ import java.io.Serializable
 @Table(name = "TOURNAMENTS")
 data class TournamentsEntity(
     @Id
-    @Column(name = "ID")
+    @Column(name = "TOURNAMENT_ID")
     val id: Int = 0,
 
     @Column(name = "ATP_TOUR_ID")

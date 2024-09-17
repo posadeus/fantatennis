@@ -133,8 +133,8 @@ class MySqlPlayerPointsRepositoryIT {
 
     assertThat(playersPointsDao.findAll()).isEqualTo(arrayListOf<PlayersPointsEntity>())
 
-    val player1 = PlayersEntity("AN_ID")
-    val player2 = PlayersEntity("ANOTHER_ID")
+    val player1 = PlayersEntity(id = "AN_ID", fullName = "A_PLAYER_NAME_1")
+    val player2 = PlayersEntity(id = "ANOTHER_ID", fullName = "A_PLAYER_NAME_2")
 
     playersDao.saveAll(listOf(player1, player2))
 
@@ -155,7 +155,7 @@ class MySqlPlayerPointsRepositoryIT {
     fantaTeamsDao.save(fantaTeam)
 
     val team1 = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "AN_ID"), player = player1, fantaTeam = fantaTeam)
-    val team2 = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "ANOTHER_ID"), player = player1, fantaTeam = fantaTeam)
+    val team2 = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "ANOTHER_ID"), player = player2, fantaTeam = fantaTeam)
 
     teamsDao.saveAll(listOf(team1, team2))
 
@@ -164,8 +164,8 @@ class MySqlPlayerPointsRepositoryIT {
                                             endingTournamentId = 1234,
                                             tournamentYear = 2222)
 
-    val playerPoints1 = PlayerPoints(playerId = "ANOTHER_ID", totalPoints = 13.0)
-    val playerPoints2 = PlayerPoints(playerId = "AN_ID", totalPoints = 10.0)
+    val playerPoints1 = PlayerPoints(playerId = "ANOTHER_ID", playerName = "A_PLAYER_NAME_2", totalPoints = 13.0)
+    val playerPoints2 = PlayerPoints(playerId = "AN_ID", playerName = "A_PLAYER_NAME_1", totalPoints = 10.0)
     val expected = TeamOrderedPlayerPoints(listOf(playerPoints1, playerPoints2))
 
     assertThat(mySqlPlayerPointsRepository.retrieve(tournamentByTeam)).isEqualTo(expected)

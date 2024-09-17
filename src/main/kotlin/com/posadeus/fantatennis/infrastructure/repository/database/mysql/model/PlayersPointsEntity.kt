@@ -25,10 +25,10 @@ data class PlayersPointsEntity(
     val fantaPoints: Double = 0.0,
 
     @ManyToOne
-    @JoinColumn(name = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "PLAYER_ID", insertable = false, updatable = false)
     val player: PlayersEntity = PlayersEntity(),
 
     @ManyToOne
-    @JoinColumn(name = "ID", insertable = false, updatable = false)
+    @JoinColumn(name = "TOURNAMENT_ID", insertable = false, updatable = false)
     val tournament: TournamentsEntity = TournamentsEntity()
 ) : Serializable
