@@ -73,5 +73,24 @@ class MySqlPlayerPointsRepositoryTest {
 
       assertThat(repository.retrieve(tournamentByTeam)).isEqualTo(expected)
     }
+
+    @Test
+    fun `retrieve empty list of players`() {
+
+      val tournamentByTeam = TournamentByTeam(teamId = 123,
+                                              startingTournamentId = 1,
+                                              endingTournamentId = 28,
+                                              tournamentYear = 2020)
+      val teamTournamentDto = TeamTournamentDto(teamId = 123,
+                                                startingTournamentId = 1,
+                                                endingTournamentId = 28,
+                                                tournamentYear = 2020)
+
+      val expected = TeamOrderedPlayerPoints(emptyList())
+
+      every { playersPointsDao.findPlayersPointsByTeamTournamentDto(teamTournamentDto) } returns emptyList()
+
+      assertThat(repository.retrieve(tournamentByTeam)).isEqualTo(expected)
+    }
   }
 }

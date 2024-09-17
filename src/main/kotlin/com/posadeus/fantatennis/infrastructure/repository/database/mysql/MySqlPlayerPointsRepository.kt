@@ -37,16 +37,19 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
   private fun toPlayersPointsEntity(players: Set<DomainPlayer>): Set<PlayersPointsEntity> =
       players.flatMap { player ->
         val playerId = player.id
+
         player.tournamentPoints.flatMap { tournament ->
           val year = tournament.key
-          tournament.value.map {
-            PlayersPointsEntity(id = PlayersPointsKeyEmbedded(tournamentYear = year,
-                                                              tournamentId = it.key,
-                                                              playerId = playerId),
-                                fantaPoints = it.value,
-                                player = PlayersEntity(id = playerId),
-                                tournament = TournamentsEntity(id = it.key))
-          }
+
+          tournament.value
+              .map {
+                PlayersPointsEntity(id = PlayersPointsKeyEmbedded(tournamentYear = year,
+                                                                  tournamentId = it.key,
+                                                                  playerId = playerId),
+                                    fantaPoints = it.value,
+                                    player = PlayersEntity(id = playerId),
+                                    tournament = TournamentsEntity(id = it.key))
+              }
         }
       }.toSet()
 }
