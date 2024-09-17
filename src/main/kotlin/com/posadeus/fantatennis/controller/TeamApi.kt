@@ -18,5 +18,5 @@ interface TeamApi {
             value = ["/team/{teamId}"],
             produces = ["application/json"]
     )
-    fun team( @PathVariable("teamId") teamId: String): ResponseEntity<TeamDto>
+    fun team( @PathVariable("teamId") teamId: Int): ResponseEntity<TeamDto>
 }

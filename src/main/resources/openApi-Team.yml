@@ -14,7 +14,7 @@ paths:
         - in: path
           name: teamId
           schema:
-            type: string
+            type: integer
           required: true
           description: ID of the team
       responses:
@@ -38,14 +38,9 @@ components:
           type: double
           default: 0
           description: Total team's score
-        completed:
-          type: boolean
-          default: false
-          description: True if the team has the correct number of players
       required:
         - players
         - totalScore
-        - completed
 
     TeamPlayersDto:
       type: array
@@ -63,14 +58,6 @@ components:
           type: double
           default: 0
           description: Player's fanta-points
-        playing:
-          type: string
-          description: Player's actual tournament played
-        chosen:
-          type: boolean
-          default: false
-          description: TRUE if player has been chosen for the tournament
       required:
         - fullName
         - fantaPoints
-        - chosen
