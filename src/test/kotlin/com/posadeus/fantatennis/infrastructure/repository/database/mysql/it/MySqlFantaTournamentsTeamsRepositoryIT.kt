@@ -54,7 +54,8 @@ class MySqlFantaTournamentsTeamsRepositoryIT {
 
     fantaTeamsDao.save(fantaTeam)
 
-    val fantaTournamentsTeams = FantaTournamentsTeamsEntity(fantaTournamentsTeamsId = 1,
+    val fantaTournamentsTeams = FantaTournamentsTeamsEntity(FantaTournamentsTeamsKeyEmbedded(tournamentId = 2384,
+                                                                                             teamId = 123),
                                                             tournament = tournament,
                                                             fantaTeam = fantaTeam)
 

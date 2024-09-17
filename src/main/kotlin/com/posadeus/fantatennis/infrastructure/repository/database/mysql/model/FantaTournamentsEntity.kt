@@ -7,7 +7,7 @@ import java.io.Serializable
 @Table(name = "FANTA_TOURNAMENTS")
 data class FantaTournamentsEntity(
     @Id
-    @Column(name = "ID")
+    @Column(name = "FANTA_TOURNAMENT_ID")
     val id: Int = 0,
 
     @Column(name = "STARTING_TOURNAMENT")
@@ -16,6 +16,6 @@ data class FantaTournamentsEntity(
     @Column(name = "ENDING_TOURNAMENT")
     val endingTournament: Int = 0,
 
-    @Column(name = "'YEAR'")
+    @Column(name = "TOURNAMENT_YEAR")
     val year: Int = 0
 ) : Serializable
