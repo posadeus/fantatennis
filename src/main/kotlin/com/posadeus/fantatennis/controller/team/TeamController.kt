@@ -14,7 +14,6 @@ class TeamController(private val service: TeamService) : TeamApi {
       when (val team = service.getTeam(teamId)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)
-        is EmptyTeam -> ResponseEntity.noContent().build()
         is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
         is ErrorTeam -> ResponseEntity.internalServerError().build()
       }

@@ -44,19 +44,6 @@ class TeamControllerTest {
   }
 
   @Test
-  fun `200 response - empty team`() {
-
-    val team = EmptyTeam
-
-    every { service.getTeam(A_TEAM_ID) } returns team
-
-    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
-                    .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isNoContent)
-  }
-
-  @Test
   fun `400 response - TeamId NOT FOUND`() {
 
     val team = TeamIdNotFoundTeam

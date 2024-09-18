@@ -4,20 +4,21 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsTeamsRepository
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
-import com.posadeus.fantatennis.domain.model.FoundTeam
-import com.posadeus.fantatennis.domain.model.Team
+import com.posadeus.fantatennis.domain.model.*
 
 class TeamService(private val fantaTournamentsTeamsRepository: FantaTournamentsTeamsRepository,
                   private val playerPointsRepository: PlayerPointsRepository) {
 
-  fun getTeam(teamId: Int): Team {
+  fun getTeam(teamId: Int): Team =
+      when (val tournamentByTeamId = fantaTournamentsTeamsRepository.retrieveTournamentByTeamId(teamId)) {
 
-    val retrieveTournamentByTeamId = fantaTournamentsTeamsRepository.retrieveTournamentByTeamId(teamId)
+        is FoundTournamentByTeam -> retrieveTeam(tournamentByTeamId)
+        is EmptyTournamentByTeam -> TeamIdNotFoundTeam
+      }
 
-    val retrieve = playerPointsRepository.retrieve(retrieveTournamentByTeamId)
-
-    return retrieve.playerPoints.map { TeamPlayerDto(fullName = it.playerName, fantaPoints = it.totalPoints) }
-        .let { TeamDto(it, it.sumOf { it.fantaPoints }) }
-        .let { FoundTeam(it) }
-  }
+  private fun retrieveTeam(tournamentByTeamId: FoundTournamentByTeam): Team =
+      playerPointsRepository.retrieve(tournamentByTeamId).playerPoints
+          .map { TeamPlayerDto(fullName = it.playerName, fantaPoints = it.totalPoints) }
+          .let { teamPlayers -> TeamDto(teamPlayers, teamPlayers.sumOf { it.fantaPoints }) }
+          .let(::FoundTeam)
 }

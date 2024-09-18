@@ -5,5 +5,5 @@ import com.posadeus.fantatennis.domain.model.*
 interface PlayerPointsRepository {
 
   fun save(players: Set<DomainPlayer>)
-  fun retrieve(tournamentByTeam: TournamentByTeam): TeamOrderedPlayerPoints
+  fun retrieve(tournamentByTeam: FoundTournamentByTeam): TeamOrderedPlayerPoints
 }

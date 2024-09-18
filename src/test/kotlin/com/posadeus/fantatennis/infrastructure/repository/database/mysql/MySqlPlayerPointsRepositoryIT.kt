@@ -159,10 +159,10 @@ class MySqlPlayerPointsRepositoryIT {
 
     teamsDao.saveAll(listOf(team1, team2))
 
-    val tournamentByTeam = TournamentByTeam(teamId = 1,
-                                            startingTournamentId = 1234,
-                                            endingTournamentId = 1234,
-                                            tournamentYear = 2222)
+    val tournamentByTeam = FoundTournamentByTeam(teamId = 1,
+                                                 startingTournamentId = 1234,
+                                                 endingTournamentId = 1234,
+                                                 tournamentYear = 2222)
 
     val playerPoints1 = PlayerPoints(playerId = "ANOTHER_ID", playerName = "A_PLAYER_NAME_2", totalPoints = 13.0)
     val playerPoints2 = PlayerPoints(playerId = "AN_ID", playerName = "A_PLAYER_NAME_1", totalPoints = 10.0)

@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql.it
 
-import com.posadeus.fantatennis.domain.model.TournamentByTeam
+import com.posadeus.fantatennis.domain.model.EmptyTournamentByTeam
+import com.posadeus.fantatennis.domain.model.FoundTournamentByTeam
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlFantaTournamentsTeamsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
@@ -61,12 +62,20 @@ class MySqlFantaTournamentsTeamsRepositoryIT {
 
     fantaTournamentsTeamsDao.save(fantaTournamentsTeams)
 
-    val expected = TournamentByTeam(teamId = 123,
-                                    startingTournamentId = 1,
-                                    endingTournamentId = 3,
-                                    tournamentYear = 2020)
+    val expected = FoundTournamentByTeam(teamId = 123,
+                                         startingTournamentId = 1,
+                                         endingTournamentId = 3,
+                                         tournamentYear = 2020)
 
     assertThat(mySqlFantaTournamentsTeamsRepository.retrieveTournamentByTeamId(123)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `tournament by teamId not found`() {
+
+    assertThat(fantaTournamentsTeamsDao.findAll()).isEqualTo(arrayListOf<FantaTournamentsTeamsEntity>())
+
+    assertThat(mySqlFantaTournamentsTeamsRepository.retrieveTournamentByTeamId(123)).isEqualTo(EmptyTournamentByTeam)
   }
 
   private fun deleteAll() {

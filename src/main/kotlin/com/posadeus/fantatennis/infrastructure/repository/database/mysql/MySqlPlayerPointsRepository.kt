@@ -12,7 +12,7 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
     playersPointsDao.saveAll(toPlayersPointsEntity(players))
   }
 
-  override fun retrieve(tournamentByTeam: TournamentByTeam): TeamOrderedPlayerPoints =
+  override fun retrieve(tournamentByTeam: FoundTournamentByTeam): TeamOrderedPlayerPoints =
       playersPointsDao.findPlayersPointsByTeamTournamentDto(tournamentByTeam.let(::toTeamTournamentDto))
           .let(::toPlayerPoints)
           .let(::TeamOrderedPlayerPoints)
@@ -25,7 +25,7 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
                          totalPoints = it.totalScore)
           }
 
-  private fun toTeamTournamentDto(tournamentByTeam: TournamentByTeam): TeamTournamentDto =
+  private fun toTeamTournamentDto(tournamentByTeam: FoundTournamentByTeam): TeamTournamentDto =
       tournamentByTeam
           .let {
             TeamTournamentDto(teamId = it.teamId,

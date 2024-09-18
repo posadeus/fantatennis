@@ -47,10 +47,10 @@ class MySqlPlayerPointsRepositoryTest {
     @Test
     fun `retrieve players points`() {
 
-      val tournamentByTeam = TournamentByTeam(teamId = 123,
-                                              startingTournamentId = 1,
-                                              endingTournamentId = 28,
-                                              tournamentYear = 2020)
+      val tournamentByTeam = FoundTournamentByTeam(teamId = 123,
+                                                   startingTournamentId = 1,
+                                                   endingTournamentId = 28,
+                                                   tournamentYear = 2020)
       val teamTournamentDto = TeamTournamentDto(teamId = 123,
                                                 startingTournamentId = 1,
                                                 endingTournamentId = 28,
@@ -77,10 +77,10 @@ class MySqlPlayerPointsRepositoryTest {
     @Test
     fun `retrieve empty list of players`() {
 
-      val tournamentByTeam = TournamentByTeam(teamId = 123,
-                                              startingTournamentId = 1,
-                                              endingTournamentId = 28,
-                                              tournamentYear = 2020)
+      val tournamentByTeam = FoundTournamentByTeam(teamId = 123,
+                                                   startingTournamentId = 1,
+                                                   endingTournamentId = 28,
+                                                   tournamentYear = 2020)
       val teamTournamentDto = TeamTournamentDto(teamId = 123,
                                                 startingTournamentId = 1,
                                                 endingTournamentId = 28,
