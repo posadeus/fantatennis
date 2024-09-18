@@ -3,13 +3,20 @@ info:
   title: API to retrieve tennis players ranking
   version: 1.0.0
 paths:
-  /players/ranking:
+  /players/ranking/{positions}:
     get:
       operationId: players
       summary: Returns players ranking
       description: Returns an ordered list based on ranking.
       tags:
         - Ranking
+      parameters:
+        - in: path
+          name: positions
+          schema:
+            type: integer
+          required: true
+          description: Number of ranking position you want to return.
       responses:
         '200':
           description: Ranking returned successfully

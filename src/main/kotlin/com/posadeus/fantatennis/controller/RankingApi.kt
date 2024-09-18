@@ -15,8 +15,8 @@ interface RankingApi {
 
     @RequestMapping(
             method = [RequestMethod.GET],
-            value = ["/players/ranking"],
+            value = ["/players/ranking/{positions}"],
             produces = ["application/json"]
     )
-    fun players(): ResponseEntity<List<RankedPlayer>>
+    fun players( @PathVariable("positions") positions: Int): ResponseEntity<List<RankedPlayer>>
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class RankingController(private val service: RankingService) : RankingApi {
 
-  override fun players(): ResponseEntity<List<RankedPlayer>> =
+  override fun players(positions: Int): ResponseEntity<List<RankedPlayer>> =
       when (val rankedPlayer = service.retrieveRankedPlayer()) {
 
         is RankedPlayers -> ResponseEntity.ok(rankedPlayer.players)

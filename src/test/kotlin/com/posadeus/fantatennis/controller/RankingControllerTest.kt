@@ -31,6 +31,7 @@ class RankingControllerTest {
   @Test
   fun `200 response`() {
 
+    val positions = 3
     val rankedPlayer1 = RankedPlayer(id = "123",
                                      fullName = "PLAYER1_NAME",
                                      rank = 1,
@@ -48,7 +49,7 @@ class RankingControllerTest {
 
     every { service.retrieveRankedPlayer() } returns ranking
 
-    mvc.perform(MockMvcRequestBuilders.get(RANKING_ENDPOINT)
+    mvc.perform(MockMvcRequestBuilders.get("$RANKING_ENDPOINT/$positions")
                     .contentType(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.print())
         .andExpect(MockMvcResultMatchers.status().isOk)
@@ -62,7 +63,7 @@ class RankingControllerTest {
 
     every { service.retrieveRankedPlayer() } returns ranking
 
-    mvc.perform(MockMvcRequestBuilders.get(RANKING_ENDPOINT)
+    mvc.perform(MockMvcRequestBuilders.get("$RANKING_ENDPOINT/$ANY_POSITIONS")
                     .contentType(MediaType.APPLICATION_JSON))
         .andDo(MockMvcResultHandlers.print())
         .andExpect(MockMvcResultMatchers.status().isInternalServerError)
@@ -75,5 +76,6 @@ class RankingControllerTest {
   companion object {
 
     private const val RANKING_ENDPOINT = "/players/ranking"
+    private const val ANY_POSITIONS = 1
   }
 }
