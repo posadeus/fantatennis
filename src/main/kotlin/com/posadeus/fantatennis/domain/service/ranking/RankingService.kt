@@ -5,6 +5,6 @@ import com.posadeus.fantatennis.domain.model.Ranking
 
 class RankingService(private val rankingRepository: RankingRepository) {
 
-  fun retrieveRankedPlayer(): Ranking =
-      rankingRepository.retrieveRanking(200)
+  fun retrieveRankedPlayer(positions: Int): Ranking =
+      rankingRepository.retrieveRanking(positions)
 }

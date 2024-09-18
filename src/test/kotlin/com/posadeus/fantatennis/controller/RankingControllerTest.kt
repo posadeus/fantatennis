@@ -47,7 +47,7 @@ class RankingControllerTest {
     val ranking = RankedPlayers(listOf(rankedPlayer1, rankedPlayer2, rankedPlayer3))
     val expected = listOf(rankedPlayer1, rankedPlayer2, rankedPlayer3)
 
-    every { service.retrieveRankedPlayer() } returns ranking
+    every { service.retrieveRankedPlayer(positions) } returns ranking
 
     mvc.perform(MockMvcRequestBuilders.get("$RANKING_ENDPOINT/$positions")
                     .contentType(MediaType.APPLICATION_JSON))
@@ -61,7 +61,7 @@ class RankingControllerTest {
 
     val ranking = EmptyRanking
 
-    every { service.retrieveRankedPlayer() } returns ranking
+    every { service.retrieveRankedPlayer(ANY_POSITIONS) } returns ranking
 
     mvc.perform(MockMvcRequestBuilders.get("$RANKING_ENDPOINT/$ANY_POSITIONS")
                     .contentType(MediaType.APPLICATION_JSON))

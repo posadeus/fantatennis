@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class RankingController(private val service: RankingService) : RankingApi {
 
   override fun players(positions: Int): ResponseEntity<List<RankedPlayer>> =
-      when (val rankedPlayer = service.retrieveRankedPlayer()) {
+      when (val rankedPlayer = service.retrieveRankedPlayer(positions)) {
 
         is RankedPlayers -> ResponseEntity.ok(rankedPlayer.players)
         is EmptyRanking -> ResponseEntity.internalServerError().build()

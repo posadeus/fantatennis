@@ -18,21 +18,22 @@ class RankingServiceTest {
   @Test
   fun `successful response from repository`() {
 
-    every { repository.retrieveRanking(200) } returns RankedPlayers(PLAYERS)
+    every { repository.retrieveRanking(ANY_POSITIONS) } returns RankedPlayers(PLAYERS)
 
-    assertThat(service.retrieveRankedPlayer()).isEqualTo(RankedPlayers(PLAYERS))
+    assertThat(service.retrieveRankedPlayer(ANY_POSITIONS)).isEqualTo(RankedPlayers(PLAYERS))
   }
 
   @Test
   fun `error response from repository`() {
 
-    every { repository.retrieveRanking(200) } returns EmptyRanking
+    every { repository.retrieveRanking(ANY_POSITIONS) } returns EmptyRanking
 
-    assertThat(service.retrieveRankedPlayer()).isEqualTo(EmptyRanking)
+    assertThat(service.retrieveRankedPlayer(ANY_POSITIONS)).isEqualTo(EmptyRanking)
   }
 
   companion object {
 
+    private const val ANY_POSITIONS = 1
     private val PLAYERS = emptyList<RankedPlayer>()
   }
 }
