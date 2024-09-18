@@ -1,7 +1,5 @@
 package com.posadeus.fantatennis.domain.model
 
-typealias AtpPlayerId = String
-
 sealed interface TournamentInfo
 
 data class CompleteTournamentInfo(val tournamentId: Int,
