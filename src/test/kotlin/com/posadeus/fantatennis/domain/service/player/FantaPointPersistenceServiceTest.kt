@@ -5,11 +5,11 @@ import com.posadeus.fantatennis.domain.model.AtpPlayer
 import io.mockk.*
 import org.junit.jupiter.api.Test
 
-class PlayerFantaPointPersistenceServiceTest {
+class FantaPointPersistenceServiceTest {
 
   private val repository: PlayerPointsRepository = mockk()
 
-  private val service = PlayerFantaPointPersistenceService(repository)
+  private val service = FantaPointPersistenceService(repository)
 
   @Test
   fun `persist scores`() {

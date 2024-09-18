@@ -3,8 +3,8 @@ package com.posadeus.fantatennis.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.job.JobController
 import com.posadeus.fantatennis.domain.model.AtpPlayer
-import com.posadeus.fantatennis.domain.service.player.PlayerFantaPointCalculatorService
-import com.posadeus.fantatennis.domain.service.player.PlayerFantaPointPersistenceService
+import com.posadeus.fantatennis.domain.service.player.FantaPointCalculatorService
+import com.posadeus.fantatennis.domain.service.player.FantaPointPersistenceService
 import io.mockk.*
 import org.junit.jupiter.api.Test
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -15,8 +15,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class JobControllerTest {
 
-  private val calculatorService: PlayerFantaPointCalculatorService = mockk()
-  private val persistenceService: PlayerFantaPointPersistenceService = mockk()
+  private val calculatorService: FantaPointCalculatorService = mockk()
+  private val persistenceService: FantaPointPersistenceService = mockk()
 
   private val controller: JobApi = JobController(calculatorService,
                                                  persistenceService)

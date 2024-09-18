@@ -5,8 +5,8 @@ import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Round.*
 
-class PlayerFantaPointCalculatorService(private val tournamentInfoRepositories: List<TournamentInfoRepository>,
-                                        private val tournamentsRepository: TournamentsRepository) {
+class FantaPointCalculatorService(private val tournamentInfoRepositories: List<TournamentInfoRepository>,
+                                  private val tournamentsRepository: TournamentsRepository) {
 
   fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<AtpPlayer> {
 
