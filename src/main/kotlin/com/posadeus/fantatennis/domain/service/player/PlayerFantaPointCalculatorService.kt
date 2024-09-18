@@ -8,7 +8,7 @@ import com.posadeus.fantatennis.domain.model.Round.*
 class PlayerFantaPointCalculatorService(private val tournamentInfoRepositories: List<TournamentInfoRepository>,
                                         private val tournamentsRepository: TournamentsRepository) {
 
-  fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<DomainPlayer> {
+  fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<AtpPlayer> {
 
     val tournament = tournamentsRepository.readTournaments().associateBy { it.id }[tournamentId]
     val tennisTvId = tournament?.tennisTvId
@@ -40,7 +40,7 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepositories: 
   private fun getScores(tournamentInfo: CompleteTournamentInfo,
                         year: Int,
                         tournamentId: Int,
-                        scoreRules: Map<String, Double>): Set<DomainPlayer> {
+                        scoreRules: Map<String, Double>): Set<AtpPlayer> {
 
     val scoresFirstRound: Map<AtpPlayerId, Double>
     val scoresSecondRound: Map<AtpPlayerId, Double>
@@ -81,7 +81,7 @@ class PlayerFantaPointCalculatorService(private val tournamentInfoRepositories: 
         scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresFourthRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
 
     return scoresByPlayer
-        .map { DomainPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
+        .map { AtpPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
         .toSet()
   }
 

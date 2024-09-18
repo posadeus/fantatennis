@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
-import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.AtpPlayer
 import io.mockk.*
 import org.junit.jupiter.api.Test
 
@@ -14,10 +14,10 @@ class PlayerFantaPointPersistenceServiceTest {
   @Test
   fun `persist scores`() {
 
-    val players = setOf(DomainPlayer(id = "PlayerId1",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                        DomainPlayer(id = "PlayerId2",
-                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+    val players = setOf(AtpPlayer(id = "PlayerId1",
+                                  tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                        AtpPlayer(id = "PlayerId2",
+                                  tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
 
     every { repository.save(players) } just runs
 
@@ -29,7 +29,7 @@ class PlayerFantaPointPersistenceServiceTest {
   @Test
   fun `repository not called if players is empty`() {
 
-    val players = emptySet<DomainPlayer>()
+    val players = emptySet<AtpPlayer>()
 
     service.persistScores(players)
 

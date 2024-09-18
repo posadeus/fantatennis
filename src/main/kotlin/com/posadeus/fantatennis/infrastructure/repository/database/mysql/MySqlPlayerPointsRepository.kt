@@ -7,7 +7,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 
 class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao) : PlayerPointsRepository {
 
-  override fun save(players: Set<DomainPlayer>) {
+  override fun save(players: Set<AtpPlayer>) {
 
     playersPointsDao.saveAll(toPlayersPointsEntity(players))
   }
@@ -34,7 +34,7 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
                               tournamentYear = it.tournamentYear)
           }
 
-  private fun toPlayersPointsEntity(players: Set<DomainPlayer>): Set<PlayersPointsEntity> =
+  private fun toPlayersPointsEntity(players: Set<AtpPlayer>): Set<PlayersPointsEntity> =
       players.flatMap { player ->
         val playerId = player.id
 

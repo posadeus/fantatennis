@@ -57,8 +57,8 @@ class MySqlPlayerPointsRepositoryIT {
 
     tournamentsDao.save(tournament)
 
-    val players = setOf(DomainPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 10.0))),
-                        DomainPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 13.0))))
+    val players = setOf(AtpPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 10.0))),
+                        AtpPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 13.0))))
 
     val playersPointsKeyEmbedded1 = PlayersPointsKeyEmbedded(2222, 1234, "AN_ID")
     val playersPointsKeyEmbedded2 = PlayersPointsKeyEmbedded(2222, 1234, "ANOTHER_ID")
@@ -114,8 +114,8 @@ class MySqlPlayerPointsRepositoryIT {
     assertThat(result[1].tournament.id).isEqualTo(entity2.tournament.id)
     assertThat(result[1].player.id).isEqualTo(entity2.player.id)
 
-    val players = setOf(DomainPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 15.0))),
-                        DomainPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 22.22))))
+    val players = setOf(AtpPlayer(id = "AN_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 15.0))),
+                        AtpPlayer(id = "ANOTHER_ID", tournamentPoints = mapOf(2222 to mapOf(1234 to 22.22))))
 
     mySqlPlayerPointsRepository.save(players)
 

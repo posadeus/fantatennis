@@ -35,20 +35,20 @@ class PlayerFantaPointCalculatorServiceTest {
                                                 participants = participants,
                                                 winners = winners)
 
-    val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 28.0))),
-                         DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
-                         DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
-                         DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 40.0))),
-                         DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
-                         DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
-                         DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
+    val expected = setOf(AtpPlayer(id = "PlayerId1",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 28.0))),
+                         AtpPlayer(id = "PlayerId2",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
+                         AtpPlayer(id = "PlayerId3",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
+                         AtpPlayer(id = "PlayerId4",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 40.0))),
+                         AtpPlayer(id = "PlayerId5",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
+                         AtpPlayer(id = "PlayerId6",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
+                         AtpPlayer(id = "PlayerId7",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
@@ -77,20 +77,20 @@ class PlayerFantaPointCalculatorServiceTest {
                                                 participants = participants,
                                                 winners = winners)
 
-    val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 28.0))),
-                         DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
-                         DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
-                         DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 40.0))),
-                         DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
-                         DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
-                         DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
+    val expected = setOf(AtpPlayer(id = "PlayerId1",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 28.0))),
+                         AtpPlayer(id = "PlayerId2",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
+                         AtpPlayer(id = "PlayerId3",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
+                         AtpPlayer(id = "PlayerId4",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 40.0))),
+                         AtpPlayer(id = "PlayerId5",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
+                         AtpPlayer(id = "PlayerId6",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
+                         AtpPlayer(id = "PlayerId7",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns false
@@ -121,22 +121,22 @@ class PlayerFantaPointCalculatorServiceTest {
                                                 participants = participants,
                                                 winners = winners)
 
-    val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 56.0))),
-                         DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 32.0))),
-                         DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
-                         DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 80.0))),
-                         DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
-                         DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
-                         DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
-                         DomainPlayer(id = "PlayerId8",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))))
+    val expected = setOf(AtpPlayer(id = "PlayerId1",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 56.0))),
+                         AtpPlayer(id = "PlayerId2",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 32.0))),
+                         AtpPlayer(id = "PlayerId3",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
+                         AtpPlayer(id = "PlayerId4",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 80.0))),
+                         AtpPlayer(id = "PlayerId5",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
+                         AtpPlayer(id = "PlayerId6",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
+                         AtpPlayer(id = "PlayerId7",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
+                         AtpPlayer(id = "PlayerId8",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))))
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
@@ -166,22 +166,22 @@ class PlayerFantaPointCalculatorServiceTest {
                                                 participants = participants,
                                                 winners = winners)
 
-    val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 28.0))),
-                         DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
-                         DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
-                         DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 40.0))),
-                         DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
-                         DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
-                         DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
-                         DomainPlayer(id = "PlayerId8",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
+    val expected = setOf(AtpPlayer(id = "PlayerId1",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 28.0))),
+                         AtpPlayer(id = "PlayerId2",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 16.0))),
+                         AtpPlayer(id = "PlayerId3",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
+                         AtpPlayer(id = "PlayerId4",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 40.0))),
+                         AtpPlayer(id = "PlayerId5",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
+                         AtpPlayer(id = "PlayerId6",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
+                         AtpPlayer(id = "PlayerId7",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
+                         AtpPlayer(id = "PlayerId8",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
@@ -210,20 +210,20 @@ class PlayerFantaPointCalculatorServiceTest {
                                                 participants = participants,
                                                 winners = winners)
 
-    val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 14.0))),
-                         DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
-                         DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
-                         DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 20.0))),
-                         DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
-                         DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
-                         DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))))
+    val expected = setOf(AtpPlayer(id = "PlayerId1",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 14.0))),
+                         AtpPlayer(id = "PlayerId2",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))),
+                         AtpPlayer(id = "PlayerId3",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
+                         AtpPlayer(id = "PlayerId4",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 20.0))),
+                         AtpPlayer(id = "PlayerId5",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
+                         AtpPlayer(id = "PlayerId6",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))),
+                         AtpPlayer(id = "PlayerId7",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))))
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
@@ -252,20 +252,20 @@ class PlayerFantaPointCalculatorServiceTest {
                                                 participants = participants,
                                                 winners = winners)
 
-    val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 7.0))),
-                         DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
-                         DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
-                         DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 10.0))),
-                         DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
-                         DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
-                         DomainPlayer(id = "PlayerId7",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))))
+    val expected = setOf(AtpPlayer(id = "PlayerId1",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 7.0))),
+                         AtpPlayer(id = "PlayerId2",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
+                         AtpPlayer(id = "PlayerId3",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
+                         AtpPlayer(id = "PlayerId4",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 10.0))),
+                         AtpPlayer(id = "PlayerId5",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
+                         AtpPlayer(id = "PlayerId6",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
+                         AtpPlayer(id = "PlayerId7",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))))
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
@@ -293,18 +293,18 @@ class PlayerFantaPointCalculatorServiceTest {
                                                 participants = participants,
                                                 winners = winners)
 
-    val expected = setOf(DomainPlayer(id = "PlayerId1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 7.0))),
-                         DomainPlayer(id = "PlayerId2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
-                         DomainPlayer(id = "PlayerId3",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
-                         DomainPlayer(id = "PlayerId4",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 10.0))),
-                         DomainPlayer(id = "PlayerId5",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
-                         DomainPlayer(id = "PlayerId6",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))))
+    val expected = setOf(AtpPlayer(id = "PlayerId1",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 7.0))),
+                         AtpPlayer(id = "PlayerId2",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))),
+                         AtpPlayer(id = "PlayerId3",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 0.0))),
+                         AtpPlayer(id = "PlayerId4",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 10.0))),
+                         AtpPlayer(id = "PlayerId5",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))),
+                         AtpPlayer(id = "PlayerId6",
+                                   tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))))
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
@@ -323,7 +323,7 @@ class PlayerFantaPointCalculatorServiceTest {
                                         points = ANY_POINTS))
     val tournamentInfo = ErrorTournamentInfo
 
-    val expected = emptySet<DomainPlayer>()
+    val expected = emptySet<AtpPlayer>()
 
     every { tournamentsRepository.readTournaments() } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true

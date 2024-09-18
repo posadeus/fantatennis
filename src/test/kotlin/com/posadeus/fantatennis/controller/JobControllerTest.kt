@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.job.JobController
-import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.AtpPlayer
 import com.posadeus.fantatennis.domain.service.player.PlayerFantaPointCalculatorService
 import com.posadeus.fantatennis.domain.service.player.PlayerFantaPointPersistenceService
 import io.mockk.*
@@ -29,13 +29,13 @@ class JobControllerTest {
   @Test
   fun `204 response`() {
 
-    val domainPlayers = setOf(DomainPlayer(id = "PlayerId1",
-                                           tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                              DomainPlayer(id = "PlayerId2",
-                                           tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+    val atpPlayers = setOf(AtpPlayer(id = "PlayerId1",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                           AtpPlayer(id = "PlayerId2",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
 
-    every { calculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns domainPlayers
-    every { persistenceService.persistScores(domainPlayers) } just runs
+    every { calculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
+    every { persistenceService.persistScores(atpPlayers) } just runs
 
     mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
         .andDo(print())
