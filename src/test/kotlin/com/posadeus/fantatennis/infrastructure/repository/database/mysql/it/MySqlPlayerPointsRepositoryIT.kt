@@ -1,6 +1,7 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.mysql
+package com.posadeus.fantatennis.infrastructure.repository.database.mysql.it
 
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlPlayerPointsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import org.assertj.core.api.Assertions.assertThat

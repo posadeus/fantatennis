@@ -1,6 +1,7 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.mysql
+package com.posadeus.fantatennis.infrastructure.repository.database.mysql.it
 
 import com.posadeus.fantatennis.domain.model.Tournament
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlTournamentsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TournamentsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.TournamentsEntity
 import org.assertj.core.api.Assertions.assertThat
