@@ -1,20 +1,31 @@
-package com.posadeus.fantatennis.domain.service.player
+package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersDao
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersEntity
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class PlayerServiceTest {
+class MySqlPlayersRepositoryTest {
 
-  private val playersRepository: PlayersRepository = mockk()
+  private val playersDao: PlayersDao = mockk()
 
-  private val service = PlayerService(playersRepository)
+  private val repository: PlayersRepository = MySqlPlayersRepository(playersDao)
 
   @Test
-  fun `get all players`() {
+  fun `retrieve all players`() {
+
+    val playersEntity1 = PlayersEntity(id = AN_ID,
+                                       atpTourId = AN_ATP_ID,
+                                       fullName = A_FULL_NAME)
+
+    val playersEntity2 = PlayersEntity(id = ANOTHER_ID,
+                                       atpTourId = ANOTHER_ATP_ID,
+                                       fullName = ANOTHER_FULL_NAME)
+    val playersEntities = listOf(playersEntity1, playersEntity2)
 
     val domainPlayer1 = DomainPlayer(id = AN_ID,
                                      atpId = AN_ATP_ID,
@@ -24,9 +35,9 @@ class PlayerServiceTest {
                                      fullName = ANOTHER_FULL_NAME)
     val expected = setOf(domainPlayer1, domainPlayer2)
 
-    every { playersRepository.getAllPlayers() } returns expected
+    every { playersDao.findAll() } returns playersEntities
 
-    assertThat(service.allPlayers()).isEqualTo(expected)
+    assertThat(repository.getAllPlayers()).isEqualTo(expected)
   }
 
   companion object {
