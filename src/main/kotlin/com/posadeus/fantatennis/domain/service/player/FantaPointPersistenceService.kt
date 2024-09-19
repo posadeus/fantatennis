@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
 import com.posadeus.fantatennis.domain.model.AtpPlayer
+import com.posadeus.fantatennis.domain.model.DomainPlayer
 
 class FantaPointPersistenceService(val repository: PlayerPointsRepository) {
 
@@ -9,5 +10,9 @@ class FantaPointPersistenceService(val repository: PlayerPointsRepository) {
 
     if (players.isNotEmpty())
       repository.save(players)
+  }
+
+  fun persistPlayersAndScores(domainPlayers: Set<DomainPlayer>, playersScores: Set<AtpPlayer>) {
+    TODO("Not yet implemented")
   }
 }
