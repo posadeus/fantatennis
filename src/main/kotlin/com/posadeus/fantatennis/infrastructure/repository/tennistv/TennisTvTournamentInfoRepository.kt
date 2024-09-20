@@ -61,7 +61,7 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
         .toSet()
 
     val winnersVsBye = round
-        .filter { it.Match == null && it.Winner != null }
+        .filter { it.Match == null && it.Winner != 0 }
         .map { it.Result?.TeamTop?.Player?.PlayerId ?: it.Result?.TeamBottom?.Player?.PlayerId!! }
         .toSet()
 

@@ -83,6 +83,23 @@ class TennisTvTournamentInfoRepositoryTest {
   }
 
   @Test
+  fun `get tournament information - match not played`() {
+
+    val clientResponse = aClientResponseWith(arrayOf(aNotPlayedRound("First Round",
+                                                                     null,
+                                                                     0,
+                                                                     null)))
+
+    val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
+                                          participants = emptySet(),
+                                          winners = mapOf(R1 to emptySet()))
+
+    every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
+
+    assertThat(tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
   fun `tournament error from client`() {
 
     val expected = ErrorTournamentInfo
@@ -120,6 +137,15 @@ class TennisTvTournamentInfoRepositoryTest {
       aRound()
           .withRoundName(roundName)
           .withFixtures(arrayOf(aFixture(fixtureWinner, fixtureLoser)))
+          .build()
+
+  private fun aNotPlayedRound(roundName: String,
+                              match: Match?,
+                              winner: Int,
+                              result: Result?) =
+      aRound()
+          .withRoundName(roundName)
+          .withFixtures(arrayOf(aFixtureNotPlayed(match, winner, result)))
           .build()
 
   private fun aRound(roundName: String,
@@ -162,6 +188,13 @@ class TennisTvTournamentInfoRepositoryTest {
                                               .withPlayer(resultTeamPlayer2)
                                               .build())
                           .build())
+          .build()
+
+  private fun aFixtureNotPlayed(match: Match?, winner: Int, result: Result?) =
+      aFixture()
+          .withMatch(match)
+          .withWinner(winner)
+          .withResult(result)
           .build()
 
   companion object {
