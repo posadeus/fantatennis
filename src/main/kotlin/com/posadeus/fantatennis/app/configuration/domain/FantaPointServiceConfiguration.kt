@@ -16,8 +16,10 @@ open class FantaPointServiceConfiguration {
                                   mySqlTournamentsRepository)
 
   @Bean
-  open fun fantaPointPersistenceService(mySqlPlayerPointsRepository: PlayerPointsRepository): FantaPointPersistenceService =
-      FantaPointPersistenceService(mySqlPlayerPointsRepository)
+  open fun fantaPointPersistenceService(mySqlPlayerPointsRepository: PlayerPointsRepository,
+                                        mySqlPlayersRepository: PlayersRepository): FantaPointPersistenceService =
+      FantaPointPersistenceService(mySqlPlayerPointsRepository,
+                                   mySqlPlayersRepository)
 
   @Bean
   open fun fantaPointService(fantaPointCalculatorService: FantaPointCalculatorService,

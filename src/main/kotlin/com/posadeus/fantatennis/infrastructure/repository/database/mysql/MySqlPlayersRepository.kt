@@ -10,6 +10,10 @@ class MySqlPlayersRepository(private val playersDao: PlayersDao) : PlayersReposi
   override fun getAllPlayers(): Set<DomainPlayer> =
       convert(playersDao.findAll())
 
+  override fun saveAll(players: Set<DomainPlayer>) {
+    TODO("Not yet implemented")
+  }
+
   private fun convert(playersEntities: Iterable<PlayersEntity>): Set<DomainPlayer> =
       playersEntities
           .map {

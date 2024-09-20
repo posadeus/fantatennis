@@ -1,43 +1,82 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
+import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
 import com.posadeus.fantatennis.domain.model.AtpPlayer
+import com.posadeus.fantatennis.domain.model.DomainPlayer
 import io.mockk.*
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class FantaPointPersistenceServiceTest {
 
-  private val repository: PlayerPointsRepository = mockk()
+  private val playerPointsRepository: PlayerPointsRepository = mockk()
+  private val playersRepository: PlayersRepository = mockk()
 
-  private val service = FantaPointPersistenceService(repository)
+  private val service = FantaPointPersistenceService(playerPointsRepository,
+                                                     playersRepository)
 
-  @Test
-  fun `persist scores`() {
+  @Nested
+  inner class ScorePersistence {
 
-    val players = setOf(AtpPlayer(id = "PlayerId1",
-                                  tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                        AtpPlayer(id = "PlayerId2",
-                                  tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+    @Test
+    fun `persist scores`() {
 
-    every { repository.save(players) } just runs
+      val players = setOf(AtpPlayer(id = "PlayerId1",
+                                    tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                          AtpPlayer(id = "PlayerId2",
+                                    tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
 
-    service.persistScores(players)
+      every { playerPointsRepository.save(players) } just runs
 
-    verify(exactly = 1) { repository.save(players) }
+      service.persistScores(players)
+
+      verify(exactly = 1) { playerPointsRepository.save(players) }
+      verify { playersRepository wasNot called }
+    }
+
+    @Test
+    fun `repository not called if players is empty`() {
+
+      val players = emptySet<AtpPlayer>()
+
+      service.persistScores(players)
+
+      verify { playerPointsRepository wasNot called }
+      verify { playersRepository wasNot called }
+    }
   }
 
-  @Test
-  fun `repository not called if players is empty`() {
+  @Nested
+  inner class PlayersAndScorePersistence {
 
-    val players = emptySet<AtpPlayer>()
+    @Test
+    fun `persist players and scores`() {
 
-    service.persistScores(players)
+      val domainPlayers = setOf(DomainPlayer(id = AN_ID,
+                                             atpId = "PlayerId1",
+                                             fullName = A_FULL_NAME))
 
-    verify { repository wasNot called }
+      val playerScores = setOf(AtpPlayer(id = "PlayerId1",
+                                         tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                               AtpPlayer(id = AN_ALREADY_EXISTING_PLAYER_ATP_ID,
+                                         tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+
+      every { playersRepository.saveAll(domainPlayers) } just runs
+      every { playerPointsRepository.save(playerScores) } just runs
+
+      service.persistPlayersAndScores(domainPlayers, playerScores)
+
+      verify(exactly = 1) { playersRepository.saveAll(domainPlayers) }
+      verify(exactly = 1) { playerPointsRepository.save(playerScores) }
+    }
   }
 
   companion object {
 
+    private const val AN_ALREADY_EXISTING_PLAYER_ATP_ID = "AN_ALREADY_EXISTING_PLAYER_ATP_ID"
+    private const val A_FULL_NAME = "A_FULL_NAME"
+    private const val AN_ID = "AN_ID"
     private const val A_TOURNAMENT_ID = 123
     private const val A_YEAR = 2222
   }
