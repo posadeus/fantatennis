@@ -11,7 +11,8 @@ class MySqlPlayersRepository(private val playersDao: PlayersDao) : PlayersReposi
       convert(playersDao.findAll())
 
   override fun saveAll(players: Set<DomainPlayer>) {
-    TODO("Not yet implemented")
+
+    playersDao.saveAll(convert(players))
   }
 
   private fun convert(playersEntities: Iterable<PlayersEntity>): Set<DomainPlayer> =
@@ -20,6 +21,15 @@ class MySqlPlayersRepository(private val playersDao: PlayersDao) : PlayersReposi
             DomainPlayer(id = it.id,
                          atpId = it.atpTourId,
                          fullName = it.fullName)
+          }
+          .toSet()
+
+  private fun convert(players: Set<DomainPlayer>): Set<PlayersEntity> =
+      players
+          .map {
+            PlayersEntity(id = it.id,
+                          atpTourId = it.atpId,
+                          fullName = it.fullName)
           }
           .toSet()
 }
