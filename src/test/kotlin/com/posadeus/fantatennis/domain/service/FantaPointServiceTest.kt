@@ -85,6 +85,47 @@ class FantaPointServiceTest {
     verify(exactly = 1) { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, atpPlayers) }
   }
 
+  @Test
+  fun `not all tournament's players found neither in the ranking`() {
+
+     val atpPlayers = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                            AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))),
+                            AtpPlayer(id = "A_THIRD_ATP_PLAYER_ID",
+                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 12.0))))
+    val domainPlayers = setOf(DomainPlayer(id = A_DOMAIN_PLAYER_ID,
+                                           atpId = AN_ATP_PLAYER_ID,
+                                           fullName = A_FULL_NAME))
+    val ranking = RankedPlayers(listOf(RankedPlayer(id = AN_ATP_PLAYER_ID,
+                                                    fullName = A_FULL_NAME,
+                                                    rank = A_RANKING,
+                                                    points = A_POINTS),
+                                       RankedPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                                    fullName = "ANOTHER_FULL_NAME",
+                                                    rank = ANOTHER_RANKING,
+                                                    points = ANOTHER_POINTS)))
+    val missingDomainPlayers = setOf(DomainPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                                  atpId = "ANOTHER_ATP_PLAYER_ID",
+                                                  fullName = "ANOTHER_FULL_NAME"))
+     val playerScoresToUpdate = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
+                                                tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                                      AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                                tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+
+    every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
+    every { playerService.allPlayers() } returns domainPlayers
+    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+    every { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, playerScoresToUpdate) } just runs
+
+    service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
+
+    verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
+    verify(exactly = 1) { playerService.allPlayers() }
+    verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
+    verify(exactly = 1) { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, playerScoresToUpdate) }
+  }
+
   companion object {
 
     private const val A_TOURNAMENT_ID = 1
