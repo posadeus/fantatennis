@@ -4,7 +4,6 @@ import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
 import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
 import com.posadeus.fantatennis.domain.model.AtpPlayer
 import com.posadeus.fantatennis.domain.model.DomainPlayer
-import jakarta.transaction.Transactional
 
 class FantaPointPersistenceService(private val repository: PlayerPointsRepository,
                                    private val playersRepository: PlayersRepository) {
@@ -15,7 +14,8 @@ class FantaPointPersistenceService(private val repository: PlayerPointsRepositor
       repository.save(players)
   }
 
-  @Transactional
+//  @Transactional
+//  TODO(Understand why it is not working in kotlin: Caused by: java.lang.IllegalArgumentException: Cannot subclass final class com.posadeus.fantatennis.domain.service.player.FantaPointPersistenceService)
   fun persistPlayersAndScores(domainPlayers: Set<DomainPlayer>,
                               playersScores: Set<AtpPlayer>) {
 
