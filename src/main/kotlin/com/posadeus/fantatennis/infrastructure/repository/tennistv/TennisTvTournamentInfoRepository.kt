@@ -49,7 +49,7 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
         "Fourth Round" -> R4
         "Third Round" -> R3
         "Second Round", "Round of 16" -> R2
-        "First Round", "Round of 28" -> R1
+        "First Round", "Round of 28", "Round of 32" -> R1
         else -> throw UnexpectedRoundException()
       }
 
