@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.job.JobController
+import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.service.player.FantaPointService
 import io.mockk.*
 import org.junit.jupiter.api.Test
@@ -30,6 +31,26 @@ class JobControllerTest {
     mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
         .andDo(print())
         .andExpect(status().isNoContent)
+  }
+
+  @Test
+  fun `400 response`() {
+
+    every { fantaPointService.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } throws NoPointsForTournamentException()
+
+    mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
+        .andDo(print())
+        .andExpect(status().isBadRequest)
+  }
+
+  @Test
+  fun `500 response`() {
+
+    every { fantaPointService.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } throws Exception()
+
+    mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
+        .andDo(print())
+        .andExpect(status().isInternalServerError)
   }
 
   companion object {

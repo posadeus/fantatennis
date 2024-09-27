@@ -26,5 +26,7 @@ paths:
       responses:
         '204':
           description: Players fanta points updated successfully
+        '400':
+          description: Wrong input params
         '500':
           description: Error during the process
