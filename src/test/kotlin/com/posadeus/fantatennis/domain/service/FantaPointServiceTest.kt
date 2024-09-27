@@ -1,11 +1,13 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.player.*
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import io.mockk.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class FantaPointServiceTest {
 
@@ -124,6 +126,19 @@ class FantaPointServiceTest {
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
     verify(exactly = 1) { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, playerScoresToUpdate) }
+  }
+
+  @Test
+  fun `tournamentPlayers is empty`() {
+
+    every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns emptySet()
+
+    assertThrows<NoPointsForTournamentException> { service.playerFantaPointsFor (A_TOURNAMENT_ID, A_YEAR) }
+
+    verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
+    verify { playerService wasNot called }
+    verify { rankingService wasNot called }
+    verify { fantaPointPersistenceService wasNot called }
   }
 
   companion object {
