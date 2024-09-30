@@ -50,3 +50,9 @@ client:
     http:
       connection-timeout: 2000
       connection-request-timeout: 2000
+
+  aus-open:
+    uri: https://prod-scores-api.ausopen.com
+    http:
+      connection-timeout: 2000
+      connection-request-timeout: 2000
