@@ -1,8 +1,7 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
-import com.posadeus.fantatennis.domain.model.DomainPlayer
-import com.posadeus.fantatennis.domain.model.RankedPlayers
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import org.slf4j.LoggerFactory
 
@@ -13,61 +12,66 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
 
   fun playerFantaPointsFor(tournamentId: Int, year: Int) {
 
-    val tournamentPlayers = fantaPointCalculatorService.calculateFantaPointsFor(tournamentId, year)
+    fantaPointCalculatorService.calculateFantaPointsFor(tournamentId, year)
+        .takeIf { it.isNotEmpty() }
+        ?.let(::persist)
+    ?: throw NoPointsForTournamentException()
+        .also { LOGGER.warn("No Players found for tournament $tournamentId and year $year") }
+  }
 
-    if (tournamentPlayers.isNotEmpty()) {
+  private fun persist(playersScores: Set<AtpPlayer>) {
 
-      val players = playerService.allPlayers()
+    val players = playerService.allPlayers()
 
-      if (players.map { it.atpId }.containsAll(tournamentPlayers.map { it.id })) {
-
-        fantaPointPersistenceService.persistScores(tournamentPlayers)
-      }
-      else {
-
-        val missingPlayerAtpIds = tournamentPlayers
+    val notRegisteredPlayersAtpIds =
+        playersScores
             .map { it.id }
             .filterNot { atpId -> atpId in players.map { it.atpId } }
-
-        val rankedPlayer = rankingService.retrieveRankedPlayer(1000)
-
-        val missingDomainPlayers = (rankedPlayer as RankedPlayers)
-            .players
-            .filter { it.id in missingPlayerAtpIds }
-            .map {
-              DomainPlayer(id = it.id,
-                           atpId = it.id,
-                           fullName = it.fullName)
-            }
             .toSet()
 
-        if (missingDomainPlayers.size == missingPlayerAtpIds.size) {
+    if (notRegisteredPlayersAtpIds.isEmpty()) {
 
-          fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, tournamentPlayers)
-        }
-        else {
-
-          val missingRankingPlayersIds = tournamentPlayers
-              .filterNot { tournamentPlayer -> tournamentPlayer.id in rankedPlayer.players.map { it.id } }
-              .map { it.id }
-              .toSet()
-
-          LOGGER.warn("Players $missingRankingPlayersIds not present in top 1000")
-
-          val playerScoresToUpdate = tournamentPlayers
-              .filter { tournamentPlayer -> tournamentPlayer.id in rankedPlayer.players.map { it.id } }
-              .toSet()
-
-          fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, playerScoresToUpdate)
-        }
-      }
+      fantaPointPersistenceService.persistScores(playersScores)
     }
     else {
 
-      LOGGER.warn("No Players found for tournament $tournamentId and year $year")
-      throw NoPointsForTournamentException()
+      val rankedPlayers = rankingService.retrieveRankedPlayer(1000) as RankedPlayers
+      val playersToRegister = findMissingPlayersInRankedPlayers(notRegisteredPlayersAtpIds, rankedPlayers)
+
+      playerService.saveAll(playersToRegister)
+
+      if (playersToRegister.size != notRegisteredPlayersAtpIds.size) {
+
+        removeNotRegisteredPlayers(playersToRegister, notRegisteredPlayersAtpIds, playersScores)
+            .let { fantaPointPersistenceService.persistScores(it) }
+      }
+      else {
+
+        fantaPointPersistenceService.persistScores(playersScores)
+      }
     }
   }
+
+  private fun removeNotRegisteredPlayers(playersToRegister: Set<DomainPlayer>,
+                                         notRegisteredPlayersAtpIds: Set<AtpPlayerId>,
+                                         playersScores: Set<AtpPlayer>): Set<AtpPlayer> {
+
+    val missingRankingPlayersIds = notRegisteredPlayersAtpIds.filter { id -> id !in playersToRegister.map { it.id } }
+
+    LOGGER.warn("Players $missingRankingPlayersIds not present in top 1000")
+
+    return playersScores
+        .filter { playerScore -> playerScore.id !in missingRankingPlayersIds }
+        .toSet()
+  }
+
+  private fun findMissingPlayersInRankedPlayers(missingPlayerAtpIds: Set<AtpPlayerId>,
+                                                rankedPlayer: RankedPlayers): Set<DomainPlayer> =
+      rankedPlayer
+          .players
+          .filter { it.id in missingPlayerAtpIds }
+          .map { DomainPlayer(id = it.id, atpId = it.id, fullName = it.fullName) }
+          .toSet()
 
   companion object {
 

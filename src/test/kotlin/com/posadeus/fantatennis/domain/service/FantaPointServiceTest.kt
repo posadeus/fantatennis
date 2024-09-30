@@ -77,14 +77,16 @@ class FantaPointServiceTest {
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
     every { playerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, atpPlayers) } just runs
+    every { playerService.saveAll(missingDomainPlayers) } just runs
+    every { fantaPointPersistenceService.persistScores(atpPlayers) } just runs
 
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
-    verify(exactly = 1) { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, atpPlayers) }
+    verify(exactly = 1) { playerService.saveAll(missingDomainPlayers) }
+    verify(exactly = 1) { fantaPointPersistenceService.persistScores(atpPlayers) }
   }
 
   @Test
@@ -118,14 +120,16 @@ class FantaPointServiceTest {
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
     every { playerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, playerScoresToUpdate) } just runs
+    every { playerService.saveAll(missingDomainPlayers) } just runs
+    every { fantaPointPersistenceService.persistScores(playerScoresToUpdate) } just runs
 
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
-    verify(exactly = 1) { fantaPointPersistenceService.persistPlayersAndScores(missingDomainPlayers, playerScoresToUpdate) }
+    verify(exactly = 1) { playerService.saveAll(missingDomainPlayers) }
+    verify(exactly = 1) { fantaPointPersistenceService.persistScores(playerScoresToUpdate) }
   }
 
   @Test

@@ -14,6 +14,7 @@ class FantaPointPersistenceService(private val repository: PlayerPointsRepositor
       repository.save(players)
   }
 
+  @Deprecated("")
 //  @Transactional
 //  TODO(Understand why it is not working in kotlin: Caused by: java.lang.IllegalArgumentException: Cannot subclass final class com.posadeus.fantatennis.domain.service.player.FantaPointPersistenceService)
   fun persistPlayersAndScores(domainPlayers: Set<DomainPlayer>,
