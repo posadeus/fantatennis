@@ -25,12 +25,13 @@ class FantaPointCalculatorService(private val tournamentInfoRepositories: List<T
 
         when (tournament.points) {
 
-          2000 -> getScores(tournamentInfo, year, tournamentId, scoresRules2000)
-          1000 -> getScores(tournamentInfo, year, tournamentId, scoresRules1000)
-          500 -> getScores(tournamentInfo, year, tournamentId, scoresRules500)
-          250 -> getScores(tournamentInfo, year, tournamentId, scoresRules250)
-          else -> emptySet()
-        }
+          2000 -> getScores(tournamentInfo, scoresRules2000)
+          1000 -> getScores(tournamentInfo, scoresRules1000)
+          500 -> getScores(tournamentInfo, scoresRules500)
+          250 -> getScores(tournamentInfo, scoresRules250)
+          else -> emptyMap()
+        }.map { toAtpPlayer(it, year, tournamentId) }
+        .toSet()
       }
 
       is ErrorTournamentInfo -> emptySet()
@@ -38,9 +39,7 @@ class FantaPointCalculatorService(private val tournamentInfoRepositories: List<T
   }
 
   private fun getScores(tournamentInfo: CompleteTournamentInfo,
-                        year: Int,
-                        tournamentId: Int,
-                        scoreRules: Map<String, Double>): Set<AtpPlayer> {
+                        scoreRules: Map<String, Double>): Map<AtpPlayerId, Double> {
 
     val scoresFirstRound: Map<AtpPlayerId, Double>
     val scoresSecondRound: Map<AtpPlayerId, Double>
@@ -50,75 +49,85 @@ class FantaPointCalculatorService(private val tournamentInfoRepositories: List<T
 
     if (tournamentInfo.winners[R4] != null) {
 
-      scoresFirstRound = tournamentInfo.participants.associateWith { scoreRules["Qualified"]!! }
-      scoresSecondRound = tournamentInfo.winners[R1]!!.associateWith { scoreRules["First Round"]!! }
-      scoresThirdRound = tournamentInfo.winners[R2]!!.associateWith { scoreRules["Second Round"]!! }
-      scoresFourthRound = tournamentInfo.winners[R3]!!.associateWith { scoreRules["Third Round"]!! }
-      scoresQuarterfinals = tournamentInfo.winners[R4]!!.associateWith { scoreRules["Quarterfinals"]!! }
+      scoresFirstRound = scoresFor(tournamentInfo.participants, scoreRules["Q"])
+      scoresSecondRound = scoresFor(tournamentInfo.winners[R1]!!, scoreRules["R1"])
+      scoresThirdRound = scoresFor(tournamentInfo.winners[R2]!!, scoreRules["R2"])
+      scoresFourthRound = scoresFor(tournamentInfo.winners[R3]!!, scoreRules["R3"])
+      scoresQuarterfinals = scoresFor(tournamentInfo.winners[R4]!!, scoreRules["QF"])
     }
     else if (tournamentInfo.winners[R3] != null) {
 
       scoresFirstRound = emptyMap()
-      scoresSecondRound = tournamentInfo.participants.associateWith { scoreRules["First Round"]!! }
-      scoresThirdRound = tournamentInfo.winners[R1]!!.associateWith { scoreRules["Second Round"]!! }
-      scoresFourthRound = tournamentInfo.winners[R2]!!.associateWith { scoreRules["Third Round"]!! }
-      scoresQuarterfinals = tournamentInfo.winners[R3]!!.associateWith { scoreRules["Quarterfinals"]!! }
+      scoresSecondRound = scoresFor(tournamentInfo.participants, scoreRules["R1"])
+      scoresThirdRound = scoresFor(tournamentInfo.winners[R1]!!, scoreRules["R2"])
+      scoresFourthRound = scoresFor(tournamentInfo.winners[R2]!!, scoreRules["R3"])
+      scoresQuarterfinals = scoresFor(tournamentInfo.winners[R3]!!, scoreRules["QF"])
     }
     else {
 
       scoresFirstRound = emptyMap()
       scoresSecondRound = emptyMap()
-      scoresThirdRound = tournamentInfo.participants.associateWith { scoreRules["Second Round"]!! }
-      scoresFourthRound = tournamentInfo.winners[R1]!!.associateWith { scoreRules["Third Round"]!! }
-      scoresQuarterfinals = tournamentInfo.winners[R2]!!.associateWith { scoreRules["Quarterfinals"]!! }
+      scoresThirdRound = scoresFor(tournamentInfo.participants, scoreRules["R2"])
+      scoresFourthRound = scoresFor(tournamentInfo.winners[R1]!!, scoreRules["R3"])
+      scoresQuarterfinals = scoresFor(tournamentInfo.winners[R2]!!, scoreRules["QF"])
     }
 
-    val scoresSemifinals = tournamentInfo.winners[QF]!!.associateWith { scoreRules["Semifinals"]!! }
-    val scoresRunnerUp = tournamentInfo.winners[SF]!!.associateWith { scoreRules["RunnerUp"]!! }
-    val scoresWinner = tournamentInfo.winners[F]!!.associateWith { scoreRules["Winner"]!! }
+    val scoresSemifinals = scoresFor(tournamentInfo.winners[QF]!!, scoreRules["SF"])
+    val scoresRunnerUp = scoresFor(tournamentInfo.winners[SF]!!, scoreRules["RU"])
+    val scoresWinner = scoresFor(tournamentInfo.winners[F]!!, scoreRules["W"])
 
-    val scoresByPlayer =
-        scoresFirstRound + scoresSecondRound + scoresThirdRound + scoresFourthRound + scoresQuarterfinals + scoresSemifinals + scoresRunnerUp + scoresWinner
-
-    return scoresByPlayer
-        .map { AtpPlayer(id = it.key, tournamentPoints = mapOf(year to mapOf(tournamentId to it.value))) }
-        .toSet()
+    return scoresFirstRound +
+           scoresSecondRound +
+           scoresThirdRound +
+           scoresFourthRound +
+           scoresQuarterfinals +
+           scoresSemifinals +
+           scoresRunnerUp +
+           scoresWinner
   }
+
+  private fun scoresFor(playerIds: Set<AtpPlayerId>, scores: Double?) =
+      playerIds.associateWith { scores!! }
+
+  private fun toAtpPlayer(scoresByPlayer: Map.Entry<AtpPlayerId, Double>,
+                          year: Int,
+                          tournamentId: Int) =
+      AtpPlayer(id = scoresByPlayer.key,
+                tournamentPoints = mapOf(year to mapOf(tournamentId to scoresByPlayer.value)))
 
   companion object {
 
-    private val scoresRules2000 = mapOf("Winner" to 80.0,
-                                        "RunnerUp" to 56.0,
-                                        "Semifinals" to 32.0,
-                                        "Quarterfinals" to 16.0,
-                                        "Third Round" to 8.0,
-                                        "Second Round" to 4.0,
-                                        "First Round" to 2.0,
-                                        "Qualified" to 0.0)
-
-    private val scoresRules1000 = mapOf("Winner" to 40.0,
-                                        "RunnerUp" to 28.0,
-                                        "Semifinals" to 16.0,
-                                        "Quarterfinals" to 8.0,
-                                        "Third Round" to 4.0,
-                                        "Second Round" to 2.0,
-                                        "First Round" to 1.0,
-                                        "Qualified" to 0.0)
-    private val scoresRules500 = mapOf("Winner" to 20.0,
-                                       "RunnerUp" to 14.0,
-                                       "Semifinals" to 8.0,
-                                       "Quarterfinals" to 4.0,
-                                       "Third Round" to 2.0,
-                                       "Second Round" to 1.0,
-                                       "First Round" to 0.0,
-                                        "Qualified" to 0.0)
-    private val scoresRules250 = mapOf("Winner" to 10.0,
-                                       "RunnerUp" to 7.0,
-                                       "Semifinals" to 4.0,
-                                       "Quarterfinals" to 2.0,
-                                       "Third Round" to 1.0,
-                                       "Second Round" to 0.0,
-                                       "First Round" to 0.0,
-                                        "Qualified" to 0.0)
+    private val scoresRules2000 = mapOf("W" to 80.0,
+                                        "RU" to 56.0,
+                                        "SF" to 32.0,
+                                        "QF" to 16.0,
+                                        "R3" to 8.0,
+                                        "R2" to 4.0,
+                                        "R1" to 2.0,
+                                        "Q" to 0.0)
+    private val scoresRules1000 = mapOf("W" to 40.0,
+                                        "RU" to 28.0,
+                                        "SF" to 16.0,
+                                        "QF" to 8.0,
+                                        "R3" to 4.0,
+                                        "R2" to 2.0,
+                                        "R1" to 1.0,
+                                        "Q" to 0.0)
+    private val scoresRules500 = mapOf("W" to 20.0,
+                                       "RU" to 14.0,
+                                       "SF" to 8.0,
+                                       "QF" to 4.0,
+                                       "R3" to 2.0,
+                                       "R2" to 1.0,
+                                       "R1" to 0.0,
+                                       "Q" to 0.0)
+    private val scoresRules250 = mapOf("W" to 10.0,
+                                       "RU" to 7.0,
+                                       "SF" to 4.0,
+                                       "QF" to 2.0,
+                                       "R3" to 1.0,
+                                       "R2" to 0.0,
+                                       "R1" to 0.0,
+                                       "Q" to 0.0)
   }
 }
