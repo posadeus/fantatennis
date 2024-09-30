@@ -8,13 +8,11 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.T
 class MySqlTournamentsRepository(private val dao: TournamentsDao) : TournamentsRepository {
 
   override fun readTournaments(): List<Tournament> =
-      convert(dao.findAll())
+      dao.findAll()
+          .map(::convert)
 
-  private fun convert(tournamentsEntities: Iterable<TournamentsEntity>): List<Tournament> =
-      tournamentsEntities
-          .map {
-            Tournament(id = it.id,
-                       tennisTvId = it.tennisTvId,
-                       points = it.points)
-          }
+  private fun convert(tournamentsEntities: TournamentsEntity): Tournament =
+      Tournament(id = tournamentsEntities.id,
+                 tennisTvId = tournamentsEntities.tennisTvId,
+                 points = tournamentsEntities.points)
 }

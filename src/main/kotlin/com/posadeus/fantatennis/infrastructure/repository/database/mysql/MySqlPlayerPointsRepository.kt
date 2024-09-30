@@ -9,47 +9,50 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
 
   override fun save(players: Set<AtpPlayer>) {
 
-    playersPointsDao.saveAll(toPlayersPointsEntity(players))
+    players
+        .let(::toPlayersPointsEntities)
+        .let { playersPointsDao.saveAll(it) }
   }
 
   override fun retrieve(tournamentByTeam: FoundTournamentByTeam): TeamOrderedPlayerPoints =
-      playersPointsDao.findPlayersPointsByTeamTournamentDto(tournamentByTeam.let(::toTeamTournamentDto))
-          .let(::toPlayerPoints)
+      tournamentByTeam
+          .let(::toTeamTournamentDto)
+          .let { playersPointsDao.findPlayersPointsByTeamTournamentDto(it) }
+          .map(::toPlayerPoints)
           .let(::TeamOrderedPlayerPoints)
 
-  private fun toPlayerPoints(teamPlayerPoints: List<TeamPlayerPointsDto>): List<PlayerPoints> =
-      teamPlayerPoints
-          .map {
-            PlayerPoints(playerId = it.playerId,
-                         playerName = it.playerName,
-                         totalPoints = it.totalScore)
-          }
+  private fun toPlayerPoints(teamPlayerPoints: TeamPlayerPointsDto): PlayerPoints =
+      PlayerPoints(playerId = teamPlayerPoints.playerId,
+                   playerName = teamPlayerPoints.playerName,
+                   totalPoints = teamPlayerPoints.totalScore)
 
   private fun toTeamTournamentDto(tournamentByTeam: FoundTournamentByTeam): TeamTournamentDto =
-      tournamentByTeam
-          .let {
-            TeamTournamentDto(teamId = it.teamId,
-                              startingTournamentId = it.startingTournamentId,
-                              endingTournamentId = it.endingTournamentId,
-                              tournamentYear = it.tournamentYear)
+      TeamTournamentDto(teamId = tournamentByTeam.teamId,
+                        startingTournamentId = tournamentByTeam.startingTournamentId,
+                        endingTournamentId = tournamentByTeam.endingTournamentId,
+                        tournamentYear = tournamentByTeam.tournamentYear)
+
+  private fun toPlayersPointsEntities(players: Set<AtpPlayer>): Set<PlayersPointsEntity> =
+      players
+          .flatMap { player ->
+
+            val playerId = player.id
+
+            player.tournamentPoints
+                .flatMap { tournament ->
+
+                  tournament.value.map { toPlayersPointsEntity(it, playerId, tournament.key) }
+                }
           }
+          .toSet()
 
-  private fun toPlayersPointsEntity(players: Set<AtpPlayer>): Set<PlayersPointsEntity> =
-      players.flatMap { player ->
-        val playerId = player.id
-
-        player.tournamentPoints.flatMap { tournament ->
-          val year = tournament.key
-
-          tournament.value
-              .map {
-                PlayersPointsEntity(id = PlayersPointsKeyEmbedded(tournamentYear = year,
-                                                                  tournamentId = it.key,
-                                                                  playerId = playerId),
-                                    fantaPoints = it.value,
-                                    player = PlayersEntity(id = playerId),
-                                    tournament = TournamentsEntity(id = it.key))
-              }
-        }
-      }.toSet()
+  private fun toPlayersPointsEntity(pointsByTournamentId: Map.Entry<TournamentId, Double>,
+                                    playerId: AtpPlayerId,
+                                    tournamentYear: Year) =
+      PlayersPointsEntity(id = PlayersPointsKeyEmbedded(tournamentYear = tournamentYear,
+                                                        tournamentId = pointsByTournamentId.key,
+                                                        playerId = playerId),
+                          fantaPoints = pointsByTournamentId.value,
+                          player = PlayersEntity(id = playerId),
+                          tournament = TournamentsEntity(id = pointsByTournamentId.key))
 }
