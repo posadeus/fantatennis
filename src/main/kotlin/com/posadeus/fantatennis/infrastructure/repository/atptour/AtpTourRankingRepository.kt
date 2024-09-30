@@ -9,22 +9,23 @@ import com.posadeus.fantatennis.infrastructure.client.atptour.model.*
 class AtpTourRankingRepository(private val atpTourClient: AtpTourClient) : RankingRepository {
 
   override fun retrieveRanking(positions: Int): Ranking =
-      convert(atpTourClient.retrieveRanking(positions))
+      atpTourClient.retrieveRanking(positions)
+          .let(::convert)
 
   private fun convert(atpTourRankingResponse: AtpTourRankingResponse): Ranking =
       when (atpTourRankingResponse) {
 
         is AtpTourRankingsOkResponse ->
           atpTourRankingResponse.ranking
-              .map {
-                RankedPlayer(id = it.playerId,
-                             fullName = it.name,
-                             rank = it.rankNo,
-                             points = it.points.replace(",", "").toInt())
-              }
-              .let { RankedPlayers(it) }
+              .map(::toRankedPlayer)
+              .let(::RankedPlayers)
 
-        is AtpTourRankingErrorResponse ->
-          EmptyRanking
+        is AtpTourRankingErrorResponse -> EmptyRanking
       }
+
+  private fun toRankedPlayer(atpTourRankingOkResponse: AtpTourRankingOkResponse): RankedPlayer =
+      RankedPlayer(id = atpTourRankingOkResponse.playerId,
+                   fullName = atpTourRankingOkResponse.name,
+                   rank = atpTourRankingOkResponse.rankNo,
+                   points = atpTourRankingOkResponse.points.replace(",", "").toInt())
 }
