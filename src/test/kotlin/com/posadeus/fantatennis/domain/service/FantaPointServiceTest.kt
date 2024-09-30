@@ -48,7 +48,6 @@ class FantaPointServiceTest {
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { fantaPointPersistenceService.persistScores(atpPlayers) }
-    verify(exactly = 0) { fantaPointPersistenceService.persistPlayersAndScores(any(), any()) }
     verify { rankingService wasNot called }
   }
 

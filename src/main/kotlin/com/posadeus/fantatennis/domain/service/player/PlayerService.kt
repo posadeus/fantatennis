@@ -9,6 +9,7 @@ class PlayerService(private val playersRepository: PlayersRepository) {
       playersRepository.getAllPlayers()
 
   fun saveAll(players: Set<DomainPlayer>) {
-    TODO("Not yet implemented")
+
+    playersRepository.saveAll(players)
   }
 }
