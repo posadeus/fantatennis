@@ -75,8 +75,8 @@ class AusOpenTournamentInfoRepository(private val client: AusOpenClient) : Tourn
         else -> throw UnexpectedRoundException()
       }
 
-  private fun toAtpId(usOpenId: String): String =
-      usOpenId.removePrefix("ATP").uppercase()
+  private fun toAtpId(ausOpenId: String): String =
+      ausOpenId.removePrefix("ATP").uppercase()
 
   companion object {
 
