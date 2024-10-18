@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.controller.team.TeamController
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.service.CreateTeamService
+import com.posadeus.fantatennis.domain.service.team.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.TeamService
 import io.mockk.*
 import org.junit.jupiter.api.Nested
@@ -38,7 +38,7 @@ class TeamControllerTest {
       val request = TeamToCreateDto(ownerId = "OWNER_ID")
       val expected = TeamCreatedDto(id = 1, ownerId = "OWNER_ID")
 
-      every { createTeamService.create(request) } returns expected
+      every { createTeamService.create(request) } returns TeamCreated(team = expected)
 
       mvc.perform(post(TEAM_ENDPOINT)
                       .contentType(MediaType.APPLICATION_JSON)
@@ -64,6 +64,24 @@ class TeamControllerTest {
       verify { createTeamService wasNot called }
       verify { service wasNot called }
     }
+
+    @Test
+    fun `500 response`() {
+
+      val request = TeamToCreateDto(ownerId = "OWNER_ID")
+
+      every { createTeamService.create(request) } returns ErrorTeamCreation
+
+      mvc.perform(post(TEAM_ENDPOINT)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isInternalServerError)
+
+      verify(exactly = 1) { createTeamService.create(request) }
+      verify { service wasNot called }
+    }
   }
 
   @Nested
@@ -82,6 +100,8 @@ class TeamControllerTest {
           .andDo(print())
           .andExpect(status().isOk)
           .andExpect(content().json(toJson(expected)))
+
+      verify { createTeamService wasNot called }
     }
 
     @Test
@@ -95,6 +115,8 @@ class TeamControllerTest {
                       .contentType(MediaType.APPLICATION_JSON))
           .andDo(print())
           .andExpect(status().isBadRequest)
+
+      verify { createTeamService wasNot called }
     }
 
     @Test
@@ -108,6 +130,8 @@ class TeamControllerTest {
                       .contentType(MediaType.APPLICATION_JSON))
           .andDo(print())
           .andExpect(status().isInternalServerError)
+
+      verify { createTeamService wasNot called }
     }
   }
 
