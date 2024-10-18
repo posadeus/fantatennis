@@ -1,8 +1,10 @@
 package com.posadeus.fantatennis.app.configuration.domain
 
 import com.posadeus.fantatennis.domain.infrastructure.*
+import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.TeamService
+import com.posadeus.fantatennis.infrastructure.TeamsRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -18,4 +20,8 @@ open class TeamServiceConfiguration {
   @Bean
   open fun createTeamService(mySqlFantaTeamsRepository: FantaTeamsRepository): CreateTeamService =
       CreateTeamService(mySqlFantaTeamsRepository)
+
+  @Bean
+  open fun addPlayersTeamService(mySqlTeamsRepository: TeamsRepository): AddPlayersTeamService =
+      AddPlayersTeamService(mySqlTeamsRepository)
 }
