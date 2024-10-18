@@ -8,10 +8,13 @@ import com.posadeus.fantatennis.domain.model.*
 class CreateTeamService(private val repository: FantaTeamsRepository) {
 
   fun create(request: TeamToCreateDto): TeamCreation =
-      repository.createTeam(request.ownerId)
-          .let(::convert)
+      when (val fantaTeam = repository.createTeam(request.ownerId)) {
 
-  private fun convert(fantaTeam: FantaTeam) =
+        is FantaTeamOk -> toTeamCreated(fantaTeam)
+        is FantaTeamError -> ErrorTeamCreation
+      }
+
+  private fun toTeamCreated(fantaTeam: FantaTeamOk): TeamCreated =
       TeamCreatedDto(id = fantaTeam.id, ownerId = fantaTeam.ownerId)
           .let(::TeamCreated)
 }

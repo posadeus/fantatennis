@@ -1,4 +1,8 @@
 package com.posadeus.fantatennis.domain.model
 
-data class FantaTeam(val id: Int,
-                     val ownerId: String)
+sealed interface FantaTeam
+
+data class FantaTeamOk(val id: Int,
+                       val ownerId: String) : FantaTeam
+
+data object FantaTeamError : FantaTeam

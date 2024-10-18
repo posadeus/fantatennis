@@ -20,11 +20,24 @@ class CreateTeamServiceTest {
 
     val ownerId = "OWNER_ID"
     val request = TeamToCreateDto(ownerId = ownerId)
-    val fantaTeam = FantaTeam(id = 1, ownerId = ownerId)
+    val fantaTeam = FantaTeamOk(id = 1, ownerId = ownerId)
 
     val expected: TeamCreation = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = ownerId))
 
     every { repository.createTeam(ownerId) } returns fantaTeam
+
+    assertThat(service.create(request)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `error from repository`() {
+
+    val ownerId = "OWNER_ID"
+    val request = TeamToCreateDto(ownerId = ownerId)
+
+    val expected = ErrorTeamCreation
+
+    every { repository.createTeam(ownerId) } returns FantaTeamError
 
     assertThat(service.create(request)).isEqualTo(expected)
   }
