@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController
 class TeamController(private val service: TeamService,
                      private val createTeamService: CreateTeamService) : TeamApi {
 
+  override fun addPlayers(teamId: Int, playersToAddDto: PlayersToAddDto): ResponseEntity<TeamDto> {
+    TODO("Not yet implemented")
+  }
+
   override fun create(teamToCreateDto: TeamToCreateDto): ResponseEntity<TeamCreatedDto> {
     return when (val teamCreation = createTeamService.create(teamToCreateDto)) {
 

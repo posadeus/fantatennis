@@ -26,6 +26,7 @@ paths:
                 $ref: '#/components/schemas/TeamDto'
         '500':
           description: Error during team retrieval
+
   /team:
     post:
       operationId: create
@@ -50,6 +51,38 @@ paths:
           description: Wrong input body
         '500':
           description: Error during team retrieval
+
+  /team/{teamId}/players:
+    post:
+      operationId: addPlayers
+      summary: Add players to an existing team.
+      description: Create an empty team.
+      tags:
+        - Team
+      parameters:
+        - in: path
+          name: teamId
+          schema:
+            type: integer
+          required: true
+          description: ID of the team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayersToAddDto'
+      responses:
+        '200':
+          description: IDs processed successfully and players added to the team
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamDto'
+        '400':
+          description: Wrong input body
+        '500':
+          description: Error during team update
 
 components:
   schemas:
@@ -110,3 +143,16 @@ components:
           example: OWNER_ID
       required:
         - ownerId
+
+    PlayersToAddDto:
+      type: object
+      properties:
+        playerIds:
+          type: array
+          default: [ ]
+          items:
+            type: string
+      example:
+        playerIds: [ "id1", "id2", "id3" ]
+      required:
+        - playerIds

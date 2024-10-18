@@ -15,6 +15,15 @@ interface TeamApi {
 
     @RequestMapping(
             method = [RequestMethod.POST],
+            value = ["/team/{teamId}/players"],
+            produces = ["application/json"],
+            consumes = ["application/json"]
+    )
+    fun addPlayers( @PathVariable("teamId") teamId: Int, @RequestBody playersToAddDto: PlayersToAddDto): ResponseEntity<TeamDto>
+
+
+    @RequestMapping(
+            method = [RequestMethod.POST],
             value = ["/team"],
             produces = ["application/json"],
             consumes = ["application/json"]
