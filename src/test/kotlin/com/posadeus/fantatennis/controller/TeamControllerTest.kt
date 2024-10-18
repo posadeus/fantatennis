@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.controller.team.TeamController
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.TeamService
 import io.mockk.*
@@ -21,13 +22,98 @@ class TeamControllerTest {
 
   private val service: TeamService = mockk()
   private val createTeamService: CreateTeamService = mockk()
+  private val addPlayersTeamService: AddPlayersTeamService = mockk()
 
-  private val controller: TeamApi = TeamController(service, createTeamService)
+  private val controller: TeamApi = TeamController(service, createTeamService, addPlayersTeamService)
 
   private val objectMapper = ObjectMapper()
   private val mvc = MockMvcBuilders.standaloneSetup(controller)
       .setMessageConverters(MappingJackson2HttpMessageConverter(objectMapper))
       .build()
+
+  @Nested
+  inner class AddPlayers {
+
+    @Test
+    fun `200 response - players added`() {
+
+      val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
+      val request = PlayersToAddDto(playerIds = playerIds)
+
+      val expected = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 0.0),
+                                              TeamPlayerDto(fullName = ANOTHER_PLAYER_FULL_NAME, fantaPoints = 0.0)),
+                             totalScore = 0.0)
+      val foundTeam = FoundTeam(expected)
+
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) } returns foundTeam
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isOk)
+          .andExpect(content().json(toJson(expected)))
+
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) }
+      verify { createTeamService wasNot called }
+      verify { service wasNot called }
+    }
+
+    @Test
+    fun `400 response - incorrect request body`() {
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isBadRequest)
+
+      verify { addPlayersTeamService wasNot called }
+      verify { createTeamService wasNot called }
+      verify { service wasNot called }
+    }
+
+    @Test
+    fun `400 response - team id not found`() {
+
+      val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
+      val request = PlayersToAddDto(playerIds = playerIds)
+
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) } returns TeamIdNotFoundTeam
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isBadRequest)
+
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) }
+      verify { createTeamService wasNot called }
+      verify { service wasNot called }
+    }
+
+    @Test
+    fun `500 response`() {
+
+      val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
+      val request = PlayersToAddDto(playerIds = playerIds)
+
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) } returns ErrorTeam
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isInternalServerError)
+
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) }
+      verify { createTeamService wasNot called }
+      verify { service wasNot called }
+    }
+  }
 
   @Nested
   inner class Create {
@@ -50,6 +136,7 @@ class TeamControllerTest {
 
       verify(exactly = 1) { createTeamService.create(request) }
       verify { service wasNot called }
+      verify { addPlayersTeamService wasNot called }
     }
 
     @Test
@@ -63,6 +150,7 @@ class TeamControllerTest {
 
       verify { createTeamService wasNot called }
       verify { service wasNot called }
+      verify { addPlayersTeamService wasNot called }
     }
 
     @Test
@@ -81,6 +169,7 @@ class TeamControllerTest {
 
       verify(exactly = 1) { createTeamService.create(request) }
       verify { service wasNot called }
+      verify { addPlayersTeamService wasNot called }
     }
   }
 
@@ -102,6 +191,7 @@ class TeamControllerTest {
           .andExpect(content().json(toJson(expected)))
 
       verify { createTeamService wasNot called }
+      verify { addPlayersTeamService wasNot called }
     }
 
     @Test
@@ -117,6 +207,7 @@ class TeamControllerTest {
           .andExpect(status().isBadRequest)
 
       verify { createTeamService wasNot called }
+      verify { addPlayersTeamService wasNot called }
     }
 
     @Test
@@ -132,6 +223,7 @@ class TeamControllerTest {
           .andExpect(status().isInternalServerError)
 
       verify { createTeamService wasNot called }
+      verify { addPlayersTeamService wasNot called }
     }
   }
 
@@ -142,8 +234,13 @@ class TeamControllerTest {
   companion object {
 
     private const val TEAM_ENDPOINT = "/team"
+    private const val PLAYER_PATH = "players"
     private const val A_TEAM_ID = 1
     private const val A_TOTAL_SCORE = 33.3
+    private const val A_PLAYER_ID = "A_PLAYER_ID"
+    private const val ANOTHER_PLAYER_ID = "ANOTHER_PLAYER_ID"
+    private const val A_PLAYER_FULL_NAME = "A_PLAYER_FULL_NAME"
+    private const val ANOTHER_PLAYER_FULL_NAME = "ANOTHER_PLAYER_FULL_NAME"
 
     private val A_LIST_OF_PLAYERS = emptyList<TeamPlayerDto>()
   }
