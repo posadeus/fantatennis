@@ -5,7 +5,7 @@ info:
 paths:
   /team/{teamId}:
     get:
-      operationId: team
+      operationId: retrieve
       summary: Returns your team players
       description: Returns an ordered list based on your player points.
       tags:
@@ -24,6 +24,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TeamDto'
+        '500':
+          description: Error during team retrieval
+  /team:
+    post:
+      operationId: create
+      summary: Create a team.
+      description: Create an empty team.
+      tags:
+        - Team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamToCreateDto'
+      responses:
+        '201':
+          description: Team created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamCreatedDto'
+        '400':
+          description: Wrong input body
         '500':
           description: Error during team retrieval
 
@@ -61,3 +85,28 @@ components:
       required:
         - fullName
         - fantaPoints
+
+    TeamCreatedDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          default: 0
+          description: Team ID
+        ownerId:
+          type: string
+          default: ""
+          description: Team's Owner ID
+      required:
+        - id
+        - ownerId
+
+    TeamToCreateDto:
+      type: object
+      properties:
+        ownerId:
+          type: string
+          default: ""
+          example: OWNER_ID
+      required:
+        - ownerId

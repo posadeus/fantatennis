@@ -1,16 +1,21 @@
 package com.posadeus.fantatennis.controller.team
 
 import com.posadeus.fantatennis.controller.TeamApi
-import com.posadeus.fantatennis.controller.model.team.TeamDto
+import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.service.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.TeamService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class TeamController(private val service: TeamService) : TeamApi {
+class TeamController(private val service: TeamService,
+                     private val createTeamService: CreateTeamService) : TeamApi {
 
-  override fun team(teamId: Int): ResponseEntity<TeamDto> =
+  override fun create(teamToCreateDto: TeamToCreateDto): ResponseEntity<TeamCreatedDto> =
+      ResponseEntity.status(201).body(createTeamService.create(teamToCreateDto))
+
+  override fun retrieve(teamId: Int): ResponseEntity<TeamDto> =
       when (val team = service.getTeam(teamId)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)

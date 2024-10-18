@@ -2,13 +2,13 @@ package com.posadeus.fantatennis.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
+import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.controller.team.TeamController
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.service.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.TeamService
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -20,53 +20,95 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 class TeamControllerTest {
 
   private val service: TeamService = mockk()
+  private val createTeamService: CreateTeamService = mockk()
 
-  private val controller: TeamApi = TeamController(service)
+  private val controller: TeamApi = TeamController(service, createTeamService)
 
   private val objectMapper = ObjectMapper()
   private val mvc = MockMvcBuilders.standaloneSetup(controller)
       .setMessageConverters(MappingJackson2HttpMessageConverter(objectMapper))
       .build()
 
-  @Test
-  fun `200 response - valid team`() {
+  @Nested
+  inner class Create {
 
-    val expected = TeamDto(A_LIST_OF_PLAYERS, A_TOTAL_SCORE)
-    val team = FoundTeam(expected)
+    @Test
+    fun `201 response`() {
 
-    every { service.getTeam(A_TEAM_ID) } returns team
+      val request = TeamToCreateDto(ownerId = "OWNER_ID")
+      val expected = TeamCreatedDto(id = 1, ownerId = "OWNER_ID")
 
-    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
-                    .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isOk)
-        .andExpect(content().json(toJson(expected)))
+      every { createTeamService.create(request) } returns expected
+
+      mvc.perform(post(TEAM_ENDPOINT)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isCreated)
+          .andExpect(content().json(toJson(expected)))
+
+      verify(exactly = 1) { createTeamService.create(request) }
+      verify { service wasNot called }
+    }
+
+    @Test
+    fun `400 response`() {
+
+      mvc.perform(post(TEAM_ENDPOINT)
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isBadRequest)
+
+      verify { createTeamService wasNot called }
+      verify { service wasNot called }
+    }
   }
 
-  @Test
-  fun `400 response - TeamId NOT FOUND`() {
+  @Nested
+  inner class Retrieve {
 
-    val team = TeamIdNotFoundTeam
+    @Test
+    fun `200 response - valid team`() {
 
-    every { service.getTeam(A_TEAM_ID) } returns team
+      val expected = TeamDto(A_LIST_OF_PLAYERS, A_TOTAL_SCORE)
+      val team = FoundTeam(expected)
 
-    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
-                    .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isBadRequest)
-  }
+      every { service.getTeam(A_TEAM_ID) } returns team
 
-  @Test
-  fun `500 response`() {
+      mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
+                      .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isOk)
+          .andExpect(content().json(toJson(expected)))
+    }
 
-    val team = ErrorTeam
+    @Test
+    fun `400 response - TeamId NOT FOUND`() {
 
-    every { service.getTeam(A_TEAM_ID) } returns team
+      val team = TeamIdNotFoundTeam
 
-    mvc.perform(get("/$TEAM_ENDPOINT$A_TEAM_ID")
-                    .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
-        .andExpect(status().isInternalServerError)
+      every { service.getTeam(A_TEAM_ID) } returns team
+
+      mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
+                      .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `500 response`() {
+
+      val team = ErrorTeam
+
+      every { service.getTeam(A_TEAM_ID) } returns team
+
+      mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
+                      .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isInternalServerError)
+    }
   }
 
   @Throws(JsonProcessingException::class)
@@ -75,7 +117,7 @@ class TeamControllerTest {
 
   companion object {
 
-    private const val TEAM_ENDPOINT = "team/"
+    private const val TEAM_ENDPOINT = "/team"
     private const val A_TEAM_ID = 1
     private const val A_TOTAL_SCORE = 33.3
 
