@@ -152,6 +152,7 @@ components:
           default: [ ]
           items:
             type: string
+          uniqueItems: true
       example:
         playerIds: [ "id1", "id2", "id3" ]
       required:
