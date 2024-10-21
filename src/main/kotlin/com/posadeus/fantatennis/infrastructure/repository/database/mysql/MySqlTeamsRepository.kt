@@ -18,6 +18,13 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
     val players = playersDao.findAllById(playerIds)
 
+    if (players.count() != playerIds.size) {
+
+      val missingPlayerIds = playerIds.filter { id -> id !in players.map { it.id } }.toSet()
+
+      return PlayersNotFound(missingPlayerIds = missingPlayerIds)
+    }
+
     val teamsEntities = players
         .map { TeamsEntity(id = TeamsKeyEmbedded(teamId = teamId, playerId = it.id),
                            player = it,

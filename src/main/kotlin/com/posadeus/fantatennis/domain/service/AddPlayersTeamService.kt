@@ -13,7 +13,7 @@ class AddPlayersTeamService(private val teamsRepository: TeamsRepository) {
 
         is AddPlayersOk -> toFoundTeam(addPlayers.players)
         is AddPlayersTeamNotFound -> TeamIdNotFoundTeam
-        is PlayersNotFound -> ErrorTeam.also { LOGGER.error("Players not found: ${addPlayers.missingPlayersIds}") }
+        is PlayersNotFound -> ErrorTeam.also { LOGGER.error("Players not found: ${addPlayers.missingPlayerIds}") }
         is AddPlayersError -> ErrorTeam
       }
 

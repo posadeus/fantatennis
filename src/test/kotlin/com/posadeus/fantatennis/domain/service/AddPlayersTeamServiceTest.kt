@@ -46,7 +46,7 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players fails - one or more players not found`() {
 
-    val addPlayersError = PlayersNotFound(missingPlayersIds = setOf(ANOTHER_PLAYER_ID))
+    val addPlayersError = PlayersNotFound(missingPlayerIds = setOf(ANOTHER_PLAYER_ID))
     val expected = ErrorTeam
 
     every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)) } returns addPlayersError

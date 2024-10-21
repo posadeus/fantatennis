@@ -67,8 +67,31 @@ class MySqlTeamsRepositoryTest {
     verify { teamsDao wasNot called }
   }
 
+  @Test
+  fun `one or more players not found`() {
+
+    val playerIds = setOf("A_PLAYER_ID", "ANOTHER_PLAYER_ID")
+
+    val fantaTeamsEntity = FantaTeamsEntity(teamId = 1,
+                                            ownerId = AN_OWNER_ID,
+                                            teams = emptyList())
+    val aPlayerEntity = PlayersEntity(id = "A_PLAYER_ID",
+                                      atpTourId = AN_ATP_PLAYER_ID,
+                                      fullName = A_PLAYER_FULL_NAME)
+
+    val expected = PlayersNotFound(missingPlayerIds = setOf("ANOTHER_PLAYER_ID"))
+
+    every { fantaTeamsDao.findById(1) } returns of(fantaTeamsEntity)
+    every { playersDao.findAllById(playerIds) } returns listOf(aPlayerEntity)
+
+    assertThat(repository.addPlayers(A_TEAM_ID, playerIds)).isEqualTo(expected)
+
+    verify { teamsDao wasNot called }
+  }
+
   companion object {
 
+    private const val A_TEAM_ID = 1
     private const val A_PLAYER_ID = "A_PLAYER_ID"
     private const val ANOTHER_PLAYER_ID = "ANOTHER_PLAYER_ID"
     private const val AN_OWNER_ID = "AN_OWNER_ID"
