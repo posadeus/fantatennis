@@ -13,6 +13,9 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
   override fun addPlayers(teamId: Int, playerIds: Set<String>): AddPlayers {
 
     val fantaTeam = fantaTeamsDao.findById(teamId)
+
+    if (fantaTeam.isEmpty) return AddPlayersTeamNotFound
+
     val players = playersDao.findAllById(playerIds)
 
     val teamsEntities = players

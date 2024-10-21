@@ -1,14 +1,13 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
-import com.posadeus.fantatennis.domain.model.AddPlayersOk
-import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.util.Optional.empty
 import java.util.Optional.of
 
 class MySqlTeamsRepositoryTest {
@@ -55,8 +54,23 @@ class MySqlTeamsRepositoryTest {
     assertThat(repository.addPlayers(1, playerIds)).isEqualTo(expected)
   }
 
+  @Test
+  fun `team not found`() {
+
+    val expected = AddPlayersTeamNotFound
+
+    every { fantaTeamsDao.findById(1) } returns empty()
+
+    assertThat(repository.addPlayers(1, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID))).isEqualTo(expected)
+
+    verify { playersDao wasNot called }
+    verify { teamsDao wasNot called }
+  }
+
   companion object {
 
+    private const val A_PLAYER_ID = "A_PLAYER_ID"
+    private const val ANOTHER_PLAYER_ID = "ANOTHER_PLAYER_ID"
     private const val AN_OWNER_ID = "AN_OWNER_ID"
     private const val AN_ATP_PLAYER_ID = "AN_ATP_PLAYER_ID"
     private const val ANOTHER_ATP_PLAYER_ID = "ANOTHER_ATP_PLAYER_ID"
