@@ -1,7 +1,10 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.AddPlayers
+import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
+import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.TeamsEntity
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.TeamsKeyEmbedded
@@ -37,7 +40,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
       teamsDao.saveAll(teamsEntities)
 
-      return AddPlayersOk(players = players.map {
+      return ValidAddPlayers(players = players.map {
         DomainPlayer(id = it.id,
                      atpId = it.atpTourId,
                      fullName = it.fullName)

@@ -1,7 +1,9 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
+import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
@@ -45,7 +47,7 @@ class MySqlTeamsRepositoryTest {
     val anotherDomainPlayer = DomainPlayer(id = "ANOTHER_PLAYER_ID",
                                            atpId = ANOTHER_ATP_PLAYER_ID,
                                            fullName = ANOTHER_PLAYER_FULL_NAME)
-    val expected = AddPlayersOk(players = setOf(aDomainPlayer, anotherDomainPlayer))
+    val expected = ValidAddPlayers(players = setOf(aDomainPlayer, anotherDomainPlayer))
 
     every { fantaTeamsDao.findById(1) } returns of(fantaTeamsEntity)
     every { playersDao.findAllById(playerIds) } returns listOf(aPlayerEntity, anotherPlayerEntity)

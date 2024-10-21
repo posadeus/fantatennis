@@ -4,6 +4,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -21,13 +23,13 @@ class AddPlayersTeamServiceTest {
     val domainPlayers = setOf(DomainPlayer(id = A_PLAYER_ID,
                                            atpId = AN_ATP_PLAYER_ID,
                                            fullName = A_PLAYER_FULL_NAME))
-    val addPlayersOk = AddPlayersOk(players = domainPlayers)
+    val validAddPlayers = ValidAddPlayers(players = domainPlayers)
 
     val expected = FoundTeam(team = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME,
                                                                            fantaPoints = 0.0)),
                                             totalScore = 0.0))
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID)) } returns addPlayersOk
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID)) } returns validAddPlayers
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID))).isEqualTo(expected)
   }

@@ -4,6 +4,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import org.slf4j.LoggerFactory
 
 class AddPlayersTeamService(private val teamsRepository: TeamsRepository) {
@@ -11,7 +13,7 @@ class AddPlayersTeamService(private val teamsRepository: TeamsRepository) {
   fun addPlayers(teamId: Int, playerIds: Set<String>): Team =
       when (val addPlayers = teamsRepository.addPlayers(teamId, playerIds)) {
 
-        is AddPlayersOk -> toFoundTeam(addPlayers.players)
+        is ValidAddPlayers -> toFoundTeam(addPlayers.players)
         is AddPlayersTeamNotFound -> TeamIdNotFoundTeam
         is PlayersNotFound -> ErrorTeam.also { LOGGER.error("Players not found: ${addPlayers.missingPlayerIds}") }
         is AddPlayersError -> ErrorTeam

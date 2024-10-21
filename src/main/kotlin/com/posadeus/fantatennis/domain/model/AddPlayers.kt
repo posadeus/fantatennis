@@ -1,9 +1,14 @@
 package com.posadeus.fantatennis.domain.model
 
-sealed interface AddPlayers
+sealed interface AddPlayers {
 
-data class AddPlayersOk(val players: Set<DomainPlayer>) : AddPlayers
-data class PlayersNotFound(val missingPlayerIds: Set<String>) : AddPlayers
-data object AddPlayersTeamNotFound : AddPlayers
-data object AddPlayersError : AddPlayers
+  data class ValidAddPlayers(val players: Set<DomainPlayer>) : AddPlayers
+
+  sealed interface InvalidAddPlayers : AddPlayers {
+
+    data class PlayersNotFound(val missingPlayerIds: Set<String>) : InvalidAddPlayers
+    data object AddPlayersTeamNotFound : InvalidAddPlayers
+    data object AddPlayersError : InvalidAddPlayers
+  }
+}
 
