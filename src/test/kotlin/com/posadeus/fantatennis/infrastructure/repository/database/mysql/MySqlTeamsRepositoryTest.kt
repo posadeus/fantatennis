@@ -89,6 +89,16 @@ class MySqlTeamsRepositoryTest {
     verify { teamsDao wasNot called }
   }
 
+  @Test
+  fun `exception thrown by any dao`() {
+
+    val expected = AddPlayersError
+
+    every { fantaTeamsDao.findById(A_TEAM_ID) } throws Exception()
+
+    assertThat(repository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID))).isEqualTo(expected)
+  }
+
   companion object {
 
     private const val A_TEAM_ID = 1

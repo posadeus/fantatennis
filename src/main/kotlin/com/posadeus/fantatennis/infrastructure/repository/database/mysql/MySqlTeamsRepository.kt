@@ -12,30 +12,41 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
   override fun addPlayers(teamId: Int, playerIds: Set<String>): AddPlayers {
 
-    val fantaTeam = fantaTeamsDao.findById(teamId)
+    try {
 
-    if (fantaTeam.isEmpty) return AddPlayersTeamNotFound
+      val fantaTeam = fantaTeamsDao.findById(teamId)
 
-    val players = playersDao.findAllById(playerIds)
+      if (fantaTeam.isEmpty) return AddPlayersTeamNotFound
 
-    if (players.count() != playerIds.size) {
+      val players = playersDao.findAllById(playerIds)
 
-      val missingPlayerIds = playerIds.filter { id -> id !in players.map { it.id } }.toSet()
+      if (players.count() != playerIds.size) {
 
-      return PlayersNotFound(missingPlayerIds = missingPlayerIds)
+        val missingPlayerIds = playerIds.filter { id -> id !in players.map { it.id } }.toSet()
+
+        return PlayersNotFound(missingPlayerIds = missingPlayerIds)
+      }
+
+      val teamsEntities = players
+          .map {
+            TeamsEntity(id = TeamsKeyEmbedded(teamId = teamId, playerId = it.id),
+                        player = it,
+                        fantaTeam = fantaTeam.get())
+          }
+          .toSet()
+
+      teamsDao.saveAll(teamsEntities)
+
+      return AddPlayersOk(players = players.map {
+        DomainPlayer(id = it.id,
+                     atpId = it.atpTourId,
+                     fullName = it.fullName)
+      }
+          .toSet())
     }
+    catch (e: Exception) {
 
-    val teamsEntities = players
-        .map { TeamsEntity(id = TeamsKeyEmbedded(teamId = teamId, playerId = it.id),
-                           player = it,
-                           fantaTeam = fantaTeam.get()) }
-        .toSet()
-
-    teamsDao.saveAll(teamsEntities)
-
-    return AddPlayersOk(players = players.map { DomainPlayer(id = it.id,
-                                                             atpId = it.atpTourId,
-                                                             fullName = it.fullName) }
-        .toSet())
+      return AddPlayersError
+    }
   }
 }
