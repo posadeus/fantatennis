@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure
+package com.posadeus.fantatennis.domain.infrastructure
 
 import com.posadeus.fantatennis.domain.model.AddPlayers
 
