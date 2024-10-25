@@ -167,10 +167,10 @@ components:
         id:
           type: integer
           example: 1
-        startingTournament:
+        startingTournamentId:
           type: integer
           example: 1
-        endingTournament:
+        endingTournamentId:
           type: integer
           example: 1
         tournamentYear:
