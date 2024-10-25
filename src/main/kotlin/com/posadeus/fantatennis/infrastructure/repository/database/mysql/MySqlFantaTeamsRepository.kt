@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
+import com.posadeus.fantatennis.controller.model.team.TournamentCreationDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.FantaTeamsDao
@@ -20,6 +21,10 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao) : Fant
         LOGGER.error("Error during the creation of the FantaTeam", e)
         FantaTeamError
       }
+
+  override fun createTeamAndTournament(ownerId: String, tournamentCreationDto: TournamentCreationDto): FantaTeam {
+    TODO("Not yet implemented")
+  }
 
   private fun toFantaTeamsEntity(ownerId: String) =
       FantaTeamsEntity(ownerId = ownerId)

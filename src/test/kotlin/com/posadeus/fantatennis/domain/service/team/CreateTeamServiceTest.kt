@@ -4,6 +4,7 @@ import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament.FantaTournamentNotFound
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
@@ -17,9 +18,9 @@ class CreateTeamServiceTest {
   private val service = CreateTeamService(fantaTeamsRepository, fantaTournamentsRepository)
 
   @Test
-  fun `creation successful`() {
+  fun `creation succeeds with already present fanta tournament`() {
 
-    val request = TeamToCreateDto(ownerId = "AN_OWNER_ID", tournament = TournamentCreationDto(id = 100))
+    val dto = TeamToCreateDto(ownerId = "AN_OWNER_ID", tournament = TournamentCreationDto(id = 100))
 
     val fantaTournament: FantaTournament = ValidFantaTournament(id = 100,
                                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
@@ -32,10 +33,77 @@ class CreateTeamServiceTest {
     every { fantaTournamentsRepository.retrieve(100) } returns fantaTournament
     every { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) } returns fantaTeam
 
-    assertThat(service.create(request)).isEqualTo(expected)
+    assertThat(service.create(dto)).isEqualTo(expected)
 
     verify(exactly = 1) { fantaTournamentsRepository.retrieve(100) }
     verify(exactly = 1) { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) }
+    verify(exactly = 0) { fantaTeamsRepository.createTeamAndTournament(any(), any()) }
+  }
+
+  @Test
+  fun `creation succeeds by ignoring unnecessary parameters`() {
+
+    val tournamentCreationDto = TournamentCreationDto(id = A_TOURNAMENT_ID,
+                                                      startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                      endingTournamentId = A_ENDING_TOURNAMENT_ID,
+                                                      tournamentYear = A_TOURNAMENT_YEAR)
+    val dto = TeamToCreateDto(ownerId = AN_OWNER_ID, tournament = tournamentCreationDto)
+
+    val fantaTournament: FantaTournament = ValidFantaTournament(id = 100,
+                                                                startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                                endingTournamentId = A_ENDING_TOURNAMENT_ID,
+                                                                tournamentYear = A_TOURNAMENT_YEAR)
+    val fantaTeam = FantaTeamOk(id = 1, ownerId = "AN_OWNER_ID")
+
+    val expected: TeamCreation = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = "AN_OWNER_ID"))
+
+    every { fantaTournamentsRepository.retrieve(100) } returns fantaTournament
+    every { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) } returns fantaTeam
+
+    assertThat(service.create(dto)).isEqualTo(expected)
+
+    verify(exactly = 1) { fantaTournamentsRepository.retrieve(100) }
+    verify(exactly = 1) { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) }
+    verify(exactly = 0) { fantaTeamsRepository.createTeamAndTournament(any(), any()) }
+  }
+
+  @Test
+  fun `creation succeeds with newly created fanta tournament`() {
+
+    val tournamentCreationDto = TournamentCreationDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                      endingTournamentId = A_ENDING_TOURNAMENT_ID,
+                                                      tournamentYear = A_TOURNAMENT_YEAR)
+    val dto = TeamToCreateDto(ownerId = AN_OWNER_ID, tournament = tournamentCreationDto)
+
+    val fantaTeam = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
+
+    val expected = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = AN_OWNER_ID))
+
+    every { fantaTeamsRepository.createTeamAndTournament(AN_OWNER_ID, tournamentCreationDto) } returns fantaTeam
+
+    assertThat(service.create(dto)).isEqualTo(expected)
+
+    verify(exactly = 1) { fantaTeamsRepository.createTeamAndTournament(AN_OWNER_ID, tournamentCreationDto) }
+    verify(exactly = 0) { fantaTeamsRepository.createTeam(any(), any()) }
+    verify { fantaTournamentsRepository wasNot called }
+  }
+
+  @Test
+  fun `creation fails due to tournamentId not found and missing tournament data`() {
+
+    val dto = TeamToCreateDto(ownerId = AN_OWNER_ID,
+                              tournament = TournamentCreationDto(id = A_NOT_EXISTING_TOURNAMENT_ID))
+
+    val fantaTournament: FantaTournament = FantaTournamentNotFound(id = A_NOT_EXISTING_TOURNAMENT_ID)
+
+    val expected: TeamCreation = ErrorTeamCreation
+
+    every { fantaTournamentsRepository.retrieve(A_NOT_EXISTING_TOURNAMENT_ID) } returns fantaTournament
+
+    assertThat(service.create(dto)).isEqualTo(expected)
+
+    verify(exactly = 1) { fantaTournamentsRepository.retrieve(A_NOT_EXISTING_TOURNAMENT_ID) }
+    verify { fantaTeamsRepository wasNot called }
   }
 
   @Test
@@ -55,15 +123,15 @@ class CreateTeamServiceTest {
 
     private const val AN_OWNER_ID = "AN_OWNER_ID"
     private const val A_TOURNAMENT_ID = 100
+    private const val A_NOT_EXISTING_TOURNAMENT_ID = 120
     private const val A_STARTING_TOURNAMENT_ID = 1
     private const val A_ENDING_TOURNAMENT_ID = 2
     private const val A_TOURNAMENT_YEAR = 2024
 
-    private val A_VALID_FANTA_TOURNAMENT = ValidFantaTournament(id = 100,
+    private val A_VALID_FANTA_TOURNAMENT = ValidFantaTournament(id = A_TOURNAMENT_ID,
                                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                                 endingTournamentId = A_ENDING_TOURNAMENT_ID,
                                                                 tournamentYear = A_TOURNAMENT_YEAR)
-
   }
 }
 
