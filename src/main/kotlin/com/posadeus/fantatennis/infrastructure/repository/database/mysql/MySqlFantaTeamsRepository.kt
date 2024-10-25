@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 
 class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao) : FantaTeamsRepository {
 
-  override fun createTeam(ownerId: String): FantaTeam =
+  override fun createTeam(ownerId: String, tournamentId: Int?): FantaTeam =
       try {
         ownerId
             .let(::toFantaTeamsEntity)

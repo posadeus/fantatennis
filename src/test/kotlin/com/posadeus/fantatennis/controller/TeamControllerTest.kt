@@ -121,7 +121,7 @@ class TeamControllerTest {
     @Test
     fun `201 response`() {
 
-      val request = TeamToCreateDto(ownerId = "OWNER_ID")
+      val request = TeamToCreateDto(ownerId = "OWNER_ID", tournament = TournamentCreationDto(id = A_TOURNAMENT_ID))
       val expected = TeamCreatedDto(id = 1, ownerId = "OWNER_ID")
 
       every { createTeamService.create(request) } returns TeamCreated(team = expected)
@@ -156,7 +156,7 @@ class TeamControllerTest {
     @Test
     fun `500 response`() {
 
-      val request = TeamToCreateDto(ownerId = "OWNER_ID")
+      val request = TeamToCreateDto(ownerId = "OWNER_ID", tournament = TournamentCreationDto(id = A_TOURNAMENT_ID))
 
       every { createTeamService.create(request) } returns ErrorTeamCreation
 
@@ -236,6 +236,7 @@ class TeamControllerTest {
     private const val TEAM_ENDPOINT = "/team"
     private const val PLAYER_PATH = "players"
     private const val A_TEAM_ID = 1
+    private const val A_TOURNAMENT_ID = 1
     private const val A_TOTAL_SCORE = 33.3
     private const val A_PLAYER_ID = "A_PLAYER_ID"
     private const val ANOTHER_PLAYER_ID = "ANOTHER_PLAYER_ID"

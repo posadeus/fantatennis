@@ -26,7 +26,7 @@ class MySqlFantaTeamsRepositoryTest {
 
     every { dao.save(toCreateFantaTeamsEntity) } returns createdFantaTeamsEntity
 
-    assertThat(repository.createTeam(AN_OWNER_ID)).isEqualTo(expected)
+    assertThat(repository.createTeam(AN_OWNER_ID, null)).isEqualTo(expected)
   }
 
   @Test
@@ -38,7 +38,7 @@ class MySqlFantaTeamsRepositoryTest {
 
     every { dao.save(toCreateFantaTeamsEntity) } throws Exception()
 
-    assertThat(repository.createTeam(AN_OWNER_ID)).isEqualTo(expected)
+    assertThat(repository.createTeam(AN_OWNER_ID, null)).isEqualTo(expected)
   }
 
   companion object {

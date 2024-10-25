@@ -39,7 +39,7 @@ class MySqlFantaTeamsRepositoryIT {
 
     val expected = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
 
-    assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID)).isEqualTo(expected)
+    assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID, null)).isEqualTo(expected)
   }
 
   private fun deleteAll() {
