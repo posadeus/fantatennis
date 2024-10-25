@@ -176,5 +176,3 @@ components:
         tournamentYear:
           type: integer
           example: 2024
-      required:
-        - id

@@ -12,7 +12,7 @@ import java.io.Serializable
  */
 data class TournamentCreationDto(
 
-    @get:JsonProperty("id", required = true) val id: Int,
+    @get:JsonProperty("id") val id: Int? = null,
 
     @get:JsonProperty("startingTournamentId") val startingTournamentId: Int? = null,
 
