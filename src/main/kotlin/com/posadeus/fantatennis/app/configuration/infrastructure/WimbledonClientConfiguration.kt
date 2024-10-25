@@ -9,15 +9,15 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-open class WimbledonClientConfiguration {
+class WimbledonClientConfiguration {
 
   @Bean
-  open fun wimbledonClient(@Value("\${client.wimbledon.uri}") wimbledonURI: String,
+  fun wimbledonClient(@Value("\${client.wimbledon.uri}") wimbledonURI: String,
                            wimbledonRestTemplate: RestTemplate): WimbledonClient =
     RestWimbledonClient(wimbledonURI, wimbledonRestTemplate)
 
   @Bean
-  open fun wimbledonRestTemplate(
+  fun wimbledonRestTemplate(
     @Value("\${client.wimbledon.http.connection-request-timeout}") connectionRequestTimeout: Int,
     @Value("\${client.wimbledon.http.connection-timeout}") connectionTimeout: Int): RestTemplate {
 

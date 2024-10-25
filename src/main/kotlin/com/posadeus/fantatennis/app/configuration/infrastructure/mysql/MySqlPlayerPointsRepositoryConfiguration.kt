@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class MySqlPlayerPointsRepositoryConfiguration {
+class MySqlPlayerPointsRepositoryConfiguration {
 
   @Bean
-  open fun mySqlPlayerPointsRepository(playersPointsDao: PlayersPointsDao): PlayerPointsRepository =
+  fun mySqlPlayerPointsRepository(playersPointsDao: PlayersPointsDao): PlayerPointsRepository =
       MySqlPlayerPointsRepository(playersPointsDao)
 }

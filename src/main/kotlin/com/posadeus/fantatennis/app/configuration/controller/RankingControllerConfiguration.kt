@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class RankingControllerConfiguration {
+class RankingControllerConfiguration {
 
   @Bean
-  open fun rankingApi(rankingService: RankingService): RankingApi =
+  fun rankingApi(rankingService: RankingService): RankingApi =
       RankingController(rankingService)
 }

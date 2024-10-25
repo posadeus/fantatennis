@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class RankingServiceConfiguration {
+class RankingServiceConfiguration {
 
   @Bean
-  open fun rankingService(rankingRepository: RankingRepository): RankingService =
+  fun rankingService(rankingRepository: RankingRepository): RankingService =
       RankingService(rankingRepository)
 }

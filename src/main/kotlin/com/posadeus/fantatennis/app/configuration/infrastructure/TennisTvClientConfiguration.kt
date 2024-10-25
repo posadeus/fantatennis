@@ -9,15 +9,15 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-open class TennisTvClientConfiguration {
+class TennisTvClientConfiguration {
 
   @Bean
-  open fun tennisTvGetClient(@Value("\${client.tennis-tv.uri}") tennisTvURI: String,
+  fun tennisTvGetClient(@Value("\${client.tennis-tv.uri}") tennisTvURI: String,
                             tennisTvRestTemplate: RestTemplate): TennisTvClient =
     RestTennisTvClient(tennisTvURI, tennisTvRestTemplate)
 
   @Bean
-  open fun tennisTvRestTemplate(
+  fun tennisTvRestTemplate(
     @Value("\${client.tennis-tv.http.connection-request-timeout}") connectionRequestTimeout: Int,
     @Value("\${client.tennis-tv.http.connection-timeout}") connectionTimeout: Int): RestTemplate {
 

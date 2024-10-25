@@ -14,25 +14,25 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 
 @Configuration
-open class TournamentInfoRepositoryConfiguration {
+class TournamentInfoRepositoryConfiguration {
 
   @Bean
   @Order(99)
-  open fun tennisTvTournamentInfoRepository(tennisTvGetClient: TennisTvClient): TournamentInfoRepository =
+  fun tennisTvTournamentInfoRepository(tennisTvGetClient: TennisTvClient): TournamentInfoRepository =
       TennisTvTournamentInfoRepository(tennisTvGetClient)
 
   @Bean
   @Order(1)
-  open fun wimbledonTournamentInfoRepository(wimbledonClient: WimbledonClient): TournamentInfoRepository =
+  fun wimbledonTournamentInfoRepository(wimbledonClient: WimbledonClient): TournamentInfoRepository =
       WimbledonTournamentInfoRepository(wimbledonClient)
 
   @Bean
   @Order(2)
-  open fun usOpenTournamentInfoRepository(usOpenClient: UsOpenClient): TournamentInfoRepository =
+  fun usOpenTournamentInfoRepository(usOpenClient: UsOpenClient): TournamentInfoRepository =
       UsOpenTournamentInfoRepository(usOpenClient)
 
   @Bean
   @Order(3)
-  open fun ausOpenTournamentInfoRepository(ausOpenClient: AusOpenClient): TournamentInfoRepository =
+  fun ausOpenTournamentInfoRepository(ausOpenClient: AusOpenClient): TournamentInfoRepository =
       AusOpenTournamentInfoRepository(ausOpenClient)
 }

@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class JobControllerConfiguration {
+class JobControllerConfiguration {
 
   @Bean
-  open fun jobApi(fantaPointService: FantaPointService): JobApi =
+  fun jobApi(fantaPointService: FantaPointService): JobApi =
       JobController(fantaPointService)
 }

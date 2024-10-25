@@ -9,15 +9,15 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-open class AusOpenClientConfiguration {
+class AusOpenClientConfiguration {
 
   @Bean
-  open fun ausOpenClient(@Value("\${client.aus-open.uri}") ausOpenURI: String,
+  fun ausOpenClient(@Value("\${client.aus-open.uri}") ausOpenURI: String,
                          ausOpenRestTemplate: RestTemplate): AusOpenClient =
       RestAusOpenClient(ausOpenURI, ausOpenRestTemplate)
 
   @Bean
-  open fun ausOpenRestTemplate(
+  fun ausOpenRestTemplate(
       @Value("\${client.aus-open.http.connection-request-timeout}") connectionRequestTimeout: Int,
       @Value("\${client.aus-open.http.connection-timeout}") connectionTimeout: Int): RestTemplate {
 

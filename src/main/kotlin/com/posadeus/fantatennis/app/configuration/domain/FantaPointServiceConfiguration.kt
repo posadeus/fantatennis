@@ -7,20 +7,20 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class FantaPointServiceConfiguration {
+class FantaPointServiceConfiguration {
 
   @Bean
-  open fun fantaPointCalculatorService(tournamentInfoRepositories: List<TournamentInfoRepository>,
+  fun fantaPointCalculatorService(tournamentInfoRepositories: List<TournamentInfoRepository>,
                                        mySqlTournamentsRepository: TournamentsRepository): FantaPointCalculatorService =
       FantaPointCalculatorService(tournamentInfoRepositories,
                                   mySqlTournamentsRepository)
 
   @Bean
-  open fun fantaPointPersistenceService(mySqlPlayerPointsRepository: PlayerPointsRepository): FantaPointPersistenceService =
+  fun fantaPointPersistenceService(mySqlPlayerPointsRepository: PlayerPointsRepository): FantaPointPersistenceService =
       FantaPointPersistenceService(mySqlPlayerPointsRepository)
 
   @Bean
-  open fun fantaPointService(fantaPointCalculatorService: FantaPointCalculatorService,
+  fun fantaPointService(fantaPointCalculatorService: FantaPointCalculatorService,
                              fantaPointPersistenceService: FantaPointPersistenceService,
                              playerService: PlayerService,
                              rankingService: RankingService): FantaPointService =

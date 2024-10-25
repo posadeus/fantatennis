@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class MySqlTournamentsTeamsRepositoryConfiguration {
+class MySqlTournamentsTeamsRepositoryConfiguration {
 
   @Bean
-  open fun mySqlFantaTournamentsTeamsRepository(fantaTournamentsTeamsDao: FantaTournamentsTeamsDao): FantaTournamentsTeamsRepository =
+  fun mySqlFantaTournamentsTeamsRepository(fantaTournamentsTeamsDao: FantaTournamentsTeamsDao): FantaTournamentsTeamsRepository =
       MySqlFantaTournamentsTeamsRepository(fantaTournamentsTeamsDao)
 }

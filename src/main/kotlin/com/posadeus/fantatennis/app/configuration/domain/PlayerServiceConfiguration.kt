@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class PlayerServiceConfiguration {
+class PlayerServiceConfiguration {
 
   @Bean
-  open fun playerService(mySqlPlayersRepository: PlayersRepository): PlayerService =
+  fun playerService(mySqlPlayersRepository: PlayersRepository): PlayerService =
       PlayerService(mySqlPlayersRepository)
 }

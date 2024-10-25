@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class RankingRepositoryConfiguration {
+class RankingRepositoryConfiguration {
 
   @Bean
-  open fun rankingRepository(atpTourClient: AtpTourClient): RankingRepository =
+  fun rankingRepository(atpTourClient: AtpTourClient): RankingRepository =
       AtpTourRankingRepository(atpTourClient)
 }

@@ -35,8 +35,13 @@
       <artifactId>kotlin-stdlib</artifactId>
       <version>${kotlin.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-maven-allopen</artifactId>
+      <version>${kotlin.version}</version>
+    </dependency>
 
-    <!-- OPEN API -->
+    <!-- API -->
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -160,7 +165,7 @@
     <testSourceDirectory>src/test/kotlin</testSourceDirectory>
     <plugins>
 
-    <plugin>
+      <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
         <version>1.9.22</version>
@@ -180,6 +185,28 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <compilerPlugins>
+            <plugin>spring</plugin>
+          </compilerPlugins>
+          <pluginOptions>
+            <!-- Each annotation is placed on its own line -->
+            <option>
+              all-open:annotation=com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlFantaTeamsRepository
+            </option>
+          </pluginOptions>
+          <annotationProcessors>
+            <annotation>org.springframework.transaction.annotation.Transactional</annotation>
+            <annotation>org.springframework.context.annotation.Configuration</annotation>
+          </annotationProcessors>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-allopen</artifactId>
+            <version>${kotlin.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <plugin>

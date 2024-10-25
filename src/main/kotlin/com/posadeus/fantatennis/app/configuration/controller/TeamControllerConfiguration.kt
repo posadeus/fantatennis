@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class TeamControllerConfiguration {
+class TeamControllerConfiguration {
 
   @Bean
-  open fun teamController(teamService: TeamService,
+  fun teamController(teamService: TeamService,
                           createTeamService: CreateTeamService,
                           addPlayersTeamService: AddPlayersTeamService): TeamApi =
       TeamController(teamService,

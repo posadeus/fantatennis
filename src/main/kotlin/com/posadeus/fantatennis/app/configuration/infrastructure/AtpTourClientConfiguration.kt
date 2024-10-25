@@ -9,15 +9,15 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.springframework.web.client.RestTemplate
 
 @Configuration
-open class AtpTourClientConfiguration {
+class AtpTourClientConfiguration {
 
   @Bean
-  open fun atpTourGetClient(@Value("\${client.atp-tour.uri}") atpTourURI: String,
+  fun atpTourGetClient(@Value("\${client.atp-tour.uri}") atpTourURI: String,
                             atpTourRestTemplate: RestTemplate): AtpTourClient =
     RestAtpTourClient(atpTourURI, atpTourRestTemplate)
 
   @Bean
-  open fun atpTourRestTemplate(
+  fun atpTourRestTemplate(
     @Value("\${client.atp-tour.http.connection-request-timeout}") connectionRequestTimeout: Int,
     @Value("\${client.atp-tour.http.connection-timeout}") connectionTimeout: Int): RestTemplate {
 

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @SpringBootApplication
 @EntityScan(basePackages = ["com.posadeus.fantatennis.infrastructure.repository.database.mysql.model"])
 @EnableJpaRepositories(basePackages = ["com.posadeus.fantatennis.infrastructure.repository.database"])
-open class Application
+class Application
 
 fun main(args: Array<String>) {
   runApplication<Application>(*args)
