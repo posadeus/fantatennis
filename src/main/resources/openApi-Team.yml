@@ -141,8 +141,11 @@ components:
           type: string
           default: ""
           example: OWNER_ID
+        tournament:
+          $ref: '#/components/schemas/TournamentCreationDto'
       required:
         - ownerId
+        - tournament
 
     PlayersToAddDto:
       type: object
@@ -157,3 +160,21 @@ components:
         playerIds: [ "id1", "id2", "id3" ]
       required:
         - playerIds
+
+    TournamentCreationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        startingTournament:
+          type: integer
+          example: 1
+        endingTournament:
+          type: integer
+          example: 1
+        tournamentYear:
+          type: integer
+          example: 2024
+      required:
+        - id
