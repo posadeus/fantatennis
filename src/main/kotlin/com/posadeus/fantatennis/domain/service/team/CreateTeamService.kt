@@ -1,7 +1,6 @@
 package com.posadeus.fantatennis.domain.service.team
 
-import com.posadeus.fantatennis.controller.model.team.TeamCreatedDto
-import com.posadeus.fantatennis.controller.model.team.TeamToCreateDto
+import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -18,24 +17,13 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
       when (fantaTournamentsRepository.retrieve(request.tournament.id)) {
 
         is ValidFantaTournament -> teamCreation(request)
-        is InvalidFantaTournament -> {
-
-          if (request.tournament.startingTournamentId != null
-              && request.tournament.endingTournamentId != null
-              && request.tournament.tournamentYear != null) {
-            teamAndTournamentCreation(request)
-          }
-          else {
-
-            ErrorTeamCreation
-          }
-        }
+        is InvalidFantaTournament ->
+          if (isValidTournamentDto(request.tournament)) teamAndTournamentCreation(request)
+          else ErrorTeamCreation
       }
     }
-    else {
-
-      teamAndTournamentCreation(request)
-    }
+    else if (isValidTournamentDto(request.tournament)) teamAndTournamentCreation(request)
+    else ErrorTeamCreation
   }
 
   private fun teamCreation(request: TeamToCreateDto): TeamCreation =
@@ -55,4 +43,9 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
   private fun toTeamCreated(fantaTeam: FantaTeamOk): TeamCreated =
       TeamCreatedDto(id = fantaTeam.id, ownerId = fantaTeam.ownerId)
           .let(::TeamCreated)
+
+  private fun isValidTournamentDto(tournament: TournamentCreationDto) =
+      (tournament.startingTournamentId != null
+       && tournament.endingTournamentId != null
+       && tournament.tournamentYear != null)
 }

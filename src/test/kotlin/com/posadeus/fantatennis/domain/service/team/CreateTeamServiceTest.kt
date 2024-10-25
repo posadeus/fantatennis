@@ -107,6 +107,20 @@ class CreateTeamServiceTest {
   }
 
   @Test
+  fun `creation fails due to missing tournament data`() {
+
+    val dto = TeamToCreateDto(ownerId = AN_OWNER_ID,
+                              tournament = TournamentCreationDto())
+
+    val expected: TeamCreation = ErrorTeamCreation
+
+    assertThat(service.create(dto)).isEqualTo(expected)
+
+    verify { fantaTournamentsRepository wasNot called }
+    verify { fantaTeamsRepository wasNot called }
+  }
+
+  @Test
   fun `error from fantaTeamsRepository`() {
 
     val request = TeamToCreateDto(ownerId = AN_OWNER_ID, tournament = TournamentCreationDto(id = A_TOURNAMENT_ID))
