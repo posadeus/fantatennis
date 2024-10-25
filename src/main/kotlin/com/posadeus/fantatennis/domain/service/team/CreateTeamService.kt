@@ -10,35 +10,30 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournamen
 class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
                         private val fantaTournamentsRepository: FantaTournamentsRepository) {
 
-  fun create(request: TeamToCreateDto): TeamCreation {
+  fun create(dto: TeamToCreateDto): TeamCreation =
+      if (dto.tournament.id != null)
+        when (fantaTournamentsRepository.retrieve(dto.tournament.id)) {
 
-    return if (request.tournament.id != null) {
+          is ValidFantaTournament -> createTeam(dto)
+          is InvalidFantaTournament -> createTeamAndTournament(dto)
+        }
+      else createTeamAndTournament(dto)
 
-      when (fantaTournamentsRepository.retrieve(request.tournament.id)) {
-
-        is ValidFantaTournament -> teamCreation(request)
-        is InvalidFantaTournament ->
-          if (isValidTournamentDto(request.tournament)) teamAndTournamentCreation(request)
-          else ErrorTeamCreation
-      }
-    }
-    else if (isValidTournamentDto(request.tournament)) teamAndTournamentCreation(request)
-    else ErrorTeamCreation
-  }
-
-  private fun teamCreation(request: TeamToCreateDto): TeamCreation =
+  private fun createTeam(request: TeamToCreateDto): TeamCreation =
       when (val fantaTeam = fantaTeamsRepository.createTeam(request.ownerId, request.tournament.id)) {
 
         is FantaTeamOk -> toTeamCreated(fantaTeam)
         is FantaTeamError -> ErrorTeamCreation
       }
 
-  private fun teamAndTournamentCreation(request: TeamToCreateDto): TeamCreation =
-      when (val fantaTeam = fantaTeamsRepository.createTeamAndTournament(request.ownerId, request.tournament)) {
+  private fun createTeamAndTournament(request: TeamToCreateDto): TeamCreation =
+      if (isValidTournamentDto(request.tournament))
+        when (val fantaTeam = fantaTeamsRepository.createTeamAndTournament(request.ownerId, request.tournament)) {
 
-        is FantaTeamOk -> toTeamCreated(fantaTeam)
-        is FantaTeamError -> ErrorTeamCreation
-      }
+          is FantaTeamOk -> toTeamCreated(fantaTeam)
+          is FantaTeamError -> ErrorTeamCreation
+        }
+      else ErrorTeamCreation
 
   private fun toTeamCreated(fantaTeam: FantaTeamOk): TeamCreated =
       TeamCreatedDto(id = fantaTeam.id, ownerId = fantaTeam.ownerId)

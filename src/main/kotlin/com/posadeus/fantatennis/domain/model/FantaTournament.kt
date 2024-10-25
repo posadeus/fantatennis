@@ -7,8 +7,5 @@ sealed interface FantaTournament {
                                   val endingTournamentId: Int,
                                   val tournamentYear: Int) : FantaTournament
 
-  sealed interface InvalidFantaTournament : FantaTournament {
-
-    data class FantaTournamentNotFound(val id: Int) : InvalidFantaTournament
-  }
+  data object InvalidFantaTournament : FantaTournament
 }

@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament.FantaTournamentNotFound
+import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
@@ -94,7 +94,7 @@ class CreateTeamServiceTest {
     val dto = TeamToCreateDto(ownerId = AN_OWNER_ID,
                               tournament = TournamentCreationDto(id = A_NOT_EXISTING_TOURNAMENT_ID))
 
-    val fantaTournament: FantaTournament = FantaTournamentNotFound(id = A_NOT_EXISTING_TOURNAMENT_ID)
+    val fantaTournament: FantaTournament = InvalidFantaTournament
 
     val expected: TeamCreation = ErrorTeamCreation
 
