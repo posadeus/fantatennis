@@ -20,20 +20,21 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
       else createTeamAndTournament(dto)
 
   private fun createTeam(request: TeamToCreateDto): TeamCreation =
-      when (val fantaTeam = fantaTeamsRepository.createTeam(request.ownerId, request.tournament.id)) {
+      fantaTeamsRepository.createTeam(request.ownerId, request.tournament.id)
+          .let(::toTeamCreation)
+
+  private fun createTeamAndTournament(request: TeamToCreateDto): TeamCreation =
+      if (isValidTournamentDto(request.tournament))
+        fantaTeamsRepository.createTeamAndTournament(request.ownerId, request.tournament)
+            .let(::toTeamCreation)
+      else ErrorTeamCreation
+
+  private fun toTeamCreation(fantaTeam: FantaTeam): TeamCreation =
+      when (fantaTeam) {
 
         is FantaTeamOk -> toTeamCreated(fantaTeam)
         is FantaTeamError -> ErrorTeamCreation
       }
-
-  private fun createTeamAndTournament(request: TeamToCreateDto): TeamCreation =
-      if (isValidTournamentDto(request.tournament))
-        when (val fantaTeam = fantaTeamsRepository.createTeamAndTournament(request.ownerId, request.tournament)) {
-
-          is FantaTeamOk -> toTeamCreated(fantaTeam)
-          is FantaTeamError -> ErrorTeamCreation
-        }
-      else ErrorTeamCreation
 
   private fun toTeamCreated(fantaTeam: FantaTeamOk): TeamCreated =
       TeamCreatedDto(id = fantaTeam.id, ownerId = fantaTeam.ownerId)
