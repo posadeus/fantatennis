@@ -4,6 +4,7 @@ import com.posadeus.fantatennis.controller.model.team.TournamentCreationDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.model.FantaTeamError
 import com.posadeus.fantatennis.domain.model.FantaTeamOk
+import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
@@ -28,10 +29,10 @@ class MySqlFantaTeamsRepositoryTest {
     @Test
     fun `team is created`() {
 
-      val tournamentCreationDto = TournamentCreationDto(id = A_TOURNAMENT_ID,
-                                                        startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                        endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                        tournamentYear = A_TOURNAMENT_YEAR)
+      val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                 endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                 tournamentYear = A_TOURNAMENT_YEAR)
       val toCreateFantaTeamsEntity = FantaTeamsEntity(ownerId = AN_OWNER_ID)
       val createdFantaTeamsEntity = FantaTeamsEntity(teamId = 1, ownerId = AN_OWNER_ID)
       val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
@@ -49,7 +50,7 @@ class MySqlFantaTeamsRepositoryTest {
       every { fantaTeamsDao.flush() } just runs
       every { fantaTournamentsTeamsDao.save(fantaTournamentsTeamsEntity) } returns fantaTournamentsTeamsEntity
 
-      assertThat(repository.createTeam(AN_OWNER_ID, tournamentCreationDto)).isEqualTo(expected)
+      assertThat(repository.createTeam(AN_OWNER_ID, fantaTournament)).isEqualTo(expected)
 
       verify { fantaTournamentsDao wasNot called }
     }
@@ -57,17 +58,17 @@ class MySqlFantaTeamsRepositoryTest {
     @Test
     fun `error during creation - fantaTeamsDao`() {
 
-      val tournamentCreationDto = TournamentCreationDto(id = A_TOURNAMENT_ID,
-                                                        startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                        endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                        tournamentYear = A_TOURNAMENT_YEAR)
+      val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                 endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                 tournamentYear = A_TOURNAMENT_YEAR)
       val toCreateFantaTeamsEntity = FantaTeamsEntity(ownerId = AN_OWNER_ID)
 
       val expected = FantaTeamError
 
       every { fantaTeamsDao.save(toCreateFantaTeamsEntity) } throws Exception()
 
-      assertThat(repository.createTeam(AN_OWNER_ID, tournamentCreationDto)).isEqualTo(expected)
+      assertThat(repository.createTeam(AN_OWNER_ID, fantaTournament)).isEqualTo(expected)
 
       verify { fantaTournamentsTeamsDao wasNot called }
       verify { fantaTournamentsDao wasNot called }
@@ -76,10 +77,10 @@ class MySqlFantaTeamsRepositoryTest {
     @Test
     fun `error during creation - fantaTournamentsTeamsDao`() {
 
-      val tournamentCreationDto = TournamentCreationDto(id = A_TOURNAMENT_ID,
-                                                        startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                        endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                        tournamentYear = A_TOURNAMENT_YEAR)
+      val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                 endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                 tournamentYear = A_TOURNAMENT_YEAR)
       val toCreateFantaTeamsEntity = FantaTeamsEntity(ownerId = AN_OWNER_ID)
       val createdFantaTeamsEntity = FantaTeamsEntity(teamId = 1, ownerId = AN_OWNER_ID)
       val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
@@ -97,7 +98,7 @@ class MySqlFantaTeamsRepositoryTest {
       every { fantaTeamsDao.flush() } just runs
       every { fantaTournamentsTeamsDao.save(fantaTournamentsTeamsEntity) } throws Exception()
 
-      assertThat(repository.createTeam(AN_OWNER_ID, tournamentCreationDto)).isEqualTo(expected)
+      assertThat(repository.createTeam(AN_OWNER_ID, fantaTournament)).isEqualTo(expected)
 
     }
   }

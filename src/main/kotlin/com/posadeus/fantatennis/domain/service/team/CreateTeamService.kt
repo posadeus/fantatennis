@@ -20,7 +20,7 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
       else createTeamAndTournament(dto)
 
   private fun createTeam(ownerId: String, tournament: ValidFantaTournament): TeamCreation =
-      fantaTeamsRepository.createTeam(ownerId, toTournamentCreationDto(tournament))
+      fantaTeamsRepository.createTeam(ownerId, tournament)
           .let(::toTeamCreation)
 
   private fun createTeamAndTournament(request: TeamToCreateDto): TeamCreation =

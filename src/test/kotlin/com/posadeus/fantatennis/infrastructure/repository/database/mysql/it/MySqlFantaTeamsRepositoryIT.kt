@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql.it
 
-import com.posadeus.fantatennis.controller.model.team.TournamentCreationDto
 import com.posadeus.fantatennis.domain.model.FantaTeamOk
+import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlFantaTeamsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.FantaTournamentsEntity
@@ -60,14 +60,14 @@ class MySqlFantaTeamsRepositoryIT {
 
       assertThat(fantaTournamentsDao.findAll()).size().isEqualTo(1)
 
-      val tournamentCreationDto = TournamentCreationDto(id = 1,
-                                                        startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                        endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                        tournamentYear = A_TOURNAMENT_YEAR)
+      val validFantaTournament = ValidFantaTournament(id = 1,
+                                                      startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                      endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                      tournamentYear = A_TOURNAMENT_YEAR)
 
       val expected = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
 
-      assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID, tournamentCreationDto)).isEqualTo(expected)
+      assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID, validFantaTournament)).isEqualTo(expected)
 
       assertThat(fantaTeamsDao.findById(1)).isPresent
       assertThat(fantaTournamentsTeamsDao.findById(FantaTournamentsTeamsKeyEmbedded(1, 1))).isPresent

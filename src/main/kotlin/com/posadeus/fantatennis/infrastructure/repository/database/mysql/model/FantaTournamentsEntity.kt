@@ -9,7 +9,7 @@ data class FantaTournamentsEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FANTA_TOURNAMENT_ID")
-    val id: Int? = null,
+    val id: Int = 0,
 
     @Column(name = "STARTING_TOURNAMENT")
     val startingTournament: Int = 0,

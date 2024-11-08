@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 import com.posadeus.fantatennis.controller.model.team.TournamentCreationDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import org.slf4j.LoggerFactory
@@ -13,7 +14,7 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
                                 private val fantaTournamentsTeamsDao: FantaTournamentsTeamsDao,
                                 private val fantaTournamentsDao: FantaTournamentsDao) : FantaTeamsRepository {
 
-  override fun createTeam(ownerId: String, tournamentCreationDto: TournamentCreationDto): FantaTeam =
+  override fun createTeam(ownerId: String, fantaTournament: ValidFantaTournament): FantaTeam =
       try {
 
         ownerId
@@ -21,7 +22,7 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
             .let(fantaTeamsDao::save)
             .also { fantaTeamsDao.flush() }
             .also {
-              toFantaTournamentsTeamsEntity(it, tournamentCreationDto)
+              toFantaTournamentsTeamsEntity(it, fantaTournament)
                   .let(fantaTournamentsTeamsDao::save)
             }
             .let(::toFantaTeamOk)
@@ -47,24 +48,29 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
         FantaTeamError
       }
 
-  private fun toTournamentCreationDto(entity: FantaTournamentsEntity): TournamentCreationDto =
-      TournamentCreationDto(id = entity.id,
-                            startingTournamentId = entity.startingTournament,
-                            endingTournamentId = entity.endingTournament,
-                            tournamentYear = entity.year)
+  private fun toTournamentCreationDto(entity: FantaTournamentsEntity): ValidFantaTournament =
+      ValidFantaTournament(id = entity.id,
+                           startingTournamentId = entity.startingTournament,
+                           endingTournamentId = entity.endingTournament,
+                           tournamentYear = entity.year)
 
   private fun toFantaTournamentsTeamsEntity(fantaTeam: FantaTeamsEntity,
-                                            tournament: TournamentCreationDto): FantaTournamentsTeamsEntity =
-      FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = tournament.id!!,
+                                            fantaTournament: ValidFantaTournament): FantaTournamentsTeamsEntity =
+      FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = fantaTournament.id,
                                                                         teamId = fantaTeam.teamId),
-                                  tournament = toFantaTournamentEntity(tournament),
+                                  tournament = toFantaTournamentEntity(fantaTournament),
                                   fantaTeam = fantaTeam)
 
   private fun toFantaTournamentEntity(dto: TournamentCreationDto): FantaTournamentsEntity =
-      FantaTournamentsEntity(id = dto.id,
-                             startingTournament = dto.startingTournamentId!!,
+      FantaTournamentsEntity(startingTournament = dto.startingTournamentId!!,
                              endingTournament = dto.endingTournamentId!!,
                              year = dto.tournamentYear!!)
+
+  private fun toFantaTournamentEntity(fantaTournament: ValidFantaTournament): FantaTournamentsEntity =
+      FantaTournamentsEntity(id = fantaTournament.id,
+                             startingTournament = fantaTournament.startingTournamentId,
+                             endingTournament = fantaTournament.endingTournamentId,
+                             year = fantaTournament.tournamentYear)
 
   private fun toFantaTeamsEntity(ownerId: String) =
       FantaTeamsEntity(ownerId = ownerId)
