@@ -7,6 +7,7 @@ import java.io.Serializable
 @Table(name = "TOURNAMENTS")
 data class TournamentsEntity(
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TOURNAMENT_ID")
     val id: Int = 0,
 

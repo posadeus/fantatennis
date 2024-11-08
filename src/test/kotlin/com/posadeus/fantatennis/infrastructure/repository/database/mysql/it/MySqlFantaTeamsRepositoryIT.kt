@@ -2,11 +2,11 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql.it
 
 import com.posadeus.fantatennis.domain.model.FantaTeamOk
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlFantaTeamsRepository
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.FantaTeamsDao
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.FantaTeamsEntity
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.FantaTournamentsEntity
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.FantaTournamentsTeamsKeyEmbedded
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -24,6 +24,12 @@ class MySqlFantaTeamsRepositoryIT {
   private lateinit var fantaTeamsDao: FantaTeamsDao
 
   @Autowired
+  private lateinit var fantaTournamentsTeamsDao: FantaTournamentsTeamsDao
+
+  @Autowired
+  private lateinit var fantaTournamentsDao: FantaTournamentsDao
+
+  @Autowired
   private lateinit var mySqlFantaTeamsRepository: MySqlFantaTeamsRepository
 
   @BeforeEach
@@ -32,23 +38,47 @@ class MySqlFantaTeamsRepositoryIT {
     deleteAll()
   }
 
-  @Test
-  fun `fanta team saved`() {
+  @Nested
+  inner class CreateTeam {
 
-    assertThat(fantaTeamsDao.findAll()).isEqualTo(arrayListOf<FantaTeamsEntity>())
+    @Test
+    fun `fanta team saved`() {
 
-    val expected = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
+      assertThat(fantaTeamsDao.findAll()).isEmpty()
+      assertThat(fantaTournamentsTeamsDao.findAll()).isEmpty()
+      assertThat(fantaTournamentsDao.findAll()).isEmpty()
 
-    assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID, null)).isEqualTo(expected)
+      val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
+                                                          startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                          endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                          year = A_TOURNAMENT_YEAR)
+
+      fantaTournamentsDao.save(fantaTournamentsEntity)
+
+      assertThat(fantaTournamentsDao.findAll()).size().isEqualTo(1)
+
+      val expected = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
+
+      assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID, A_TOURNAMENT_ID)).isEqualTo(expected)
+
+      assertThat(fantaTeamsDao.findById(1)).isPresent
+      assertThat(fantaTournamentsTeamsDao.findById(FantaTournamentsTeamsKeyEmbedded(A_TOURNAMENT_ID, 1))).isPresent
+    }
   }
 
   private fun deleteAll() {
 
+    fantaTournamentsDao.deleteAll()
+    fantaTournamentsTeamsDao.deleteAll()
     fantaTeamsDao.deleteAll()
   }
 
   companion object {
 
     private const val AN_OWNER_ID = "AN_OWNER_ID"
+    private const val A_TOURNAMENT_ID = 111
+    private const val A_STARTING_TOURNAMENT_ID = 1
+    private const val AN_ENDING_TOURNAMENT_ID = 10
+    private const val A_TOURNAMENT_YEAR = 2222
   }
 }

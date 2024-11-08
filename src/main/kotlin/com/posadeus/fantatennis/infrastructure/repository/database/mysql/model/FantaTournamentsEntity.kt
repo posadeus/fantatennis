@@ -8,7 +8,7 @@ import java.io.Serializable
 data class FantaTournamentsEntity(
     @Id
     @Column(name = "FANTA_TOURNAMENT_ID")
-    val id: Int = 0,
+    val id: Int? = null,
 
     @Column(name = "STARTING_TOURNAMENT")
     val startingTournament: Int = 0,

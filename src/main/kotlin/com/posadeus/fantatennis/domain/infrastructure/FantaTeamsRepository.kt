@@ -5,6 +5,6 @@ import com.posadeus.fantatennis.domain.model.FantaTeam
 
 interface FantaTeamsRepository {
 
-  fun createTeam(ownerId: String, tournamentId: Int?): FantaTeam
+  fun createTeam(ownerId: String, tournamentId: Int): FantaTeam
   fun createTeamAndTournament(ownerId: String, tournamentCreationDto: TournamentCreationDto): FantaTeam
 }
