@@ -14,7 +14,7 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
                                 private val fantaTournamentsTeamsDao: FantaTournamentsTeamsDao,
                                 private val fantaTournamentsDao: FantaTournamentsDao) : FantaTeamsRepository {
 
-  override fun createTeam(ownerId: String, fantaTournament: ValidFantaTournament): FantaTeam =
+  override fun createTeam(ownerId: String, validFantaTournament: ValidFantaTournament): FantaTeam =
       try {
 
         ownerId
@@ -22,7 +22,7 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
             .let(fantaTeamsDao::save)
             .also { fantaTeamsDao.flush() }
             .also {
-              toFantaTournamentsTeamsEntity(it, fantaTournament)
+              toFantaTournamentsTeamsEntity(it, validFantaTournament)
                   .let(fantaTournamentsTeamsDao::save)
             }
             .let(::toFantaTeamOk)

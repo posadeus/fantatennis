@@ -36,12 +36,6 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
         is FantaTeamError -> ErrorTeamCreation
       }
 
-  private fun toTournamentCreationDto(tournament: ValidFantaTournament): TournamentCreationDto =
-      TournamentCreationDto(id = tournament.id,
-                            startingTournamentId = tournament.startingTournamentId,
-                            endingTournamentId = tournament.endingTournamentId,
-                            tournamentYear = tournament.tournamentYear)
-
   private fun toTeamCreated(fantaTeam: FantaTeamOk): TeamCreated =
       TeamCreatedDto(id = fantaTeam.id, ownerId = fantaTeam.ownerId)
           .let(::TeamCreated)
