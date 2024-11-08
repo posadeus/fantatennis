@@ -13,7 +13,7 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
                                 private val fantaTournamentsTeamsDao: FantaTournamentsTeamsDao,
                                 private val fantaTournamentsDao: FantaTournamentsDao) : FantaTeamsRepository {
 
-  override fun createTeam(ownerId: String, tournamentId: Int): FantaTeam =
+  override fun createTeam(ownerId: String, tournamentCreationDto: TournamentCreationDto): FantaTeam =
       try {
 
         ownerId
@@ -21,7 +21,7 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
             .let(fantaTeamsDao::save)
             .also { fantaTeamsDao.flush() }
             .also {
-              toFantaTournamentsTeamsEntity(it, tournamentId)
+              toFantaTournamentsTeamsEntity(it, tournamentCreationDto)
                   .let(fantaTournamentsTeamsDao::save)
             }
             .let(::toFantaTeamOk)
@@ -39,7 +39,7 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
             .let(::toFantaTournamentEntity)
             .let(fantaTournamentsDao::save)
             .also { fantaTournamentsDao.flush() }
-            .let { createTeam(ownerId, it.id!!) }
+            .let { createTeam(ownerId, toTournamentCreationDto(it)) }
       }
       catch (e: Exception) {
 
@@ -47,15 +47,22 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
         FantaTeamError
       }
 
+  private fun toTournamentCreationDto(entity: FantaTournamentsEntity): TournamentCreationDto =
+      TournamentCreationDto(id = entity.id,
+                            startingTournamentId = entity.startingTournament,
+                            endingTournamentId = entity.endingTournament,
+                            tournamentYear = entity.year)
+
   private fun toFantaTournamentsTeamsEntity(fantaTeam: FantaTeamsEntity,
-                                            tournamentId: Int): FantaTournamentsTeamsEntity =
-      FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = tournamentId,
+                                            tournament: TournamentCreationDto): FantaTournamentsTeamsEntity =
+      FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = tournament.id!!,
                                                                         teamId = fantaTeam.teamId),
-                                  tournament = fantaTournamentsDao.findById(tournamentId).get(),
+                                  tournament = toFantaTournamentEntity(tournament),
                                   fantaTeam = fantaTeam)
 
   private fun toFantaTournamentEntity(dto: TournamentCreationDto): FantaTournamentsEntity =
-      FantaTournamentsEntity(startingTournament = dto.startingTournamentId!!,
+      FantaTournamentsEntity(id = dto.id,
+                             startingTournament = dto.startingTournamentId!!,
                              endingTournament = dto.endingTournamentId!!,
                              year = dto.tournamentYear!!)
 

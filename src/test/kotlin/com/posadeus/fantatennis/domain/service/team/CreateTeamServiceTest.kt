@@ -26,17 +26,21 @@ class CreateTeamServiceTest {
                                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                                 endingTournamentId = A_ENDING_TOURNAMENT_ID,
                                                                 tournamentYear = A_TOURNAMENT_YEAR)
+    val tournamentCreationDto = TournamentCreationDto(id = 100,
+                                                      startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                      endingTournamentId = A_ENDING_TOURNAMENT_ID,
+                                                      tournamentYear = A_TOURNAMENT_YEAR)
     val fantaTeam = FantaTeamOk(id = 1, ownerId = "AN_OWNER_ID")
 
     val expected: TeamCreation = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = "AN_OWNER_ID"))
 
     every { fantaTournamentsRepository.retrieve(100) } returns fantaTournament
-    every { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) } returns fantaTeam
+    every { fantaTeamsRepository.createTeam("AN_OWNER_ID", tournamentCreationDto) } returns fantaTeam
 
     assertThat(service.create(dto)).isEqualTo(expected)
 
     verify(exactly = 1) { fantaTournamentsRepository.retrieve(100) }
-    verify(exactly = 1) { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) }
+    verify(exactly = 1) { fantaTeamsRepository.createTeam("AN_OWNER_ID", tournamentCreationDto) }
     verify(exactly = 0) { fantaTeamsRepository.createTeamAndTournament(any(), any()) }
   }
 
@@ -58,12 +62,12 @@ class CreateTeamServiceTest {
     val expected: TeamCreation = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = "AN_OWNER_ID"))
 
     every { fantaTournamentsRepository.retrieve(100) } returns fantaTournament
-    every { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) } returns fantaTeam
+    every { fantaTeamsRepository.createTeam("AN_OWNER_ID", tournamentCreationDto) } returns fantaTeam
 
     assertThat(service.create(dto)).isEqualTo(expected)
 
     verify(exactly = 1) { fantaTournamentsRepository.retrieve(100) }
-    verify(exactly = 1) { fantaTeamsRepository.createTeam("AN_OWNER_ID", 100) }
+    verify(exactly = 1) { fantaTeamsRepository.createTeam("AN_OWNER_ID", tournamentCreationDto) }
     verify(exactly = 0) { fantaTeamsRepository.createTeamAndTournament(any(), any()) }
   }
 
@@ -127,8 +131,8 @@ class CreateTeamServiceTest {
 
     val expected = ErrorTeamCreation
 
-    every { fantaTournamentsRepository.retrieve(100) } returns A_VALID_FANTA_TOURNAMENT
-    every { fantaTeamsRepository.createTeam(AN_OWNER_ID, A_TOURNAMENT_ID) } returns FantaTeamError
+    every { fantaTournamentsRepository.retrieve(A_TOURNAMENT_ID) } returns A_VALID_FANTA_TOURNAMENT
+    every { fantaTeamsRepository.createTeam(AN_OWNER_ID, A_TOURNAMENT_CREATION_DTO) } returns FantaTeamError
 
     assertThat(service.create(request)).isEqualTo(expected)
   }
@@ -146,6 +150,10 @@ class CreateTeamServiceTest {
                                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                                 endingTournamentId = A_ENDING_TOURNAMENT_ID,
                                                                 tournamentYear = A_TOURNAMENT_YEAR)
+    private val A_TOURNAMENT_CREATION_DTO = TournamentCreationDto(id = A_TOURNAMENT_ID,
+                                                                  startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                                  endingTournamentId = A_ENDING_TOURNAMENT_ID,
+                                                                  tournamentYear = A_TOURNAMENT_YEAR)
   }
 }
 
