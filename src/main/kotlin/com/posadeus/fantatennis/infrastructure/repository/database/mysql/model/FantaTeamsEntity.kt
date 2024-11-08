@@ -15,5 +15,8 @@ data class FantaTeamsEntity(
     val ownerId: String = "",
 
     @OneToMany(mappedBy = "fantaTeam", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val teams: List<TeamsEntity> = emptyList()
+    val teams: List<TeamsEntity> = emptyList(),
+
+    @OneToOne(mappedBy = "fantaTeam", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    val tournament: FantaTournamentsTeamsEntity? = null
 ) : Serializable

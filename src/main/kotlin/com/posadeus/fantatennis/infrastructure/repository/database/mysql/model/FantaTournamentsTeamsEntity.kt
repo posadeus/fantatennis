@@ -22,7 +22,7 @@ data class FantaTournamentsTeamsEntity(
     @JoinColumn(name = "FANTA_TOURNAMENT_ID", insertable = false, updatable = false)
     val tournament: FantaTournamentsEntity = FantaTournamentsEntity(),
 
-    @OneToOne
+    @OneToOne(cascade = [CascadeType.PERSIST], fetch = FetchType.LAZY)
     @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false)
     val fantaTeam: FantaTeamsEntity = FantaTeamsEntity()
 ) : Serializable

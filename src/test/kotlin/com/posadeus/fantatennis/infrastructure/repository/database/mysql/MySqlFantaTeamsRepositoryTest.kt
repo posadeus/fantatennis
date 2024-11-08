@@ -10,6 +10,7 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.util.Optional.of
 
 class MySqlFantaTeamsRepositoryTest {
 
@@ -29,18 +30,23 @@ class MySqlFantaTeamsRepositoryTest {
 
       val toCreateFantaTeamsEntity = FantaTeamsEntity(ownerId = AN_OWNER_ID)
       val createdFantaTeamsEntity = FantaTeamsEntity(teamId = 1, ownerId = AN_OWNER_ID)
-
+      val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
+                                                          startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                          endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                          year = A_TOURNAMENT_YEAR)
       val fantaTournamentsTeamsEntity =
-        FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = A_TOURNAMENT_ID, teamId = 1))
+        FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = A_TOURNAMENT_ID, teamId = 1),
+                                    tournament = fantaTournamentsEntity,
+                                    fantaTeam = createdFantaTeamsEntity)
 
       val expected = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
 
       every { fantaTeamsDao.save(toCreateFantaTeamsEntity) } returns createdFantaTeamsEntity
+      every { fantaTeamsDao.flush() } just runs
+      every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } returns of(fantaTournamentsEntity)
       every { fantaTournamentsTeamsDao.save(fantaTournamentsTeamsEntity) } returns fantaTournamentsTeamsEntity
 
       assertThat(repository.createTeam(AN_OWNER_ID, A_TOURNAMENT_ID)).isEqualTo(expected)
-
-      verify { fantaTournamentsDao wasNot called }
     }
 
     @Test
@@ -63,18 +69,24 @@ class MySqlFantaTeamsRepositoryTest {
 
       val toCreateFantaTeamsEntity = FantaTeamsEntity(ownerId = AN_OWNER_ID)
       val createdFantaTeamsEntity = FantaTeamsEntity(teamId = 1, ownerId = AN_OWNER_ID)
-
+      val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
+                                                          startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                          endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                          year = A_TOURNAMENT_YEAR)
       val fantaTournamentsTeamsEntity =
-        FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = A_TOURNAMENT_ID, teamId = 1))
+        FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = A_TOURNAMENT_ID, teamId = 1),
+                                    tournament = fantaTournamentsEntity,
+                                    fantaTeam = createdFantaTeamsEntity)
 
       val expected = FantaTeamError
 
       every { fantaTeamsDao.save(toCreateFantaTeamsEntity) } returns createdFantaTeamsEntity
+      every { fantaTeamsDao.flush() } just runs
+      every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } returns of(fantaTournamentsEntity)
       every { fantaTournamentsTeamsDao.save(fantaTournamentsTeamsEntity) } throws Exception()
 
       assertThat(repository.createTeam(AN_OWNER_ID, A_TOURNAMENT_ID)).isEqualTo(expected)
 
-      verify { fantaTournamentsDao wasNot called }
     }
   }
 
@@ -99,12 +111,17 @@ class MySqlFantaTeamsRepositoryTest {
       val createdFantaTeamsEntity = FantaTeamsEntity(teamId = 1, ownerId = AN_OWNER_ID)
 
       val fantaTournamentsTeamsEntity =
-        FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = A_TOURNAMENT_ID, teamId = 1))
+        FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = A_TOURNAMENT_ID, teamId = 1),
+                                    tournament = createdFantaTournamentsEntity,
+                                    fantaTeam = createdFantaTeamsEntity)
 
       val expected = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
 
       every { fantaTournamentsDao.save(toCreateFantaTournamentsEntity) } returns createdFantaTournamentsEntity
+      every { fantaTournamentsDao.flush() } just runs
       every { fantaTeamsDao.save(toCreateFantaTeamsEntity) } returns createdFantaTeamsEntity
+      every { fantaTeamsDao.flush() } just runs
+      every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } returns of(createdFantaTournamentsEntity)
       every { fantaTournamentsTeamsDao.save(fantaTournamentsTeamsEntity) } returns fantaTournamentsTeamsEntity
 
       assertThat(repository.createTeamAndTournament(AN_OWNER_ID, tournamentCreationDto)).isEqualTo(expected)

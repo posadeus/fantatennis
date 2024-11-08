@@ -48,21 +48,22 @@ class MySqlFantaTeamsRepositoryIT {
       assertThat(fantaTournamentsTeamsDao.findAll()).isEmpty()
       assertThat(fantaTournamentsDao.findAll()).isEmpty()
 
-      val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
+      val fantaTournamentsEntity = FantaTournamentsEntity(id = 1,
                                                           startingTournament = A_STARTING_TOURNAMENT_ID,
                                                           endingTournament = AN_ENDING_TOURNAMENT_ID,
                                                           year = A_TOURNAMENT_YEAR)
 
       fantaTournamentsDao.save(fantaTournamentsEntity)
+      fantaTournamentsDao.flush()
 
       assertThat(fantaTournamentsDao.findAll()).size().isEqualTo(1)
 
       val expected = FantaTeamOk(id = 1, ownerId = AN_OWNER_ID)
 
-      assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID, A_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(mySqlFantaTeamsRepository.createTeam(AN_OWNER_ID, 1)).isEqualTo(expected)
 
       assertThat(fantaTeamsDao.findById(1)).isPresent
-      assertThat(fantaTournamentsTeamsDao.findById(FantaTournamentsTeamsKeyEmbedded(A_TOURNAMENT_ID, 1))).isPresent
+      assertThat(fantaTournamentsTeamsDao.findById(FantaTournamentsTeamsKeyEmbedded(1, 1))).isPresent
     }
   }
 
@@ -76,7 +77,6 @@ class MySqlFantaTeamsRepositoryIT {
   companion object {
 
     private const val AN_OWNER_ID = "AN_OWNER_ID"
-    private const val A_TOURNAMENT_ID = 111
     private const val A_STARTING_TOURNAMENT_ID = 1
     private const val AN_ENDING_TOURNAMENT_ID = 10
     private const val A_TOURNAMENT_YEAR = 2222

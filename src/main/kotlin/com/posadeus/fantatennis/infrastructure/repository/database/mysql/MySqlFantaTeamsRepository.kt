@@ -15,12 +15,13 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
   override fun createTeam(ownerId: String, tournamentId: Int): FantaTeam =
       try {
+
         ownerId
             .let(::toFantaTeamsEntity)
             .let(fantaTeamsDao::save)
+            .also { fantaTeamsDao.flush() }
             .also {
-              FantaTournamentsTeamsKeyEmbedded(tournamentId = tournamentId, teamId = it.teamId)
-                  .let(::FantaTournamentsTeamsEntity)
+              toFantaTournamentsTeamsEntity(it, tournamentId)
                   .let(fantaTournamentsTeamsDao::save)
             }
             .let(::toFantaTeamOk)
@@ -33,9 +34,11 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
   override fun createTeamAndTournament(ownerId: String, tournamentCreationDto: TournamentCreationDto): FantaTeam =
       try {
+
         tournamentCreationDto
             .let(::toFantaTournamentEntity)
             .let(fantaTournamentsDao::save)
+            .also { fantaTournamentsDao.flush() }
             .let { createTeam(ownerId, it.id!!) }
       }
       catch (e: Exception) {
@@ -43,6 +46,13 @@ class MySqlFantaTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
         LOGGER.error("Error during the creation of the FantaTournament", e)
         FantaTeamError
       }
+
+  private fun toFantaTournamentsTeamsEntity(fantaTeam: FantaTeamsEntity,
+                                            tournamentId: Int): FantaTournamentsTeamsEntity =
+      FantaTournamentsTeamsEntity(id = FantaTournamentsTeamsKeyEmbedded(tournamentId = tournamentId,
+                                                                        teamId = fantaTeam.teamId),
+                                  tournament = fantaTournamentsDao.findById(tournamentId).get(),
+                                  fantaTeam = fantaTeam)
 
   private fun toFantaTournamentEntity(dto: TournamentCreationDto): FantaTournamentsEntity =
       FantaTournamentsEntity(startingTournament = dto.startingTournamentId!!,
