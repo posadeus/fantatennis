@@ -135,12 +135,15 @@ components:
         startingTournamentId:
           type: integer
           example: 1
+          default: 1
         endingTournamentId:
           type: integer
           example: 1
+          default: 1
         tournamentYear:
           type: integer
           example: 2024
+          default: 2024
       required:
         - startingTournamentId
         - endingTournamentId

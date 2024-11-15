@@ -11,11 +11,11 @@ import java.io.Serializable
  */
 data class TournamentToCreateDto(
 
-    @get:JsonProperty("startingTournamentId", required = true) val startingTournamentId: Int,
+    @get:JsonProperty("startingTournamentId", required = true) val startingTournamentId: Int = 1,
 
-    @get:JsonProperty("endingTournamentId", required = true) val endingTournamentId: Int,
+    @get:JsonProperty("endingTournamentId", required = true) val endingTournamentId: Int = 1,
 
-    @get:JsonProperty("tournamentYear", required = true) val tournamentYear: Int
+    @get:JsonProperty("tournamentYear", required = true) val tournamentYear: Int = 2024
     ) : Serializable{
 
     companion object {
