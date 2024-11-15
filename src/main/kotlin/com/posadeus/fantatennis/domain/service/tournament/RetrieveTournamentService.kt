@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.domain.service
+package com.posadeus.fantatennis.domain.service.tournament
 
 import com.posadeus.fantatennis.domain.model.FantaTournamentData
 

@@ -3,8 +3,8 @@ package com.posadeus.fantatennis.controller.tournament
 import com.posadeus.fantatennis.controller.TournamentApi
 import com.posadeus.fantatennis.controller.model.tournament.*
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.service.CreateTournamentService
-import com.posadeus.fantatennis.domain.service.RetrieveTournamentService
+import com.posadeus.fantatennis.domain.service.tournament.CreateTournamentService
+import com.posadeus.fantatennis.domain.service.tournament.RetrieveTournamentService
 import org.springframework.http.ResponseEntity
 
 class TournamentController(private val createTournamentService: CreateTournamentService,
