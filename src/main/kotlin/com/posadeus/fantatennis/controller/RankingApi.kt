@@ -5,7 +5,7 @@
 */
 package com.posadeus.fantatennis.controller
 
-import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -18,5 +18,5 @@ interface RankingApi {
             value = ["/players/ranking/{positions}"],
             produces = ["application/json"]
     )
-    fun players( @PathVariable("positions") positions: Int): ResponseEntity<List<RankedPlayer>>
+    fun players( @PathVariable("positions") positions: Int): ResponseEntity<List<RankedPlayerDto>>
 }

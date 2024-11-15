@@ -1,0 +1,168 @@
+components:
+  schemas:
+
+    RankedPlayerDto:
+      type: object
+      properties:
+        id:
+          type: string
+          default: 0
+          description: Player's unique ID
+        fullName:
+          type: string
+          default: ""
+          description: Player's name
+        rank:
+          type: integer
+          description: Player's ranking
+        points:
+          type: integer
+          description: Player's points
+      required:
+        - id
+        - fullName
+        - rank
+        - points
+
+    TeamDto:
+      type: object
+      properties:
+        players:
+          $ref: '#/components/schemas/TeamPlayersDto'
+        totalScore:
+          type: double
+          default: 0
+          description: Total team's score
+      required:
+        - players
+        - totalScore
+
+    TeamPlayersDto:
+      type: array
+      items:
+        $ref: '#/components/schemas/TeamPlayerDto'
+
+    TeamPlayerDto:
+      type: object
+      properties:
+        fullName:
+          type: string
+          default: ""
+          description: Player's full name
+        fantaPoints:
+          type: double
+          default: 0
+          description: Player's fanta-points
+      required:
+        - fullName
+        - fantaPoints
+
+    TeamCreatedDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          default: 0
+          description: Team ID
+        ownerId:
+          type: string
+          default: ""
+          description: Team's Owner ID
+      required:
+        - id
+        - ownerId
+
+    TeamToCreateDto:
+      type: object
+      properties:
+        ownerId:
+          type: string
+          default: ""
+          example: OWNER_ID
+        tournament:
+          $ref: '#/components/schemas/TournamentCreationDto'
+      required:
+        - ownerId
+        - tournament
+
+    PlayersToAddDto:
+      type: object
+      properties:
+        playerIds:
+          type: array
+          default: [ ]
+          items:
+            type: string
+          uniqueItems: true
+      example:
+        playerIds: [ "id1", "id2", "id3" ]
+      required:
+        - playerIds
+
+    TournamentCreationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        startingTournamentId:
+          type: integer
+          example: 1
+        endingTournamentId:
+          type: integer
+          example: 1
+        tournamentYear:
+          type: integer
+          example: 2024
+
+    TournamentDto:
+      type: object
+      properties:
+        teams:
+          $ref: '#/components/schemas/TeamsDto'
+      required:
+        - teams
+
+    TeamsDto:
+      type: array
+      items:
+        type: object
+        format: teamDto
+
+    TournamentToCreateDto:
+      type: object
+      properties:
+        startingTournamentId:
+          type: integer
+          example: 1
+        endingTournamentId:
+          type: integer
+          example: 1
+        tournamentYear:
+          type: integer
+          example: 2024
+      required:
+        - startingTournamentId
+        - endingTournamentId
+        - tournamentYear
+
+    TournamentCreatedDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        startingTournamentId:
+          type: integer
+          example: 1
+        endingTournamentId:
+          type: integer
+          example: 1
+        tournamentYear:
+          type: integer
+          example: 2024
+      required:
+        - id
+        - startingTournamentId
+        - endingTournamentId
+        - tournamentYear

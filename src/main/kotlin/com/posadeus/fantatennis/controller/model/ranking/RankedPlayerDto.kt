@@ -10,7 +10,7 @@ import java.io.Serializable
  * @param rank Player's ranking
  * @param points Player's points
  */
-data class RankedPlayer(
+data class RankedPlayerDto(
 
     @get:JsonProperty("id", required = true) val id: String = "0",
 

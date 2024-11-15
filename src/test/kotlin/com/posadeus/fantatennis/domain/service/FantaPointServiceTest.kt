@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.domain.service
 
-import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.player.*
@@ -24,10 +24,10 @@ class FantaPointServiceTest {
   @Test
   fun `all tournament's players found`() {
 
-     val atpPlayers = setOf(AtpPlayer(id = "AN_ATP_PLAYER_ID_1",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                            AtpPlayer(id = "AN_ATP_PLAYER_ID_2",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+    val atpPlayers = setOf(AtpPlayer(id = "AN_ATP_PLAYER_ID_1",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                           AtpPlayer(id = "AN_ATP_PLAYER_ID_2",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
 
     val domainPlayers = setOf(DomainPlayer(id = "A_DOMAIN_PLAYER_ID_1",
                                            atpId = "AN_ATP_PLAYER_ID_1",
@@ -54,21 +54,21 @@ class FantaPointServiceTest {
   @Test
   fun `not all tournament's players found`() {
 
-     val atpPlayers = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                            AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+    val atpPlayers = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                           AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
     val domainPlayers = setOf(DomainPlayer(id = A_DOMAIN_PLAYER_ID,
                                            atpId = AN_ATP_PLAYER_ID,
                                            fullName = A_FULL_NAME))
-    val ranking = RankedPlayers(listOf(RankedPlayer(id = AN_ATP_PLAYER_ID,
-                                                    fullName = A_FULL_NAME,
-                                                    rank = A_RANKING,
-                                                    points = A_POINTS),
-                                       RankedPlayer(id = "ANOTHER_ATP_PLAYER_ID",
-                                                    fullName = "ANOTHER_FULL_NAME",
-                                                    rank = ANOTHER_RANKING,
-                                                    points = ANOTHER_POINTS)))
+    val ranking = RankedPlayers(listOf(RankedPlayerDto(id = AN_ATP_PLAYER_ID,
+                                                       fullName = A_FULL_NAME,
+                                                       rank = A_RANKING,
+                                                       points = A_POINTS),
+                                       RankedPlayerDto(id = "ANOTHER_ATP_PLAYER_ID",
+                                                       fullName = "ANOTHER_FULL_NAME",
+                                                       rank = ANOTHER_RANKING,
+                                                       points = ANOTHER_POINTS)))
     val missingDomainPlayers = setOf(DomainPlayer(id = "ANOTHER_ATP_PLAYER_ID",
                                                   atpId = "ANOTHER_ATP_PLAYER_ID",
                                                   fullName = "ANOTHER_FULL_NAME"))
@@ -91,30 +91,30 @@ class FantaPointServiceTest {
   @Test
   fun `not all tournament's players found neither in the ranking`() {
 
-     val atpPlayers = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                            AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))),
-                            AtpPlayer(id = "A_THIRD_ATP_PLAYER_ID",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 12.0))))
+    val atpPlayers = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                           AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))),
+                           AtpPlayer(id = "A_THIRD_ATP_PLAYER_ID",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 12.0))))
     val domainPlayers = setOf(DomainPlayer(id = A_DOMAIN_PLAYER_ID,
                                            atpId = AN_ATP_PLAYER_ID,
                                            fullName = A_FULL_NAME))
-    val ranking = RankedPlayers(listOf(RankedPlayer(id = AN_ATP_PLAYER_ID,
-                                                    fullName = A_FULL_NAME,
-                                                    rank = A_RANKING,
-                                                    points = A_POINTS),
-                                       RankedPlayer(id = "ANOTHER_ATP_PLAYER_ID",
-                                                    fullName = "ANOTHER_FULL_NAME",
-                                                    rank = ANOTHER_RANKING,
-                                                    points = ANOTHER_POINTS)))
+    val ranking = RankedPlayers(listOf(RankedPlayerDto(id = AN_ATP_PLAYER_ID,
+                                                       fullName = A_FULL_NAME,
+                                                       rank = A_RANKING,
+                                                       points = A_POINTS),
+                                       RankedPlayerDto(id = "ANOTHER_ATP_PLAYER_ID",
+                                                       fullName = "ANOTHER_FULL_NAME",
+                                                       rank = ANOTHER_RANKING,
+                                                       points = ANOTHER_POINTS)))
     val missingDomainPlayers = setOf(DomainPlayer(id = "ANOTHER_ATP_PLAYER_ID",
                                                   atpId = "ANOTHER_ATP_PLAYER_ID",
                                                   fullName = "ANOTHER_FULL_NAME"))
-     val playerScoresToUpdate = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
-                                                tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                                      AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
-                                                tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+    val playerScoresToUpdate = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
+                                               tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                                     AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                               tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
 
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
     every { playerService.allPlayers() } returns domainPlayers
@@ -136,7 +136,7 @@ class FantaPointServiceTest {
 
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns emptySet()
 
-    assertThrows<NoPointsForTournamentException> { service.playerFantaPointsFor (A_TOURNAMENT_ID, A_YEAR) }
+    assertThrows<NoPointsForTournamentException> { service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify { playerService wasNot called }
@@ -148,11 +148,11 @@ class FantaPointServiceTest {
   fun `not all tournament's players found and ranking is empty`() {
 
     val atpPlayers = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                            AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))),
-                            AtpPlayer(id = "A_THIRD_ATP_PLAYER_ID",
-                                      tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 12.0))))
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                           AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))),
+                           AtpPlayer(id = "A_THIRD_ATP_PLAYER_ID",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 12.0))))
     val domainPlayers = setOf(DomainPlayer(id = A_DOMAIN_PLAYER_ID,
                                            atpId = AN_ATP_PLAYER_ID,
                                            fullName = A_FULL_NAME))
@@ -161,7 +161,7 @@ class FantaPointServiceTest {
     every { playerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns EmptyRanking
 
-    assertThrows<ClassCastException> { service.playerFantaPointsFor (A_TOURNAMENT_ID, A_YEAR) }
+    assertThrows<ClassCastException> { service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify(exactly = 1) { playerService.allPlayers() }

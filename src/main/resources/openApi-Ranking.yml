@@ -25,31 +25,6 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/RankedPlayer'
+                  $ref: './openApi-schemas.yml#/components/schemas/RankedPlayerDto'
         '500':
           description: Error during the retrieving
-
-components:
-  schemas:
-    RankedPlayer:
-      type: object
-      properties:
-        id:
-          type: string
-          default: 0
-          description: Player's unique ID
-        fullName:
-          type: string
-          default: ""
-          description: Player's name
-        rank:
-          type: integer
-          description: Player's ranking
-        points:
-          type: integer
-          description: Player's points
-      required:
-        - id
-        - fullName
-        - rank
-        - points

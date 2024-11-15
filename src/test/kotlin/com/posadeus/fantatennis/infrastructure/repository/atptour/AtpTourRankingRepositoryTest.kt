@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.atptour
 
-import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RankingRepository
 import com.posadeus.fantatennis.domain.model.EmptyRanking
 import com.posadeus.fantatennis.domain.model.RankedPlayers
@@ -30,10 +30,10 @@ class AtpTourRankingRepositoryTest {
                                                                                    countryCode = "AC",
                                                                                    playerId = "AN_ID",
                                                                                    playerProfileUrl = "")))
-    val expected = RankedPlayers(listOf(RankedPlayer(id = "AN_ID",
-                                                     fullName = "A_NAME",
-                                                     rank = 1,
-                                                     points = 10000)))
+    val expected = RankedPlayers(listOf(RankedPlayerDto(id = "AN_ID",
+                                                        fullName = "A_NAME",
+                                                        rank = 1,
+                                                        points = 10000)))
 
     every { client.retrieveRanking(ANY_POSITIONS) } returns clientResponse
 

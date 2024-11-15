@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.domain.service.ranking
 
-import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RankingRepository
 import com.posadeus.fantatennis.domain.model.EmptyRanking
 import com.posadeus.fantatennis.domain.model.RankedPlayers
@@ -34,6 +34,6 @@ class RankingServiceTest {
   companion object {
 
     private const val ANY_POSITIONS = 1
-    private val PLAYERS = emptyList<RankedPlayer>()
+    private val PLAYERS = emptyList<RankedPlayerDto>()
   }
 }

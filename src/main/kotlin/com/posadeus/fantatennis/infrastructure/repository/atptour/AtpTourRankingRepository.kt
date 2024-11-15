@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.atptour
 
-import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RankingRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.client.atptour.AtpTourClient
@@ -23,9 +23,9 @@ class AtpTourRankingRepository(private val atpTourClient: AtpTourClient) : Ranki
         is AtpTourRankingErrorResponse -> EmptyRanking
       }
 
-  private fun toRankedPlayer(atpTourRankingOkResponse: AtpTourRankingOkResponse): RankedPlayer =
-      RankedPlayer(id = atpTourRankingOkResponse.playerId,
-                   fullName = atpTourRankingOkResponse.name,
-                   rank = atpTourRankingOkResponse.rankNo,
-                   points = atpTourRankingOkResponse.points.replace(",", "").toInt())
+  private fun toRankedPlayer(atpTourRankingOkResponse: AtpTourRankingOkResponse): RankedPlayerDto =
+      RankedPlayerDto(id = atpTourRankingOkResponse.playerId,
+                      fullName = atpTourRankingOkResponse.name,
+                      rank = atpTourRankingOkResponse.rankNo,
+                      points = atpTourRankingOkResponse.points.replace(",", "").toInt())
 }

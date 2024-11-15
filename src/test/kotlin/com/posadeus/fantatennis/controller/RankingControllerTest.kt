@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.posadeus.fantatennis.controller.model.ranking.RankedPlayer
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.controller.ranking.RankingController
 import com.posadeus.fantatennis.domain.model.EmptyRanking
 import com.posadeus.fantatennis.domain.model.RankedPlayers
@@ -32,18 +32,18 @@ class RankingControllerTest {
   fun `200 response`() {
 
     val positions = 3
-    val rankedPlayer1 = RankedPlayer(id = "123",
-                                     fullName = "PLAYER1_NAME",
-                                     rank = 1,
-                                     points = 1000)
-    val rankedPlayer2 = RankedPlayer(id = "456",
-                                     fullName = "PLAYER2_NAME",
-                                     rank = 2,
-                                     points = 987)
-    val rankedPlayer3 = RankedPlayer(id = "789",
-                                     fullName = "PLAYER3_NAME",
-                                     rank = 3,
-                                     points = 786)
+    val rankedPlayer1 = RankedPlayerDto(id = "123",
+                                        fullName = "PLAYER1_NAME",
+                                        rank = 1,
+                                        points = 1000)
+    val rankedPlayer2 = RankedPlayerDto(id = "456",
+                                        fullName = "PLAYER2_NAME",
+                                        rank = 2,
+                                        points = 987)
+    val rankedPlayer3 = RankedPlayerDto(id = "789",
+                                        fullName = "PLAYER3_NAME",
+                                        rank = 3,
+                                        points = 786)
     val ranking = RankedPlayers(listOf(rankedPlayer1, rankedPlayer2, rankedPlayer3))
     val expected = listOf(rankedPlayer1, rankedPlayer2, rankedPlayer3)
 
