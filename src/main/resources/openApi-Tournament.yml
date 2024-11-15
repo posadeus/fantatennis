@@ -24,6 +24,8 @@ paths:
             application/json:
               schema:
                 $ref: './openApi-schemas.yml#/components/schemas/TournamentDto'
+        '400':
+          description: Not found tournament ID
         '500':
           description: Error during tournament retrieval
 
