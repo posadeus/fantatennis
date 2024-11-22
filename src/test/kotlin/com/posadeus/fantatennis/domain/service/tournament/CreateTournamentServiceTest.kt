@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test
 
 class CreateTournamentServiceTest {
 
-  private val fantaTournamentRepository: FantaTournamentsRepository = mockk()
+  private val fantaTournamentsRepository: FantaTournamentsRepository = mockk()
 
-  private val service = CreateTournamentService(fantaTournamentRepository)
+  private val service = CreateTournamentService(fantaTournamentsRepository)
 
   @Test
   fun `create tournament successfully`() {
@@ -34,7 +34,7 @@ class CreateTournamentServiceTest {
                                                                  endingTournamentId = AN_ENDING_TOURNAMENT_ID,
                                                                  tournamentYear = A_TOURNAMENT_YEAR))
 
-    every { fantaTournamentRepository.create(dto) } returns fantaTournament
+    every { fantaTournamentsRepository.create(dto) } returns fantaTournament
 
     assertThat(service.create(dto)).isEqualTo(expected)
   }
@@ -49,7 +49,7 @@ class CreateTournamentServiceTest {
 
     val expected = ErrorTournamentCreation
 
-    every { fantaTournamentRepository.create(dto) } returns fantaTournament
+    every { fantaTournamentsRepository.create(dto) } returns fantaTournament
 
     assertThat(service.create(dto)).isEqualTo(expected)
   }

@@ -7,10 +7,10 @@ import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 
-class CreateTournamentService(private val fantaTournamentRepository: FantaTournamentsRepository) {
+class CreateTournamentService(private val fantaTournamentsRepository: FantaTournamentsRepository) {
 
   fun create(dto: TournamentToCreateDto): TournamentCreated =
-      when (val result = fantaTournamentRepository.create(dto)) {
+      when (val result = fantaTournamentsRepository.create(dto)) {
 
         is ValidFantaTournament -> result.let(::toTournamentCreatedDto).let(::SuccessTournamentCreated)
         is InvalidFantaTournament -> ErrorTournamentCreation
