@@ -3,6 +3,8 @@ package com.posadeus.fantatennis.domain.service.tournament
 import com.posadeus.fantatennis.controller.model.tournament.TournamentCreatedDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
+import com.posadeus.fantatennis.domain.model.ErrorTournamentCreation
+import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.domain.model.SuccessTournamentCreated
 import io.mockk.every
@@ -31,6 +33,21 @@ class CreateTournamentServiceTest {
                                                                  startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                                  endingTournamentId = AN_ENDING_TOURNAMENT_ID,
                                                                  tournamentYear = A_TOURNAMENT_YEAR))
+
+    every { fantaTournamentRepository.create(dto) } returns fantaTournament
+
+    assertThat(service.create(dto)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `create tournament fails due to error from repository`() {
+
+    val dto = TournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                    endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                    tournamentYear = A_TOURNAMENT_YEAR)
+    val fantaTournament = InvalidFantaTournament
+
+    val expected = ErrorTournamentCreation
 
     every { fantaTournamentRepository.create(dto) } returns fantaTournament
 
