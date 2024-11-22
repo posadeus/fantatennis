@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql.it
 
+import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
@@ -61,6 +62,29 @@ class MySqlFantaTournamentsRepositoryIT {
     val expected = InvalidFantaTournament
 
     assertThat(mySqlFantaTournamentsRepository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `create fanta tournament`() {
+
+    assertThat(fantaTournamentsDao.findAll()).isEmpty()
+
+    val dto = TournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                    endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                    tournamentYear = A_TOURNAMENT_YEAR)
+
+    val createdEntity = FantaTournamentsEntity(id = 1,
+                                               startingTournament = A_STARTING_TOURNAMENT_ID,
+                                               endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                               year = A_TOURNAMENT_YEAR)
+
+    val expected = ValidFantaTournament(id = 1,
+                                        startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                        endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                        tournamentYear = A_TOURNAMENT_YEAR)
+
+    assertThat(mySqlFantaTournamentsRepository.create(dto)).isEqualTo(expected)
+    assertThat(fantaTournamentsDao.findAll()).containsExactly(createdEntity)
   }
 
   private fun deleteAll() {
