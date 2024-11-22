@@ -20,8 +20,8 @@ class TournamentController(private val createTournamentService: CreateTournament
   override fun retrieve(tournamentId: Int): ResponseEntity<TournamentDto> =
       when (val response = retrieveTournamentService.retrieve(tournamentId)) {
 
-        is FoundFantaTournamentData -> ResponseEntity.ok(response.tournament)
+        is FoundFantaTournamentResults -> ResponseEntity.ok(response.tournament)
         is NotFoundFantaTournamentId -> ResponseEntity.badRequest().build()
-        is ErrorFantaTournamentData -> ResponseEntity.internalServerError().build()
+        is ErrorFantaTournamentResults -> ResponseEntity.internalServerError().build()
       }
 }

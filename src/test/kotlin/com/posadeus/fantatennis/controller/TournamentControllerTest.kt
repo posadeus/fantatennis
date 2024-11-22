@@ -103,7 +103,7 @@ class TournamentControllerTest {
     fun `200 response`() {
 
       val expected = TournamentDto(teams = A_TEAM_LIST)
-      val tournament = FoundFantaTournamentData(expected)
+      val tournament = FoundFantaTournamentResults(expected)
 
       every { retrieveTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
 
@@ -130,7 +130,7 @@ class TournamentControllerTest {
     @Test
     fun `500 response`() {
 
-      val tournament = ErrorFantaTournamentData
+      val tournament = ErrorFantaTournamentResults
 
       every { retrieveTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
 

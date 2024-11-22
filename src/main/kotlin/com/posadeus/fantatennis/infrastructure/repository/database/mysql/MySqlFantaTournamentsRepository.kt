@@ -5,23 +5,11 @@ import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.FantaTournamentsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.FantaTournamentsEntity
 import org.slf4j.LoggerFactory
 class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTournamentsDao) : FantaTournamentsRepository {
-
-  override fun retrieve(tournamentId: Int): FantaTournament =
-      try {
-        tournamentId
-            .let(fantaTournamentsDao::findById)
-            .map(::toValidFantaTournament)
-            .orElse(InvalidFantaTournament)
-      }
-      catch (e: Exception) {
-
-        LOGGER.error("Error during retrieve operation for tournament id: $tournamentId")
-        InvalidFantaTournament
-      }
 
   override fun create(tournamentToCreate: TournamentToCreateDto): FantaTournament =
       try {
@@ -36,6 +24,23 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
         LOGGER.error("Error during save operation of the new fanta tournament", e)
         InvalidFantaTournament
       }
+
+  override fun retrieve(tournamentId: Int): FantaTournament =
+      try {
+        tournamentId
+            .let(fantaTournamentsDao::findById)
+            .map(::toValidFantaTournament)
+            .orElse(InvalidFantaTournament)
+      }
+      catch (e: Exception) {
+
+        LOGGER.error("Error during retrieve operation for tournament id: $tournamentId")
+        InvalidFantaTournament
+      }
+
+  override fun retrieveTournamentResults(tournamentId: Int): FantaTournamentResults {
+    TODO("Not yet implemented")
+  }
 
   private fun toFantaTournamentsEntityToCreate(dto: TournamentToCreateDto): FantaTournamentsEntity =
       FantaTournamentsEntity(startingTournament = dto.startingTournamentId,
