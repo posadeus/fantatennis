@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
+import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
@@ -23,8 +24,12 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
         InvalidFantaTournament
       }
 
+  override fun create(tournamentToCreate: TournamentToCreateDto): FantaTournament {
+    TODO("Not yet implemented")
+  }
+
   private fun toValidFantaTournament(entity: FantaTournamentsEntity): FantaTournament =
-      ValidFantaTournament(id = entity.id!!,
+      ValidFantaTournament(id = entity.id,
                            startingTournamentId = entity.startingTournament,
                            endingTournamentId = entity.endingTournament,
                            tournamentYear = entity.year)
