@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
+import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
@@ -8,6 +9,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.F
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.Optional.empty
 import java.util.Optional.of
@@ -18,42 +20,91 @@ class MySqlFantaTournamentsRepositoryTest {
 
   private val repository: FantaTournamentsRepository = MySqlFantaTournamentsRepository(fantaTournamentsDao)
 
-  @Test
-  fun `retrieve found a result`() {
+  @Nested
+  inner class RetrieveFantaTournament {
 
-    val expected = ValidFantaTournament(id = A_TOURNAMENT_ID,
-                                        startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                        endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                        tournamentYear = A_TOURNAMENT_YEAR)
+    @Test
+    fun `retrieve found a result`() {
 
-    val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
-                                                        startingTournament = A_STARTING_TOURNAMENT_ID,
-                                                        endingTournament = AN_ENDING_TOURNAMENT_ID,
-                                                        year = A_TOURNAMENT_YEAR)
+      val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
+                                                          startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                          endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                          year = A_TOURNAMENT_YEAR)
 
-    every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } returns of(fantaTournamentsEntity)
+      val expected = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                          startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                          endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                          tournamentYear = A_TOURNAMENT_YEAR)
 
-    assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+      every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } returns of(fantaTournamentsEntity)
+
+      assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+    }
+
+    @Test
+    fun `retrieve found no results`() {
+
+      val expected = InvalidFantaTournament
+
+      every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } returns empty()
+
+      assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+    }
+
+    @Test
+    fun `error during retrieve operation`() {
+
+      val expected = InvalidFantaTournament
+
+      every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } throws Exception()
+
+      assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+    }
   }
 
-  @Test
-  fun `retrieve found no results`() {
+  @Nested
+  inner class CreateFantaTournament {
 
-    val expected = InvalidFantaTournament
+    @Test
+    fun `create successfully`() {
 
-    every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } returns empty()
+      val dto = TournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                      endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                      tournamentYear = A_TOURNAMENT_YEAR)
+      val fantaTournamentsEntity = FantaTournamentsEntity(startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                          endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                          year = A_TOURNAMENT_YEAR)
+      val createdFantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
+                                                                 startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                                 endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                                 year = A_TOURNAMENT_YEAR)
 
-    assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
-  }
+      val expected = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                          startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                          endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                          tournamentYear = A_TOURNAMENT_YEAR)
 
-  @Test
-  fun `error during retrieve operation`() {
+      every { fantaTournamentsDao.save(fantaTournamentsEntity) } returns createdFantaTournamentsEntity
 
-    val expected = InvalidFantaTournament
+      assertThat(repository.create(dto)).isEqualTo(expected)
+    }
 
-    every { fantaTournamentsDao.findById(A_TOURNAMENT_ID) } throws Exception()
+    @Test
+    fun `creation fails due to exception from dao`() {
 
-    assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+      val dto = TournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                      endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                      tournamentYear = A_TOURNAMENT_YEAR)
+      val fantaTournamentsEntity = FantaTournamentsEntity(startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                          endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                          year = A_TOURNAMENT_YEAR)
+
+      val expected = InvalidFantaTournament
+
+      every { fantaTournamentsDao.save(fantaTournamentsEntity) } throws Exception()
+
+      assertThat(repository.create(dto)).isEqualTo(expected)
+    }
   }
 
   companion object {

@@ -8,7 +8,6 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournamen
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.FantaTournamentsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.FantaTournamentsEntity
 import org.slf4j.LoggerFactory
-
 class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTournamentsDao) : FantaTournamentsRepository {
 
   override fun retrieve(tournamentId: Int): FantaTournament =
@@ -24,9 +23,24 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
         InvalidFantaTournament
       }
 
-  override fun create(tournamentToCreate: TournamentToCreateDto): FantaTournament {
-    TODO("Not yet implemented")
-  }
+  override fun create(tournamentToCreate: TournamentToCreateDto): FantaTournament =
+      try {
+
+        tournamentToCreate
+            .let(::toFantaTournamentsEntityToCreate)
+            .let(fantaTournamentsDao::save)
+            .let(::toValidFantaTournament)
+      }
+      catch (e: Exception) {
+
+        LOGGER.error("Error during save operation of the new fanta tournament", e)
+        InvalidFantaTournament
+      }
+
+  private fun toFantaTournamentsEntityToCreate(dto: TournamentToCreateDto): FantaTournamentsEntity =
+      FantaTournamentsEntity(startingTournament = dto.startingTournamentId,
+                             endingTournament = dto.endingTournamentId,
+                             year = dto.tournamentYear)
 
   private fun toValidFantaTournament(entity: FantaTournamentsEntity): FantaTournament =
       ValidFantaTournament(id = entity.id,
@@ -39,3 +53,4 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
     private val LOGGER = LoggerFactory.getLogger(MySqlFantaTournamentsRepository::class.java)
   }
 }
+
