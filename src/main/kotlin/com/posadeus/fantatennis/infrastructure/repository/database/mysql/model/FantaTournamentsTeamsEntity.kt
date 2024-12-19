@@ -18,11 +18,11 @@ data class FantaTournamentsTeamsEntity(
     @EmbeddedId
     val id: FantaTournamentsTeamsKeyEmbedded = FantaTournamentsTeamsKeyEmbedded(),
 
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "FANTA_TOURNAMENT_ID", insertable = false, updatable = false)
     val tournament: FantaTournamentsEntity = FantaTournamentsEntity(),
 
-    @OneToOne(cascade = [CascadeType.PERSIST], fetch = FetchType.LAZY)
+    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false)
     val fantaTeam: FantaTeamsEntity = FantaTeamsEntity()
 ) : Serializable
