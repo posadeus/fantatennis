@@ -24,4 +24,8 @@ class TournamentController(private val createTournamentService: CreateTournament
         is NotFoundFantaTournamentId -> ResponseEntity.badRequest().build()
         is ErrorFantaTournamentResults -> ResponseEntity.internalServerError().build()
       }
+
+  override fun retrieveAll(): ResponseEntity<TournamentsDto> {
+    TODO("Not yet implemented")
+  }
 }

@@ -176,4 +176,4 @@ components:
         ids:
           type: array
           items:
-            type: string
+            type: integer
