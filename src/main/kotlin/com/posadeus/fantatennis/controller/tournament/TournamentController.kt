@@ -3,12 +3,12 @@ package com.posadeus.fantatennis.controller.tournament
 import com.posadeus.fantatennis.controller.TournamentApi
 import com.posadeus.fantatennis.controller.model.tournament.*
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.service.tournament.CreateTournamentService
-import com.posadeus.fantatennis.domain.service.tournament.RetrieveTournamentService
+import com.posadeus.fantatennis.domain.service.tournament.*
 import org.springframework.http.ResponseEntity
 
 class TournamentController(private val createTournamentService: CreateTournamentService,
-                           private val retrieveTournamentService: RetrieveTournamentService) : TournamentApi {
+                           private val retrieveTournamentService: RetrieveTournamentService,
+                           private val retrieveTournamentsService: RetrieveTournamentsService) : TournamentApi {
 
   override fun create(tournamentToCreateDto: TournamentToCreateDto): ResponseEntity<TournamentCreatedDto> =
       when (val response = createTournamentService.create(tournamentToCreateDto)) {
@@ -25,7 +25,11 @@ class TournamentController(private val createTournamentService: CreateTournament
         is ErrorFantaTournamentResults -> ResponseEntity.internalServerError().build()
       }
 
-  override fun retrieveAll(): ResponseEntity<TournamentsDto> {
-    TODO("Not yet implemented")
-  }
+  override fun retrieveAll(): ResponseEntity<TournamentsDto> =
+      when (val response = retrieveTournamentsService.retrieveAll()) {
+
+        is FoundFantaTournamentsResults -> ResponseEntity.ok(response.tournaments)
+        is NotFoundFantaTournaments -> ResponseEntity.notFound().build()
+        is ErrorFantaTournamentsResults -> ResponseEntity.internalServerError().build()
+      }
 }

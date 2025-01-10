@@ -6,8 +6,7 @@ import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.controller.model.tournament.*
 import com.posadeus.fantatennis.controller.tournament.TournamentController
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.service.tournament.CreateTournamentService
-import com.posadeus.fantatennis.domain.service.tournament.RetrieveTournamentService
+import com.posadeus.fantatennis.domain.service.tournament.*
 import io.mockk.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -22,9 +21,11 @@ class TournamentControllerTest {
 
   private val createTournamentService: CreateTournamentService = mockk()
   private val retrieveTournamentService: RetrieveTournamentService = mockk()
+  private val retrieveTournamentsService: RetrieveTournamentsService = mockk()
 
   private val controller: TournamentApi = TournamentController(createTournamentService,
-                                                               retrieveTournamentService)
+                                                               retrieveTournamentService,
+                                                               retrieveTournamentsService)
 
   private val objectMapper = ObjectMapper()
   private val mvc = MockMvcBuilders.standaloneSetup(controller)
@@ -141,6 +142,51 @@ class TournamentControllerTest {
     }
   }
 
+  @Nested
+  inner class RetrieveAllTournaments {
+
+    @Test
+    fun `200 response`() {
+
+      val expected = TournamentsDto(ids = listOf(1, 2, 3))
+      val tournaments = FoundFantaTournamentsResults(expected)
+
+      every { retrieveTournamentsService.retrieveAll() } returns tournaments
+
+      mvc.perform(get(TOURNAMENTS_ENDPOINT)
+                      .accept(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isOk)
+          .andExpect(content().json(toJson(expected)))
+    }
+
+    @Test
+    fun `404 response - not found tournaments`() {
+
+      val tournaments = NotFoundFantaTournaments
+
+      every { retrieveTournamentsService.retrieveAll() } returns tournaments
+
+      mvc.perform(get(TOURNAMENTS_ENDPOINT)
+                      .accept(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isNotFound)
+    }
+
+    @Test
+    fun `500 response`() {
+
+      val tournaments = ErrorFantaTournamentsResults
+
+      every { retrieveTournamentsService.retrieveAll() } returns tournaments
+
+      mvc.perform(get(TOURNAMENTS_ENDPOINT)
+                      .accept(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isInternalServerError)
+    }
+  }
+
   @Throws(JsonProcessingException::class)
   private fun toJson(obj: Any): String =
       objectMapper.writeValueAsString(obj)
@@ -148,6 +194,7 @@ class TournamentControllerTest {
   companion object {
 
     private const val TOURNAMENT_ENDPOINT = "/tournament"
+    private const val TOURNAMENTS_ENDPOINT = "/tournaments"
     private const val A_TOURNAMENT_ID = 1
     private const val A_STARTING_TOURNAMENT_ID = 1
     private const val AN_ENDING_TOURNAMENT_ID = 1
