@@ -169,3 +169,11 @@ components:
         - startingTournamentId
         - endingTournamentId
         - tournamentYear
+
+    TournamentsDto:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string

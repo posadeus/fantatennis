@@ -53,3 +53,22 @@ paths:
           description: Wrong input body
         '500':
           description: Error during tournament retrieval
+
+  /tournaments:
+    get:
+      operationId: retrieveAll
+      summary: Returns all the Fanta Tournaments
+      description: Returns the list of all Fanta Tournaments.
+      tags:
+        - Tournament
+      responses:
+        '200':
+          description: Tournaments found
+          content:
+            application/json:
+              schema:
+                $ref: './openApi-schemas.yml#/components/schemas/TournamentsDto'
+        '404':
+          description: Not found tournament ID
+        '500':
+          description: Error during tournaments retrieval
