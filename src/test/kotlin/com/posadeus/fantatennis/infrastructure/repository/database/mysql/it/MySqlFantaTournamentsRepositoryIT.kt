@@ -77,6 +77,35 @@ class MySqlFantaTournamentsRepositoryIT {
   }
 
   @Test
+  fun `fanta tournaments retrieved`() {
+
+    assertThat(fantaTournamentsDao.findAll()).isEmpty()
+
+    val fantaTournamentsEntity = FantaTournamentsEntity(id = A_TOURNAMENT_ID,
+                                                        startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                        endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                        year = A_TOURNAMENT_YEAR)
+
+    val anotherFantaTournamentsEntity = FantaTournamentsEntity(id = ANOTHER_TOURNAMENT_ID,
+                                                               startingTournament = A_STARTING_TOURNAMENT_ID,
+                                                               endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                                               year = A_TOURNAMENT_YEAR)
+
+    fantaTournamentsDao.saveAll(listOf(fantaTournamentsEntity, anotherFantaTournamentsEntity))
+
+    val expected = listOf(ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                               startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                               endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                               tournamentYear = A_TOURNAMENT_YEAR),
+                          ValidFantaTournament(id = ANOTHER_TOURNAMENT_ID,
+                                               startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                               endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                               tournamentYear = A_TOURNAMENT_YEAR))
+
+    assertThat(mySqlFantaTournamentsRepository.retrieveAll()).isEqualTo(expected)
+  }
+
+  @Test
   fun `fanta tournament not found`() {
 
     assertThat(fantaTournamentsDao.findAll()).isEmpty()
@@ -181,6 +210,7 @@ class MySqlFantaTournamentsRepositoryIT {
   companion object {
 
     private const val A_TOURNAMENT_ID = 1
+    private const val ANOTHER_TOURNAMENT_ID = 2
     private const val A_STARTING_TOURNAMENT_ID = 1
     private const val AN_ENDING_TOURNAMENT_ID = 10
     private const val A_TOURNAMENT_YEAR = 2222
