@@ -300,9 +300,6 @@
                 <serializableModel>true</serializableModel>
                 <skipDefaultInterface>true</skipDefaultInterface>
                 <useTags>true</useTags>
-                <additionalProperties>
-                  <useTags>true</useTags>
-                </additionalProperties>
               </configOptions>
             </configuration>
           </execution>
