@@ -13,6 +13,7 @@ interface FantaTournamentsDao : JpaRepository<FantaTournamentsEntity, Int> {
         SELECT 
           ft.FANTA_TOURNAMENT_ID as tournamentId, 
           ft2.TEAM_ID as teamId, 
+          ft2.OWNER_ID as ownerId,
           p.PLAYER_ID as playerId, 
           p.FULL_NAME as playerFullName, 
           pps.playerTotalScore
@@ -61,6 +62,7 @@ interface TournamentResultsDto {
 
   fun getTournamentId(): Int
   fun getTeamId(): Int
+  fun getOwnerId(): String
   fun getPlayerId(): String
   fun getPlayerFullName(): String
   fun getPlayerTotalScore(): Double

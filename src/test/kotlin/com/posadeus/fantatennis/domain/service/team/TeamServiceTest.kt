@@ -30,7 +30,7 @@ class TeamServiceTest {
 
     val teamPlayerDto1 = TeamPlayerDto(fullName = "A_PLAYER_NAME_1", fantaPoints = 20.0)
     val teamPlayerDto2 = TeamPlayerDto(fullName = "A_PLAYER_NAME_2", fantaPoints = 18.0)
-    val expected = FoundTeam(TeamDto(listOf(teamPlayerDto1, teamPlayerDto2), 38.0))
+    val expected = FoundTeam(TeamDto(owner = "", listOf(teamPlayerDto1, teamPlayerDto2), 38.0))
 
     every { fantaTournamentsTeamsRepository.retrieveTournamentByTeamId(A_TEAM_ID) } returns tournamentByTeam
     every { playerPointsRepository.retrieve(tournamentByTeam) } returns teamOrderedPlayerPoints

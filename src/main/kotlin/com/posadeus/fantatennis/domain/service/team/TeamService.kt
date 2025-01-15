@@ -19,6 +19,11 @@ class TeamService(private val fantaTournamentsTeamsRepository: FantaTournamentsT
   private fun retrieveTeam(tournamentByTeamId: FoundTournamentByTeam): Team =
       playerPointsRepository.retrieve(tournamentByTeamId).playerPoints
           .map { TeamPlayerDto(fullName = it.playerName, fantaPoints = it.totalPoints) }
-          .let { teamPlayers -> TeamDto(teamPlayers, teamPlayers.sumOf { it.fantaPoints }) }
+          .let(::toTeamDto)
           .let(::FoundTeam)
+
+  private fun toTeamDto(teamPlayers: List<TeamPlayerDto>) =
+      TeamDto(owner = "", // FIXME
+              players = teamPlayers,
+              totalScore = teamPlayers.sumOf { it.fantaPoints })
 }

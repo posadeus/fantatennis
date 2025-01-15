@@ -12,7 +12,7 @@ data class TeamToCreateDto(
 
     @get:JsonProperty("ownerId", required = true) val ownerId: String = "",
 
-    @get:JsonProperty("tournament", required = true) val tournament: TournamentCreationDto = TournamentCreationDto()
+    @get:JsonProperty("tournament", required = true) val tournament: TournamentCreationDto
     ) : Serializable{
 
     companion object {

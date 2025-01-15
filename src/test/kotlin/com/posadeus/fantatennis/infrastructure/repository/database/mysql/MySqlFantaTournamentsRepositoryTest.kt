@@ -121,16 +121,19 @@ class MySqlFantaTournamentsRepositoryTest {
 
       val tournamentResultsDto1 = TournamentResultsDtoImpl(tournamentId = A_TOURNAMENT_ID,
                                                            teamId = A_TEAM_ID,
+                                                           ownerId = AN_OWNER_ID,
                                                            playerId = A_PLAYER_ID,
                                                            playerFullName = A_PLAYER_FULL_NAME,
                                                            playerTotalScore = 2.00)
       val tournamentResultsDto2 = TournamentResultsDtoImpl(tournamentId = A_TOURNAMENT_ID,
                                                            teamId = A_TEAM_ID,
+                                                           ownerId = AN_OWNER_ID,
                                                            playerId = ANOTHER_PLAYER_ID,
                                                            playerFullName = ANOTHER_PLAYER_FULL_NAME,
                                                            playerTotalScore = 1.00)
       val tournamentResultsDto3 = TournamentResultsDtoImpl(tournamentId = A_TOURNAMENT_ID,
                                                            teamId = ANOTHER_TEAM_ID,
+                                                           ownerId = ANOTHER_OWNER_ID,
                                                            playerId = A_THIRD_PLAYER_ID,
                                                            playerFullName = A_THIRD_PLAYER_FULL_NAME,
                                                            playerTotalScore = 4.00)
@@ -138,9 +141,9 @@ class MySqlFantaTournamentsRepositoryTest {
 
       val aPlayer = TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 2.00)
       val anotherPlayer = TeamPlayerDto(fullName = ANOTHER_PLAYER_FULL_NAME, fantaPoints = 1.00)
-      val aTeam = TeamDto(players = listOf(aPlayer, anotherPlayer), totalScore = 3.00)
+      val aTeam = TeamDto(owner = AN_OWNER_ID, players = listOf(aPlayer, anotherPlayer), totalScore = 3.00)
       val aThirdPlayer = TeamPlayerDto(fullName = A_THIRD_PLAYER_FULL_NAME, fantaPoints = 4.00)
-      val anotherTeam = TeamDto(players = listOf(aThirdPlayer), totalScore = 4.00)
+      val anotherTeam = TeamDto(owner = ANOTHER_OWNER_ID, players = listOf(aThirdPlayer), totalScore = 4.00)
       val expected = FoundFantaTournamentResults(TournamentDto(teams = listOf(anotherTeam, aTeam)))
 
       every { fantaTournamentsDao.findTournamentResultsByTournamentId(A_TOURNAMENT_ID) } returns tournamentResultsDto
@@ -191,6 +194,7 @@ class MySqlFantaTournamentsRepositoryTest {
 
   inner class TournamentResultsDtoImpl(private val tournamentId: Int,
                                        private val teamId: Int,
+                                       private val ownerId: String,
                                        private val playerId: String,
                                        private val playerFullName: String,
                                        private val playerTotalScore: Double) : TournamentResultsDto {
@@ -198,6 +202,8 @@ class MySqlFantaTournamentsRepositoryTest {
     override fun getTournamentId(): Int = tournamentId
 
     override fun getTeamId(): Int = teamId
+
+    override fun getOwnerId(): String = ownerId
 
     override fun getPlayerId(): String = playerId
 
@@ -224,5 +230,7 @@ class MySqlFantaTournamentsRepositoryTest {
     private const val A_PLAYER_FULL_NAME = "A_PLAYER_FULL_NAME"
     private const val ANOTHER_PLAYER_FULL_NAME = "ANOTHER_PLAYER_FULL_NAME"
     private const val A_THIRD_PLAYER_FULL_NAME = "A_THIRD_PLAYER_FULL_NAME"
+    private const val AN_OWNER_ID = "AN_OWNER_ID"
+    private const val ANOTHER_OWNER_ID = "ANOTHER_OWNER_ID"
   }
 }

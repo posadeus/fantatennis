@@ -27,6 +27,10 @@ components:
     TeamDto:
       type: object
       properties:
+        owner:
+          type: string
+          default: ""
+          description: The owner of the team
         players:
           $ref: '#/components/schemas/TeamPlayersDto'
         totalScore:
@@ -34,6 +38,7 @@ components:
           default: 0
           description: Total team's score
       required:
+        - owner
         - players
         - totalScore
 

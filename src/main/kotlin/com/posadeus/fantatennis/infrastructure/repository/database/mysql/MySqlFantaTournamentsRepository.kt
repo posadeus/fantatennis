@@ -59,7 +59,8 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
           .let(::TournamentDto)
 
   private fun toTeamDto(entries: Map.Entry<Int, List<TournamentResultsDto>>) =
-      TeamDto(players = entries.value.map(::toTeamPlayerDto),
+      TeamDto(owner = entries.value.first().getOwnerId(),
+              players = entries.value.map(::toTeamPlayerDto),
               totalScore = calculateTeamTotalScore(entries.value))
 
   private fun calculateTeamTotalScore(dtos: List<TournamentResultsDto>) =
