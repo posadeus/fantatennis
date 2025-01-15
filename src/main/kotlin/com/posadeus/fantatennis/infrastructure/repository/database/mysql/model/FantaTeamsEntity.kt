@@ -17,6 +17,6 @@ data class FantaTeamsEntity(
     @OneToMany(mappedBy = "fantaTeam", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val teams: List<TeamsEntity> = emptyList(),
 
-    @OneToOne(mappedBy = "fantaTeam", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val tournament: FantaTournamentsTeamsEntity? = null
+    @OneToMany(mappedBy = "fantaTeam", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    val tournaments: MutableList<FantaTournamentsTeamsEntity> = mutableListOf()
 ) : Serializable

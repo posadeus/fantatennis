@@ -18,5 +18,9 @@ data class FantaTournamentsEntity(
     val endingTournament: Int = 0,
 
     @Column(name = "TOURNAMENT_YEAR")
-    val year: Int = 0
+    val year: Int = 0,
+
+    @OneToMany(mappedBy = "tournament", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val tournaments: MutableList<FantaTournamentsTeamsEntity> = mutableListOf()
+
 ) : Serializable
