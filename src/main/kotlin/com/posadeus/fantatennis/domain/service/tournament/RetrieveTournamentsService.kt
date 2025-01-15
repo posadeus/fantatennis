@@ -8,23 +8,16 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournamen
 
 class RetrieveTournamentsService(private val fantaTournamentsRepository: FantaTournamentsRepository) {
 
-  fun retrieveAll(): FantaTournamentsResults {
-
-    val results = fantaTournamentsRepository.retrieveAll()
-
-    if (results.isEmpty())
-      return NotFoundFantaTournaments
-
-
-    if (results.any { it is InvalidFantaTournament })
-      return ErrorFantaTournamentsResults
-
-    return toFantaTournamentsResults(results as List<ValidFantaTournament>)
-  }
-
-  private fun toFantaTournamentsResults(results: List<ValidFantaTournament>): FoundFantaTournamentsResults =
-      results
-          .map { it.id }
-          .let(::TournamentsDto)
-          .let(::FoundFantaTournamentsResults)
+  fun retrieveAll(): FantaTournamentsResults =
+      fantaTournamentsRepository.retrieveAll()
+          .takeIf { it.isNotEmpty() }
+          ?.map {
+            when (it) {
+              is InvalidFantaTournament -> return ErrorFantaTournamentsResults
+              is ValidFantaTournament -> it.id
+            }
+          }
+          ?.let(::TournamentsDto)
+          ?.let(::FoundFantaTournamentsResults)
+      ?: NotFoundFantaTournaments
 }
