@@ -9,13 +9,13 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class TeamServiceTest {
+class RetrieveTeamServiceTest {
 
   private val fantaTournamentsTeamsRepository: FantaTournamentsTeamsRepository = mockk()
   private val playerPointsRepository: PlayerPointsRepository = mockk()
 
-  private val service = TeamService(fantaTournamentsTeamsRepository,
-                                    playerPointsRepository)
+  private val service = RetrieveTeamService(fantaTournamentsTeamsRepository,
+                                            playerPointsRepository)
 
   @Test
   fun `retrieve a team`() {

@@ -5,12 +5,12 @@ import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
-import com.posadeus.fantatennis.domain.service.team.TeamService
+import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class TeamController(private val service: TeamService,
+class TeamController(private val service: RetrieveTeamService,
                      private val createTeamService: CreateTeamService,
                      private val addPlayersTeamService: AddPlayersTeamService) : TeamApi {
 

@@ -11,7 +11,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class AddPlayersTeamServiceTest {
+class AddPlayersRetrieveTeamServiceTest {
 
   private val teamsRepository: TeamsRepository = mockk()
 

@@ -7,7 +7,7 @@ import com.posadeus.fantatennis.controller.team.TeamController
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
-import com.posadeus.fantatennis.domain.service.team.TeamService
+import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import io.mockk.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class TeamControllerTest {
 
-  private val service: TeamService = mockk()
+  private val service: RetrieveTeamService = mockk()
   private val createTeamService: CreateTeamService = mockk()
   private val addPlayersTeamService: AddPlayersTeamService = mockk()
 

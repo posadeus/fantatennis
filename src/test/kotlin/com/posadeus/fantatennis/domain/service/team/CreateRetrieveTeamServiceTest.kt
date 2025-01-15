@@ -10,7 +10,7 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class CreateTeamServiceTest {
+class CreateRetrieveTeamServiceTest {
 
   private val fantaTeamsRepository: FantaTeamsRepository = mockk()
   private val fantaTournamentsRepository: FantaTournamentsRepository = mockk()

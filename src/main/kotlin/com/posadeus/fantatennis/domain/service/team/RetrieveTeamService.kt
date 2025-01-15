@@ -6,8 +6,8 @@ import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsTeamsRepos
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
 import com.posadeus.fantatennis.domain.model.*
 
-class TeamService(private val fantaTournamentsTeamsRepository: FantaTournamentsTeamsRepository,
-                  private val playerPointsRepository: PlayerPointsRepository) {
+class RetrieveTeamService(private val fantaTournamentsTeamsRepository: FantaTournamentsTeamsRepository,
+                          private val playerPointsRepository: PlayerPointsRepository) {
 
   fun getTeam(teamId: Int): Team =
       when (val tournamentByTeamId = fantaTournamentsTeamsRepository.retrieveTournamentByTeamId(teamId)) {
@@ -17,10 +17,16 @@ class TeamService(private val fantaTournamentsTeamsRepository: FantaTournamentsT
       }
 
   private fun retrieveTeam(tournamentByTeamId: FoundTournamentByTeam): Team =
-      playerPointsRepository.retrieve(tournamentByTeamId).playerPoints
-          .map { TeamPlayerDto(fullName = it.playerName, fantaPoints = it.totalPoints) }
+      tournamentByTeamId
+          .let(playerPointsRepository::retrieve)
+          .playerPoints
+          .map(::toTeamPlayerDto)
           .let(::toTeamDto)
           .let(::FoundTeam)
+
+  private fun toTeamPlayerDto(it: PlayerPoints) =
+      TeamPlayerDto(fullName = it.playerName,
+                    fantaPoints = it.totalPoints)
 
   private fun toTeamDto(teamPlayers: List<TeamPlayerDto>) =
       TeamDto(owner = "", // FIXME

@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.controller.TeamApi
 import com.posadeus.fantatennis.controller.team.TeamController
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
-import com.posadeus.fantatennis.domain.service.team.TeamService
+import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Configuration
 class TeamControllerConfiguration {
 
   @Bean
-  fun teamController(teamService: TeamService,
-                          createTeamService: CreateTeamService,
-                          addPlayersTeamService: AddPlayersTeamService): TeamApi =
-      TeamController(teamService,
+  fun teamController(retrieveTeamService: RetrieveTeamService,
+                     createTeamService: CreateTeamService,
+                     addPlayersTeamService: AddPlayersTeamService): TeamApi =
+      TeamController(retrieveTeamService,
                      createTeamService,
                      addPlayersTeamService)
 }
