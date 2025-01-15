@@ -9,4 +9,5 @@ interface FantaTournamentsRepository {
   fun create(tournamentToCreate: TournamentToCreateDto): FantaTournament
   fun retrieve(tournamentId: Int): FantaTournament
   fun retrieveTournamentResults(tournamentId: Int): FantaTournamentResults
+  fun retrieveAll(): List<FantaTournament>
 }

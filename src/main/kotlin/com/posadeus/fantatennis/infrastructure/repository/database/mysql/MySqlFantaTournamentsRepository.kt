@@ -47,6 +47,10 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
           .let(::toTournamentDto)
           .let(::FoundFantaTournamentResults)
 
+  override fun retrieveAll(): List<FantaTournament> {
+    TODO("Not yet implemented")
+  }
+
   private fun toTournamentDto(resultsDto: List<TournamentResultsDto>): TournamentDto =
       resultsDto
           .groupBy { it.getTeamId() }
