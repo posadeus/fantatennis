@@ -11,19 +11,19 @@ typealias TeamUUID = String
 typealias PlayerUUID = String
 typealias AtpPlayerId = String
 
-class AusOpenTournamentInfoRepository(private val client: AusOpenClient) : TournamentInfoRepository {
+class AusOpenTournamentInfoRepository(private val client: AusOpenClient,
+                                      private val tournamentEventIdService: AusOpenTournamentEventIdService)
+  : TournamentInfoRepository {
 
   override fun canProcess(tournamentId: Int): Boolean =
       tournamentId == 580
 
-  override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo {
+  override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo =
+      when (val ausOpenResponse = client.retrieveDraws(tournamentEventIdService.retrieveEventId(year))) {
 
-    return when (val ausOpenResponse = client.retrieveDraws(EVENT_NID)) {
-
-      is AusOpenOkResponse -> convert(tournamentId, ausOpenResponse)
-      is AusOpenErrorResponse -> ErrorTournamentInfo
-    }
-  }
+        is AusOpenOkResponse -> convert(tournamentId, ausOpenResponse)
+        is AusOpenErrorResponse -> ErrorTournamentInfo
+      }
 
   private fun convert(tournamentId: Int, ausOpenResponse: AusOpenOkResponse): CompleteTournamentInfo {
 
@@ -77,9 +77,4 @@ class AusOpenTournamentInfoRepository(private val client: AusOpenClient) : Tourn
 
   private fun toAtpId(ausOpenId: String): String =
       ausOpenId.removePrefix("ATP").uppercase()
-
-  companion object {
-
-    private const val EVENT_NID = 245421
-  }
 }

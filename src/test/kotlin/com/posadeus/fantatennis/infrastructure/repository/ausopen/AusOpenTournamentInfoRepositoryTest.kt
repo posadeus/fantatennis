@@ -13,18 +13,19 @@ import com.posadeus.fantatennis.infrastructure.client.ausopen.model.AusOpenPlaye
 import com.posadeus.fantatennis.infrastructure.client.ausopen.model.AusOpenRoundBuilder.Companion.anAusOpenRound
 import com.posadeus.fantatennis.infrastructure.client.ausopen.model.AusOpenTeamBuilder.Companion.anAusOpenTeam
 import com.posadeus.fantatennis.infrastructure.client.ausopen.model.AusOpenTeamDefinitionBuilder.Companion.anAusOpenTeamDefinition
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AusOpenTournamentInfoRepositoryTest {
 
   private val client: AusOpenClient = mockk()
+  private val tournamentEventIdService: AusOpenTournamentEventIdService = mockk()
 
-  private val repository: TournamentInfoRepository = AusOpenTournamentInfoRepository(client)
+  private val repository: TournamentInfoRepository = AusOpenTournamentInfoRepository(client, tournamentEventIdService)
 
   @Test
   fun `can process`() {
@@ -62,9 +63,20 @@ class AusOpenTournamentInfoRepositoryTest {
                                           winners = mapOf(R2 to setOf("PLAYER_TOUR_ID_1"),
                                                           R1 to setOf("PLAYER_TOUR_ID_1", "PLAYER_TOUR_ID_3")))
 
-    every { client.retrieveDraws(EVENT_NID) } returns clientResponse
+    every { tournamentEventIdService.retrieveEventId(A_YEAR) } returns AN_EVENT_NID
+    every { client.retrieveDraws(AN_EVENT_NID) } returns clientResponse
 
-    assertThat(repository.retrieveTournamentInfo(580, EVENT_NID)).isEqualTo(expected)
+    assertThat(repository.retrieveTournamentInfo(580, A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `error from tournamentEventIdService`() {
+
+    every { tournamentEventIdService.retrieveEventId(A_YEAR) } throws RuntimeException()
+
+    assertThrows<RuntimeException> { repository.retrieveTournamentInfo(580, A_YEAR) }
+
+    verify { client wasNot called }
   }
 
   @Test
@@ -72,9 +84,10 @@ class AusOpenTournamentInfoRepositoryTest {
 
     val expected = ErrorTournamentInfo
 
-    every { client.retrieveDraws(EVENT_NID) } returns AusOpenErrorResponse
+    every { tournamentEventIdService.retrieveEventId(A_YEAR) } returns AN_EVENT_NID
+    every { client.retrieveDraws(AN_EVENT_NID) } returns AusOpenErrorResponse
 
-    assertThat(repository.retrieveTournamentInfo(580, EVENT_NID)).isEqualTo(expected)
+    assertThat(repository.retrieveTournamentInfo(580, A_YEAR)).isEqualTo(expected)
   }
 
   private fun aMatchWith(roundUUID: String,
@@ -115,7 +128,8 @@ class AusOpenTournamentInfoRepositoryTest {
   companion object {
 
     private const val NOT_580_TOURNAMENT_ID = 123
-    private const val EVENT_NID = 245421
+    private const val AN_EVENT_NID = 245421
+    private const val A_YEAR = 2024
     private const val ROUND_UUID_1 = "ROUND_UUID_1"
     private const val ROUND_UUID_2 = "ROUND_UUID_2"
     private const val TEAM_UUID_1 = "TEAM_UUID_1"
