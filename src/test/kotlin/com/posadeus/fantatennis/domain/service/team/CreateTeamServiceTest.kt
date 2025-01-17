@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service.team
 
-import com.posadeus.fantatennis.controller.model.team.*
+import com.posadeus.fantatennis.controller.model.team.TeamCreatedDto
+import com.posadeus.fantatennis.controller.model.team.TeamToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -20,7 +21,7 @@ class CreateTeamServiceTest {
   @Test
   fun `creation succeeds with already present fanta tournament`() {
 
-    val dto = TeamToCreateDto(ownerId = "AN_OWNER_ID", tournament = TournamentCreationDto(id = 100))
+    val dto = TeamToCreateDto(ownerId = "AN_OWNER_ID", tournamentId = 100)
 
     val fantaTournament = ValidFantaTournament(id = 100,
                                                startingTournamentId = A_STARTING_TOURNAMENT_ID,
@@ -42,8 +43,7 @@ class CreateTeamServiceTest {
   @Test
   fun `creation fails due to tournamentId not found`() {
 
-    val dto = TeamToCreateDto(ownerId = AN_OWNER_ID,
-                              tournament = TournamentCreationDto(id = A_NOT_EXISTING_TOURNAMENT_ID))
+    val dto = TeamToCreateDto(ownerId = AN_OWNER_ID, tournamentId = A_NOT_EXISTING_TOURNAMENT_ID)
 
     val fantaTournament: FantaTournament = InvalidFantaTournament
 
@@ -60,7 +60,7 @@ class CreateTeamServiceTest {
   @Test
   fun `error from fantaTeamsRepository`() {
 
-    val request = TeamToCreateDto(ownerId = AN_OWNER_ID, tournament = TournamentCreationDto(id = A_TOURNAMENT_ID))
+    val request = TeamToCreateDto(ownerId = AN_OWNER_ID, tournamentId = A_TOURNAMENT_ID)
 
     val expected = ErrorTeamCreation
 

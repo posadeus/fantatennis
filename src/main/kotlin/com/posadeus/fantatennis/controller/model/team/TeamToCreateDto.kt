@@ -6,13 +6,13 @@ import java.io.Serializable
 /**
  * 
  * @param ownerId 
- * @param tournament 
+ * @param tournamentId 
  */
 data class TeamToCreateDto(
 
     @get:JsonProperty("ownerId", required = true) val ownerId: String = "",
 
-    @get:JsonProperty("tournament", required = true) val tournament: TournamentCreationDto = TournamentCreationDto()
+    @get:JsonProperty("tournamentId", required = true) val tournamentId: Int = 0
     ) : Serializable{
 
     companion object {

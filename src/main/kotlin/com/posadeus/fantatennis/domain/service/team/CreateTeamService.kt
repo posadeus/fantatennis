@@ -12,13 +12,11 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
                         private val fantaTournamentsRepository: FantaTournamentsRepository) {
 
   fun create(dto: TeamToCreateDto): TeamCreation =
-      if (dto.tournament.id != null)
-        when (val tournament = fantaTournamentsRepository.retrieve(dto.tournament.id)) {
+      when (val tournament = fantaTournamentsRepository.retrieve(dto.tournamentId)) {
 
-          is ValidFantaTournament -> createTeam(dto.ownerId, tournament)
-          is InvalidFantaTournament -> ErrorTeamCreation
-        }
-      else ErrorTeamCreation // FIXME To remove after changes in DTO
+        is ValidFantaTournament -> createTeam(dto.ownerId, tournament)
+        is InvalidFantaTournament -> ErrorTeamCreation
+      }
 
   private fun createTeam(ownerId: String, tournament: ValidFantaTournament): TeamCreation =
       fantaTeamsRepository.createTeam(ownerId, tournament)
