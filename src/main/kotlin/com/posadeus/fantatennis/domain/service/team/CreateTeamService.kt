@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service.team
 
-import com.posadeus.fantatennis.controller.model.team.*
+import com.posadeus.fantatennis.controller.model.team.TeamCreatedDto
+import com.posadeus.fantatennis.controller.model.team.TeamToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -10,26 +11,18 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournamen
 class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
                         private val fantaTournamentsRepository: FantaTournamentsRepository) {
 
-  // FIXME Should create only the team, not the tournament. If the tournament is not present it should returns an error
   fun create(dto: TeamToCreateDto): TeamCreation =
       if (dto.tournament.id != null)
         when (val tournament = fantaTournamentsRepository.retrieve(dto.tournament.id)) {
 
           is ValidFantaTournament -> createTeam(dto.ownerId, tournament)
-          is InvalidFantaTournament -> createTeamAndTournament(dto)
+          is InvalidFantaTournament -> ErrorTeamCreation
         }
-      else createTeamAndTournament(dto)
+      else ErrorTeamCreation // FIXME To remove after changes in DTO
 
   private fun createTeam(ownerId: String, tournament: ValidFantaTournament): TeamCreation =
       fantaTeamsRepository.createTeam(ownerId, tournament)
           .let(::toTeamCreation)
-
-  @Deprecated("No more possible to create a team and a tournament at the same time")
-  private fun createTeamAndTournament(request: TeamToCreateDto): TeamCreation =
-      if (isValidTournamentDto(request.tournament))
-        fantaTeamsRepository.createTeamAndTournament(request.ownerId, request.tournament)
-            .let(::toTeamCreation)
-      else ErrorTeamCreation
 
   private fun toTeamCreation(fantaTeam: FantaTeam): TeamCreation =
       when (fantaTeam) {
@@ -41,9 +34,4 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
   private fun toTeamCreated(fantaTeam: FantaTeamOk): TeamCreated =
       TeamCreatedDto(id = fantaTeam.id, ownerId = fantaTeam.ownerId)
           .let(::TeamCreated)
-
-  private fun isValidTournamentDto(tournament: TournamentCreationDto) =
-      (tournament.startingTournamentId != null
-       && tournament.endingTournamentId != null
-       && tournament.tournamentYear != null)
 }
