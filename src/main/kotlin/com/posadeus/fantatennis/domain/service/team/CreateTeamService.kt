@@ -24,6 +24,7 @@ class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
       fantaTeamsRepository.createTeam(ownerId, tournament)
           .let(::toTeamCreation)
 
+  @Deprecated("No more possible to create a team and a tournament at the same time")
   private fun createTeamAndTournament(request: TeamToCreateDto): TeamCreation =
       if (isValidTournamentDto(request.tournament))
         fantaTeamsRepository.createTeamAndTournament(request.ownerId, request.tournament)

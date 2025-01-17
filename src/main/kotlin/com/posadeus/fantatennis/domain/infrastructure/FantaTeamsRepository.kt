@@ -7,5 +7,7 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournamen
 interface FantaTeamsRepository {
 
   fun createTeam(ownerId: String, validFantaTournament: ValidFantaTournament): FantaTeam
+
+  @Deprecated("No more possible to create a team and a tournament at the same time")
   fun createTeamAndTournament(ownerId: String, tournamentCreationDto: TournamentCreationDto): FantaTeam
 }
