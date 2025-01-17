@@ -29,7 +29,7 @@ class RetrieveTeamService(private val fantaTournamentsTeamsRepository: FantaTour
                     fantaPoints = it.totalPoints)
 
   private fun toTeamDto(teamPlayers: List<TeamPlayerDto>) =
-      TeamDto(owner = "", // FIXME
+      TeamDto(owner = "", // FIXME (minor/not urgent) add owner
               players = teamPlayers,
               totalScore = teamPlayers.sumOf { it.fantaPoints })
 }

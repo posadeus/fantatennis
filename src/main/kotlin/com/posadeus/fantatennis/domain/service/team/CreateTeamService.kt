@@ -10,6 +10,7 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournamen
 class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
                         private val fantaTournamentsRepository: FantaTournamentsRepository) {
 
+  // FIXME Should create only the team, not the tournament. If the tournament is not present it should returns an error
   fun create(dto: TeamToCreateDto): TeamCreation =
       if (dto.tournament.id != null)
         when (val tournament = fantaTournamentsRepository.retrieve(dto.tournament.id)) {
