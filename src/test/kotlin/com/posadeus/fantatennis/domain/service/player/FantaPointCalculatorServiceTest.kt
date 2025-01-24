@@ -30,7 +30,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = 1000))
+                                        points = 1000,
+                                        year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -72,7 +73,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = 1000))
+                                        points = 1000,
+                                        year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -116,7 +118,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = 2000))
+                                        points = 2000,
+                                        year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -161,7 +164,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = 1000))
+                                        points = 1000,
+                                        year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -205,7 +209,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = 500))
+                                        points = 500,
+                                        year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -247,7 +252,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = 250))
+                                        points = 250,
+                                        year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -288,7 +294,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = 250))
+                                        points = 250,
+                                        year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -320,7 +327,8 @@ class FantaPointCalculatorServiceTest {
 
     val tournaments = listOf(Tournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
-                                        points = ANY_POINTS))
+                                        points = ANY_POINTS,
+                                        year = A_YEAR))
     val tournamentInfo = ErrorTournamentInfo
 
     val expected = emptySet<AtpPlayer>()
