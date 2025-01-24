@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
+// FIXME Fix all the IT and use a H2 DB creating the tables for test manually
 @ExtendWith(SpringExtension::class)
 @DataJpaTest
 @ContextConfiguration(classes = [com.posadeus.fantatennis.app.Application::class])
@@ -33,7 +34,7 @@ class MySqlTournamentsRepositoryIT {
   }
 
   @Test
-  fun `players saved`() {
+  fun `read tournaments`() {
 
     assertThat(tournamentsDao.findAll()).isEqualTo(arrayListOf<TournamentsEntity>())
 
@@ -43,26 +44,26 @@ class MySqlTournamentsRepositoryIT {
                                     name = A_NAME,
                                     points = A_POINTS,
                                     location = A_LOCATION,
-                                    surface = A_SURFACE)
+                                    surface = A_SURFACE,
+                                    year = A_YEAR)
     val entity2 = TournamentsEntity(id = ANOTHER_ID,
                                     atpTourId = ANOTHER_ATP_TOUR_ID,
                                     tennisTvId = ANOTHER_TENNIS_TV_ID,
                                     name = ANOTHER_NAME,
                                     points = ANOTHER_POINTS,
                                     location = ANOTHER_LOCATION,
-                                    surface = ANOTHER_SURFACE)
+                                    surface = ANOTHER_SURFACE,
+                                    year = ANOTHER_YEAR)
     val entities = arrayListOf(entity1, entity2)
 
     tournamentsDao.saveAll(entities)
 
     val expected = listOf(Tournament(id = AN_ID,
                                      tennisTvId = A_TENNIS_TV_ID,
-                                     points = A_POINTS),
-                          Tournament(id = ANOTHER_ID,
-                                     tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                     points = ANOTHER_POINTS))
+                                     points = A_POINTS,
+                                     year = A_YEAR))
 
-    assertThat(mySqlTournamentsRepository.readTournaments()).isEqualTo(expected)
+    assertThat(mySqlTournamentsRepository.readTournaments(A_YEAR)).isEqualTo(expected)
   }
 
   private fun deleteAll() {
@@ -78,6 +79,8 @@ class MySqlTournamentsRepositoryIT {
     private const val ANOTHER_ATP_TOUR_ID = 98765
     private const val A_TENNIS_TV_ID = 23456
     private const val ANOTHER_TENNIS_TV_ID = 76543
+    private const val A_YEAR = 1234
+    private const val ANOTHER_YEAR = 2344
     private const val A_NAME = "A_NAME"
     private const val ANOTHER_NAME = "ANOTHER_NAME"
     private const val A_POINTS = 250

@@ -5,4 +5,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TournamentsDao : CrudRepository<TournamentsEntity, Int>
+interface TournamentsDao : CrudRepository<TournamentsEntity, Int> {
+
+  fun findByYear(year: Int): List<TournamentsEntity>
+}

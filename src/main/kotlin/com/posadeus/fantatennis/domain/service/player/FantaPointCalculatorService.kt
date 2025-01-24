@@ -10,7 +10,7 @@ class FantaPointCalculatorService(private val tournamentInfoRepositories: List<T
 
   fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<AtpPlayer> {
 
-    val tournament = tournamentsRepository.readTournaments().associateBy { it.id }[tournamentId]
+    val tournament = tournamentsRepository.readTournaments(year).associateBy { it.id }[tournamentId]
     val tennisTvId = tournament?.tennisTvId
                      ?: return emptySet()
 

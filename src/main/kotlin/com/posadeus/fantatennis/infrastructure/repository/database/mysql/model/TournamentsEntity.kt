@@ -27,5 +27,8 @@ data class TournamentsEntity(
     val location: String = "",
 
     @Column(name = "SURFACE")
-    val surface: String = ""
+    val surface: String = "",
+
+    @Column(name = "YEAR")
+    val year: Int = 0
 ) : Serializable

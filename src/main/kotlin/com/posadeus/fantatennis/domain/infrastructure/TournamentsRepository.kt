@@ -4,5 +4,5 @@ import com.posadeus.fantatennis.domain.model.Tournament
 
 interface TournamentsRepository {
 
-  fun readTournaments(): List<Tournament>
+  fun readTournaments(year: Int): List<Tournament>
 }

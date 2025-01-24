@@ -24,25 +24,29 @@ class MySqlTournamentsRepositoryTest {
                                                        name = A_NAME,
                                                        points = A_POINTS,
                                                        location = A_LOCATION,
-                                                       surface = A_SURFACE),
+                                                       surface = A_SURFACE,
+                                                       year = A_YEAR),
                                      TournamentsEntity(id = ANOTHER_ID,
                                                        atpTourId = ANOTHER_ATP_TOUR_ID,
                                                        tennisTvId = ANOTHER_TENNIS_TV_ID,
                                                        name = ANOTHER_NAME,
                                                        points = ANOTHER_POINTS,
                                                        location = ANOTHER_LOCATION,
-                                                       surface = ANOTHER_SURFACE))
+                                                       surface = ANOTHER_SURFACE,
+                                                       year = A_YEAR))
 
     val expected = listOf(Tournament(id = AN_ID,
                                      tennisTvId = A_TENNIS_TV_ID,
-                                     points = A_POINTS),
+                                     points = A_POINTS,
+                                     year = A_YEAR),
                           Tournament(id = ANOTHER_ID,
                                      tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                     points = ANOTHER_POINTS))
+                                     points = ANOTHER_POINTS,
+                                     year = A_YEAR))
 
-    every { dao.findAll() } returns tournamentsEntities
+    every { dao.findByYear(A_YEAR) } returns tournamentsEntities
 
-    assertThat(repository.readTournaments()).isEqualTo(expected)
+    assertThat(repository.readTournaments(A_YEAR)).isEqualTo(expected)
   }
 
   companion object {
@@ -53,6 +57,7 @@ class MySqlTournamentsRepositoryTest {
     private const val ANOTHER_ATP_TOUR_ID = 98765
     private const val A_TENNIS_TV_ID = 23456
     private const val ANOTHER_TENNIS_TV_ID = 76543
+    private const val A_YEAR = 1234
     private const val A_NAME = "A_NAME"
     private const val ANOTHER_NAME = "ANOTHER_NAME"
     private const val A_POINTS = 250
