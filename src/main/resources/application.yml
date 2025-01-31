@@ -2,12 +2,6 @@ spring:
   application:
     name: fanta-tennis
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/fanta_tennis
-    username: root
-    password: RogerFederer81
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: none
@@ -21,6 +15,7 @@ logging:
         web:
           client:
             RestTemplate: DEBUG
+        security: DEBUG
 
 server:
   servlet:
