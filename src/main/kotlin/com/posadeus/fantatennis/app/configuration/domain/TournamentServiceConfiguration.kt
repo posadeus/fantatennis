@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration
 class TournamentServiceConfiguration {
 
   @Bean
-  fun addTournamentsService(tournamentRegistryRepository: TournamentRegistryRepository,
+  fun addTournamentsService(tournamentsRegistryRepository: TournamentsRegistryRepository,
                             tournamentsRepository: TournamentsRepository): AddTournamentsService =
-      AddTournamentsService(tournamentRegistryRepository,
+      AddTournamentsService(tournamentsRegistryRepository,
                             tournamentsRepository)
 
   @Bean
