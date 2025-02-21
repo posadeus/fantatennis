@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.Tournament
+import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TournamentsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.TournamentsEntity
 
@@ -11,6 +12,10 @@ class MySqlTournamentsRepository(private val dao: TournamentsDao) : TournamentsR
       year
           .let(dao::findByYear)
           .map(::convert)
+
+  override fun persist(tournamentsRegistry: FoundTournamentsRegistry) {
+    TODO("Not yet implemented")
+  }
 
   private fun convert(tournamentsEntities: TournamentsEntity): Tournament =
       Tournament(id = tournamentsEntities.id,
