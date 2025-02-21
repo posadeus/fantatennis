@@ -30,3 +30,24 @@ paths:
           description: Wrong input params
         '500':
           description: Error during the process
+  /job/tournaments/{year}:
+    post:
+      operationId: addTournamentsForYear
+      summary: Add Tournaments to DB for a specific year
+      description: Add Tournaments to DB for a specific year
+      tags:
+        - Job
+      parameters:
+        - in: path
+          name: year
+          schema:
+            type: integer
+          required: true
+          description: Year to take tournaments
+      responses:
+        '204':
+          description: Tournaments added correctly
+        '400':
+          description: Wrong input params
+        '500':
+          description: Error during the process
