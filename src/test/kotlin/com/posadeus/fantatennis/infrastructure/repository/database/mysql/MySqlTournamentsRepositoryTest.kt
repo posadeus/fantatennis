@@ -54,7 +54,7 @@ class MySqlTournamentsRepositoryTest {
   @Test
   fun persist() {
 
-    val tournament1 = TournamentRegistry(atpId = AN_ATP_TOUR_ID,
+    val tournament1 = TournamentRegistry(atpTourId = AN_ATP_TOUR_ID,
                                          tennisTvId = A_TENNIS_TV_ID,
                                          name = A_NAME,
                                          startDate = A_START_DATE,
@@ -63,7 +63,7 @@ class MySqlTournamentsRepositoryTest {
                                          points = A_POINTS,
                                          surface = A_SURFACE_ENUM,
                                          location = A_LOCATION)
-    val tournament2 = TournamentRegistry(atpId = ANOTHER_ATP_TOUR_ID,
+    val tournament2 = TournamentRegistry(atpTourId = ANOTHER_ATP_TOUR_ID,
                                          tennisTvId = ANOTHER_TENNIS_TV_ID,
                                          name = ANOTHER_NAME,
                                          startDate = ANOTHER_START_DATE,

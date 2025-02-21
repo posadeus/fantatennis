@@ -21,7 +21,7 @@ class AddTournamentsServiceTest {
   @Test
   fun `add tournaments successfully`() {
 
-    val tournament1 = TournamentRegistry(atpId = AN_ATP_ID,
+    val tournament1 = TournamentRegistry(atpTourId = AN_ATP_ID,
                                          tennisTvId = A_TENNIS_TV_ID,
                                          name = A_NAME,
                                          startDate = A_START_DATE,
@@ -30,7 +30,7 @@ class AddTournamentsServiceTest {
                                          points = A_POINTS,
                                          surface = A_SURFACE,
                                          location = A_LOCATION)
-    val tournament2 = TournamentRegistry(atpId = ANOTHER_ATP_ID,
+    val tournament2 = TournamentRegistry(atpTourId = ANOTHER_ATP_ID,
                                          tennisTvId = ANOTHER_TENNIS_TV_ID,
                                          name = ANOTHER_NAME,
                                          startDate = ANOTHER_START_DATE,
@@ -64,7 +64,7 @@ class AddTournamentsServiceTest {
   @Test
   fun `tournamentsRepository throws exception`() {
 
-    val tournament1 = TournamentRegistry(atpId = AN_ATP_ID,
+    val tournament1 = TournamentRegistry(atpTourId = AN_ATP_ID,
                                          tennisTvId = A_TENNIS_TV_ID,
                                          name = A_NAME,
                                          startDate = A_START_DATE,
@@ -73,7 +73,7 @@ class AddTournamentsServiceTest {
                                          points = A_POINTS,
                                          surface = A_SURFACE,
                                          location = A_LOCATION)
-    val tournament2 = TournamentRegistry(atpId = ANOTHER_ATP_ID,
+    val tournament2 = TournamentRegistry(atpTourId = ANOTHER_ATP_ID,
                                          tennisTvId = ANOTHER_TENNIS_TV_ID,
                                          name = ANOTHER_NAME,
                                          startDate = ANOTHER_START_DATE,

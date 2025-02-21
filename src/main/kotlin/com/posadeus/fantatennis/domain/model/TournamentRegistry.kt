@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.domain.model
 
-data class TournamentRegistry(val atpId: Int,
+data class TournamentRegistry(val atpTourId: Int,
                               val tennisTvId: Int,
                               val name: String,
                               val startDate: String,

@@ -1,0 +1,2355 @@
+[
+    {
+        "id": 9900,
+        "year": 2025,
+        "name": "United Cup",
+        "start": "2024-12-27",
+        "end": "2025-01-05",
+        "type": "UC",
+        "location": "Australia",
+        "surface": "Hard",
+        "info": {
+            "title": "United Cup",
+            "city": "Perth-Sydney",
+            "inOutdoor": "O",
+            "utcOffset": 10,
+            "mainStart": "2024-12-27",
+            "drawSizeSM": 18,
+            "drawSizeDM": 18,
+            "commitment": "$5,000,000",
+            "prize": "$5,000,000"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "1",
+                "isoDate": "2024-12-27"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "2",
+                "isoDate": "2024-12-28"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "3",
+                "isoDate": "2024-12-29"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "4",
+                "isoDate": "2024-12-30"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "5",
+                "isoDate": "2024-12-31"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "6",
+                "isoDate": "2025-01-01"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "7",
+                "isoDate": "2025-01-02"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "8",
+                "isoDate": "2025-01-03"
+            },
+            {
+                "dateSeq": 9,
+                "dateLabel": "9",
+                "isoDate": "2025-01-04"
+            },
+            {
+                "dateSeq": 10,
+                "dateLabel": "10",
+                "isoDate": "2025-01-05"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/01/06/284ec84b-0e8b-4813-9186-c8a03006f308/ME1_1548_Q4TCLjGd.JPG",
+        "metadata": {
+            "customRoute": "/tournaments/united-cup",
+            "matchesSize": "75"
+        }
+    },
+    {
+        "id": 339,
+        "year": 2025,
+        "name": "Brisbane",
+        "start": "2024-12-29",
+        "end": "2025-01-05",
+        "type": "250",
+        "location": "Australia",
+        "surface": "Hard",
+        "info": {
+            "title": "Brisbane International presented by Evie",
+            "city": "Brisbane",
+            "inOutdoor": "O",
+            "utcOffset": 10,
+            "qualStart": "2024-12-28",
+            "mainStart": "2024-12-29",
+            "drawSizeSM": 32,
+            "drawSizeDM": 24,
+            "drawSizeSQ": 24,
+            "commitment": "$766,290",
+            "prize": "$680,140"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2024-12-27"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2024-12-28"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2024-12-29"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2024-12-30"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2024-12-31"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-01-01"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-01-02"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "6",
+                "isoDate": "2025-01-03"
+            },
+            {
+                "dateSeq": 9,
+                "dateLabel": "7",
+                "isoDate": "2025-01-04"
+            },
+            {
+                "dateSeq": 10,
+                "dateLabel": "8",
+                "isoDate": "2025-01-05"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/10/13/7644c073-04f9-4c68-a485-3c689f42d4f2/GettyImages-885184124.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/brisbane-international",
+            "matchesSize": "25"
+        }
+    },
+    {
+        "id": 336,
+        "year": 2025,
+        "name": "Hong Kong",
+        "start": "2024-12-30",
+        "end": "2025-01-05",
+        "type": "250",
+        "location": "Hong Kong",
+        "surface": "Hard",
+        "info": {
+            "title": "Bank of China Hong Kong Tennis Open",
+            "city": "Hong Kong",
+            "inOutdoor": "O",
+            "utcOffset": 8,
+            "qualStart": "2024-12-29",
+            "mainStart": "2024-12-30",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$766,290",
+            "prize": "$680,140"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2024-12-29"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "1",
+                "isoDate": "2024-12-30"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "2",
+                "isoDate": "2024-12-31"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "3",
+                "isoDate": "2025-01-01"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "4",
+                "isoDate": "2025-01-02"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "5",
+                "isoDate": "2025-01-03"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "6",
+                "isoDate": "2025-01-04"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "7",
+                "isoDate": "2025-01-05"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/01/06/73b60165-6e16-4952-ad61-431c83e58780/250105_1757_BOCHKTO2025_SC1_6053.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/hong-kong-open",
+            "matchesSize": "26"
+        }
+    },
+    {
+        "id": 8998,
+        "year": 2025,
+        "name": "Adelaide",
+        "start": "2025-01-06",
+        "end": "2025-01-11",
+        "type": "250",
+        "location": "Australia",
+        "surface": "Hard",
+        "info": {
+            "title": "Adelaide International",
+            "city": "Adelaide",
+            "inOutdoor": "O",
+            "utcOffset": 9,
+            "qualStart": "2025-01-05",
+            "mainStart": "2025-01-06",
+            "drawSizeSM": 28,
+            "drawSizeDM": 24,
+            "drawSizeSQ": 16,
+            "commitment": "$766,290",
+            "prize": "$680,140"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-01-04"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-01-05"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2025-01-06"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2025-01-07"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2025-01-08"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-01-09"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-01-10"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "6",
+                "isoDate": "2025-01-11"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/01/15/43df02c9-3031-440a-ba1b-0343a42cb805/203501.JPG",
+        "metadata": {
+            "customRoute": "/tournaments/adelaide-international",
+            "matchesSize": "26"
+        }
+    },
+    {
+        "id": 301,
+        "year": 2025,
+        "name": "Auckland",
+        "start": "2025-01-06",
+        "end": "2025-01-11",
+        "type": "250",
+        "location": "New Zealand",
+        "surface": "Hard",
+        "info": {
+            "title": "ASB Classic",
+            "city": "Auckland",
+            "inOutdoor": "O",
+            "utcOffset": 12,
+            "qualStart": "2025-01-05",
+            "mainStart": "2025-01-06",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$766,290",
+            "prize": "$680,140"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-01-04"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-01-05"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2025-01-06"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2025-01-07"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2025-01-08"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-01-09"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-01-10"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "6",
+                "isoDate": "2025-01-11"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/01/16/7516426d-f8e0-4ef5-a404-9a4fbae18e23/GettyImages-1455906600.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/asb-classic",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 580,
+        "year": 2025,
+        "name": "Australian Open",
+        "start": "2025-01-12",
+        "end": "2025-01-26",
+        "type": "GS",
+        "location": "Australia",
+        "surface": "Hard",
+        "info": {
+            "title": "Australian Open",
+            "city": "Melbourne",
+            "inOutdoor": "O",
+            "utcOffset": 11,
+            "qualStart": "2025-01-06",
+            "mainStart": "2025-01-12",
+            "drawSizeSM": 128,
+            "drawSizeDM": 64,
+            "drawSizeSQ": 128,
+            "commitment": "A$43,250,000",
+            "prize": "A$43,250,000"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/01/20/28f58835-c561-4f26-b866-e2ba8389ff13/GettyImages-2194841549.jpg",
+        "metadata": {
+            "broadcastText": "Not Shown On Tennis TV",
+            "customRoute": "/tournaments/australian-open"
+        }
+    },
+    {
+        "id": 375,
+        "year": 2025,
+        "name": "Montpellier",
+        "start": "2025-01-27",
+        "end": "2025-02-02",
+        "type": "250",
+        "location": "France",
+        "surface": "Hard",
+        "info": {
+            "title": "Open Occitanie",
+            "city": "Montpellier",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-01-26",
+            "mainStart": "2025-01-27",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-01-26"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "1",
+                "isoDate": "2025-01-27"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "2",
+                "isoDate": "2025-01-28"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "3",
+                "isoDate": "2025-01-29"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "4",
+                "isoDate": "2025-01-30"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "5",
+                "isoDate": "2025-01-31"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "6",
+                "isoDate": "2025-02-01"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "7",
+                "isoDate": "2025-02-02"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/02/03/10e4c5e7-6d5a-42ed-9c34-1320e6368008/JB2_4432.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-montpellier",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 407,
+        "year": 2025,
+        "name": "Rotterdam",
+        "start": "2025-02-03",
+        "end": "2025-02-09",
+        "type": "500",
+        "location": "Netherlands",
+        "surface": "Hard",
+        "info": {
+            "title": "ABN AMRO Open",
+            "city": "Rotterdam",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-02-02",
+            "mainStart": "2025-02-03",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "€2,563,150",
+            "prize": "€2,401,550"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-02-01"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-02-02"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2025-02-03"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2025-02-04"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2025-02-05"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-02-06"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-02-07"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "6",
+                "isoDate": "2025-02-08"
+            },
+            {
+                "dateSeq": 9,
+                "dateLabel": "7",
+                "isoDate": "2025-02-09"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/02/10/3a24cfbd-588d-4cfa-917e-52df3006a3ab/GettyImages-2197842999.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-rotterdam",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 424,
+        "year": 2025,
+        "name": "Dallas",
+        "start": "2025-02-03",
+        "end": "2025-02-09",
+        "type": "500",
+        "location": "TX, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "Dallas Open",
+            "city": "Dallas",
+            "inOutdoor": "I",
+            "utcOffset": -6,
+            "qualStart": "2025-02-02",
+            "mainStart": "2025-02-03",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "$3,035,960",
+            "prize": "$2,760,000"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-02-01"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-02-02"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2025-02-03"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2025-02-04"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2025-02-05"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-02-06"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-02-07"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "6",
+                "isoDate": "2025-02-08"
+            },
+            {
+                "dateSeq": 9,
+                "dateLabel": "7",
+                "isoDate": "2025-02-09"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/02/10/8088667c-e1d1-4af9-af86-e7efc287eea2/GettyImages-2198278773.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/dallas-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 496,
+        "year": 2025,
+        "name": "Marseille",
+        "start": "2025-02-10",
+        "end": "2025-02-16",
+        "type": "250",
+        "location": "France",
+        "surface": "Hard",
+        "info": {
+            "title": "Open 13 Provence",
+            "city": "Marseille",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-02-09",
+            "mainStart": "2025-02-10",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€767,545",
+            "prize": "€740,730"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-02-09"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "1",
+                "isoDate": "2025-02-10"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "2",
+                "isoDate": "2025-02-11"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "3",
+                "isoDate": "2025-02-12"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "4",
+                "isoDate": "2025-02-13"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "5",
+                "isoDate": "2025-02-14"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "6",
+                "isoDate": "2025-02-15"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "7",
+                "isoDate": "2025-02-16"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/11/29/480786e5-3ea5-4cf3-b933-732fcd1aa583/GettyImages-1097608990.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/open-13",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 499,
+        "year": 2025,
+        "name": "Delray Beach",
+        "start": "2025-02-10",
+        "end": "2025-02-16",
+        "type": "250",
+        "location": "FL, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "Delray Beach Open",
+            "city": "Delray Beach",
+            "inOutdoor": "O",
+            "utcOffset": -5,
+            "qualStart": "2025-02-08",
+            "mainStart": "2025-02-10",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$710,735",
+            "prize": "$680,140"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-02-07"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-02-08"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "Q3",
+                "qualifying": true,
+                "isoDate": "2025-02-09"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "1",
+                "isoDate": "2025-02-10"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "2",
+                "isoDate": "2025-02-11"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "3",
+                "isoDate": "2025-02-12"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "4",
+                "isoDate": "2025-02-13"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "5",
+                "isoDate": "2025-02-14"
+            },
+            {
+                "dateSeq": 9,
+                "dateLabel": "6",
+                "isoDate": "2025-02-15"
+            },
+            {
+                "dateSeq": 10,
+                "dateLabel": "7",
+                "isoDate": "2025-02-16"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/01/24/6572a66f-13a5-4348-84f6-ae2bb95da807/GettyImages-1371817496.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/delray-beach-open",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 506,
+        "year": 2025,
+        "name": "Buenos Aires",
+        "start": "2025-02-10",
+        "end": "2025-02-16",
+        "type": "250",
+        "location": "Argentina",
+        "surface": "Clay",
+        "info": {
+            "title": "IEB+ Argentina Open",
+            "city": "Buenos Aires",
+            "inOutdoor": "O",
+            "utcOffset": -3,
+            "qualStart": "2025-02-09",
+            "mainStart": "2025-02-10",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$688,985",
+            "prize": "$658,390"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-02-08"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-02-09"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2025-02-10"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2025-02-11"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2025-02-12"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-02-13"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-02-14"
+            },
+            {
+                "dateSeq": 8,
+                "dateLabel": "6",
+                "isoDate": "2025-02-15"
+            },
+            {
+                "dateSeq": 9,
+                "dateLabel": "7",
+                "isoDate": "2025-02-16"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/02/17/c29b1c71-97a8-4a6e-979c-1bd1b10d97f8/GettyImages-2199391633.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/argentina-open",
+            "matchesSize": "19"
+        }
+    },
+    {
+        "id": 451,
+        "year": 2025,
+        "name": "Doha",
+        "start": "2025-02-17",
+        "end": "2025-02-22",
+        "type": "500",
+        "location": "Qatar",
+        "surface": "Hard",
+        "info": {
+            "title": "Qatar ExxonMobil Open",
+            "city": "Doha",
+            "inOutdoor": "O",
+            "utcOffset": 3,
+            "qualStart": "2025-02-15",
+            "mainStart": "2025-02-17",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "$3,035,960",
+            "prize": "$2,760,000"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-02-15"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-02-16"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2025-02-17"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2025-02-18"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2025-02-19"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-02-20"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-02-21"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/02/20/ae68e595-d433-48c9-a754-c721f686851c/IMG_6820.jpeg",
+        "metadata": {
+            "customRoute": "/tournaments/qatar-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 6932,
+        "year": 2025,
+        "name": "Rio de Janeiro",
+        "start": "2025-02-17",
+        "end": "2025-02-23",
+        "type": "500",
+        "location": "Brazil",
+        "surface": "Clay",
+        "info": {
+            "title": "Rio Open presented by Claro",
+            "city": "Rio de Janeiro",
+            "inOutdoor": "O",
+            "utcOffset": -3,
+            "qualStart": "2025-02-15",
+            "mainStart": "2025-02-17",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "$2,574,145",
+            "prize": "$2,396,115"
+        },
+        "availableOopDays": [
+            {
+                "dateSeq": 1,
+                "dateLabel": "Q1",
+                "qualifying": true,
+                "isoDate": "2025-02-15"
+            },
+            {
+                "dateSeq": 2,
+                "dateLabel": "Q2",
+                "qualifying": true,
+                "isoDate": "2025-02-16"
+            },
+            {
+                "dateSeq": 3,
+                "dateLabel": "1",
+                "isoDate": "2025-02-17"
+            },
+            {
+                "dateSeq": 4,
+                "dateLabel": "2",
+                "isoDate": "2025-02-18"
+            },
+            {
+                "dateSeq": 5,
+                "dateLabel": "3",
+                "isoDate": "2025-02-19"
+            },
+            {
+                "dateSeq": 6,
+                "dateLabel": "4",
+                "isoDate": "2025-02-20"
+            },
+            {
+                "dateSeq": 7,
+                "dateLabel": "5",
+                "isoDate": "2025-02-21"
+            }
+        ],
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/02/26/81c888ed-7725-49d5-a585-e04218be22b3/53551313357_01226cf9dd_o.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/rio-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 495,
+        "year": 2025,
+        "name": "Dubai",
+        "start": "2025-02-24",
+        "end": "2025-03-01",
+        "type": "500",
+        "location": "U.A.E.",
+        "surface": "Hard",
+        "info": {
+            "title": "Dubai Duty Free Tennis Championships",
+            "city": "Dubai",
+            "inOutdoor": "O",
+            "utcOffset": 4,
+            "qualStart": "2025-02-22",
+            "mainStart": "2025-02-24",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "$3,415,700",
+            "prize": "$3,237,670"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/03/01/a8dfd44a-6eac-441c-876c-3135d514d3b8/29.02.24_.ATP_RV__RVL3009.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/dubai-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 807,
+        "year": 2025,
+        "name": "Acapulco",
+        "start": "2025-02-24",
+        "end": "2025-03-01",
+        "type": "500",
+        "location": "Mexico",
+        "surface": "Hard",
+        "info": {
+            "title": "Abierto Mexicano Telcel presentado por HSBC",
+            "city": "Acapulco",
+            "inOutdoor": "O",
+            "utcOffset": -6,
+            "qualStart": "2025-02-22",
+            "mainStart": "2025-02-24",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "$2,763,440",
+            "prize": "$2,585,410"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/03/04/268fb7ec-1d6d-454d-8225-526e556f4012/20240301221832_ATTZ7494-01.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-acapulco",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 8996,
+        "year": 2025,
+        "name": "Santiago",
+        "start": "2025-02-24",
+        "end": "2025-03-02",
+        "type": "250",
+        "location": "Chile",
+        "surface": "Clay",
+        "info": {
+            "title": "Movistar Chile Open",
+            "city": "Santiago",
+            "inOutdoor": "O",
+            "utcOffset": -4,
+            "qualStart": "2025-02-22",
+            "mainStart": "2025-02-24",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$710,735",
+            "prize": "$680,140"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2021/10/27/2b05b14f-f15b-497a-bcf5-e2ea27e1926f/AK_Santiago.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/chile-open",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 404,
+        "year": 2025,
+        "name": "ATP Masters 1000 Indian Wells",
+        "start": "2025-03-05",
+        "end": "2025-03-16",
+        "type": "1000",
+        "location": "CA, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "BNP Paribas Open",
+            "city": "Indian Wells",
+            "inOutdoor": "O",
+            "utcOffset": -8,
+            "qualStart": "2025-03-04",
+            "mainStart": "2025-03-05",
+            "drawSizeSM": 96,
+            "drawSizeDM": 32,
+            "drawSizeSQ": 48,
+            "commitment": "$13,042,410",
+            "prize": "$9,693,540"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/03/18/8da572db-3d7e-41de-9e7a-099e90349144/GettyImages-2092909560.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/indian-wells",
+            "matchesSize": "126"
+        }
+    },
+    {
+        "id": 403,
+        "year": 2025,
+        "name": "ATP Masters 1000 Miami",
+        "start": "2025-03-19",
+        "end": "2025-03-30",
+        "type": "1000",
+        "location": "FL, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "Miami Open presented by Itau",
+            "city": "Miami",
+            "inOutdoor": "O",
+            "utcOffset": -5,
+            "qualStart": "2025-03-18",
+            "mainStart": "2025-03-19",
+            "drawSizeSM": 96,
+            "drawSizeDM": 32,
+            "drawSizeSQ": 48,
+            "commitment": "$11,255,360",
+            "prize": "$9,193,540"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/03/25/6d3f139c-1245-4098-8056-9aee1433c239/240317-MiamiOpen-TDS012.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/miami-open",
+            "matchesSize": "126"
+        }
+    },
+    {
+        "id": 360,
+        "year": 2025,
+        "name": "Marrakech",
+        "start": "2025-03-31",
+        "end": "2025-04-06",
+        "type": "250",
+        "location": "Morocco",
+        "surface": "Clay",
+        "info": {
+            "title": "Grand Prix Hassan II",
+            "city": "Marrakech",
+            "inOutdoor": "O",
+            "qualStart": "2025-03-30",
+            "mainStart": "2025-03-31",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/11/18/37789f6f-ee13-4389-8781-e03a1c4849da/GettyImages-129914817.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-marrakech",
+            "matchesSize": "17"
+        }
+    },
+    {
+        "id": 717,
+        "year": 2025,
+        "name": "Houston",
+        "start": "2025-03-31",
+        "end": "2025-04-06",
+        "type": "250",
+        "location": "TX, U.S.A.",
+        "surface": "Clay",
+        "info": {
+            "title": "Fayez Sarofim & Co. U.S. Men's Clay Court Championship",
+            "city": "Houston",
+            "inOutdoor": "O",
+            "utcOffset": -6,
+            "qualStart": "2025-03-30",
+            "mainStart": "2025-03-31",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$710,735",
+            "prize": "$680,140"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2021/11/03/5ccf66f9-7059-433e-b8f6-9421711fded5/GettyImages-946644960.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-houston",
+            "matchesSize": "19"
+        }
+    },
+    {
+        "id": 4462,
+        "year": 2025,
+        "name": "Bucharest",
+        "start": "2025-03-31",
+        "end": "2025-04-06",
+        "type": "250",
+        "location": "Romania",
+        "surface": "Clay",
+        "info": {
+            "title": "Tiriac Open",
+            "city": "Bucharest",
+            "inOutdoor": "O",
+            "utcOffset": 2,
+            "qualStart": "2025-03-30",
+            "mainStart": "2025-03-31",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/12/19/9f1b3697-e69b-4313-84f2-b8ace4fa5560/GettyImages-1031313010.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-bucharest",
+            "matchesSize": "20"
+        }
+    },
+    {
+        "id": 410,
+        "year": 2025,
+        "name": "ATP Masters 1000 Monte-Carlo",
+        "start": "2025-04-06",
+        "end": "2025-04-13",
+        "type": "1000",
+        "location": "Monaco",
+        "surface": "Clay",
+        "info": {
+            "title": "Rolex Monte-Carlo Masters",
+            "city": "Monte-Carlo",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-04-05",
+            "mainStart": "2025-04-06",
+            "drawSizeSM": 56,
+            "drawSizeDM": 28,
+            "drawSizeSQ": 28,
+            "commitment": "€6,832,435",
+            "prize": "€6,128,940"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/04/14/34421dfd-bb36-4b61-9619-bf0b7e90889e/GettyImages-1481979786.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/monte-carlo-masters",
+            "matchesSize": "82"
+        }
+    },
+    {
+        "id": 308,
+        "year": 2025,
+        "name": "Munich",
+        "start": "2025-04-14",
+        "end": "2025-04-20",
+        "type": "500",
+        "location": "Germany",
+        "surface": "Clay",
+        "info": {
+            "title": "BMW Open",
+            "city": "Munich",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-04-13",
+            "mainStart": "2025-04-14",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€2,747,360",
+            "prize": "€2,500,000"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/04/19/54084f8b-8d22-491c-afd9-11ea1055418f/GettyImages-2149143191.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/bmw-open-tennis",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 425,
+        "year": 2025,
+        "name": "Barcelona",
+        "start": "2025-04-14",
+        "end": "2025-04-20",
+        "type": "500",
+        "location": "Spain",
+        "surface": "Clay",
+        "info": {
+            "title": "Barcelona Open Banc Sabadell",
+            "city": "Barcelona",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-04-12",
+            "mainStart": "2025-04-14",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 24,
+            "drawSizeDQ": 4,
+            "commitment": "€3,050,800",
+            "prize": "€2,889,200"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/04/22/17b7c512-c72c-4621-a1c0-10bce2520bfa/IZQ_9703.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/barcelona-open",
+            "matchesSize": "62"
+        }
+    },
+    {
+        "id": 1536,
+        "year": 2025,
+        "name": "ATP Masters 1000 Madrid",
+        "start": "2025-04-23",
+        "end": "2025-05-04",
+        "type": "1000",
+        "location": "Spain",
+        "surface": "Clay",
+        "info": {
+            "title": "Mutua Madrid Open",
+            "city": "Madrid",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-04-21",
+            "mainStart": "2025-04-23",
+            "drawSizeSM": 96,
+            "drawSizeDM": 32,
+            "drawSizeSQ": 48,
+            "commitment": "€9,797,365",
+            "prize": "€8,055,385"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/04/26/6c6103f0-e4f1-4ee2-a8b0-8fa15d10a3a3/_1MV6686.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/madrid-open",
+            "matchesSize": "126"
+        }
+    },
+    {
+        "id": 416,
+        "year": 2025,
+        "name": "ATP Masters 1000 Rome",
+        "start": "2025-05-07",
+        "end": "2025-05-18",
+        "type": "1000",
+        "location": "Italy",
+        "surface": "Clay",
+        "info": {
+            "title": "Internazionali BNL d'Italia",
+            "city": "Rome",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-05-05",
+            "mainStart": "2025-05-07",
+            "drawSizeSM": 96,
+            "drawSizeDM": 32,
+            "drawSizeSQ": 48,
+            "commitment": "€9,645,265",
+            "prize": "€8,055,385"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/05/13/fe88e552-364d-4762-9384-db97122b6611/GettyImages-2152084800.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/italian-open",
+            "matchesSize": "126"
+        }
+    },
+    {
+        "id": 322,
+        "year": 2025,
+        "name": "Geneva",
+        "start": "2025-05-18",
+        "end": "2025-05-24",
+        "type": "250",
+        "location": "Switzerland",
+        "surface": "Clay",
+        "info": {
+            "title": "Gonet Geneva Open",
+            "city": "Geneva",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-05-17",
+            "mainStart": "2025-05-18",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/11/30/f87c48a5-c390-4967-b939-cfdfb0d21e7d/GettyImages-1352148361.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/geneva-open",
+            "matchesSize": "21"
+        }
+    },
+    {
+        "id": 414,
+        "year": 2025,
+        "name": "Hamburg",
+        "start": "2025-05-18",
+        "end": "2025-05-24",
+        "type": "500",
+        "location": "Germany",
+        "surface": "Clay",
+        "info": {
+            "title": "Hamburg Open",
+            "city": "Hamburg",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-05-17",
+            "mainStart": "2025-05-18",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "€2,320,160",
+            "prize": "€2,158,560"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/07/22/c5965aa4-4624-47e6-bde8-18861f17a698/Photo_Mathias_Schulz_for_ATP_240721_0461.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/hamburg-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 520,
+        "year": 2025,
+        "name": "Roland Garros",
+        "start": "2025-05-25",
+        "end": "2025-06-08",
+        "type": "GS",
+        "location": "France",
+        "surface": "Clay",
+        "info": {
+            "title": "Roland Garros",
+            "city": "Paris",
+            "inOutdoor": "O",
+            "utcOffset": 2,
+            "qualStart": "2025-05-19",
+            "mainStart": "2025-05-25",
+            "drawSizeSM": 128,
+            "drawSizeDM": 64,
+            "drawSizeSQ": 128
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/11/29/6f48dc5b-1c8f-4a6d-b117-9f355202262b/GettyImages-1176062521.jpg",
+        "metadata": {
+            "broadcastText": "Not Shown On Tennis TV",
+            "customRoute": "/tournaments/roland-garros"
+        }
+    },
+    {
+        "id": 440,
+        "year": 2025,
+        "name": "'s-Hertogenbosch",
+        "start": "2025-06-09",
+        "end": "2025-06-15",
+        "type": "250",
+        "location": "Netherlands",
+        "surface": "Grass",
+        "info": {
+            "title": "Libema Open",
+            "city": "'s-Hertogenbosch",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-06-08",
+            "mainStart": "2025-06-09",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€733,665",
+            "prize": "€706,850"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/06/17/2790b4ce-c22e-4960-8409-0eb27635268c/GettyImages-2157179560.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/libema-open",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 321,
+        "year": 2025,
+        "name": "Stuttgart",
+        "start": "2025-06-09",
+        "end": "2025-06-15",
+        "type": "250",
+        "location": "Germany",
+        "surface": "Grass",
+        "info": {
+            "title": "BOSS OPEN",
+            "city": "Stuttgart",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-06-08",
+            "mainStart": "2025-06-09",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€778,445",
+            "prize": "€751,630"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/06/17/2d49eb46-26df-4517-9090-786d986b650e/GettyImages-2157828367.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/stuttgart-open",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 311,
+        "year": 2025,
+        "name": "London / Queen's Club",
+        "start": "2025-06-16",
+        "end": "2025-06-22",
+        "type": "500",
+        "location": "Great Britain",
+        "surface": "Grass",
+        "info": {
+            "title": "HSBC Championships",
+            "city": "London",
+            "inOutdoor": "O",
+            "qualStart": "2025-06-15",
+            "mainStart": "2025-06-16",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "€2,683,820",
+            "prize": "€2,522,220"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/06/18/20489f74-3647-4937-afd7-57eedacd09ac/2157979348.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/queens-club-championships",
+            "matchesSize": "54"
+        }
+    },
+    {
+        "id": 500,
+        "year": 2025,
+        "name": "Halle",
+        "start": "2025-06-16",
+        "end": "2025-06-22",
+        "type": "500",
+        "location": "Germany",
+        "surface": "Grass",
+        "info": {
+            "title": "Terra Wortmann Open",
+            "city": "Halle",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-06-15",
+            "mainStart": "2025-06-16",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "€2,683,820",
+            "prize": "€2,522,220"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/06/21/59683638-084a-4149-8b28-d0c14fc56d3c/MSfTWO_240621_0223.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/halle-open",
+            "matchesSize": "54"
+        }
+    },
+    {
+        "id": 8994,
+        "year": 2025,
+        "name": "Mallorca",
+        "start": "2025-06-22",
+        "end": "2025-06-28",
+        "type": "250",
+        "location": "Spain",
+        "surface": "Grass",
+        "info": {
+            "title": "Mallorca Championships presented by Waterdrop",
+            "city": "Mallorca",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-06-21",
+            "mainStart": "2025-06-22",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/07/01/d665cec9-cb5b-4e25-95f6-51af035e5b78/MQA106623.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/mallorca-open",
+            "matchesSize": "22"
+        }
+    },
+    {
+        "id": 741,
+        "year": 2025,
+        "name": "Eastbourne",
+        "start": "2025-06-23",
+        "end": "2025-06-28",
+        "type": "250",
+        "location": "Great Britain",
+        "surface": "Grass",
+        "info": {
+            "title": "Lexus Eastbourne Open",
+            "city": "Eastbourne",
+            "inOutdoor": "O",
+            "qualStart": "2025-06-22",
+            "mainStart": "2025-06-23",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€783,690",
+            "prize": "€756,875"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/10/24/03814ca4-2f2d-4472-a49d-ad114e1b3d1c/2159152981.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-eastbourne",
+            "matchesSize": "20"
+        }
+    },
+    {
+        "id": 540,
+        "year": 2025,
+        "name": "Wimbledon",
+        "start": "2025-06-30",
+        "end": "2025-07-13",
+        "type": "GS",
+        "location": "Great Britain",
+        "surface": "Grass",
+        "info": {
+            "title": "Wimbledon",
+            "city": "London",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-06-23",
+            "mainStart": "2025-06-30",
+            "drawSizeSM": 128,
+            "drawSizeDM": 64,
+            "drawSizeSQ": 128
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/06/28/4ae810a2-affc-4184-a8f9-8c12c32cddc4/545199.jpg",
+        "metadata": {
+            "broadcastText": "Not Shown On Tennis TV",
+            "customRoute": "/tournaments/wimbledon"
+        }
+    },
+    {
+        "id": 7480,
+        "year": 2025,
+        "name": "Los Cabos",
+        "start": "2025-07-14",
+        "end": "2025-07-19",
+        "type": "250",
+        "location": "Mexico",
+        "surface": "Hard",
+        "info": {
+            "title": "Mifel Tennis Open by Telcel Oppo",
+            "city": "Los Cabos",
+            "inOutdoor": "O",
+            "utcOffset": -7,
+            "qualStart": "2025-07-13",
+            "mainStart": "2025-07-14",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$920,480",
+            "prize": "$889,890"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/02/21/9591548f-177f-4d65-afcd-8b86e1a00476/DJI_0488.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/los-cabos-open",
+            "matchesSize": "16"
+        }
+    },
+    {
+        "id": 314,
+        "year": 2025,
+        "name": "Gstaad",
+        "start": "2025-07-14",
+        "end": "2025-07-20",
+        "type": "250",
+        "location": "Switzerland",
+        "surface": "Clay",
+        "info": {
+            "title": "EFG Swiss Open Gstaad",
+            "city": "Gstaad",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-07-13",
+            "mainStart": "2025-07-14",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/07/22/95125e54-e465-48ef-9344-819c3eaa70c3/FM-06853.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/gstaad-open",
+            "matchesSize": "22"
+        }
+    },
+    {
+        "id": 316,
+        "year": 2025,
+        "name": "Bastad",
+        "start": "2025-07-14",
+        "end": "2025-07-20",
+        "type": "250",
+        "location": "Sweden",
+        "surface": "Clay",
+        "info": {
+            "title": "Nordea Open",
+            "city": "Bastad",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-07-13",
+            "mainStart": "2025-07-14",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/07/22/e7aa3118-f366-424c-83f2-edb6f0bb483d/_JL85440-2.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/nordea-open",
+            "matchesSize": "21"
+        }
+    },
+    {
+        "id": 319,
+        "year": 2025,
+        "name": "Kitzbuhel",
+        "start": "2025-07-20",
+        "end": "2025-07-26",
+        "type": "250",
+        "location": "Austria",
+        "surface": "Clay",
+        "info": {
+            "title": "Generali Open",
+            "city": "Kitzbuhel",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-07-19",
+            "mainStart": "2025-07-20",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/07/24/0aedc0cd-0fd5-4cf0-8fec-a1461043f46c/DJI_0853-Enhanced-SR.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-kitzbuhel",
+            "matchesSize": "19"
+        }
+    },
+    {
+        "id": 439,
+        "year": 2025,
+        "name": "Umag",
+        "start": "2025-07-20",
+        "end": "2025-07-26",
+        "type": "250",
+        "location": "Croatia",
+        "surface": "Clay",
+        "info": {
+            "title": "Plava Laguna Croatia Open Umag",
+            "city": "Umag",
+            "inOutdoor": "O",
+            "utcOffset": 1,
+            "qualStart": "2025-07-19",
+            "mainStart": "2025-07-20",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/02/16/fa855cfa-e725-4fe7-9cfa-bceb90862d03/GettyImages-1242234625.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/atp-umag",
+            "matchesSize": "18"
+        }
+    },
+    {
+        "id": 418,
+        "year": 2025,
+        "name": "Washington",
+        "start": "2025-07-21",
+        "end": "2025-07-27",
+        "type": "500",
+        "location": "DC, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "Mubadala Citi DC Open",
+            "city": "Washington",
+            "inOutdoor": "O",
+            "utcOffset": -5,
+            "qualStart": "2025-07-20",
+            "mainStart": "2025-07-21",
+            "drawSizeSM": 48,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 24,
+            "drawSizeDQ": 4,
+            "commitment": "$2,574,145",
+            "prize": "$2,396,115"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/07/31/9892f028-d225-41bc-b9ef-8cd8da2bb325/BS3_9425.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/citi-open",
+            "matchesSize": "62"
+        }
+    },
+    {
+        "id": 421,
+        "year": 2025,
+        "name": "ATP Masters 1000 Canada",
+        "start": "2025-07-27",
+        "end": "2025-08-07",
+        "type": "1000",
+        "location": "Canada",
+        "surface": "Hard",
+        "info": {
+            "title": "National Bank Open Presented by Rogers",
+            "city": "Toronto",
+            "inOutdoor": "O",
+            "utcOffset": -5,
+            "qualStart": "2025-07-26",
+            "mainStart": "2025-07-27",
+            "drawSizeSM": 96,
+            "drawSizeDM": 32,
+            "drawSizeSQ": 32,
+            "commitment": "$10,913,715",
+            "prize": "$9,193,540"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/08/08/9764713e-5be3-4db4-9aa1-a4e34069b40e/20230807_Toronto_ML_1603.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/national-bank-open",
+            "matchesSize": "126"
+        }
+    },
+    {
+        "id": 422,
+        "year": 2025,
+        "name": "ATP Masters 1000 Cincinnati",
+        "start": "2025-08-07",
+        "end": "2025-08-18",
+        "type": "1000",
+        "location": "OH, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "Cincinnati Open",
+            "city": "Cincinnati",
+            "inOutdoor": "O",
+            "utcOffset": -5,
+            "qualStart": "2025-08-05",
+            "mainStart": "2025-08-07",
+            "drawSizeSM": 96,
+            "drawSizeDM": 32,
+            "drawSizeSQ": 48,
+            "commitment": "$10,699,452",
+            "prize": "$9,193,540"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/08/13/bdaa02aa-3b5d-4c05-ade4-12313223d11c/20240812_CincinnatiOpen_2012.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/cincinnati-open",
+            "matchesSize": "126"
+        }
+    },
+    {
+        "id": 6242,
+        "year": 2025,
+        "name": "Winston-Salem",
+        "start": "2025-08-17",
+        "end": "2025-08-23",
+        "type": "250",
+        "location": "NC, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "Winston-Salem Open",
+            "city": "Winston-Salem",
+            "inOutdoor": "O",
+            "utcOffset": -5,
+            "qualStart": "2025-08-16",
+            "mainStart": "2025-08-17",
+            "drawSizeSM": 48,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$828,925",
+            "prize": "$798,335"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/08/26/d054582a-ae1e-42c6-bf84-81e5dd5617c7/GettyImages-1418067935.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/winston-salem-open",
+            "matchesSize": "22"
+        }
+    },
+    {
+        "id": 560,
+        "year": 2025,
+        "name": "US Open",
+        "start": "2025-08-24",
+        "end": "2025-09-07",
+        "type": "GS",
+        "location": "NY, U.S.A.",
+        "surface": "Hard",
+        "info": {
+            "title": "US Open",
+            "city": "New York",
+            "inOutdoor": "O",
+            "utcOffset": -5,
+            "qualStart": "2025-08-18",
+            "mainStart": "2025-08-24",
+            "drawSizeSM": 128,
+            "drawSizeDM": 64,
+            "drawSizeSQ": 128
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/09/10/072ddd13-7e29-49aa-885e-350e01c91439/GettyImages-2170862375.jpg",
+        "metadata": {
+            "broadcastText": "Not Shown On Tennis TV",
+            "customRoute": "/tournaments/atp-us-open"
+        }
+    },
+    {
+        "id": 4713,
+        "year": 2025,
+        "name": "Hangzhou",
+        "start": "2025-09-17",
+        "end": "2025-09-23",
+        "type": "250",
+        "location": "China",
+        "surface": "Hard",
+        "info": {
+            "title": "Hangzhou Open",
+            "city": "Hangzhou",
+            "inOutdoor": "O",
+            "utcOffset": 8,
+            "qualStart": "2025-09-16",
+            "mainStart": "2025-09-17",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$1,049,780",
+            "prize": "$1,019,185"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/09/23/edceaa52-3bab-4d9e-845f-c3088a7dd6b8/GettyImages-2173737440.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/hangzhou-open",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 7581,
+        "year": 2025,
+        "name": "Chengdu",
+        "start": "2025-09-17",
+        "end": "2025-09-23",
+        "type": "250",
+        "location": "China",
+        "surface": "Hard",
+        "info": {
+            "title": "Chengdu Open",
+            "city": "Chengdu",
+            "inOutdoor": "O",
+            "utcOffset": 8,
+            "qualStart": "2025-09-16",
+            "mainStart": "2025-09-17",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$1,220,805",
+            "prize": "$1,190,210"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2021/11/15/8e637c78-c4e3-4dd2-8b76-50957b777ae4/GettyImages-1043372730.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/chengdu-open",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 9210,
+        "year": 2025,
+        "name": "Laver Cup",
+        "start": "2025-09-19",
+        "end": "2025-09-21",
+        "type": "LVR",
+        "location": "United States",
+        "surface": "Hard",
+        "info": {
+            "title": "Laver Cup",
+            "city": "San Francisco",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "mainStart": "2025-09-19",
+            "drawSizeSM": 12,
+            "drawSizeDM": 12
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/09/23/a163d94b-50d2-40d5-adef-551a0218de2b/GettyImages-2173793973.jpg",
+        "metadata": {
+            "broadcastText": "Not Shown On Tennis TV",
+            "customRoute": "/tournaments/laver-cup"
+        }
+    },
+    {
+        "id": 329,
+        "year": 2025,
+        "name": "Tokyo",
+        "start": "2025-09-24",
+        "end": "2025-09-30",
+        "type": "500",
+        "location": "Japan",
+        "surface": "Hard",
+        "info": {
+            "title": "Kinoshita Group Japan Open Tennis Championships",
+            "city": "Tokyo",
+            "inOutdoor": "O",
+            "utcOffset": 9,
+            "qualStart": "2025-09-23",
+            "mainStart": "2025-09-24",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "$2,404,500",
+            "prize": "$2,226,470"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/11/29/f795a9f2-4fe4-484f-a010-54b64f578102/GettyImages-1208124099.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/japan-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 747,
+        "year": 2025,
+        "name": "Beijing",
+        "start": "2025-09-25",
+        "end": "2025-10-01",
+        "type": "500",
+        "location": "China",
+        "surface": "Hard",
+        "info": {
+            "title": "China Open",
+            "city": "Beijing",
+            "inOutdoor": "O",
+            "utcOffset": 8,
+            "qualStart": "2025-09-23",
+            "mainStart": "2025-09-25",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "$4,194,080",
+            "prize": "$4,016,050"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/09/30/6a165839-307e-4ad7-aa70-8606ccc39497/3IrNUZsJ.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/china-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 5014,
+        "year": 2025,
+        "name": "ATP Masters 1000 Shanghai",
+        "start": "2025-10-01",
+        "end": "2025-10-12",
+        "type": "1000",
+        "location": "China",
+        "surface": "Hard",
+        "info": {
+            "title": "Rolex Shanghai Masters",
+            "city": "Shanghai",
+            "inOutdoor": "O",
+            "utcOffset": 8,
+            "qualStart": "2025-09-30",
+            "mainStart": "2025-10-01",
+            "drawSizeSM": 96,
+            "drawSizeDM": 32,
+            "drawSizeSQ": 48,
+            "commitment": "$10,897,410",
+            "prize": "$9,193,540"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/10/11/d5a3aca4-4598-42d8-a197-182fd6d98c9a/AMBIENCE-SHANGHAIMASTERS-11102023-12818.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/shanghai-masters",
+            "matchesSize": "126"
+        }
+    },
+    {
+        "id": 429,
+        "year": 2025,
+        "name": "Stockholm",
+        "start": "2025-10-13",
+        "end": "2025-10-19",
+        "type": "250",
+        "location": "Sweden",
+        "surface": "Hard",
+        "info": {
+            "title": "BNP Paribas Nordic Open",
+            "city": "Stockholm",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-10-12",
+            "mainStart": "2025-10-13",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€733,665",
+            "prize": "€706,850"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/10/21/3aec0936-6bbf-47ba-8383-8b5c037d7872/_28A9806.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/stockholm-open",
+            "matchesSize": "23"
+        }
+    },
+    {
+        "id": 7485,
+        "year": 2025,
+        "name": "Brussels",
+        "start": "2025-10-13",
+        "end": "2025-10-19",
+        "type": "250",
+        "location": "Belgium",
+        "surface": "Hard",
+        "info": {
+            "title": "European Open",
+            "city": "Brussels",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-10-12",
+            "mainStart": "2025-10-13",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€733,665",
+            "prize": "€706,850"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2025/01/30/6f2d616a-ad3c-47a0-b491-dff8db4a7b95/GettyImages-1246672817.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/european-open",
+            "matchesSize": "21"
+        }
+    },
+    {
+        "id": 9410,
+        "year": 2025,
+        "name": "Almaty",
+        "start": "2025-10-13",
+        "end": "2025-10-19",
+        "type": "250",
+        "location": "Kazakhstan",
+        "surface": "Hard",
+        "info": {
+            "title": "Almaty Open",
+            "city": "Almaty",
+            "inOutdoor": "I",
+            "utcOffset": 5,
+            "qualStart": "2025-10-12",
+            "mainStart": "2025-10-13",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "$1,085,850",
+            "prize": "$1,055,255"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/12/15/267cd8fb-effc-4a6c-9739-91547549ed1d/GettyImages-588603321.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/almaty-open",
+            "matchesSize": "22"
+        }
+    },
+    {
+        "id": 328,
+        "year": 2025,
+        "name": "Basel",
+        "start": "2025-10-20",
+        "end": "2025-10-26",
+        "type": "500",
+        "location": "Switzerland",
+        "surface": "Hard",
+        "info": {
+            "title": "Swiss Indoors Basel",
+            "city": "Basel",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-10-19",
+            "mainStart": "2025-10-20",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "€2,684,645",
+            "prize": "€2,523,045"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/11/01/2900f314-c955-4b3e-bebb-16d586351ecd/GettyImages-1244312708.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/swiss-indoors",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 337,
+        "year": 2025,
+        "name": "Vienna",
+        "start": "2025-10-20",
+        "end": "2025-10-26",
+        "type": "500",
+        "location": "Austria",
+        "surface": "Hard",
+        "info": {
+            "title": "Erste Bank Open",
+            "city": "Vienna",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-10-19",
+            "mainStart": "2025-10-20",
+            "drawSizeSM": 32,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "drawSizeDQ": 4,
+            "commitment": "€2,898,475",
+            "prize": "€2,736,875"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2024/10/28/3ac24160-6db1-40c9-bb72-9a028a891a2e/GettyImages-2180392586.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/vienna-open",
+            "matchesSize": "46"
+        }
+    },
+    {
+        "id": 352,
+        "year": 2025,
+        "name": "ATP Masters 1000 Paris",
+        "start": "2025-10-27",
+        "end": "2025-11-02",
+        "type": "1000",
+        "location": "France",
+        "surface": "Hard",
+        "info": {
+            "title": "Rolex Paris Masters",
+            "city": "Paris",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-10-25",
+            "mainStart": "2025-10-27",
+            "drawSizeSM": 56,
+            "drawSizeDM": 28,
+            "drawSizeSQ": 28,
+            "commitment": "€7,703,855",
+            "prize": "€6,128,940"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2022/11/29/8b9185cb-eca1-41bd-aa1c-32625d46e0ed/GettyImages-1184845032.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/paris-masters",
+            "matchesSize": "78"
+        }
+    },
+    {
+        "id": 341,
+        "year": 2025,
+        "name": "Metz",
+        "start": "2025-11-02",
+        "end": "2025-11-08",
+        "type": "250",
+        "location": "France",
+        "surface": "Hard",
+        "info": {
+            "title": "Moselle Open",
+            "city": "Metz",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-11-01",
+            "mainStart": "2025-11-02",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "€622,850",
+            "prize": "€596,035"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2021/11/05/d1133aa4-f246-4c91-95e2-4a37cc875065/GettyImages-1265235429.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/moselle-open",
+            "matchesSize": "22"
+        }
+    },
+    {
+        "id": 4787,
+        "year": 2025,
+        "name": "Belgrade",
+        "start": "2025-11-02",
+        "end": "2025-11-08",
+        "type": "250",
+        "location": "Serbia",
+        "surface": "Hard",
+        "info": {
+            "title": "Belgrade Open",
+            "city": "Belgrade",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "qualStart": "2025-11-01",
+            "mainStart": "2025-11-02",
+            "drawSizeSM": 28,
+            "drawSizeDM": 16,
+            "drawSizeSQ": 16,
+            "commitment": "793,530",
+            "prize": "766,715"
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2021/10/27/1602baf3-08a5-48de-833e-40173988cab4/AK_Belgrade.jpg",
+        "metadata": {
+            "customRoute": "/tournaments/belgrade-open",
+            "matchesSize": "20"
+        }
+    },
+    {
+        "id": 605,
+        "year": 2025,
+        "name": "Nitto ATP Finals",
+        "start": "2025-11-09",
+        "end": "2025-11-16",
+        "type": "WC",
+        "location": "Italy",
+        "surface": "Hard",
+        "info": {
+            "title": "Nitto ATP Finals",
+            "city": "Turin",
+            "inOutdoor": "I",
+            "utcOffset": 1,
+            "mainStart": "2025-11-09",
+            "drawSizeSM": 8,
+            "drawSizeDM": 8
+        },
+        "onDemandUrl": "https://resources.prod.atpmedia.pulselive.com/photo-resources/2023/11/17/dadebea5-9fa0-4696-b7ef-e443244f4cd2/COR_6400.JPG",
+        "metadata": {
+            "customRoute": "/tournaments/nitto-atp-finals",
+            "matchesSize": "30"
+        }
+    },
+    {
+        "id": 7696,
+        "year": 2025,
+        "name": "Next Gen ATP Finals",
+        "start": "2025-12-17",
+        "end": "2025-12-21",
+        "type": "XXI",
+        "location": "Saudi Arabia",
+        "surface": "Hard",
+        "info": {
+            "title": "Next Gen ATP Finals presented by PIF",
+            "city": "Jeddah",
+            "inOutdoor": "I",
+            "utcOffset": 3,
+            "mainStart": "2025-12-17",
+            "drawSizeSM": 8
+        }
+    }
+]

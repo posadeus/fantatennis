@@ -33,6 +33,10 @@ class RestTennisTvClient(private val baseUrl: String,
     }
   }
 
+  override fun retrieveTournamentsRegistry(year: Int): TennisTvTournamentsRegistryResponse {
+    TODO("Not yet implemented")
+  }
+
   private fun convert(body: String): TennisTvTournamentOkResponse =
       Gson().fromJson(body, TournamentResponse::class.java)
           .let(::TennisTvTournamentOkResponse)

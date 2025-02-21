@@ -23,7 +23,7 @@ class MySqlTournamentsRepository(private val dao: TournamentsDao) : TournamentsR
   }
 
   private fun toTournamentsEntity(tournamentRegistry: TournamentRegistry): TournamentsEntity =
-      TournamentsEntity(atpTourId = tournamentRegistry.atpId,
+      TournamentsEntity(atpTourId = tournamentRegistry.atpTourId,
                         tennisTvId = tournamentRegistry.tennisTvId,
                         name = tournamentRegistry.name,
                         points = tournamentRegistry.points,
