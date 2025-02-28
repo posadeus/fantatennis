@@ -37,7 +37,9 @@ class TennisTvTournamentsRegistryRepository(private val tennisTvClient: TennisTv
   private fun toSurface(surface: String): Surface =
       try {
 
-        Surface.valueOf(surface)
+        surface
+            .uppercase()
+            .let(Surface::valueOf)
       }
       catch (e: Exception) {
 

@@ -30,7 +30,7 @@ class TennisTvTournamentsRegistryRepositoryTest {
                                                                  end = AN_END_DATE,
                                                                  type = "250",
                                                                  location = A_LOCATION,
-                                                                 surface = "HARD")
+                                                                 surface = "Hard")
     val tournamentRegistryResponse2 = TennisTvTournamentRegistry(id = 76543,
                                                                  year = A_YEAR,
                                                                  name = ANOTHER_NAME,

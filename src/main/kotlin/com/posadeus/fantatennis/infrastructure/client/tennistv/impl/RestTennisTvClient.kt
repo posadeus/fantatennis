@@ -74,6 +74,6 @@ class RestTennisTvClient(private val baseUrl: String,
   companion object {
 
     private const val TOURNAMENT_INFO_PATH = "/v1/tournaments/{tournamentId}/{year}/draws"
-    private const val TOURNAMENTS_REGISTRY_PATH = "v1/tournaments?from={from}&to={to}&size=250"
+    private const val TOURNAMENTS_REGISTRY_PATH = "/v1/tournaments?from={from}&to={to}&size=250"
   }
 }
