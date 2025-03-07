@@ -72,7 +72,7 @@ class AusOpenTournamentInfoRepository(private val client: AusOpenClient,
         "3rd Round" -> R3
         "2nd Round" -> R2
         "1st Round" -> R1
-        else -> throw UnexpectedRoundException()
+        else -> throw UnexpectedRoundException("Round not found: ${roundNamesByUUID[roundUUID]}")
       }
 
   private fun toAtpId(ausOpenId: String): String =

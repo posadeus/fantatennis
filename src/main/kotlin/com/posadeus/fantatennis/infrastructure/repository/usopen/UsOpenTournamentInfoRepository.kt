@@ -50,7 +50,7 @@ class UsOpenTournamentInfoRepository(private val client: UsOpenClient) : Tournam
         "R3" -> R3
         "R2" -> R2
         "R1" -> R1
-        else -> throw UnexpectedRoundException()
+        else -> throw UnexpectedRoundException("Round not found: $roundNameShort")
       }
 
   private fun chooseWinner(usOpenMatch: UsOpenMatch): String? =

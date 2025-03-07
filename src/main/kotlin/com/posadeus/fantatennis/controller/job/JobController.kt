@@ -5,6 +5,7 @@ import com.posadeus.fantatennis.domain.exception.InvalidYearException
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.service.player.FantaPointService
 import com.posadeus.fantatennis.domain.service.tournament.AddTournamentsService
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
@@ -41,6 +42,12 @@ class JobController(private val fantaPointService: FantaPointService,
       }
       catch (e: Exception) {
 
+        LOGGER.error(e.message, e.printStackTrace())
         ResponseEntity.internalServerError().build()
       }
+
+  companion object {
+
+    private val LOGGER = LoggerFactory.getLogger(JobController::class.java)
+  }
 }

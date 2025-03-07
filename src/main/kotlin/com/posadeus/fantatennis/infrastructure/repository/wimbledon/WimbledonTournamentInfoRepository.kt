@@ -50,7 +50,7 @@ class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : T
         "3R" -> R3
         "2R" -> R2
         "1R" -> R1
-        else -> throw UnexpectedRoundException()
+        else -> throw UnexpectedRoundException("Round not found: $roundNameShort")
       }
 
   private fun chooseWinner(wimbledonMatch: WimbledonMatch): String? =

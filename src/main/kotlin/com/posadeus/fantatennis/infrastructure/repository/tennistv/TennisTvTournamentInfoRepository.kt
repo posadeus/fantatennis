@@ -50,7 +50,7 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
         "Third Round" -> R3
         "Second Round", "Round of 16" -> R2
         "First Round", "Round of 28", "Round of 32" -> R1
-        else -> throw UnexpectedRoundException()
+        else -> throw UnexpectedRoundException("Round not found: $roundName")
       }
 
   private fun winners(round: Array<Fixture>): Set<AtpPlayerId> {

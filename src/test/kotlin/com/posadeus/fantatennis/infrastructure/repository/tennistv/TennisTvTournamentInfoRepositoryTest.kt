@@ -16,10 +16,12 @@ import com.posadeus.fantatennis.infrastructure.client.tennistv.model.ResultTeamB
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.ResultTeamPlayerBuilder.Companion.aResultTeamPlayer
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.RoundBuilder.Companion.aRound
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TournamentResponseBuilder.Companion.aTournamentResponse
+import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedRoundException
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertTrue
 
 class TennisTvTournamentInfoRepositoryTest {
@@ -97,6 +99,18 @@ class TennisTvTournamentInfoRepositoryTest {
     every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
 
     assertThat(tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `round exception`() {
+
+    val clientResponse = aClientResponseWith(arrayOf(aRound("A_NOT_EXISTING_ROUND",
+                                                            A_FIXTURE_PLAYER,
+                                                            A_FIXTURE_PLAYER)))
+
+    every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
+
+    assertThrows<UnexpectedRoundException> { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) }
   }
 
   @Test
@@ -202,5 +216,6 @@ class TennisTvTournamentInfoRepositoryTest {
     private const val A_TOURNAMENT_ID = 123
     private const val ANY_TOURNAMENT_ID = 2345
     private const val A_YEAR = 2000
+    private const val A_FIXTURE_PLAYER = "A_FIXTURE_PLAYER"
   }
 }
