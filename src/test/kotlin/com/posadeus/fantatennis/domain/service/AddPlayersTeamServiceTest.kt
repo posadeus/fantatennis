@@ -11,7 +11,7 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class AddPlayersRetrieveTeamServiceTest {
+class AddPlayersTeamServiceTest {
 
   private val teamsRepository: TeamsRepository = mockk()
 
@@ -29,9 +29,9 @@ class AddPlayersRetrieveTeamServiceTest {
                                                                            fantaPoints = 0.0)),
                                             totalScore = 0.0))
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), null) } returns validAddPlayers
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns validAddPlayers
 
-    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID))).isEqualTo(expected)
+    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
   @Test
@@ -40,9 +40,9 @@ class AddPlayersRetrieveTeamServiceTest {
     val addPlayersError = AddPlayersTeamNotFound
     val expected = TeamIdNotFoundTeam
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), null) } returns addPlayersError
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns addPlayersError
 
-    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID))).isEqualTo(expected)
+    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
   @Test
@@ -51,9 +51,9 @@ class AddPlayersRetrieveTeamServiceTest {
     val addPlayersError = PlayersNotFound(missingPlayerIds = setOf(ANOTHER_PLAYER_ID))
     val expected = ErrorTeam
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), null) } returns addPlayersError
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns addPlayersError
 
-    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID))).isEqualTo(expected)
+    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
   @Test
@@ -62,14 +62,15 @@ class AddPlayersRetrieveTeamServiceTest {
     val addPlayersError = AddPlayersError
     val expected = ErrorTeam
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), null) } returns addPlayersError
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns addPlayersError
 
-    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID))).isEqualTo(expected)
+    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
   companion object {
 
     private const val A_TEAM_ID = 1
+    private const val A_STARTING_TOURNAMENT_ID = 123
     private const val A_PLAYER_FULL_NAME = "A_PLAYER_FULL_NAME"
     private const val A_PLAYER_ID = "A_PLAYER_ID"
     private const val ANOTHER_PLAYER_ID = "ANOTHER_PLAYER_ID"

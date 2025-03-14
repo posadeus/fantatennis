@@ -45,7 +45,7 @@ class TeamControllerTest {
                              totalScore = 0.0)
       val foundTeam = FoundTeam(expected)
 
-      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) } returns foundTeam
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) } returns foundTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -55,7 +55,7 @@ class TeamControllerTest {
           .andExpect(status().isOk)
           .andExpect(content().json(toJson(expected)))
 
-      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) }
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) }
       verify { createTeamService wasNot called }
       verify { service wasNot called }
     }
@@ -80,7 +80,7 @@ class TeamControllerTest {
       val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
       val request = PlayersToAddDto(playerIds = playerIds)
 
-      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) } returns TeamIdNotFoundTeam
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) } returns TeamIdNotFoundTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +89,7 @@ class TeamControllerTest {
           .andDo(print())
           .andExpect(status().isBadRequest)
 
-      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) }
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) }
       verify { createTeamService wasNot called }
       verify { service wasNot called }
     }
@@ -100,7 +100,7 @@ class TeamControllerTest {
       val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
       val request = PlayersToAddDto(playerIds = playerIds)
 
-      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) } returns ErrorTeam
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) } returns ErrorTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +109,7 @@ class TeamControllerTest {
           .andDo(print())
           .andExpect(status().isInternalServerError)
 
-      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds) }
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) }
       verify { createTeamService wasNot called }
       verify { service wasNot called }
     }

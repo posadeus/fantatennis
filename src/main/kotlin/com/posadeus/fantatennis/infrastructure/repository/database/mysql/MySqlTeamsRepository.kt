@@ -15,14 +15,14 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
                            private val teamsDao: TeamsDao) : TeamsRepository {
 
   // TODO: Create a new endpoint to switch players
-  override fun addPlayers(teamId: Int, playerIds: Set<String>, startingTournamentId: Int?): AddPlayers {
+  override fun addPlayers(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
 
     try {
 
       val fantaTeam = fantaTeamsDao.findById(teamId).getOrNull()
                       ?: return AddPlayersTeamNotFound
 
-      val startingTournament = tournamentsDao.findById(startingTournamentId!!).getOrNull()
+      val startingTournament = tournamentsDao.findById(startingTournamentId).getOrNull()
                                ?: return AddPlayersTournamentNotFound
 
       val players = playersDao.findAllById(playerIds)
