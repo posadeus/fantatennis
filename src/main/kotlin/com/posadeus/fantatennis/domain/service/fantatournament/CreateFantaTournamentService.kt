@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.domain.service.tournament
+package com.posadeus.fantatennis.domain.service.fantatournament
 
 import com.posadeus.fantatennis.controller.model.tournament.TournamentCreatedDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
@@ -7,7 +7,7 @@ import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 
-class CreateTournamentService(private val fantaTournamentsRepository: FantaTournamentsRepository) {
+class CreateFantaTournamentService(private val fantaTournamentsRepository: FantaTournamentsRepository) {
 
   fun create(dto: TournamentToCreateDto): TournamentCreated =
       when (val result = fantaTournamentsRepository.create(dto)) {

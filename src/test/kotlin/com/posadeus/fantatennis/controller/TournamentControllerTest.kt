@@ -6,6 +6,7 @@ import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.controller.model.tournament.*
 import com.posadeus.fantatennis.controller.tournament.TournamentController
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.service.fantatournament.*
 import com.posadeus.fantatennis.domain.service.tournament.*
 import io.mockk.*
 import org.junit.jupiter.api.Nested
@@ -19,13 +20,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class TournamentControllerTest {
 
-  private val createTournamentService: CreateTournamentService = mockk()
-  private val retrieveTournamentService: RetrieveTournamentService = mockk()
-  private val retrieveTournamentsService: RetrieveTournamentsService = mockk()
+  private val createFantaTournamentService: CreateFantaTournamentService = mockk()
+  private val retrieveFantaTournamentService: RetrieveFantaTournamentService = mockk()
+  private val retrieveFantaTournamentsService: RetrieveFantaTournamentsService = mockk()
 
-  private val controller: TournamentApi = TournamentController(createTournamentService,
-                                                               retrieveTournamentService,
-                                                               retrieveTournamentsService)
+  private val controller: TournamentApi = TournamentController(createFantaTournamentService,
+                                                               retrieveFantaTournamentService,
+                                                               retrieveFantaTournamentsService)
 
   private val objectMapper = ObjectMapper()
   private val mvc = MockMvcBuilders.standaloneSetup(controller)
@@ -49,7 +50,7 @@ class TournamentControllerTest {
                                           tournamentYear = A_TOURNAMENT_YEAR)
       val tournamentCreated = SuccessTournamentCreated(expected)
 
-      every { createTournamentService.create(request) } returns tournamentCreated
+      every { createFantaTournamentService.create(request) } returns tournamentCreated
 
       mvc.perform(post(TOURNAMENT_ENDPOINT)
                       .contentType(MediaType.APPLICATION_JSON)
@@ -76,7 +77,7 @@ class TournamentControllerTest {
           .andDo(print())
           .andExpect(status().isBadRequest)
 
-      verify { createTournamentService wasNot called }
+      verify { createFantaTournamentService wasNot called }
     }
 
     @Test
@@ -86,7 +87,7 @@ class TournamentControllerTest {
                                           endingTournamentId = AN_ENDING_TOURNAMENT_ID,
                                           tournamentYear = A_TOURNAMENT_YEAR)
 
-      every { createTournamentService.create(request) } returns ErrorTournamentCreation
+      every { createFantaTournamentService.create(request) } returns ErrorTournamentCreation
 
       mvc.perform(post(TOURNAMENT_ENDPOINT)
                       .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +107,7 @@ class TournamentControllerTest {
       val expected = TournamentDto(teams = A_TEAM_LIST)
       val tournament = FoundFantaTournamentResults(expected)
 
-      every { retrieveTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
+      every { retrieveFantaTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
 
       mvc.perform(get("$TOURNAMENT_ENDPOINT/$A_TOURNAMENT_ID")
                       .accept(MediaType.APPLICATION_JSON))
@@ -120,7 +121,7 @@ class TournamentControllerTest {
 
       val tournament = NotFoundFantaTournamentId
 
-      every { retrieveTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
+      every { retrieveFantaTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
 
       mvc.perform(get("$TOURNAMENT_ENDPOINT/$A_TOURNAMENT_ID")
                       .accept(MediaType.APPLICATION_JSON))
@@ -133,7 +134,7 @@ class TournamentControllerTest {
 
       val tournament = ErrorFantaTournamentResults
 
-      every { retrieveTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
+      every { retrieveFantaTournamentService.retrieve(A_TOURNAMENT_ID) } returns tournament
 
       mvc.perform(get("$TOURNAMENT_ENDPOINT/$A_TOURNAMENT_ID")
                       .accept(MediaType.APPLICATION_JSON))
@@ -151,7 +152,7 @@ class TournamentControllerTest {
       val expected = TournamentsDto(ids = listOf(1, 2, 3))
       val tournaments = FoundFantaTournamentsResults(expected)
 
-      every { retrieveTournamentsService.retrieveAll() } returns tournaments
+      every { retrieveFantaTournamentsService.retrieveAll() } returns tournaments
 
       mvc.perform(get(TOURNAMENTS_ENDPOINT)
                       .accept(MediaType.APPLICATION_JSON))
@@ -165,7 +166,7 @@ class TournamentControllerTest {
 
       val tournaments = NotFoundFantaTournaments
 
-      every { retrieveTournamentsService.retrieveAll() } returns tournaments
+      every { retrieveFantaTournamentsService.retrieveAll() } returns tournaments
 
       mvc.perform(get(TOURNAMENTS_ENDPOINT)
                       .accept(MediaType.APPLICATION_JSON))
@@ -178,7 +179,7 @@ class TournamentControllerTest {
 
       val tournaments = ErrorFantaTournamentsResults
 
-      every { retrieveTournamentsService.retrieveAll() } returns tournaments
+      every { retrieveFantaTournamentsService.retrieveAll() } returns tournaments
 
       mvc.perform(get(TOURNAMENTS_ENDPOINT)
                       .accept(MediaType.APPLICATION_JSON))

@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.domain.service.tournament
+package com.posadeus.fantatennis.domain.service.fantatournament
 
 import com.posadeus.fantatennis.controller.model.tournament.TournamentCreatedDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
@@ -12,11 +12,11 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class CreateTournamentServiceTest {
+class CreateFantaTournamentServiceTest {
 
   private val fantaTournamentsRepository: FantaTournamentsRepository = mockk()
 
-  private val service = CreateTournamentService(fantaTournamentsRepository)
+  private val service = CreateFantaTournamentService(fantaTournamentsRepository)
 
   @Test
   fun `create tournament successfully`() {
