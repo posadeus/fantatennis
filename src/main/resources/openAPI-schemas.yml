@@ -111,6 +111,37 @@ components:
         - playerIds
         - startingTournamentId
 
+    PlayersToRemoveDto:
+      type: object
+      properties:
+        playerIds:
+          type: array
+          default: [ ]
+          items:
+            type: string
+          uniqueItems: true
+        endingTournamentId:
+          type: integer
+          default: 0
+          example: 1
+      example:
+        playerIds: [ "id1", "id2", "id3" ]
+        endingTournamentId: 1
+      required:
+        - playerIds
+        - endingTournamentId
+
+    PlayersToSwapDto:
+      type: object
+      properties:
+        remove:
+          $ref: '#/components/schemas/PlayersToRemoveDto'
+        add:
+          $ref: '#/components/schemas/PlayersToAddDto'
+      required:
+        - remove
+        - add
+
     TournamentDto:
       type: object
       properties:

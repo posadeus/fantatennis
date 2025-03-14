@@ -36,4 +36,8 @@ class TeamController(private val service: RetrieveTeamService,
         is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
         is ErrorTeam -> ResponseEntity.internalServerError().build()
       }
+
+  override fun swamp(teamId: Int, playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto> {
+    TODO("Not yet implemented")
+  }
 }
