@@ -29,7 +29,9 @@ class MySqlTournamentsRepository(private val dao: TournamentsDao) : TournamentsR
                         points = tournamentRegistry.points,
                         location = tournamentRegistry.location,
                         surface = tournamentRegistry.surface.name,
-                        year = tournamentRegistry.year)
+                        year = tournamentRegistry.year,
+                        startDate = tournamentRegistry.startDate,
+                        endDate = tournamentRegistry.endDate)
 
   private fun toTournament(tournamentsEntity: TournamentsEntity): Tournament =
       Tournament(id = tournamentsEntity.id,

@@ -80,14 +80,18 @@ class MySqlTournamentsRepositoryTest {
                                                points = A_POINTS,
                                                location = A_LOCATION,
                                                surface = A_SURFACE,
-                                               year = A_YEAR)
+                                               year = A_YEAR,
+                                               startDate = A_START_DATE,
+                                               endDate = AN_END_DATE)
     val tournamentsEntity2 = TournamentsEntity(atpTourId = ANOTHER_ATP_TOUR_ID,
                                                tennisTvId = ANOTHER_TENNIS_TV_ID,
                                                name = ANOTHER_NAME,
                                                points = ANOTHER_POINTS,
                                                location = ANOTHER_LOCATION,
                                                surface = ANOTHER_SURFACE,
-                                               year = A_YEAR)
+                                               year = A_YEAR,
+                                               startDate = ANOTHER_START_DATE,
+                                               endDate = ANOTHER_END_DATE)
     val entities = listOf(tournamentsEntity1, tournamentsEntity2)
 
     val tournamentsEntityPersisted1 = tournamentsEntity1.copy(id = 1)

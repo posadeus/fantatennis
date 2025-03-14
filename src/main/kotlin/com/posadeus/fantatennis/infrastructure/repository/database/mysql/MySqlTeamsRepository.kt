@@ -14,7 +14,6 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
                            private val playersDao: PlayersDao,
                            private val teamsDao: TeamsDao) : TeamsRepository {
 
-  // TODO: Create a new endpoint to switch players
   override fun addPlayers(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
 
     try {

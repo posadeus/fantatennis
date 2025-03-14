@@ -30,5 +30,11 @@ data class TournamentsEntity(
     val surface: String = "",
 
     @Column(name = "`YEAR`")
-    val year: Int = 0
+    val year: Int = 0,
+
+    @Column(name = "START_DATE")
+    val startDate: String = "2024-01-01",
+
+    @Column(name = "END_DATE")
+    val endDate: String = "2024-01-01"
 ) : Serializable

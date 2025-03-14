@@ -36,10 +36,14 @@ class MySqlTeamsRepositoryTest {
                                             fullName = ANOTHER_PLAYER_FULL_NAME)
     val aTeamEntity = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "A_PLAYER_ID"),
                                   player = aPlayerEntity,
-                                  fantaTeam = fantaTeamsEntity)
+                                  fantaTeam = fantaTeamsEntity,
+                                  startingTournament = tournamentsEntity,
+                                  endingTournament = null)
     val anotherTeamEntity = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "ANOTHER_PLAYER_ID"),
                                   player = anotherPlayerEntity,
-                                  fantaTeam = fantaTeamsEntity)
+                                  fantaTeam = fantaTeamsEntity,
+                                  startingTournament = tournamentsEntity,
+                                  endingTournament = null)
 
     val aDomainPlayer = DomainPlayer(id = "A_PLAYER_ID",
                                      atpId = AN_ATP_PLAYER_ID,
@@ -127,7 +131,9 @@ class MySqlTeamsRepositoryTest {
                         points = A_TOURNAMENT_POINTS,
                         location = A_TOURNAMENT_LOCATION,
                         surface = A_TOURNAMENT_SURFACE,
-                        year = A_TOURNAMENT_YEAR)
+                        year = A_TOURNAMENT_YEAR,
+                        startDate = A_START_DATE,
+                        endDate = AN_END_DATE)
 
   private fun aFantaTeamsEntityWith(teamId: Int) =
       FantaTeamsEntity(teamId = teamId,
@@ -147,6 +153,8 @@ class MySqlTeamsRepositoryTest {
     private const val A_TOURNAMENT_NAME = "A_TOURNAMENT_NAME"
     private const val A_TOURNAMENT_LOCATION = "A_TOURNAMENT_LOCATION"
     private const val A_TOURNAMENT_SURFACE = "A_TOURNAMENT_SURFACE"
+    private const val A_START_DATE = "2024-01-01"
+    private const val AN_END_DATE = "2024-01-01"
     private const val A_TOURNAMENT_ID = 123
     private const val A_TOURNAMENT_TENNIS_TV_ID = 234
     private const val A_TOURNAMENT_ATP_TOUR_ID = 345
