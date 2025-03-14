@@ -15,7 +15,7 @@ class AddPlayersTeamService(private val teamsRepository: TeamsRepository) {
 
         is ValidAddPlayers -> toFoundTeam(addPlayers.players)
         is AddPlayersTeamNotFound -> TeamIdNotFoundTeam
-        is AddPlayersTournamentNotFound -> ErrorTeam.also { LOGGER.error("Tournament not found: $startingTournamentId") }
+        is AddPlayersTournamentNotFound -> ErrorTeam.also { LOGGER.error("Tournament not found: $startingTournamentId") } // FIXME: not a generic error
         is PlayersNotFound -> ErrorTeam.also { LOGGER.error("Players not found: ${addPlayers.missingPlayerIds}") }
         is AddPlayersError -> ErrorTeam
       }

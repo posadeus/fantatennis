@@ -10,9 +10,9 @@ import java.io.Serializable
  */
 data class PlayersToSwapDto(
 
-    @get:JsonProperty("remove", required = true) val remove: PlayersToRemoveDto,
+    @get:JsonProperty("remove", required = true) val remove: PlayersToRemoveDto = PlayersToRemoveDto(),
 
-    @get:JsonProperty("add", required = true) val add: PlayersToAddDto
+    @get:JsonProperty("add", required = true) val add: PlayersToAddDto = PlayersToAddDto()
     ) : Serializable{
 
     companion object {

@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.app.configuration.controller
 
 import com.posadeus.fantatennis.controller.TeamApi
 import com.posadeus.fantatennis.controller.team.TeamController
+import com.posadeus.fantatennis.domain.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
@@ -14,8 +15,10 @@ class TeamControllerConfiguration {
   @Bean
   fun teamController(retrieveTeamService: RetrieveTeamService,
                      createTeamService: CreateTeamService,
-                     addPlayersTeamService: AddPlayersTeamService): TeamApi =
+                     addPlayersTeamService: AddPlayersTeamService,
+                     swapPlayersTeamService: SwapPlayersTeamService): TeamApi =
       TeamController(retrieveTeamService,
                      createTeamService,
-                     addPlayersTeamService)
+                     addPlayersTeamService,
+                     swapPlayersTeamService)
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.controller.team.TeamController
+import com.posadeus.fantatennis.domain.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
@@ -20,11 +21,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class TeamControllerTest {
 
-  private val service: RetrieveTeamService = mockk()
+  private val retrieveTeamService: RetrieveTeamService = mockk()
   private val createTeamService: CreateTeamService = mockk()
   private val addPlayersTeamService: AddPlayersTeamService = mockk()
+  private val swapPlayersTeamService: SwapPlayersTeamService = mockk()
 
-  private val controller: TeamApi = TeamController(service, createTeamService, addPlayersTeamService)
+  private val controller: TeamApi = TeamController(retrieveTeamService, createTeamService, addPlayersTeamService, swapPlayersTeamService)
 
   private val objectMapper = ObjectMapper()
   private val mvc = MockMvcBuilders.standaloneSetup(controller)
@@ -48,7 +50,7 @@ class TeamControllerTest {
 
       every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) } returns foundTeam
 
-      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_ADD_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
                       .accept(MediaType.APPLICATION_JSON)
                       .content(toJson(request)))
@@ -58,13 +60,13 @@ class TeamControllerTest {
 
       verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) }
       verify { createTeamService wasNot called }
-      verify { service wasNot called }
+      verify { retrieveTeamService wasNot called }
     }
 
     @Test
     fun `400 response - incorrect request body`() {
 
-      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_ADD_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
                       .accept(MediaType.APPLICATION_JSON))
           .andDo(print())
@@ -72,7 +74,7 @@ class TeamControllerTest {
 
       verify { addPlayersTeamService wasNot called }
       verify { createTeamService wasNot called }
-      verify { service wasNot called }
+      verify { retrieveTeamService wasNot called }
     }
 
     @Test
@@ -84,7 +86,7 @@ class TeamControllerTest {
 
       every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) } returns TeamIdNotFoundTeam
 
-      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_ADD_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
                       .accept(MediaType.APPLICATION_JSON)
                       .content(toJson(request)))
@@ -93,7 +95,7 @@ class TeamControllerTest {
 
       verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) }
       verify { createTeamService wasNot called }
-      verify { service wasNot called }
+      verify { retrieveTeamService wasNot called }
     }
 
     @Test
@@ -105,7 +107,7 @@ class TeamControllerTest {
 
       every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) } returns ErrorTeam
 
-      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_ADD_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
                       .accept(MediaType.APPLICATION_JSON)
                       .content(toJson(request)))
@@ -114,7 +116,7 @@ class TeamControllerTest {
 
       verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) }
       verify { createTeamService wasNot called }
-      verify { service wasNot called }
+      verify { retrieveTeamService wasNot called }
     }
   }
 
@@ -138,7 +140,7 @@ class TeamControllerTest {
           .andExpect(content().json(toJson(expected)))
 
       verify(exactly = 1) { createTeamService.create(request) }
-      verify { service wasNot called }
+      verify { retrieveTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }
     }
 
@@ -152,7 +154,7 @@ class TeamControllerTest {
           .andExpect(status().isBadRequest)
 
       verify { createTeamService wasNot called }
-      verify { service wasNot called }
+      verify { retrieveTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }
     }
 
@@ -171,7 +173,7 @@ class TeamControllerTest {
           .andExpect(status().isInternalServerError)
 
       verify(exactly = 1) { createTeamService.create(request) }
-      verify { service wasNot called }
+      verify { retrieveTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }
     }
   }
@@ -185,7 +187,7 @@ class TeamControllerTest {
       val expected = TeamDto(AN_OWNER, A_LIST_OF_PLAYERS, A_TOTAL_SCORE)
       val team = FoundTeam(expected)
 
-      every { service.getTeam(A_TEAM_ID) } returns team
+      every { retrieveTeamService.getTeam(A_TEAM_ID) } returns team
 
       mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
                       .contentType(MediaType.APPLICATION_JSON))
@@ -202,7 +204,7 @@ class TeamControllerTest {
 
       val team = TeamIdNotFoundTeam
 
-      every { service.getTeam(A_TEAM_ID) } returns team
+      every { retrieveTeamService.getTeam(A_TEAM_ID) } returns team
 
       mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
                       .contentType(MediaType.APPLICATION_JSON))
@@ -218,7 +220,7 @@ class TeamControllerTest {
 
       val team = ErrorTeam
 
-      every { service.getTeam(A_TEAM_ID) } returns team
+      every { retrieveTeamService.getTeam(A_TEAM_ID) } returns team
 
       mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
                       .contentType(MediaType.APPLICATION_JSON))
@@ -226,6 +228,115 @@ class TeamControllerTest {
           .andExpect(status().isInternalServerError)
 
       verify { createTeamService wasNot called }
+      verify { addPlayersTeamService wasNot called }
+    }
+  }
+
+  @Nested
+  inner class SwapPlayers {
+
+    @Test
+    fun `200 response - players added`() {
+
+      val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+      val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
+                                                  endingTournamentId = AN_ENDING_TOURNAMENT_ID)
+      val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+      val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
+                                            startingTournamentId = A_STARTING_TOURNAMENT_ID)
+      val request = PlayersToSwapDto(remove = playersToRemoveDto,
+                                     add = playersToAddDto)
+
+      val expected = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0),
+                                              TeamPlayerDto(fullName = A_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0),
+                                              TeamPlayerDto(fullName = ANOTHER_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0)),
+                             totalScore = 30.0)
+      val foundTeam = FoundTeam(expected)
+
+      every { swapPlayersTeamService.swap(request) } returns foundTeam
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isOk)
+          .andExpect(content().json(toJson(expected)))
+
+      verify(exactly = 1) { swapPlayersTeamService.swap(request) }
+      verify { createTeamService wasNot called }
+      verify { retrieveTeamService wasNot called }
+      verify { addPlayersTeamService wasNot called }
+    }
+
+    @Test
+    fun `400 response - incorrect request body`() {
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isBadRequest)
+
+      verify { swapPlayersTeamService wasNot called }
+      verify { addPlayersTeamService wasNot called }
+      verify { createTeamService wasNot called }
+      verify { retrieveTeamService wasNot called }
+    }
+
+    @Test
+    fun `400 response - team id not found`() {
+
+      val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+      val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
+                                                  endingTournamentId = AN_ENDING_TOURNAMENT_ID)
+      val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+      val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
+                                            startingTournamentId = A_STARTING_TOURNAMENT_ID)
+      val request = PlayersToSwapDto(remove = playersToRemoveDto,
+                                     add = playersToAddDto)
+
+      every { swapPlayersTeamService.swap(request) } returns TeamIdNotFoundTeam
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isBadRequest)
+
+      verify(exactly = 1) { swapPlayersTeamService.swap(request) }
+      verify { createTeamService wasNot called }
+      verify { retrieveTeamService wasNot called }
+      verify { addPlayersTeamService wasNot called }
+    }
+
+    @Test
+    fun `500 response`() {
+
+      val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+      val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
+                                                  endingTournamentId = AN_ENDING_TOURNAMENT_ID)
+      val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+      val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
+                                            startingTournamentId = A_STARTING_TOURNAMENT_ID)
+      val request = PlayersToSwapDto(remove = playersToRemoveDto,
+                                     add = playersToAddDto)
+
+      every { swapPlayersTeamService.swap(request) } returns ErrorTeam
+
+      mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .accept(MediaType.APPLICATION_JSON)
+                      .content(toJson(request)))
+          .andDo(print())
+          .andExpect(status().isInternalServerError)
+
+      verify(exactly = 1) { swapPlayersTeamService.swap(request) }
+      verify { createTeamService wasNot called }
+      verify { retrieveTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }
     }
   }
@@ -238,14 +349,25 @@ class TeamControllerTest {
 
     private const val TEAM_ENDPOINT = "/team"
     private const val PLAYER_PATH = "players"
+    private const val PLAYER_ADD_PATH = "add"
+    private const val PLAYER_SWAP_PATH = "swap"
     private const val A_TEAM_ID = 1
     private const val A_TOURNAMENT_ID = 1
     private const val A_STARTING_TOURNAMENT_ID = 1
+    private const val AN_ENDING_TOURNAMENT_ID = 1
     private const val A_TOTAL_SCORE = 33.3
     private const val A_PLAYER_ID = "A_PLAYER_ID"
     private const val ANOTHER_PLAYER_ID = "ANOTHER_PLAYER_ID"
+    private const val AN_OLD_PLAYER_ID = "AN_OLD_PLAYER_ID"
+    private const val ANOTHER_OLD_PLAYER_ID = "ANOTHER_OLD_PLAYER_ID"
+    private const val A_NEW_PLAYER_ID = "A_NEW_PLAYER_ID"
+    private const val ANOTHER_NEW_PLAYER_ID = "ANOTHER_NEW_PLAYER_ID"
     private const val A_PLAYER_FULL_NAME = "A_PLAYER_FULL_NAME"
     private const val ANOTHER_PLAYER_FULL_NAME = "ANOTHER_PLAYER_FULL_NAME"
+    private const val AN_OLD_PLAYER_FULL_NAME = "AN_OLD_PLAYER_FULL_NAME"
+    private const val ANOTHER_OLD_PLAYER_FULL_NAME = "ANOTHER_OLD_PLAYER_FULL_NAME"
+    private const val A_NEW_PLAYER_FULL_NAME = "A_NEW_PLAYER_FULL_NAME"
+    private const val ANOTHER_NEW_PLAYER_FULL_NAME = "ANOTHER_NEW_PLAYER_FULL_NAME"
     private const val AN_OWNER = "AN_OWNER"
 
     private val A_LIST_OF_PLAYERS = emptyList<TeamPlayerDto>()
