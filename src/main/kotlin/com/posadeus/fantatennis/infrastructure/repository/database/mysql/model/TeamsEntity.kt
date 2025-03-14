@@ -24,5 +24,13 @@ data class TeamsEntity(
 
     @ManyToOne
     @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false)
-    val fantaTeam: FantaTeamsEntity = FantaTeamsEntity()
+    val fantaTeam: FantaTeamsEntity = FantaTeamsEntity(),
+
+    @ManyToOne
+    @JoinColumn(name = "TOURNAMENT_ID", insertable = false, updatable = false)
+    val startingTournament: TournamentsEntity = TournamentsEntity(),
+
+    @ManyToOne
+    @JoinColumn(name = "TOURNAMENT_ID", insertable = false, updatable = false)
+    val endingTournament: TournamentsEntity? = null,
 ) : Serializable

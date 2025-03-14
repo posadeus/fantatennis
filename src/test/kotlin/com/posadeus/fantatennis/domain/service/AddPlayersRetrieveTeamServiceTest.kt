@@ -29,7 +29,7 @@ class AddPlayersRetrieveTeamServiceTest {
                                                                            fantaPoints = 0.0)),
                                             totalScore = 0.0))
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID)) } returns validAddPlayers
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), null) } returns validAddPlayers
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID))).isEqualTo(expected)
   }
@@ -40,7 +40,7 @@ class AddPlayersRetrieveTeamServiceTest {
     val addPlayersError = AddPlayersTeamNotFound
     val expected = TeamIdNotFoundTeam
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID)) } returns addPlayersError
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), null) } returns addPlayersError
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID))).isEqualTo(expected)
   }
@@ -51,7 +51,7 @@ class AddPlayersRetrieveTeamServiceTest {
     val addPlayersError = PlayersNotFound(missingPlayerIds = setOf(ANOTHER_PLAYER_ID))
     val expected = ErrorTeam
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)) } returns addPlayersError
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), null) } returns addPlayersError
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID))).isEqualTo(expected)
   }
@@ -62,7 +62,7 @@ class AddPlayersRetrieveTeamServiceTest {
     val addPlayersError = AddPlayersError
     val expected = ErrorTeam
 
-    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID)) } returns addPlayersError
+    every { teamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), null) } returns addPlayersError
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID))).isEqualTo(expected)
   }

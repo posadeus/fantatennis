@@ -1,7 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql.it
 
-import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.AddPlayersTeamNotFound
-import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.PlayersNotFound
+import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlTeamsRepository
@@ -33,6 +32,9 @@ class MySqlTeamsRepositoryIT {
   private lateinit var teamsDao: TeamsDao
 
   @Autowired
+  private lateinit var tournamentsDao: TournamentsDao
+
+  @Autowired
   private lateinit var mySqlTeamsRepository: MySqlTeamsRepository
 
   @BeforeEach
@@ -45,11 +47,23 @@ class MySqlTeamsRepositoryIT {
   fun `team saved`() {
 
     assertThat(fantaTeamsDao.findAll()).isEqualTo(arrayListOf<FantaTeamsEntity>())
+    assertThat(tournamentsDao.findAll()).isEqualTo(arrayListOf<TournamentsEntity>())
     assertThat(playersDao.findAll()).isEqualTo(arrayListOf<PlayersEntity>())
     assertThat(teamsDao.findAll()).isEqualTo(arrayListOf<TeamsEntity>())
 
     val fantaTeamEntity = FantaTeamsEntity(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
     fantaTeamsDao.save(fantaTeamEntity)
+
+    val tournamentEntity = TournamentsEntity(id = A_TOURNAMENT_ID,
+                                             tennisTvId = A_TOURNAMENT_TENNIS_TV_ID,
+                                             atpTourId = A_TOURNAMENT_ATP_TOUR_ID,
+                                             name = A_TOURNAMENT_NAME,
+                                             points = A_TOURNAMENT_POINTS,
+                                             location = A_TOURNAMENT_LOCATION,
+                                             surface = A_TOURNAMENT_SURFACE,
+                                             year = A_TOURNAMENT_YEAR)
+
+    tournamentsDao.save(tournamentEntity)
 
     val aPlayerEntity = PlayersEntity(id = A_PLAYER_ID,
                                       atpTourId = AN_ATP_TOUR_ID,
@@ -68,7 +82,7 @@ class MySqlTeamsRepositoryIT {
                                            fullName = ANOTHER_FULL_NAME)
     val expected = ValidAddPlayers(players = setOf(aDomainPlayer, anotherDomainPlayer))
 
-    assertThat(mySqlTeamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID))).isEqualTo(expected)
+    assertThat(mySqlTeamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
   @Test
@@ -78,17 +92,43 @@ class MySqlTeamsRepositoryIT {
 
     val expected = AddPlayersTeamNotFound
 
-    assertThat(mySqlTeamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID))).isEqualTo(expected)
+    assertThat(mySqlTeamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `tournament not found`() {
+
+    assertThat(fantaTeamsDao.findAll()).isEqualTo(arrayListOf<FantaTeamsEntity>())
+    assertThat(tournamentsDao.findAll()).isEqualTo(arrayListOf<TournamentsEntity>())
+
+    val fantaTeamEntity = FantaTeamsEntity(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
+    fantaTeamsDao.save(fantaTeamEntity)
+
+    val expected = AddPlayersTournamentNotFound
+
+    assertThat(mySqlTeamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
   @Test
   fun `one or more players not found`() {
 
     assertThat(fantaTeamsDao.findAll()).isEqualTo(arrayListOf<FantaTeamsEntity>())
+    assertThat(tournamentsDao.findAll()).isEqualTo(arrayListOf<TournamentsEntity>())
     assertThat(playersDao.findAll()).isEqualTo(arrayListOf<PlayersEntity>())
 
     val fantaTeamEntity = FantaTeamsEntity(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
     fantaTeamsDao.save(fantaTeamEntity)
+
+    val tournamentEntity = TournamentsEntity(id = A_TOURNAMENT_ID,
+                                             tennisTvId = A_TOURNAMENT_TENNIS_TV_ID,
+                                             atpTourId = A_TOURNAMENT_ATP_TOUR_ID,
+                                             name = A_TOURNAMENT_NAME,
+                                             points = A_TOURNAMENT_POINTS,
+                                             location = A_TOURNAMENT_LOCATION,
+                                             surface = A_TOURNAMENT_SURFACE,
+                                             year = A_TOURNAMENT_YEAR)
+
+    tournamentsDao.save(tournamentEntity)
 
     val aPlayerEntity = PlayersEntity(id = A_PLAYER_ID,
                                       atpTourId = AN_ATP_TOUR_ID,
@@ -97,12 +137,13 @@ class MySqlTeamsRepositoryIT {
 
     val expected = PlayersNotFound(missingPlayerIds = setOf(ANOTHER_PLAYER_ID))
 
-    assertThat(mySqlTeamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID))).isEqualTo(expected)
+    assertThat(mySqlTeamsRepository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
   private fun deleteAll() {
 
     fantaTeamsDao.deleteAll()
+    tournamentsDao.deleteAll()
     playersDao.deleteAll()
     teamsDao.deleteAll()
   }
@@ -117,5 +158,13 @@ class MySqlTeamsRepositoryIT {
     private const val A_FULL_NAME = "A_FULL_NAME"
     private const val ANOTHER_FULL_NAME = "ANOTHER_FULL_NAME"
     private const val AN_OWNER_ID = "AN_OWNER_ID"
+    private const val A_TOURNAMENT_NAME = "A_TOURNAMENT_NAME"
+    private const val A_TOURNAMENT_LOCATION = "A_TOURNAMENT_LOCATION"
+    private const val A_TOURNAMENT_SURFACE = "A_TOURNAMENT_SURFACE"
+    private const val A_TOURNAMENT_ID = 1
+    private const val A_TOURNAMENT_TENNIS_TV_ID = 456
+    private const val A_TOURNAMENT_ATP_TOUR_ID = 789
+    private const val A_TOURNAMENT_POINTS = 2
+    private const val A_TOURNAMENT_YEAR = 2000
   }
 }

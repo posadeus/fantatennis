@@ -11,10 +11,11 @@ import org.slf4j.LoggerFactory
 class AddPlayersTeamService(private val teamsRepository: TeamsRepository) {
 
   fun addPlayers(teamId: Int, playerIds: Set<String>): Team =
-      when (val addPlayers = teamsRepository.addPlayers(teamId, playerIds)) {
+      when (val addPlayers = teamsRepository.addPlayers(teamId, playerIds, null)) {
 
         is ValidAddPlayers -> toFoundTeam(addPlayers.players)
         is AddPlayersTeamNotFound -> TeamIdNotFoundTeam
+        is AddPlayersTournamentNotFound -> ErrorTeam.also { LOGGER.error("Tournament not found: ") } // FIXME add tournamentId
         is PlayersNotFound -> ErrorTeam.also { LOGGER.error("Players not found: ${addPlayers.missingPlayerIds}") }
         is AddPlayersError -> ErrorTeam
       }

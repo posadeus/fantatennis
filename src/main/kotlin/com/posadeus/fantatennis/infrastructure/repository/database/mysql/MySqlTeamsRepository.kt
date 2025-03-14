@@ -10,15 +10,20 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import kotlin.jvm.optionals.getOrNull
 
 class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
+                           private val tournamentsDao: TournamentsDao,
                            private val playersDao: PlayersDao,
                            private val teamsDao: TeamsDao) : TeamsRepository {
 
-  override fun addPlayers(teamId: Int, playerIds: Set<String>): AddPlayers {
+  // TODO: Create a new endpoint to switch players
+  override fun addPlayers(teamId: Int, playerIds: Set<String>, startingTournamentId: Int?): AddPlayers {
 
     try {
 
       val fantaTeam = fantaTeamsDao.findById(teamId).getOrNull()
                       ?: return AddPlayersTeamNotFound
+
+      val startingTournament = tournamentsDao.findById(startingTournamentId!!).getOrNull()
+                               ?: return AddPlayersTournamentNotFound
 
       val players = playersDao.findAllById(playerIds)
 
@@ -28,7 +33,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
       }
 
       return players
-          .map { toTeamsEntity(teamId, it, fantaTeam) }
+          .map { toTeamsEntity(teamId, it, fantaTeam, startingTournament) }
           .toSet()
           .let(::persist)
           .map(::toDomainPlayer)
@@ -57,8 +62,11 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
   private fun toTeamsEntity(teamId: Int,
                             playersEntity: PlayersEntity,
-                            fantaTeam: FantaTeamsEntity) =
+                            fantaTeam: FantaTeamsEntity,
+                            startingTournament: TournamentsEntity) =
       TeamsEntity(id = TeamsKeyEmbedded(teamId = teamId, playerId = playersEntity.id),
                   player = playersEntity,
-                  fantaTeam = fantaTeam)
+                  fantaTeam = fantaTeam,
+                  startingTournament = startingTournament,
+                  endingTournament = null)
 }

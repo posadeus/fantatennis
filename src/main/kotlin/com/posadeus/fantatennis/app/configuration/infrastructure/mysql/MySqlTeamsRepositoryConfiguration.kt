@@ -11,9 +11,11 @@ class MySqlTeamsRepositoryConfiguration {
 
   @Bean
   fun mySqlTeamsRepository(fantaTeamsDao: FantaTeamsDao,
-                                playersDao: PlayersDao,
-                                teamsDao: TeamsDao): TeamsRepository =
+                           tournamentsDao: TournamentsDao,
+                           playersDao: PlayersDao,
+                           teamsDao: TeamsDao): TeamsRepository =
       MySqlTeamsRepository(fantaTeamsDao,
+                           tournamentsDao,
                            playersDao,
                            teamsDao)
 }

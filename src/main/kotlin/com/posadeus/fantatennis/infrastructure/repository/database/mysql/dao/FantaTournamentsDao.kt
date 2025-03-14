@@ -29,6 +29,7 @@ interface FantaTournamentsDao : JpaRepository<FantaTournamentsEntity, Int> {
               SUM(pp.FANTA_POINTS) AS playerTotalScore
             FROM 
               PLAYERS_POINTS pp, 
+              TEAMS t2,
               (
                 SELECT 
                   ft3.FANTA_TOURNAMENT_ID AS fantaTournamentId,
@@ -39,8 +40,11 @@ interface FantaTournamentsDao : JpaRepository<FantaTournamentsEntity, Int> {
                 WHERE ft3.FANTA_TOURNAMENT_ID = :tournamentId
               ) fttt
             WHERE 
-              pp.TOURNAMENT_YEAR = fttt.fantaTournamentYear
-              AND pp.TOURNAMENT_ID BETWEEN fttt.fantaTournamentStartingTournament AND fttt.fantaTournamentEndingTournament
+              pp.PLAYER_ID = t2.PLAYER_ID
+              AND pp.TOURNAMENT_YEAR = fttt.fantaTournamentYear
+              AND t2.STARTING_TOURNAMENT >= fttt.fantaTournamentStartingTournament
+              AND pp.TOURNAMENT_ID >= t2.STARTING_TOURNAMENT 
+              AND (t2.ENDING_TOURNAMENT IS NULL OR pp.TOURNAMENT_ID <= t2.ENDING_TOURNAMENT) 
             GROUP BY pp.PLAYER_ID 
             ORDER BY playerTotalScore DESC
           ) pps 
