@@ -6,10 +6,13 @@ import java.io.Serializable
 /**
  * 
  * @param playerIds 
+ * @param startingTournamentId 
  */
 data class PlayersToAddDto(
 
-    @get:JsonProperty("playerIds", required = true) val playerIds: Set<String> = setOf()
+    @get:JsonProperty("playerIds", required = true) val playerIds: Set<String> = setOf(),
+
+    @get:JsonProperty("startingTournamentId", required = true) val startingTournamentId: Int = 0
     ) : Serializable{
 
     companion object {

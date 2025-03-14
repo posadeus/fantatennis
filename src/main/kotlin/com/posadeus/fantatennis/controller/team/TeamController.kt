@@ -15,7 +15,7 @@ class TeamController(private val service: RetrieveTeamService,
                      private val addPlayersTeamService: AddPlayersTeamService) : TeamApi {
 
   override fun addPlayers(teamId: Int, playersToAddDto: PlayersToAddDto): ResponseEntity<TeamDto> =
-      when (val team = addPlayersTeamService.addPlayers(teamId, playersToAddDto.playerIds, 123)) { // FIXME
+      when (val team = addPlayersTeamService.addPlayers(teamId, playersToAddDto.playerIds, playersToAddDto.startingTournamentId)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)
         is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()

@@ -38,14 +38,15 @@ class TeamControllerTest {
     fun `200 response - players added`() {
 
       val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
-      val request = PlayersToAddDto(playerIds = playerIds)
+      val request = PlayersToAddDto(playerIds = playerIds,
+                                    startingTournamentId = A_STARTING_TOURNAMENT_ID)
 
       val expected = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 0.0),
                                               TeamPlayerDto(fullName = ANOTHER_PLAYER_FULL_NAME, fantaPoints = 0.0)),
                              totalScore = 0.0)
       val foundTeam = FoundTeam(expected)
 
-      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) } returns foundTeam
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) } returns foundTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -55,7 +56,7 @@ class TeamControllerTest {
           .andExpect(status().isOk)
           .andExpect(content().json(toJson(expected)))
 
-      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) }
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) }
       verify { createTeamService wasNot called }
       verify { service wasNot called }
     }
@@ -78,9 +79,10 @@ class TeamControllerTest {
     fun `400 response - team id not found`() {
 
       val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
-      val request = PlayersToAddDto(playerIds = playerIds)
+      val request = PlayersToAddDto(playerIds = playerIds,
+                                    startingTournamentId = A_STARTING_TOURNAMENT_ID)
 
-      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) } returns TeamIdNotFoundTeam
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) } returns TeamIdNotFoundTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +91,7 @@ class TeamControllerTest {
           .andDo(print())
           .andExpect(status().isBadRequest)
 
-      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) }
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) }
       verify { createTeamService wasNot called }
       verify { service wasNot called }
     }
@@ -98,9 +100,10 @@ class TeamControllerTest {
     fun `500 response`() {
 
       val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
-      val request = PlayersToAddDto(playerIds = playerIds)
+      val request = PlayersToAddDto(playerIds = playerIds,
+                                    startingTournamentId = A_STARTING_TOURNAMENT_ID)
 
-      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) } returns ErrorTeam
+      every { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) } returns ErrorTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +112,7 @@ class TeamControllerTest {
           .andDo(print())
           .andExpect(status().isInternalServerError)
 
-      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, 123) }
+      verify(exactly = 1) { addPlayersTeamService.addPlayers(A_TEAM_ID, playerIds, A_STARTING_TOURNAMENT_ID) }
       verify { createTeamService wasNot called }
       verify { service wasNot called }
     }
@@ -237,6 +240,7 @@ class TeamControllerTest {
     private const val PLAYER_PATH = "players"
     private const val A_TEAM_ID = 1
     private const val A_TOURNAMENT_ID = 1
+    private const val A_STARTING_TOURNAMENT_ID = 1
     private const val A_TOTAL_SCORE = 33.3
     private const val A_PLAYER_ID = "A_PLAYER_ID"
     private const val ANOTHER_PLAYER_ID = "ANOTHER_PLAYER_ID"

@@ -100,10 +100,16 @@ components:
           items:
             type: string
           uniqueItems: true
+        startingTournamentId:
+          type: integer
+          default: 0
+          example: 1
       example:
         playerIds: [ "id1", "id2", "id3" ]
+        startingTournamentId: 1
       required:
         - playerIds
+        - startingTournamentId
 
     TournamentDto:
       type: object
