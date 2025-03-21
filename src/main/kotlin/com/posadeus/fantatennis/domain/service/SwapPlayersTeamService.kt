@@ -28,6 +28,7 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
           val tournamentsIds = tournaments
               .map(Tournament::id)
 
+          // TODO: Add a rule to fail the service if the startingTournament is before the endingTournament OR already started OR not right after the endingTournament
           return if (tournaments.isNotEmpty()
                      && playersToSwap.add.startingTournamentId in tournamentsIds
                      && playersToSwap.remove.endingTournamentId in tournamentsIds) {
