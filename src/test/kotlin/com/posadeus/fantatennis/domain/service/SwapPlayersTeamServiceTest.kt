@@ -29,18 +29,15 @@ class SwapPlayersTeamServiceTest {
   fun `swap completed, with new players fantaPoints to ZERO, with removed and already present players still present in team response`() {
 
     val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
-    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
-                                                endingTournamentId = A_TOURNAMENT_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
     val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
-                                          startingTournamentId = ANOTHER_TOURNAMENT_ID)
-    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto,
-                                         add = playersToAddDto)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
     val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
                                               TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
                                               TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
-                             totalScore = 30.0)
+                             totalScore = 40.0)
     val aPlayer = aDomainPlayer(id = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aDomainPlayer(id = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val anotherOldPlayer = aDomainPlayer(id = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
@@ -60,7 +57,7 @@ class SwapPlayersTeamServiceTest {
                                               TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0),
                                               TeamPlayerDto(fullName = A_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0),
                                               TeamPlayerDto(fullName = ANOTHER_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0)),
-                             totalScore = 30.0)
+                             totalScore = 40.0)
     val expected = FoundTeam(newTeamDto)
 
     every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
@@ -89,18 +86,15 @@ class SwapPlayersTeamServiceTest {
   fun `players not found, empty set returned by the repository`() {
 
     val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
-    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
-                                                endingTournamentId = A_TOURNAMENT_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
     val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
-                                          startingTournamentId = ANOTHER_TOURNAMENT_ID)
-    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto,
-                                         add = playersToAddDto)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
     val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
                                               TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
                                               TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
-                             totalScore = 30.0)
+                             totalScore = 40.0)
 
     val expected = ErrorTeam
 
@@ -117,18 +111,15 @@ class SwapPlayersTeamServiceTest {
   fun `one or more players not found in the set returned by the repository`() {
 
     val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
-    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
-                                                endingTournamentId = A_TOURNAMENT_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
     val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
-                                          startingTournamentId = ANOTHER_TOURNAMENT_ID)
-    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto,
-                                         add = playersToAddDto)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
     val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
                                               TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
                                               TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
-                             totalScore = 30.0)
+                             totalScore = 40.0)
     val anOldPlayer = aDomainPlayer(id = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val anotherOldPlayer = aDomainPlayer(id = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aDomainPlayer(id = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -148,25 +139,19 @@ class SwapPlayersTeamServiceTest {
   @Test
   fun `one or more tournaments not found`() {
 
-    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
-    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
-                                                endingTournamentId = A_TOURNAMENT_ID)
-    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
-                                          startingTournamentId = ANOTHER_TOURNAMENT_ID)
-    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto,
-                                         add = playersToAddDto)
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
     val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
-                             totalScore = 30.0)
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0)),
+                             totalScore = 40.0)
     val aPlayer = aDomainPlayer(id = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aDomainPlayer(id = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
-    val anotherOldPlayer = aDomainPlayer(id = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aDomainPlayer(id = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
-    val anotherNewPlayer = aDomainPlayer(id = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
-    val allPlayers = setOf(aPlayer, anOldPlayer, anotherOldPlayer, aNewPlayer, anotherNewPlayer)
+    val allPlayers = setOf(aPlayer, anOldPlayer, aNewPlayer)
     val endingTournament = aTournament(id = A_TOURNAMENT_ID)
     val notAllTournamentsFound = listOf(endingTournament, A_TOURNAMENT)
 
@@ -184,31 +169,24 @@ class SwapPlayersTeamServiceTest {
   @Test
   fun `error on swap player`() {
 
-    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
-    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
-                                                endingTournamentId = A_TOURNAMENT_ID)
-    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
-                                          startingTournamentId = ANOTHER_TOURNAMENT_ID)
-    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto,
-                                         add = playersToAddDto)
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
     val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
-                             totalScore = 30.0)
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0)),
+                             totalScore = 32.0)
     val aPlayer = aDomainPlayer(id = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aDomainPlayer(id = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
-    val anotherOldPlayer = aDomainPlayer(id = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aDomainPlayer(id = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
-    val anotherNewPlayer = aDomainPlayer(id = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
-    val allPlayers = setOf(aPlayer, anOldPlayer, anotherOldPlayer, aNewPlayer, anotherNewPlayer)
+    val allPlayers = setOf(aPlayer, anOldPlayer, aNewPlayer)
     val endingTournament = aTournament(id = A_TOURNAMENT_ID)
     val startingTournament = aTournament(id = ANOTHER_TOURNAMENT_ID)
-    val aTournament = aTournament(id = A_THIRD_TOURNAMENT_ID)
-    val allTournaments = listOf(endingTournament, startingTournament, aTournament)
-    val playersToRemove = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
-    val playersToAdd = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val allTournaments = listOf(endingTournament, startingTournament)
+    val playersToRemove = setOf(AN_OLD_PLAYER_ID)
+    val playersToAdd = setOf(A_NEW_PLAYER_ID)
     val swapCommand = SwapCommand(playersToRemove, playersToAdd, A_TOURNAMENT_ID, ANOTHER_TOURNAMENT_ID)
 
     val expected = ErrorTeam

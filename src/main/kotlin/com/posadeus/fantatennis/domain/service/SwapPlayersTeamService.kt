@@ -19,34 +19,37 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
 
       is FoundTeam -> {
 
-        val allPlayers = playerService.allPlayers()
-        val allPlayersIds = allPlayers.map(DomainPlayer::id).toSet()
+        val allPlayersIds = playerService.allPlayers()
+            .map(DomainPlayer::id)
 
-        if (allPlayers.isNotEmpty()
-            && allPlayersIds.containsAll(playersToSwap.add.playerIds)
-            && allPlayersIds.containsAll(playersToSwap.remove.playerIds)) {
+        if (areAllRequestedPlayersPresent(allPlayersIds, playersToSwap)) {
 
           val tournaments = retrieveTournamentsService.retrieveAll()
-          val tournamentsIds = tournaments.map(Tournament::id)
+          val tournamentsIds = tournaments
+              .map(Tournament::id)
 
-          if (tournaments.isNotEmpty()
-              && playersToSwap.add.startingTournamentId in tournamentsIds
-              && playersToSwap.remove.endingTournamentId in tournamentsIds) {
+          return if (tournaments.isNotEmpty()
+                     && playersToSwap.add.startingTournamentId in tournamentsIds
+                     && playersToSwap.remove.endingTournamentId in tournamentsIds) {
 
-            val response = teamsRepository.swapPlayers(SwapCommand(playersToSwap.remove.playerIds,
-                                                                   playersToSwap.add.playerIds,
-                                                                   playersToSwap.remove.endingTournamentId,
-                                                                   playersToSwap.add.startingTournamentId))
-
-            return response
+            teamsRepository.swapPlayers(SwapCommand(playersToSwap.remove.playerIds,
+                                                    playersToSwap.add.playerIds,
+                                                    playersToSwap.remove.endingTournamentId,
+                                                    playersToSwap.add.startingTournamentId))
           }
-          else return ErrorTeam
+          else
+            ErrorTeam
         }
-        else return ErrorTeam
+        else 
+          return ErrorTeam
       }
 
-      is TeamIdNotFoundTeam -> return team
-      is ErrorTeam -> return team
+      is TeamIdNotFoundTeam, ErrorTeam -> return team
     }
   }
+
+  private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) = 
+      allPlayersIds.isNotEmpty()
+       && allPlayersIds.containsAll(playersToSwap.add.playerIds)
+       && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
 }
