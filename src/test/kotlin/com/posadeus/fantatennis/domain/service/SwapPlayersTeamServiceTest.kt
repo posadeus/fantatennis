@@ -146,8 +146,39 @@ class SwapPlayersTeamServiceTest {
   }
 
   @Test
-  fun `tournaments not found`() {
-    TODO("Not yet implemented")
+  fun `one or more tournaments not found`() {
+
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
+                                                endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
+                                          startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto,
+                                         add = playersToAddDto)
+
+    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
+                             totalScore = 30.0)
+    val aPlayer = aDomainPlayer(id = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
+    val anOldPlayer = aDomainPlayer(id = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
+    val anotherOldPlayer = aDomainPlayer(id = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
+    val aNewPlayer = aDomainPlayer(id = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
+    val anotherNewPlayer = aDomainPlayer(id = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
+    val allPlayers = setOf(aPlayer, anOldPlayer, anotherOldPlayer, aNewPlayer, anotherNewPlayer)
+    val endingTournament = aTournament(id = A_TOURNAMENT_ID)
+    val notAllTournamentsFound = listOf(endingTournament, A_TOURNAMENT)
+
+    val expected = ErrorTeam
+
+    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { playerService.allPlayers() } returns allPlayers
+    every { retrieveTournamentsService.retrieveAll() } returns notAllTournamentsFound
+
+    assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+
+    verify(exactly = 0) { teamsRepository.swapPlayers(any()) }
   }
 
   @Test
@@ -174,5 +205,6 @@ class SwapPlayersTeamServiceTest {
 
     private val ANY_PLAYER_TO_SWAP = PlayersToSwapDto()
     private val A_PLAYER = aDomainPlayer(id = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
+    private val A_TOURNAMENT = aTournament(id = A_THIRD_TOURNAMENT_ID)
   }
 }

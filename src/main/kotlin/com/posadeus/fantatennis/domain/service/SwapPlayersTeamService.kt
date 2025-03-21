@@ -27,12 +27,20 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
             && allPlayersIds.containsAll(playersToSwap.remove.playerIds)) {
 
           val tournaments = retrieveTournamentsService.retrieveAll()
-          val response = teamsRepository.swapPlayers(SwapCommand(playersToSwap.remove.playerIds,
-                                                                 playersToSwap.add.playerIds,
-                                                                 playersToSwap.remove.endingTournamentId,
-                                                                 playersToSwap.add.startingTournamentId))
+          val tournamentsIds = tournaments.map(Tournament::id)
 
-          return response
+          if (tournaments.isNotEmpty()
+              && playersToSwap.add.startingTournamentId in tournamentsIds
+              && playersToSwap.remove.endingTournamentId in tournamentsIds) {
+
+            val response = teamsRepository.swapPlayers(SwapCommand(playersToSwap.remove.playerIds,
+                                                                   playersToSwap.add.playerIds,
+                                                                   playersToSwap.remove.endingTournamentId,
+                                                                   playersToSwap.add.startingTournamentId))
+
+            return response
+          }
+          else return ErrorTeam
         }
         else return ErrorTeam
       }
