@@ -1,10 +1,9 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
-import com.posadeus.fantatennis.domain.model.AddPlayers
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
-import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import kotlin.jvm.optionals.getOrNull
@@ -43,6 +42,10 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
       return AddPlayersError
     }
+  }
+
+  override fun swapPlayers(swapCommand: SwapCommand): Team {
+    TODO("Not yet implemented")
   }
 
   private fun persist(it: Set<TeamsEntity>): Iterable<TeamsEntity> =

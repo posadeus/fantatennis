@@ -2,9 +2,9 @@ package com.posadeus.fantatennis.controller.team
 
 import com.posadeus.fantatennis.controller.TeamApi
 import com.posadeus.fantatennis.controller.model.team.*
-import com.posadeus.fantatennis.domain.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
+import com.posadeus.fantatennis.domain.service.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import org.springframework.http.ResponseEntity
@@ -40,7 +40,7 @@ class TeamController(private val service: RetrieveTeamService,
       }
 
   override fun swamp(teamId: Int, playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto> =
-      when (val team = swapPlayersTeamService.swap(playersToSwapDto)) {
+      when (val team = swapPlayersTeamService.swap(teamId, playersToSwapDto)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)
         is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()

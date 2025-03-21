@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.controller.team.TeamController
-import com.posadeus.fantatennis.domain.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
+import com.posadeus.fantatennis.domain.service.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import io.mockk.*
@@ -255,7 +255,7 @@ class TeamControllerTest {
                              totalScore = 30.0)
       val foundTeam = FoundTeam(expected)
 
-      every { swapPlayersTeamService.swap(request) } returns foundTeam
+      every { swapPlayersTeamService.swap(A_TEAM_ID, request) } returns foundTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -265,7 +265,7 @@ class TeamControllerTest {
           .andExpect(status().isOk)
           .andExpect(content().json(toJson(expected)))
 
-      verify(exactly = 1) { swapPlayersTeamService.swap(request) }
+      verify(exactly = 1) { swapPlayersTeamService.swap(A_TEAM_ID, request) }
       verify { createTeamService wasNot called }
       verify { retrieveTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }
@@ -298,7 +298,7 @@ class TeamControllerTest {
       val request = PlayersToSwapDto(remove = playersToRemoveDto,
                                      add = playersToAddDto)
 
-      every { swapPlayersTeamService.swap(request) } returns TeamIdNotFoundTeam
+      every { swapPlayersTeamService.swap(A_TEAM_ID, request) } returns TeamIdNotFoundTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -307,7 +307,7 @@ class TeamControllerTest {
           .andDo(print())
           .andExpect(status().isBadRequest)
 
-      verify(exactly = 1) { swapPlayersTeamService.swap(request) }
+      verify(exactly = 1) { swapPlayersTeamService.swap(A_TEAM_ID, request) }
       verify { createTeamService wasNot called }
       verify { retrieveTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }
@@ -325,7 +325,7 @@ class TeamControllerTest {
       val request = PlayersToSwapDto(remove = playersToRemoveDto,
                                      add = playersToAddDto)
 
-      every { swapPlayersTeamService.swap(request) } returns ErrorTeam
+      every { swapPlayersTeamService.swap(A_TEAM_ID, request) } returns ErrorTeam
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
@@ -334,7 +334,7 @@ class TeamControllerTest {
           .andDo(print())
           .andExpect(status().isInternalServerError)
 
-      verify(exactly = 1) { swapPlayersTeamService.swap(request) }
+      verify(exactly = 1) { swapPlayersTeamService.swap(A_TEAM_ID, request) }
       verify { createTeamService wasNot called }
       verify { retrieveTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }

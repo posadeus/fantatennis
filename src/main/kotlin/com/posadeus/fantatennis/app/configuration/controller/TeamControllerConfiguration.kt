@@ -2,8 +2,8 @@ package com.posadeus.fantatennis.app.configuration.controller
 
 import com.posadeus.fantatennis.controller.TeamApi
 import com.posadeus.fantatennis.controller.team.TeamController
-import com.posadeus.fantatennis.domain.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
+import com.posadeus.fantatennis.domain.service.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
 import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import org.springframework.context.annotation.Bean
