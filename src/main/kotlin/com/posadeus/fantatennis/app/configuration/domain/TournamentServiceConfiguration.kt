@@ -17,6 +17,6 @@ class TournamentServiceConfiguration {
                             tournamentsRepository)
 
   @Bean
-  fun retrieveTournamentsService(): RetrieveTournamentsService =
-      RetrieveTournamentsService()
+  fun retrieveTournamentsService(tournamentsRepository: TournamentsRepository): RetrieveTournamentsService =
+      RetrieveTournamentsService(tournamentsRepository)
 }

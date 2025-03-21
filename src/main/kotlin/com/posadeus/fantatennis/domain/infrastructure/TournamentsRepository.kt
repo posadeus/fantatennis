@@ -7,4 +7,5 @@ interface TournamentsRepository {
 
   fun readTournaments(year: Int): List<Tournament>
   fun persist(tournamentsRegistry: FoundTournamentsRegistry)
+  fun getAllTournaments(): List<Tournament>
 }

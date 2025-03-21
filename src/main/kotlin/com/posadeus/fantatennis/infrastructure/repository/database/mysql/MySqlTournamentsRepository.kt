@@ -22,6 +22,10 @@ class MySqlTournamentsRepository(private val dao: TournamentsDao) : TournamentsR
         .let(dao::saveAll)
   }
 
+  override fun getAllTournaments(): List<Tournament> {
+    TODO("Not yet implemented")
+  }
+
   private fun toTournamentsEntity(tournamentRegistry: TournamentRegistry): TournamentsEntity =
       TournamentsEntity(atpTourId = tournamentRegistry.atpTourId,
                         tennisTvId = tournamentRegistry.tennisTvId,
