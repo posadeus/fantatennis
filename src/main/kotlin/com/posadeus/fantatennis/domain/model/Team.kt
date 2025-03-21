@@ -6,4 +6,4 @@ sealed interface Team
 
 data class FoundTeam(val team: TeamDto) : Team
 data object TeamIdNotFoundTeam : Team
-data object ErrorTeam : Team
+data object ErrorTeam : Team // FIXME: Add a message?

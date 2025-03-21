@@ -18,17 +18,27 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
     when (val team = retrieveTeamService.getTeam(teamId)) {
 
       is FoundTeam -> {
-        val allPlayers = playerService.allPlayers()
-        val tournaments = retrieveTournamentsService.retrieveAll()
-        val response = teamsRepository.swapPlayers(SwapCommand(playersToSwap.remove.playerIds,
-                                                               playersToSwap.add.playerIds,
-                                                               playersToSwap.remove.endingTournamentId,
-                                                               playersToSwap.add.startingTournamentId))
 
-        return response
+        val allPlayers = playerService.allPlayers()
+        val allPlayersIds = allPlayers.map(DomainPlayer::id).toSet()
+
+        if (allPlayers.isNotEmpty()
+            && allPlayersIds.containsAll(playersToSwap.add.playerIds)
+            && allPlayersIds.containsAll(playersToSwap.remove.playerIds)) {
+
+          val tournaments = retrieveTournamentsService.retrieveAll()
+          val response = teamsRepository.swapPlayers(SwapCommand(playersToSwap.remove.playerIds,
+                                                                 playersToSwap.add.playerIds,
+                                                                 playersToSwap.remove.endingTournamentId,
+                                                                 playersToSwap.add.startingTournamentId))
+
+          return response
+        }
+        else return ErrorTeam
       }
+
       is TeamIdNotFoundTeam -> return team
-      else -> throw RuntimeException()
+      is ErrorTeam -> return team
     }
   }
 }
