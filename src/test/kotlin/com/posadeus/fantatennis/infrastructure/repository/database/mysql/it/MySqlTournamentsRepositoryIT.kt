@@ -34,7 +34,7 @@ class MySqlTournamentsRepositoryIT {
   }
 
   @Test
-  fun `read tournaments`() {
+  fun `read tournaments by year`() {
 
     assertThat(tournamentsDao.findAll()).isEqualTo(arrayListOf<TournamentsEntity>())
 
@@ -64,6 +64,43 @@ class MySqlTournamentsRepositoryIT {
                                      year = A_YEAR))
 
     assertThat(mySqlTournamentsRepository.readTournaments(A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `read tournaments`() {
+
+    assertThat(tournamentsDao.findAll()).isEqualTo(arrayListOf<TournamentsEntity>())
+
+    val entity1 = TournamentsEntity(id = AN_ID,
+                                    atpTourId = AN_ATP_TOUR_ID,
+                                    tennisTvId = A_TENNIS_TV_ID,
+                                    name = A_NAME,
+                                    points = A_POINTS,
+                                    location = A_LOCATION,
+                                    surface = A_SURFACE,
+                                    year = A_YEAR)
+    val entity2 = TournamentsEntity(id = ANOTHER_ID,
+                                    atpTourId = ANOTHER_ATP_TOUR_ID,
+                                    tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                    name = ANOTHER_NAME,
+                                    points = ANOTHER_POINTS,
+                                    location = ANOTHER_LOCATION,
+                                    surface = ANOTHER_SURFACE,
+                                    year = ANOTHER_YEAR)
+    val entities = arrayListOf(entity1, entity2)
+
+    tournamentsDao.saveAll(entities)
+
+    val expected = listOf(Tournament(id = AN_ID,
+                                     tennisTvId = A_TENNIS_TV_ID,
+                                     points = A_POINTS,
+                                     year = A_YEAR),
+                          Tournament(id = ANOTHER_ID,
+                                     tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                     points = ANOTHER_POINTS,
+                                     year = ANOTHER_YEAR))
+
+    assertThat(mySqlTournamentsRepository.getAllTournaments()).isEqualTo(expected)
   }
 
   private fun deleteAll() {
