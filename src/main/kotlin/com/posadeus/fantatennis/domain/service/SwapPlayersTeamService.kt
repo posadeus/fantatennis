@@ -7,7 +7,6 @@ import com.posadeus.fantatennis.domain.service.player.PlayerService
 import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import com.posadeus.fantatennis.domain.service.tournament.RetrieveTournamentsService
 
-// TODO Add configuration
 class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamService,
                              private val playerService: PlayerService,
                              private val retrieveTournamentsService: RetrieveTournamentsService,

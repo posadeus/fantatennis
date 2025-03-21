@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration
 class FantaTournamentServiceConfiguration {
 
   @Bean
-  fun createTournamentService(fantaTournamentsRepository: FantaTournamentsRepository): CreateFantaTournamentService =
+  fun createFantaTournamentService(fantaTournamentsRepository: FantaTournamentsRepository): CreateFantaTournamentService =
       CreateFantaTournamentService(fantaTournamentsRepository)
 
   @Bean
-  fun retrieveTournamentService(fantaTournamentsRepository: FantaTournamentsRepository): RetrieveFantaTournamentService =
+  fun retrieveFantaTournamentService(fantaTournamentsRepository: FantaTournamentsRepository): RetrieveFantaTournamentService =
       RetrieveFantaTournamentService(fantaTournamentsRepository)
 
   @Bean
-  fun retrieveTournamentsService(fantaTournamentsRepository: FantaTournamentsRepository): RetrieveFantaTournamentsService =
+  fun retrieveFantaTournamentsService(fantaTournamentsRepository: FantaTournamentsRepository): RetrieveFantaTournamentsService =
       RetrieveFantaTournamentsService(fantaTournamentsRepository)
 }
