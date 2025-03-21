@@ -183,7 +183,42 @@ class SwapPlayersTeamServiceTest {
 
   @Test
   fun `error on swap player`() {
-    TODO("Not yet implemented")
+
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds,
+                                                endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds,
+                                          startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto,
+                                         add = playersToAddDto)
+
+    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
+                             totalScore = 30.0)
+    val aPlayer = aDomainPlayer(id = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
+    val anOldPlayer = aDomainPlayer(id = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
+    val anotherOldPlayer = aDomainPlayer(id = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
+    val aNewPlayer = aDomainPlayer(id = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
+    val anotherNewPlayer = aDomainPlayer(id = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
+    val allPlayers = setOf(aPlayer, anOldPlayer, anotherOldPlayer, aNewPlayer, anotherNewPlayer)
+    val endingTournament = aTournament(id = A_TOURNAMENT_ID)
+    val startingTournament = aTournament(id = ANOTHER_TOURNAMENT_ID)
+    val aTournament = aTournament(id = A_THIRD_TOURNAMENT_ID)
+    val allTournaments = listOf(endingTournament, startingTournament, aTournament)
+    val playersToRemove = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToAdd = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val swapCommand = SwapCommand(playersToRemove, playersToAdd, A_TOURNAMENT_ID, ANOTHER_TOURNAMENT_ID)
+
+    val expected = ErrorTeam
+
+    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { playerService.allPlayers() } returns allPlayers
+    every { retrieveTournamentsService.retrieveAll() } returns allTournaments
+    every { teamsRepository.swapPlayers(swapCommand) } returns ErrorTeam
+
+    assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
 
   companion object {
