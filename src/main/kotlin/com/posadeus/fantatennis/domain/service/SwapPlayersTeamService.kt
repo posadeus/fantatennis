@@ -13,44 +13,43 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
                              private val retrieveTournamentsService: RetrieveTournamentsService,
                              private val teamsRepository: TeamsRepository) {
 
-  fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team {
+  fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
+      when (val team = retrieveTeamService.getTeam(teamId)) {
 
-    when (val team = retrieveTeamService.getTeam(teamId)) {
+        is FoundTeam -> {
 
-      is FoundTeam -> {
-
-        val allPlayersIds = playerService.allPlayers()
-            .map(DomainPlayer::id)
-
-        if (areAllRequestedPlayersPresent(allPlayersIds, playersToSwap)) {
-
-          val tournaments = retrieveTournamentsService.retrieveAll()
-          val tournamentsIds = tournaments
-              .map(Tournament::id)
-
-          // TODO: Add a rule to fail the service if the startingTournament is before the endingTournament OR already started OR not right after the endingTournament
-          return if (tournaments.isNotEmpty()
-                     && playersToSwap.add.startingTournamentId in tournamentsIds
-                     && playersToSwap.remove.endingTournamentId in tournamentsIds) {
-
-            teamsRepository.swapPlayers(SwapCommand(playersToSwap.remove.playerIds,
-                                                    playersToSwap.add.playerIds,
-                                                    playersToSwap.remove.endingTournamentId,
-                                                    playersToSwap.add.startingTournamentId))
-          }
-          else
-            ErrorTeam
+          playerService.allPlayers()
+              .map(DomainPlayer::id)
+              .takeIf { areAllRequestedPlayersPresent(it, playersToSwap) }
+              ?.flatMap {
+                retrieveTournamentsService.retrieveAll()
+                  .map(Tournament::id)
+              }
+              // TODO: Add a rule to fail the service if the startingTournament is before the endingTournament OR already started OR not right after the endingTournament
+              ?.takeIf {
+                it.isNotEmpty()
+                && playersToSwap.add.startingTournamentId in it
+                && playersToSwap.remove.endingTournamentId in it
+              }
+              ?.let {
+                playersToSwap
+                    .let(::toSwapCommand)
+                    .let(teamsRepository::swapPlayers)
+              }
+          ?: ErrorTeam
         }
-        else 
-          return ErrorTeam
+
+        is TeamIdNotFoundTeam, ErrorTeam -> team
       }
 
-      is TeamIdNotFoundTeam, ErrorTeam -> return team
-    }
-  }
+  private fun toSwapCommand(playersToSwap: PlayersToSwapDto) =
+      SwapCommand(playersToSwap.remove.playerIds,
+                  playersToSwap.add.playerIds,
+                  playersToSwap.remove.endingTournamentId,
+                  playersToSwap.add.startingTournamentId)
 
-  private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) = 
+  private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) =
       allPlayersIds.isNotEmpty()
-       && allPlayersIds.containsAll(playersToSwap.add.playerIds)
-       && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
+      && allPlayersIds.containsAll(playersToSwap.add.playerIds)
+      && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
 }
