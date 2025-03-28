@@ -3,6 +3,8 @@ package com.posadeus.fantatennis.domain.service
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.domain.model.TestDomainPlayer.aDomainPlayer
 import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
 import com.posadeus.fantatennis.domain.service.player.PlayerService
@@ -60,10 +62,10 @@ class SwapPlayersTeamServiceTest {
                              totalScore = 40.0)
     val expected = FoundTeam(newTeamDto)
 
-    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto) andThen expected
     every { playerService.allPlayers() } returns allPlayers
     every { retrieveTournamentsService.retrieveAll() } returns allTournaments
-    every { teamsRepository.swapPlayers(swapCommand) } returns expected
+    every { teamsRepository.swapPlayers(swapCommand) } returns SwapCompleted
 
     assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
@@ -194,7 +196,7 @@ class SwapPlayersTeamServiceTest {
     every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { playerService.allPlayers() } returns allPlayers
     every { retrieveTournamentsService.retrieveAll() } returns allTournaments
-    every { teamsRepository.swapPlayers(swapCommand) } returns ErrorTeam
+    every { teamsRepository.swapPlayers(swapCommand) } returns SwapFailed
 
     assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }

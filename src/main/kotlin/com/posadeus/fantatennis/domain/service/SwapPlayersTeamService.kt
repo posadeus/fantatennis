@@ -3,6 +3,8 @@ package com.posadeus.fantatennis.domain.service
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.domain.service.player.PlayerService
 import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
 import com.posadeus.fantatennis.domain.service.tournament.RetrieveTournamentsService
@@ -31,8 +33,10 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
                 && playersToSwap.remove.endingTournamentId in it
               }
               ?.let {
-                toSwapCommand(teamId, playersToSwap)
-                    .let(teamsRepository::swapPlayers)
+                when (toSwapCommand(teamId, playersToSwap).let(teamsRepository::swapPlayers)) {
+                  is SwapCompleted -> retrieveTeamService.getTeam(teamId)
+                  is SwapFailed -> ErrorTeam
+                }
               }
           ?: ErrorTeam
         }

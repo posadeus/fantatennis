@@ -6,6 +6,7 @@ import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
+import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import kotlin.jvm.optionals.getOrNull
@@ -46,10 +47,10 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
     }
   }
 
-  override fun swapPlayers(swapCommand: SwapCommand): Team {
+  override fun swapPlayers(swapCommand: SwapCommand): Swap {
 
     val teamsEntities = swapCommand.playersToRemove
-        .map { TeamsKeyEmbedded(swapCommand.teamId!!, it) }
+        .map { TeamsKeyEmbedded(swapCommand.teamId, it) }
         .let { teamsDao.findAllById(it) }
 
     val tournamentsEntities = listOf(swapCommand.endingTournament, swapCommand.startingTournament)
@@ -67,7 +68,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
     val entitiesToAdd = playersEntities
         .map {
-          TeamsEntity(id = TeamsKeyEmbedded(swapCommand.teamId!!, it.id),
+          TeamsEntity(id = TeamsKeyEmbedded(swapCommand.teamId, it.id),
                       player = it,
                       fantaTeam = fantaTeamEntity,
                       startingTournament = startingTournamentEntity,
@@ -76,9 +77,9 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
     val entities = entitiesToUpdate + entitiesToAdd
 
-    val updatedTeam = teamsDao.saveAll(entities)
+    teamsDao.saveAll(entities)
 
-    return convert(updatedTeam, fantaTeamEntity)
+    return SwapCompleted
   }
 
   private fun convert(teamsEntities: Iterable<TeamsEntity>, fantaTeamEntity: FantaTeamsEntity): FoundTeam =

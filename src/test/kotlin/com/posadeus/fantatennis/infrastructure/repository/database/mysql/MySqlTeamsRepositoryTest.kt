@@ -1,11 +1,10 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
-import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
+import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
@@ -147,12 +146,12 @@ class MySqlTeamsRepositoryTest {
       val oldTeamPlayerKeys = listOf(teamsKeyEmbedded1, teamsKeyEmbedded2)
       val fantaTeamEntity = aFantaTeamsEntityWith(A_TEAM_ID, AN_OWNER_ID)
       val teamsEntity1 = TeamsEntity(id = teamsKeyEmbedded1,
-                                     player = aPlayerEntityWith(AN_OLD_PLAYER_ID, AN_OLD_PLAYER_FULL_NAME),
+                                     player = aPlayerEntityWith(AN_OLD_PLAYER_ID),
                                      fantaTeam = fantaTeamEntity,
                                      startingTournament = aTournamentsEntityWith(A_TOURNAMENT_ID),
                                      endingTournament = null)
       val teamsEntity2 = TeamsEntity(id = teamsKeyEmbedded1,
-                                     player = aPlayerEntityWith(ANOTHER_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_FULL_NAME),
+                                     player = aPlayerEntityWith(ANOTHER_OLD_PLAYER_ID),
                                      fantaTeam = fantaTeamEntity,
                                      startingTournament = aTournamentsEntityWith(A_TOURNAMENT_ID),
                                      endingTournament = null)
@@ -163,8 +162,8 @@ class MySqlTeamsRepositoryTest {
       val oldTeamEntityToUpdate1 = teamsEntity1.copy(endingTournament = endingTournamentEntity)
       val oldTeamEntityToUpdate2 = teamsEntity2.copy(endingTournament = endingTournamentEntity)
       val playerIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-      val newPlayerEntity1 = aPlayerEntityWith(A_NEW_PLAYER_ID, A_NEW_PLAYER_FULL_NAME)
-      val newPlayerEntity2 = aPlayerEntityWith(ANOTHER_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_FULL_NAME)
+      val newPlayerEntity1 = aPlayerEntityWith(A_NEW_PLAYER_ID)
+      val newPlayerEntity2 = aPlayerEntityWith(ANOTHER_NEW_PLAYER_ID)
       val newPlayersEntities = listOf(newPlayerEntity1, newPlayerEntity2)
       val newTeamEntityToAdd1 = TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_NEW_PLAYER_ID),
                                             player = newPlayerEntity1,
@@ -178,13 +177,7 @@ class MySqlTeamsRepositoryTest {
                                             endingTournament = null)
       val teamEntities = listOf(oldTeamEntityToUpdate1, oldTeamEntityToUpdate2, newTeamEntityToAdd1, newTeamEntityToAdd2)
 
-      val aTeamPlayerOld = TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 0.0)
-      val anotherTeamPlayerOld = TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 0.0)
-      val aTeamPlayerNew = TeamPlayerDto(fullName = A_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0)
-      val anotherTeamPlayerNew = TeamPlayerDto(fullName = ANOTHER_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0)
-      val expected = FoundTeam(team = TeamDto(owner = AN_OWNER_ID,
-                                              players = listOf(aTeamPlayerOld, anotherTeamPlayerOld, aTeamPlayerNew, anotherTeamPlayerNew),
-                                              totalScore = 0.0))
+      val expected = SwapCompleted
 
       every { teamsDao.findAllById(oldTeamPlayerKeys) } returns teamsEntities
       every { tournamentsDao.findAllById(listOf(123, 456)) } returns tournamentsEntities
@@ -217,9 +210,8 @@ class MySqlTeamsRepositoryTest {
                        ownerId = ownerId,
                        teams = emptyList())
 
-  private fun aPlayerEntityWith(id: PlayerId, fullName: String): PlayersEntity =
-      PlayersEntity(id = id,
-                    fullName = fullName)
+  private fun aPlayerEntityWith(id: PlayerId): PlayersEntity =
+      PlayersEntity(id = id)
 
   companion object {
 
@@ -235,10 +227,6 @@ class MySqlTeamsRepositoryTest {
     private const val ANOTHER_ATP_PLAYER_ID = "ANOTHER_ATP_PLAYER_ID"
     private const val A_PLAYER_FULL_NAME = "A_PLAYER_FULL_NAME"
     private const val ANOTHER_PLAYER_FULL_NAME = "ANOTHER_PLAYER_FULL_NAME"
-    private const val AN_OLD_PLAYER_FULL_NAME = "AN_OLD_PLAYER_FULL_NAME"
-    private const val A_NEW_PLAYER_FULL_NAME = "A_NEW_PLAYER_FULL_NAME"
-    private const val ANOTHER_OLD_PLAYER_FULL_NAME = "ANOTHER_OLD_PLAYER_FULL_NAME"
-    private const val ANOTHER_NEW_PLAYER_FULL_NAME = "ANOTHER_NEW_PLAYER_FULL_NAME"
     private const val A_TOURNAMENT_NAME = "A_TOURNAMENT_NAME"
     private const val A_TOURNAMENT_LOCATION = "A_TOURNAMENT_LOCATION"
     private const val A_TOURNAMENT_SURFACE = "A_TOURNAMENT_SURFACE"
