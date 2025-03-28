@@ -75,13 +75,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
     val fantaTeamEntity = teamsEntities.first().fantaTeam
 
     val entitiesToAdd = playersEntities
-        .map {
-          TeamsEntity(id = TeamsKeyEmbedded(swapCommand.teamId, it.id),
-                      player = it,
-                      fantaTeam = fantaTeamEntity,
-                      startingTournament = startingTournamentEntity,
-                      endingTournament = null)
-        }
+        .map { toTeamsEntity(swapCommand, it, fantaTeamEntity, startingTournamentEntity) }
 
     val entities = entitiesToUpdate union entitiesToAdd
 
@@ -89,6 +83,16 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
     return SwapCompleted
   }
+
+  private fun toTeamsEntity(swapCommand: SwapCommand,
+                            playersEntity: PlayersEntity,
+                            fantaTeamEntity: FantaTeamsEntity,
+                            startingTournamentEntity: TournamentsEntity) =
+      TeamsEntity(id = TeamsKeyEmbedded(swapCommand.teamId, playersEntity.id),
+                  player = playersEntity,
+                  fantaTeam = fantaTeamEntity,
+                  startingTournament = startingTournamentEntity,
+                  endingTournament = null)
 
   private fun persist(it: Set<TeamsEntity>): Iterable<TeamsEntity> =
       teamsDao.saveAll(it)
