@@ -46,7 +46,6 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
     }
   }
 
-  // TODO Implement IT for this in MySqlTeamsRepositoryIT
   override fun swapPlayers(swapCommand: SwapCommand): Swap {
 
     val teamsEntities = swapCommand.playersToRemove
