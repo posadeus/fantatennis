@@ -46,6 +46,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
     }
   }
 
+  // TODO Implement IT for this in MySqlTeamsRepositoryIT
   override fun swapPlayers(swapCommand: SwapCommand): Swap {
 
     val teamsEntities = swapCommand.playersToRemove
@@ -75,7 +76,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
     val fantaTeamEntity = teamsEntities.first().fantaTeam
 
     val entitiesToAdd = playersEntities
-        .map { toTeamsEntity(swapCommand, it, fantaTeamEntity, startingTournamentEntity) }
+        .map { toTeamsEntity(swapCommand.teamId, it, fantaTeamEntity, startingTournamentEntity) }
 
     val entities = entitiesToUpdate union entitiesToAdd
 
@@ -83,16 +84,6 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
 
     return SwapCompleted
   }
-
-  private fun toTeamsEntity(swapCommand: SwapCommand,
-                            playersEntity: PlayersEntity,
-                            fantaTeamEntity: FantaTeamsEntity,
-                            startingTournamentEntity: TournamentsEntity) =
-      TeamsEntity(id = TeamsKeyEmbedded(swapCommand.teamId, playersEntity.id),
-                  player = playersEntity,
-                  fantaTeam = fantaTeamEntity,
-                  startingTournament = startingTournamentEntity,
-                  endingTournament = null)
 
   private fun persist(it: Set<TeamsEntity>): Iterable<TeamsEntity> =
       teamsDao.saveAll(it)
