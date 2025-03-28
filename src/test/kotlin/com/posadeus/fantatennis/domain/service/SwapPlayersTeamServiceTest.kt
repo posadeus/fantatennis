@@ -50,7 +50,7 @@ class SwapPlayersTeamServiceTest {
     val allTournaments = listOf(endingTournament, startingTournament, aTournament)
     val playersToRemove = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
     val playersToAdd = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-    val swapCommand = SwapCommand(playersToRemove, playersToAdd, A_TOURNAMENT_ID, ANOTHER_TOURNAMENT_ID)
+    val swapCommand = SwapCommand(A_TEAM_ID, playersToRemove, playersToAdd, A_TOURNAMENT_ID, ANOTHER_TOURNAMENT_ID)
 
     val newTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
                                               TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
@@ -187,7 +187,7 @@ class SwapPlayersTeamServiceTest {
     val allTournaments = listOf(endingTournament, startingTournament)
     val playersToRemove = setOf(AN_OLD_PLAYER_ID)
     val playersToAdd = setOf(A_NEW_PLAYER_ID)
-    val swapCommand = SwapCommand(playersToRemove, playersToAdd, A_TOURNAMENT_ID, ANOTHER_TOURNAMENT_ID)
+    val swapCommand = SwapCommand(A_TEAM_ID, playersToRemove, playersToAdd, A_TOURNAMENT_ID, ANOTHER_TOURNAMENT_ID)
 
     val expected = ErrorTeam
 

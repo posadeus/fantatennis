@@ -42,10 +42,10 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
       }
 
   private fun toSwapCommand(playersToSwap: PlayersToSwapDto) =
-      SwapCommand(playersToSwap.remove.playerIds,
-                  playersToSwap.add.playerIds,
-                  playersToSwap.remove.endingTournamentId,
-                  playersToSwap.add.startingTournamentId)
+      SwapCommand(playersToRemove = playersToSwap.remove.playerIds,
+                  playersToAdd = playersToSwap.add.playerIds,
+                  endingTournament = playersToSwap.remove.endingTournamentId,
+                  startingTournament = playersToSwap.add.startingTournamentId)
 
   private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) =
       allPlayersIds.isNotEmpty()

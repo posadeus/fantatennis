@@ -1,5 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
+import com.posadeus.fantatennis.controller.model.team.TeamDto
+import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
@@ -45,8 +47,50 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
   }
 
   override fun swapPlayers(swapCommand: SwapCommand): Team {
-    TODO("Not yet implemented")
+
+    val teamsEntities = swapCommand.playersToRemove
+        .map { TeamsKeyEmbedded(swapCommand.teamId!!, it) }
+        .let { teamsDao.findAllById(it) }
+
+    val tournamentsEntities = listOf(swapCommand.endingTournament, swapCommand.startingTournament)
+        .let { tournamentsDao.findAllById(it) }
+
+    val playersEntities = playersDao.findAllById(swapCommand.playersToAdd)
+
+    val endingTournamentEntity = tournamentsEntities.first { it.id == swapCommand.endingTournament }
+    val startingTournamentEntity = tournamentsEntities.first { it.id == swapCommand.startingTournament }
+
+    val entitiesToUpdate = teamsEntities
+        .map { it.copy(endingTournament = endingTournamentEntity!!) }
+
+    val fantaTeamEntity = teamsEntities.first().fantaTeam
+
+    val entitiesToAdd = playersEntities
+        .map {
+          TeamsEntity(id = TeamsKeyEmbedded(swapCommand.teamId!!, it.id),
+                      player = it,
+                      fantaTeam = fantaTeamEntity,
+                      startingTournament = startingTournamentEntity,
+                      endingTournament = null)
+        }
+
+    val entities = entitiesToUpdate + entitiesToAdd
+
+    val updatedTeam = teamsDao.saveAll(entities)
+
+    return convert(updatedTeam, fantaTeamEntity)
   }
+
+  private fun convert(teamsEntities: Iterable<TeamsEntity>, fantaTeamEntity: FantaTeamsEntity): FoundTeam =
+      teamsEntities
+          .map {
+            TeamPlayerDto(fullName = it.player.fullName, fantaPoints = 0.0)
+          }
+          .let {
+            FoundTeam(TeamDto(owner = fantaTeamEntity.ownerId,
+                              players = it,
+                              totalScore = 0.0))
+          }
 
   private fun persist(it: Set<TeamsEntity>): Iterable<TeamsEntity> =
       teamsDao.saveAll(it)

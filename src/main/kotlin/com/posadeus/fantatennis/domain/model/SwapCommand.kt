@@ -1,8 +1,10 @@
 package com.posadeus.fantatennis.domain.model
 
 typealias PlayerId = String
+typealias TeamId = Int
 
-data class SwapCommand(val playersToRemove: Set<PlayerId>,
+data class SwapCommand(val teamId: TeamId? = null, // FIXME not nullable
+                       val playersToRemove: Set<PlayerId>,
                        val playersToAdd: Set<PlayerId>,
                        val endingTournament: TournamentId,
                        val startingTournament: TournamentId)
