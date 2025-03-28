@@ -1,12 +1,11 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
-import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import kotlin.jvm.optionals.getOrNull
@@ -53,16 +52,25 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
         .map { TeamsKeyEmbedded(swapCommand.teamId, it) }
         .let { teamsDao.findAllById(it) }
 
+    if (teamsEntities.count() != swapCommand.playersToRemove.size)
+      return SwapFailed
+
     val tournamentsEntities = listOf(swapCommand.endingTournament, swapCommand.startingTournament)
         .let { tournamentsDao.findAllById(it) }
 
+    if (tournamentsEntities.count() != 2)
+      return SwapFailed
+
     val playersEntities = playersDao.findAllById(swapCommand.playersToAdd)
+
+    if (playersEntities.count() != swapCommand.playersToAdd.size)
+      return SwapFailed
 
     val endingTournamentEntity = tournamentsEntities.first { it.id == swapCommand.endingTournament }
     val startingTournamentEntity = tournamentsEntities.first { it.id == swapCommand.startingTournament }
 
     val entitiesToUpdate = teamsEntities
-        .map { it.copy(endingTournament = endingTournamentEntity!!) }
+        .map { it.copy(endingTournament = endingTournamentEntity) }
 
     val fantaTeamEntity = teamsEntities.first().fantaTeam
 
@@ -75,23 +83,12 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
                       endingTournament = null)
         }
 
-    val entities = entitiesToUpdate + entitiesToAdd
+    val entities = entitiesToUpdate union entitiesToAdd
 
     teamsDao.saveAll(entities)
 
     return SwapCompleted
   }
-
-  private fun convert(teamsEntities: Iterable<TeamsEntity>, fantaTeamEntity: FantaTeamsEntity): FoundTeam =
-      teamsEntities
-          .map {
-            TeamPlayerDto(fullName = it.player.fullName, fantaPoints = 0.0)
-          }
-          .let {
-            FoundTeam(TeamDto(owner = fantaTeamEntity.ownerId,
-                              players = it,
-                              totalScore = 0.0))
-          }
 
   private fun persist(it: Set<TeamsEntity>): Iterable<TeamsEntity> =
       teamsDao.saveAll(it)

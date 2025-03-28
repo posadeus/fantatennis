@@ -5,6 +5,7 @@ import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
@@ -135,9 +136,124 @@ class MySqlTeamsRepositoryTest {
     @Test
     fun `swap players correctly`() {
 
+      val swapCommand = SwapCommand(teamId = 1,
+                                    playersToRemove = setOf("AN_OLD_PLAYER_ID", "ANOTHER_OLD_PLAYER_ID"),
+                                    playersToAdd = setOf("A_NEW_PLAYER_ID", "ANOTHER_NEW_PLAYER_ID"),
+                                    endingTournament = 123,
+                                    startingTournament = 456)
+
+      val teamsKeyEmbedded1 = TeamsKeyEmbedded(teamId = 1, playerId = "AN_OLD_PLAYER_ID")
+      val teamsKeyEmbedded2 = TeamsKeyEmbedded(teamId = 1, playerId = "ANOTHER_OLD_PLAYER_ID")
+      val oldTeamPlayerKeys = listOf(teamsKeyEmbedded1, teamsKeyEmbedded2)
+      val fantaTeamEntity = aFantaTeamsEntityWith(1, AN_OWNER_ID)
+      val teamsEntity1 = TeamsEntity(id = teamsKeyEmbedded1,
+                                     player = aPlayerEntityWith("AN_OLD_PLAYER_ID"),
+                                     fantaTeam = fantaTeamEntity,
+                                     startingTournament = aTournamentsEntityWith(A_TOURNAMENT_ID),
+                                     endingTournament = null)
+      val teamsEntity2 = TeamsEntity(id = teamsKeyEmbedded1,
+                                     player = aPlayerEntityWith("ANOTHER_OLD_PLAYER_ID"),
+                                     fantaTeam = fantaTeamEntity,
+                                     startingTournament = aTournamentsEntityWith(A_TOURNAMENT_ID),
+                                     endingTournament = null)
+      val teamsEntities = listOf(teamsEntity1, teamsEntity2)
+      val endingTournamentEntity = aTournamentsEntityWith(123)
+      val startingTournamentEntity = aTournamentsEntityWith(456)
+      val tournamentsEntities = listOf(endingTournamentEntity, startingTournamentEntity)
+      val oldTeamEntityToUpdate1 = teamsEntity1.copy(endingTournament = endingTournamentEntity)
+      val oldTeamEntityToUpdate2 = teamsEntity2.copy(endingTournament = endingTournamentEntity)
+      val playerIds = setOf("A_NEW_PLAYER_ID", "ANOTHER_NEW_PLAYER_ID")
+      val newPlayerEntity1 = aPlayerEntityWith("A_NEW_PLAYER_ID")
+      val newPlayerEntity2 = aPlayerEntityWith("ANOTHER_NEW_PLAYER_ID")
+      val newPlayersEntities = listOf(newPlayerEntity1, newPlayerEntity2)
+      val newTeamEntityToAdd1 = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "A_NEW_PLAYER_ID"),
+                                            player = newPlayerEntity1,
+                                            fantaTeam = fantaTeamEntity,
+                                            startingTournament = startingTournamentEntity,
+                                            endingTournament = null)
+      val newTeamEntityToAdd2 = TeamsEntity(id = TeamsKeyEmbedded(teamId = 1, playerId = "ANOTHER_NEW_PLAYER_ID"),
+                                            player = newPlayerEntity2,
+                                            fantaTeam = fantaTeamEntity,
+                                            startingTournament = startingTournamentEntity,
+                                            endingTournament = null)
+      val teamEntities = setOf(oldTeamEntityToUpdate1, oldTeamEntityToUpdate2, newTeamEntityToAdd1, newTeamEntityToAdd2)
+
+      val expected = SwapCompleted
+
+      every { teamsDao.findAllById(oldTeamPlayerKeys) } returns teamsEntities
+      every { tournamentsDao.findAllById(listOf(123, 456)) } returns tournamentsEntities
+      every { playersDao.findAllById(playerIds) } returns newPlayersEntities
+      every { teamsDao.saveAll(teamEntities) } returns teamEntities
+
+      assertThat(repository.swapPlayers(swapCommand)).isEqualTo(expected)
+    }
+
+    @Test
+    fun `swap fails due to one or more teams entities not found`() {
+
+      val swapCommand = SwapCommand(teamId = A_TEAM_ID,
+                                    playersToRemove = setOf("AN_OLD_PLAYER_ID", "ANOTHER_OLD_PLAYER_ID"),
+                                    playersToAdd = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID),
+                                    endingTournament = AN_ENDING_TOURNAMENT_ID,
+                                    startingTournament = A_STARTING_TOURNAMENT_ID)
+
+      val teamsKeyEmbedded1 = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = "AN_OLD_PLAYER_ID")
+      val teamsKeyEmbedded2 = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = "ANOTHER_OLD_PLAYER_ID")
+      val oldTeamPlayerKeys = listOf(teamsKeyEmbedded1, teamsKeyEmbedded2)
+      val teamsEntity1 = TeamsEntity(id = teamsKeyEmbedded1,
+                                     player = aPlayerEntityWith("AN_OLD_PLAYER_ID"),
+                                     fantaTeam = aFantaTeamsEntityWith(A_TEAM_ID, AN_OWNER_ID),
+                                     startingTournament = aTournamentsEntityWith(A_TOURNAMENT_ID),
+                                     endingTournament = null)
+      val teamsEntities = listOf(teamsEntity1)
+
+      val expected = SwapFailed
+
+      every { teamsDao.findAllById(oldTeamPlayerKeys) } returns teamsEntities
+
+      assertThat(repository.swapPlayers(swapCommand)).isEqualTo(expected)
+
+      verify { tournamentsDao wasNot called }
+      verify { playersDao wasNot called }
+    }
+
+    @Test
+    fun `swap fails due to one or all tournaments entities not found`() {
+
+      val swapCommand = SwapCommand(teamId = A_TEAM_ID,
+                                    playersToRemove = setOf(AN_OLD_PLAYER_ID),
+                                    playersToAdd = setOf(A_NEW_PLAYER_ID),
+                                    endingTournament = 123,
+                                    startingTournament = 456)
+
+      val teamsKeyEmbedded1 = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = AN_OLD_PLAYER_ID)
+      val oldTeamPlayerKeys = listOf(teamsKeyEmbedded1)
+      val fantaTeamEntity = aFantaTeamsEntityWith(A_TEAM_ID, AN_OWNER_ID)
+      val teamsEntity1 = TeamsEntity(id = teamsKeyEmbedded1,
+                                     player = aPlayerEntityWith(AN_OLD_PLAYER_ID),
+                                     fantaTeam = fantaTeamEntity,
+                                     startingTournament = aTournamentsEntityWith(A_TOURNAMENT_ID),
+                                     endingTournament = null)
+      val teamsEntities = listOf(teamsEntity1)
+      val endingTournamentEntity = aTournamentsEntityWith(123)
+      val tournamentsEntities = listOf(endingTournamentEntity)
+
+      val expected = SwapFailed
+
+      every { teamsDao.findAllById(oldTeamPlayerKeys) } returns teamsEntities
+      every { tournamentsDao.findAllById(listOf(123, 456)) } returns tournamentsEntities
+
+      assertThat(repository.swapPlayers(swapCommand)).isEqualTo(expected)
+
+      verify { playersDao wasNot called }
+    }
+
+    @Test
+    fun `swap fails due to one or more players entities not found`() {
+
       val swapCommand = SwapCommand(teamId = A_TEAM_ID,
                                     playersToRemove = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID),
-                                    playersToAdd = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID),
+                                    playersToAdd = setOf("A_NEW_PLAYER_ID", "ANOTHER_NEW_PLAYER_ID"),
                                     endingTournament = 123,
                                     startingTournament = 456)
 
@@ -159,30 +275,15 @@ class MySqlTeamsRepositoryTest {
       val endingTournamentEntity = aTournamentsEntityWith(123)
       val startingTournamentEntity = aTournamentsEntityWith(456)
       val tournamentsEntities = listOf(endingTournamentEntity, startingTournamentEntity)
-      val oldTeamEntityToUpdate1 = teamsEntity1.copy(endingTournament = endingTournamentEntity)
-      val oldTeamEntityToUpdate2 = teamsEntity2.copy(endingTournament = endingTournamentEntity)
-      val playerIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-      val newPlayerEntity1 = aPlayerEntityWith(A_NEW_PLAYER_ID)
-      val newPlayerEntity2 = aPlayerEntityWith(ANOTHER_NEW_PLAYER_ID)
-      val newPlayersEntities = listOf(newPlayerEntity1, newPlayerEntity2)
-      val newTeamEntityToAdd1 = TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = A_NEW_PLAYER_ID),
-                                            player = newPlayerEntity1,
-                                            fantaTeam = fantaTeamEntity,
-                                            startingTournament = startingTournamentEntity,
-                                            endingTournament = null)
-      val newTeamEntityToAdd2 = TeamsEntity(id = TeamsKeyEmbedded(teamId = A_TEAM_ID, playerId = ANOTHER_NEW_PLAYER_ID),
-                                            player = newPlayerEntity2,
-                                            fantaTeam = fantaTeamEntity,
-                                            startingTournament = startingTournamentEntity,
-                                            endingTournament = null)
-      val teamEntities = listOf(oldTeamEntityToUpdate1, oldTeamEntityToUpdate2, newTeamEntityToAdd1, newTeamEntityToAdd2)
+      val playerIds = setOf("A_NEW_PLAYER_ID", "ANOTHER_NEW_PLAYER_ID")
+      val newPlayerEntity1 = aPlayerEntityWith("A_NEW_PLAYER_ID")
+      val newPlayersEntities = listOf(newPlayerEntity1)
 
-      val expected = SwapCompleted
+      val expected = SwapFailed
 
       every { teamsDao.findAllById(oldTeamPlayerKeys) } returns teamsEntities
       every { tournamentsDao.findAllById(listOf(123, 456)) } returns tournamentsEntities
       every { playersDao.findAllById(playerIds) } returns newPlayersEntities
-      every { teamsDao.saveAll(teamEntities) } returns teamEntities
 
       assertThat(repository.swapPlayers(swapCommand)).isEqualTo(expected)
     }
@@ -237,5 +338,7 @@ class MySqlTeamsRepositoryTest {
     private const val A_TOURNAMENT_ATP_TOUR_ID = 345
     private const val A_TOURNAMENT_POINTS = 2
     private const val A_TOURNAMENT_YEAR = 2000
+    private const val AN_ENDING_TOURNAMENT_ID = 123
+    private const val A_STARTING_TOURNAMENT_ID = 456
   }
 }
