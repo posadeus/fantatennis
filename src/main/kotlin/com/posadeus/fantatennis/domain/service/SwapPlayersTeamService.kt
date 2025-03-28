@@ -31,8 +31,7 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
                 && playersToSwap.remove.endingTournamentId in it
               }
               ?.let {
-                playersToSwap
-                    .let(::toSwapCommand)
+                toSwapCommand(teamId, playersToSwap)
                     .let(teamsRepository::swapPlayers)
               }
           ?: ErrorTeam
@@ -41,11 +40,12 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
         is TeamIdNotFoundTeam, ErrorTeam -> team
       }
 
-  private fun toSwapCommand(playersToSwap: PlayersToSwapDto) =
-      SwapCommand(playersToRemove = playersToSwap.remove.playerIds,
-                  playersToAdd = playersToSwap.add.playerIds,
-                  endingTournament = playersToSwap.remove.endingTournamentId,
-                  startingTournament = playersToSwap.add.startingTournamentId)
+  private fun toSwapCommand(teamId: Int, playersToSwapDto: PlayersToSwapDto) =
+      SwapCommand(teamId = teamId,
+                  playersToRemove = playersToSwapDto.remove.playerIds,
+                  playersToAdd = playersToSwapDto.add.playerIds,
+                  endingTournament = playersToSwapDto.remove.endingTournamentId,
+                  startingTournament = playersToSwapDto.add.startingTournamentId)
 
   private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) =
       allPlayersIds.isNotEmpty()
