@@ -3,7 +3,6 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
-import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
@@ -14,20 +13,6 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.F
 import org.slf4j.LoggerFactory
 
 class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTournamentsDao) : FantaTournamentsRepository {
-
-  override fun create(tournamentToCreate: TournamentToCreateDto): FantaTournament =
-      try {
-
-        tournamentToCreate
-            .let(::toFantaTournamentsEntityToCreate)
-            .let(fantaTournamentsDao::save)
-            .let(::toValidFantaTournament)
-      }
-      catch (e: Exception) {
-
-        LOGGER.error("Error during save operation of the new fanta tournament", e)
-        InvalidFantaTournament
-      }
 
   override fun retrieve(tournamentId: Int): FantaTournament =
       try {
@@ -70,11 +55,6 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
   private fun toTeamPlayerDto(dto: TournamentResultsDto) =
       TeamPlayerDto(fullName = dto.getPlayerFullName(),
                     fantaPoints = dto.getPlayerTotalScore())
-
-  private fun toFantaTournamentsEntityToCreate(dto: TournamentToCreateDto): FantaTournamentsEntity =
-      FantaTournamentsEntity(startingTournament = dto.startingTournamentId,
-                             endingTournament = dto.endingTournamentId,
-                             year = dto.tournamentYear)
 
   private fun toValidFantaTournament(entity: FantaTournamentsEntity): FantaTournament =
       ValidFantaTournament(id = entity.id,
