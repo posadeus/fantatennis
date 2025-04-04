@@ -1,7 +1,6 @@
 package com.posadeus.fantatennis.app.configuration.domain
 
-import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
-import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
+import com.posadeus.fantatennis.domain.infrastructure.*
 import com.posadeus.fantatennis.domain.service.fantatournament.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,8 +13,8 @@ class FantaTournamentServiceConfiguration {
       CreateFantaTournamentService(jdbcCreateFantaTournamentRepository)
 
   @Bean
-  fun retrieveFantaTournamentService(fantaTournamentsRepository: FantaTournamentsRepository): RetrieveFantaTournamentService =
-      RetrieveFantaTournamentService(fantaTournamentsRepository)
+  fun retrieveFantaTournamentService(jdbcRetrieveFantaTournamentResultsRepository: RetrieveFantaTournamentResultsRepository): RetrieveFantaTournamentService =
+      RetrieveFantaTournamentService(jdbcRetrieveFantaTournamentResultsRepository)
 
   @Bean
   fun retrieveFantaTournamentsService(fantaTournamentsRepository: FantaTournamentsRepository): RetrieveFantaTournamentsService =
