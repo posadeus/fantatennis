@@ -4,20 +4,26 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
-import com.posadeus.fantatennis.domain.model.FantaTournamentResults
-import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TournamentResultsDto
+import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 
 class JdbcRetrieveFantaTournamentResultsRepository(private val jdbcTemplate: JdbcTemplate) : RetrieveFantaTournamentResultsRepository {
 
-  override fun retrieve(tournamentId: Int): FantaTournamentResults {
+  override fun retrieve(tournamentId: Int): FantaTournamentResults =
+      try {
 
-    return jdbcTemplate.query(RETRIEVE_QUERY, userRowMapper)
-        .let(::toTournamentDto)
-        .let(::FoundFantaTournamentResults)
-  }
+        jdbcTemplate.query(RETRIEVE_QUERY, userRowMapper)
+            .let(::toTournamentDto)
+            .let(::FoundFantaTournamentResults)
+      }
+      catch (e: RuntimeException) {
+
+        LOGGER.error("Error during retrieve operation for tournament id: $tournamentId")
+        ErrorFantaTournamentResults
+      }
 
   private val userRowMapper = RowMapper { rs, _ ->
     TournamentResultsDtoImpl(tournamentId = rs.getInt("FANTA_TOURNAMENT_ID"),
@@ -103,5 +109,7 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val jdbcTemplate: Jdb
       WHERE ft.FANTA_TOURNAMENT_ID = 3
       ORDER BY t.TEAM_ID, pps.TOTAL_SCORE DESC;
     """.trimIndent()
+
+    private val LOGGER = LoggerFactory.getLogger(JdbcRetrieveFantaTournamentResultsRepository::class.java)
   }
 }

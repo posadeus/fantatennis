@@ -4,6 +4,7 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
+import com.posadeus.fantatennis.domain.model.ErrorFantaTournamentResults
 import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveFantaTournamentResultsRepository.TournamentResultsDtoImpl
 import io.mockk.every
@@ -18,6 +19,16 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
   private val jdbcTemplate: JdbcTemplate = mockk()
 
   private val repository: RetrieveFantaTournamentResultsRepository = JdbcRetrieveFantaTournamentResultsRepository(jdbcTemplate)
+
+  @Test
+  fun `error on repository operation`() {
+
+    val expected = ErrorFantaTournamentResults
+
+    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<TournamentResultsDtoImpl>>()) } throws RuntimeException()
+
+    assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
 
   @Test
   fun `retrieve results successfully`() {
@@ -52,11 +63,6 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
     every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<TournamentResultsDtoImpl>>()) } returns tournamentResultsDto
 
     assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
-  }
-
-  @Test
-  fun `fail scenario`() {
-    TODO("Not yet implemented")
   }
 
   companion object {
