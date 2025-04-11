@@ -48,9 +48,9 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val jdbcTemplate: Jdb
               players = entries.value.map(::toTeamPlayerDto),
               totalScore = calculateTeamTotalScore(entries.value))
 
-  private fun calculateTeamTotalScore(dtos: List<TournamentResultsDto>) =
-      dtos
-          .map { it.getPlayerTotalScore() }
+  private fun calculateTeamTotalScore(tournamentResultsDtoList: List<TournamentResultsDto>) =
+      tournamentResultsDtoList
+          .map(TournamentResultsDto::getPlayerTotalScore)
           .reduce { teamTotalScore, singlePlayerScore -> teamTotalScore + singlePlayerScore }
 
   private fun toTeamPlayerDto(dto: TournamentResultsDto) =
