@@ -16,8 +16,10 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val jdbcTemplate: Jdb
       try {
 
         jdbcTemplate.query(RETRIEVE_QUERY, userRowMapper)
-            .let(::toTournamentDto)
-            .let(::FoundFantaTournamentResults)
+            .takeIf { it.isNotEmpty() }
+            ?.let(::toTournamentDto)
+            ?.let(::FoundFantaTournamentResults)
+        ?: NotFoundFantaTournamentId
       }
       catch (e: RuntimeException) {
 

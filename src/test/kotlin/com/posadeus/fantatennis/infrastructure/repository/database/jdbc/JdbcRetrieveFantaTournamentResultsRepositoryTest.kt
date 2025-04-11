@@ -4,8 +4,7 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
-import com.posadeus.fantatennis.domain.model.ErrorFantaTournamentResults
-import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveFantaTournamentResultsRepository.TournamentResultsDtoImpl
 import io.mockk.every
 import io.mockk.mockk
@@ -26,6 +25,16 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
     val expected = ErrorFantaTournamentResults
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<TournamentResultsDtoImpl>>()) } throws RuntimeException()
+
+    assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `no results returned by the query`() {
+
+    val expected = NotFoundFantaTournamentId
+
+    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<TournamentResultsDtoImpl>>()) } returns emptyList()
 
     assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
   }
