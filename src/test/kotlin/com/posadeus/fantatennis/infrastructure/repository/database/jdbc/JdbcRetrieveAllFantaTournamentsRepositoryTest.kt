@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament
+import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentDto
 import io.mockk.every
@@ -60,6 +61,16 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
     val expected = emptySet<FantaTournament>()
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } returns emptyList()
+
+    assertThat(repository.retrieve()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `error from db`() {
+
+    val expected = setOf(InvalidFantaTournament) // FIXME: This shouldn't be a setOf, just Invalid. Refactor needed
+
+    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } throws RuntimeException("Scary error!")
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }

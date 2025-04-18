@@ -4,15 +4,24 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentDto
+import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 
 class JdbcRetrieveAllFantaTournamentsRepository(private val jdbcTemplate: JdbcTemplate) : RetrieveAllFantaTournamentsRepository {
 
   override fun retrieve(): Set<FantaTournament> =
-      jdbcTemplate.query(RETRIEVE_QUERY, rowMapper)
-          .map(::toValidFantaTournament)
-          .let(List<FantaTournament>::toSet)
+      try {
+
+        jdbcTemplate.query(RETRIEVE_QUERY, rowMapper)
+            .map(::toValidFantaTournament)
+            .let(List<FantaTournament>::toSet)
+      }
+      catch (e: Exception) {
+
+        LOGGER.error("Error retrieving fanta tournaments", e)
+        setOf(InvalidFantaTournament)
+      }
 
   private val rowMapper = RowMapper { rs, _ ->
     FantaTournamentDto(id = rs.getInt("FANTA_TOURNAMENT_ID"),
@@ -28,6 +37,8 @@ class JdbcRetrieveAllFantaTournamentsRepository(private val jdbcTemplate: JdbcTe
                            tournamentYear = dto.year)
 
   companion object {
+
+    private val LOGGER = LoggerFactory.getLogger(JdbcRetrieveAllFantaTournamentsRepository::class.java)
 
     private val RETRIEVE_QUERY = """
       SELECT *
