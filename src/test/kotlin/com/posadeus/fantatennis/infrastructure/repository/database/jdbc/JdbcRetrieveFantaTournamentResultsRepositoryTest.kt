@@ -5,7 +5,7 @@ import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveFantaTournamentResultsRepository.TournamentResultsDtoImpl
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TournamentResultsDtoImpl
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

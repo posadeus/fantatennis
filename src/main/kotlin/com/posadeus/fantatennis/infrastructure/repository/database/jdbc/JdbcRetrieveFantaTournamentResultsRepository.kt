@@ -5,6 +5,7 @@ import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TournamentResultsDtoImpl
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TournamentResultsDto
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.RowMapper
@@ -58,28 +59,6 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
   private fun toTeamPlayerDto(dto: TournamentResultsDto) =
       TeamPlayerDto(fullName = dto.getPlayerFullName(),
                     fantaPoints = dto.getPlayerTotalScore())
-
-  // FIXME: remove interface and all the methods and change it to data class
-  // FIXME: move it outside
-  class TournamentResultsDtoImpl(private val tournamentId: Int,
-                                 private val teamId: Int,
-                                 private val ownerId: String,
-                                 private val playerId: String,
-                                 private val playerFullName: String,
-                                 private val playerTotalScore: Double) : TournamentResultsDto {
-
-    override fun getTournamentId(): Int = tournamentId
-
-    override fun getTeamId(): Int = teamId
-
-    override fun getOwnerId(): String = ownerId
-
-    override fun getPlayerId(): String = playerId
-
-    override fun getPlayerFullName(): String = playerFullName
-
-    override fun getPlayerTotalScore(): Double = playerTotalScore
-  }
 
   companion object {
 
