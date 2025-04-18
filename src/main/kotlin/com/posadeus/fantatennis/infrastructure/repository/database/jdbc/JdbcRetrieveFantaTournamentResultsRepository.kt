@@ -7,15 +7,17 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentRes
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TournamentResultsDto
 import org.slf4j.LoggerFactory
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
-class JdbcRetrieveFantaTournamentResultsRepository(private val jdbcTemplate: JdbcTemplate) : RetrieveFantaTournamentResultsRepository {
+class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate)
+  : RetrieveFantaTournamentResultsRepository {
 
   override fun retrieve(tournamentId: Int): FantaTournamentResults =
       try {
 
-        jdbcTemplate.query(RETRIEVE_QUERY, userRowMapper)
+        val params = mapOf("tournamentId" to tournamentId)
+        namedParameterJdbcTemplate.query(RETRIEVE_QUERY, params, rowMapper)
             .takeIf { it.isNotEmpty() }
             ?.let(::toTournamentDto)
             ?.let(::FoundFantaTournamentResults)
@@ -23,11 +25,11 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val jdbcTemplate: Jdb
       }
       catch (e: RuntimeException) {
 
-        LOGGER.error("Error during retrieve operation for tournament id: $tournamentId")
+        LOGGER.error("Error during retrieve operation for tournament id: $tournamentId", e)
         ErrorFantaTournamentResults
       }
 
-  private val userRowMapper = RowMapper { rs, _ ->
+  private val rowMapper = RowMapper { rs, _ ->
     TournamentResultsDtoImpl(tournamentId = rs.getInt("FANTA_TOURNAMENT_ID"),
                              teamId = rs.getInt("TEAM_ID"),
                              ownerId = rs.getString("OWNER_ID"),
@@ -84,31 +86,28 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val jdbcTemplate: Jdb
     private val RETRIEVE_QUERY = """
       SELECT ft.FANTA_TOURNAMENT_ID, ft2.TEAM_ID, p.FULL_NAME, p.PLAYER_ID, pps.TOTAL_SCORE, ft2.OWNER_ID 
       FROM fanta_tennis.FANTA_TOURNAMENTS ft 
-      	LEFT JOIN fanta_tennis.FANTA_TOURNAMENTS_TEAMS ftt ON ft.FANTA_TOURNAMENT_ID = ftt.FANTA_TOURNAMENT_ID 
-      	LEFT JOIN fanta_tennis.FANTA_TEAMS ft2 ON ftt.TEAM_ID = ft2.TEAM_ID
-      	LEFT JOIN fanta_tennis.TEAMS t ON ft2.TEAM_ID = t.TEAM_ID
-      	LEFT JOIN fanta_tennis.PLAYERS p ON t.PLAYER_ID = p.PLAYER_ID
-      	LEFT JOIN (	
-      		SELECT 
-      		  pp.PLAYER_ID AS ID,
-      		  SUM(pp.FANTA_POINTS) AS TOTAL_SCORE
-      		FROM 
-      		  fanta_tennis.PLAYERS_POINTS pp,
-      		  fanta_tennis.TEAMS t2,
-      		  (
-      			  SELECT *
-      			  FROM fanta_tennis.FANTA_TOURNAMENTS ft3 
-      			  WHERE ft3.FANTA_TOURNAMENT_ID = 3
-      		  ) AS fttt
-      		WHERE 
-      		  pp.PLAYER_ID = t2.PLAYER_ID 
-      		  AND pp.TOURNAMENT_YEAR = fttt.TOURNAMENT_YEAR
-      		  AND t2.STARTING_TOURNAMENT >= fttt.STARTING_TOURNAMENT
-      		  AND pp.TOURNAMENT_ID >= t2.STARTING_TOURNAMENT 
-      		  AND (t2.ENDING_TOURNAMENT IS NULL OR pp.TOURNAMENT_ID <= t2.ENDING_TOURNAMENT) 
-      		  GROUP BY pp.PLAYER_ID
-      	) AS pps ON pps.ID = p.PLAYER_ID 
-      WHERE ft.FANTA_TOURNAMENT_ID = 3
+        LEFT JOIN fanta_tennis.FANTA_TOURNAMENTS_TEAMS ftt ON ft.FANTA_TOURNAMENT_ID = ftt.FANTA_TOURNAMENT_ID 
+        LEFT JOIN fanta_tennis.FANTA_TEAMS ft2 ON ftt.TEAM_ID = ft2.TEAM_ID
+        LEFT JOIN fanta_tennis.TEAMS t ON ft2.TEAM_ID = t.TEAM_ID
+        LEFT JOIN fanta_tennis.PLAYERS p ON t.PLAYER_ID = p.PLAYER_ID
+        LEFT JOIN (	
+          SELECT 
+            pp.PLAYER_ID AS ID,
+            SUM(pp.FANTA_POINTS) AS TOTAL_SCORE
+          FROM 
+            fanta_tennis.PLAYERS_POINTS pp
+            LEFT JOIN fanta_tennis.TEAMS t2 ON pp.PLAYER_ID = t2.PLAYER_ID
+            LEFT JOIN fanta_tennis.FANTA_TOURNAMENTS_TEAMS ftt2 ON ftt2.TEAM_ID = t2.TEAM_ID
+            LEFT JOIN fanta_tennis.FANTA_TOURNAMENTS fto ON ftt2.FANTA_TOURNAMENT_ID = fto.FANTA_TOURNAMENT_ID 
+          WHERE 
+            fto.FANTA_TOURNAMENT_ID = :tournamentId
+            AND pp.TOURNAMENT_YEAR = fto.TOURNAMENT_YEAR
+            AND t2.STARTING_TOURNAMENT BETWEEN fto.STARTING_TOURNAMENT AND fto.ENDING_TOURNAMENT
+            AND pp.TOURNAMENT_ID BETWEEN t2.STARTING_TOURNAMENT AND fto.ENDING_TOURNAMENT
+            AND (t2.ENDING_TOURNAMENT IS NULL OR pp.TOURNAMENT_ID <= t2.ENDING_TOURNAMENT) 
+          GROUP BY pp.PLAYER_ID
+        ) AS pps ON pps.ID = p.PLAYER_ID 
+      WHERE ft.FANTA_TOURNAMENT_ID = :tournamentId
       ORDER BY t.TEAM_ID, pps.TOTAL_SCORE DESC;
     """.trimIndent()
 

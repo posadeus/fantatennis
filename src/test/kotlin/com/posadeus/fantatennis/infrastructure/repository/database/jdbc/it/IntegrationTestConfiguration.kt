@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.utility.MountableFile
 import javax.sql.DataSource
@@ -27,17 +28,23 @@ class IntegrationTestConfiguration {
   fun jdbcTemplate(dataSource: DataSource): JdbcTemplate =
       JdbcTemplate(dataSource)
 
+  @Bean
+  fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate =
+      NamedParameterJdbcTemplate(dataSource)
+
   companion object {
 
     private val mysqlContainer: MySQLContainer<*> = MySQLContainer("mysql:8.0")
         .apply {
-          withDatabaseName("test_db")
+          withDatabaseName("fanta_tennis")
           withUsername("test_user")
           withPassword("test_password")
           withCopyFileToContainer(
               MountableFile.forClasspathResource("test-containers/init-db.sql"),
               "/docker-entrypoint-initdb.d/init-db.sql"
           )
+          withPrivilegedMode(true)
+          withReuse(false)
           start()
         }
   }

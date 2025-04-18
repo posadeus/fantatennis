@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.app.configuration.infrastructure.jdbc
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import javax.sql.DataSource
 
 @Configuration
@@ -11,4 +12,8 @@ class JdbcConfig {
   @Bean
   fun jdbcTemplate(dataSource: DataSource): JdbcTemplate =
       JdbcTemplate(dataSource)
+
+  @Bean
+  fun namedParameterJdbcTemplate(dataSource: DataSource): NamedParameterJdbcTemplate =
+      NamedParameterJdbcTemplate(dataSource)
 }
