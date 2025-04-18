@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
+import com.posadeus.fantatennis.domain.model.FantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentDto
 import io.mockk.every
@@ -49,6 +50,16 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
     val expected = setOf(validFantaTournament1, validFantaTournament2, validFantaTournament3)
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } returns fantaTournaments
+
+    assertThat(repository.retrieve()).isEqualTo(expected)
+  }
+
+  @Test
+  fun `no fanta tournaments found`() {
+
+    val expected = emptySet<FantaTournament>()
+
+    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } returns emptyList()
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
