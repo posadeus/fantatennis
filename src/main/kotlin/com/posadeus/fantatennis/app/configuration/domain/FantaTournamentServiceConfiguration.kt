@@ -17,6 +17,6 @@ class FantaTournamentServiceConfiguration {
       RetrieveFantaTournamentService(jdbcRetrieveFantaTournamentResultsRepository)
 
   @Bean
-  fun retrieveFantaTournamentsService(fantaTournamentsRepository: FantaTournamentsRepository): RetrieveFantaTournamentsService =
-      RetrieveFantaTournamentsService(fantaTournamentsRepository)
+  fun retrieveFantaTournamentsService(jdbcRetrieveAllFantaTournamentsRepository: RetrieveAllFantaTournamentsRepository): RetrieveFantaTournamentsService =
+      RetrieveFantaTournamentsService(jdbcRetrieveAllFantaTournamentsRepository)
 }
