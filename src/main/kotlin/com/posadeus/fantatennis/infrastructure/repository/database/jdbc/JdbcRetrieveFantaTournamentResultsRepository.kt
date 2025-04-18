@@ -5,8 +5,7 @@ import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TournamentResultsDtoImpl
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TournamentResultsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TournamentResultsDto
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -31,34 +30,34 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
       }
 
   private val rowMapper = RowMapper { rs, _ ->
-    TournamentResultsDtoImpl(tournamentId = rs.getInt("FANTA_TOURNAMENT_ID"),
-                             teamId = rs.getInt("TEAM_ID"),
-                             ownerId = rs.getString("OWNER_ID"),
-                             playerId = rs.getString("PLAYER_ID"),
-                             playerFullName = rs.getString("FULL_NAME"),
-                             playerTotalScore = rs.getDouble("TOTAL_SCORE"))
+    TournamentResultsDto(tournamentId = rs.getInt("FANTA_TOURNAMENT_ID"),
+                         teamId = rs.getInt("TEAM_ID"),
+                         ownerId = rs.getString("OWNER_ID"),
+                         playerId = rs.getString("PLAYER_ID"),
+                         playerFullName = rs.getString("FULL_NAME"),
+                         playerTotalScore = rs.getDouble("TOTAL_SCORE"))
   }
 
   private fun toTournamentDto(resultsDto: List<TournamentResultsDto>): TournamentDto =
       resultsDto
-          .groupBy(TournamentResultsDto::getTeamId)
+          .groupBy(TournamentResultsDto::teamId)
           .map(::toTeamDto)
           .sortedByDescending(TeamDto::totalScore)
           .let(::TournamentDto)
 
   private fun toTeamDto(entries: Map.Entry<Int, List<TournamentResultsDto>>) =
-      TeamDto(owner = entries.value.first().getOwnerId(),
+      TeamDto(owner = entries.value.first().ownerId,
               players = entries.value.map(::toTeamPlayerDto),
               totalScore = calculateTeamTotalScore(entries.value))
 
   private fun calculateTeamTotalScore(tournamentResultsDtoList: List<TournamentResultsDto>) =
       tournamentResultsDtoList
-          .map(TournamentResultsDto::getPlayerTotalScore)
+          .map(TournamentResultsDto::playerTotalScore)
           .reduce { teamTotalScore, singlePlayerScore -> teamTotalScore + singlePlayerScore }
 
   private fun toTeamPlayerDto(dto: TournamentResultsDto) =
-      TeamPlayerDto(fullName = dto.getPlayerFullName(),
-                    fantaPoints = dto.getPlayerTotalScore())
+      TeamPlayerDto(fullName = dto.playerFullName,
+                    fantaPoints = dto.playerTotalScore)
 
   companion object {
 

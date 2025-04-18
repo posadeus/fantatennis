@@ -6,13 +6,3 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface FantaTournamentsDao : JpaRepository<FantaTournamentsEntity, Int>
-
-interface TournamentResultsDto {
-
-  fun getTournamentId(): Int
-  fun getTeamId(): Int
-  fun getOwnerId(): String
-  fun getPlayerId(): String
-  fun getPlayerFullName(): String
-  fun getPlayerTotalScore(): Double
-}
