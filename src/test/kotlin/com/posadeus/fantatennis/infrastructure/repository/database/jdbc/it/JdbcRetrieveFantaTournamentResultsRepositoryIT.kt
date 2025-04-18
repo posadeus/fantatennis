@@ -45,7 +45,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryIT {
 
   @SqlGroup(
       Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-tournament-results.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
   )
   @Test
   fun `tournament results successfully retrieved`() {

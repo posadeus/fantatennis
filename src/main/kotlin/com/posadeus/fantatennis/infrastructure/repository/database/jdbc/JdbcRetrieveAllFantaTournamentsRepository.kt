@@ -7,7 +7,6 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Fant
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 
-// TODO Add config
 class JdbcRetrieveAllFantaTournamentsRepository(private val jdbcTemplate: JdbcTemplate) : RetrieveAllFantaTournamentsRepository {
 
   override fun retrieve(): Set<FantaTournament> =
