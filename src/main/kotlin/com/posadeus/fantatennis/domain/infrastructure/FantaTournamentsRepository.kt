@@ -5,5 +5,4 @@ import com.posadeus.fantatennis.domain.model.FantaTournament
 interface FantaTournamentsRepository {
 
   fun retrieve(tournamentId: Int): FantaTournament
-  fun retrieveAll(): List<FantaTournament>
 }

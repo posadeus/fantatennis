@@ -23,11 +23,6 @@ class MySqlFantaTournamentsRepository(private val fantaTournamentsDao: FantaTour
         InvalidFantaTournament
       }
 
-  @Deprecated("Use JdbcRetrieveAllFantaTournamentsRepository::retrieve")
-  override fun retrieveAll(): List<FantaTournament> =
-      fantaTournamentsDao.findAll()
-          .map(::toValidFantaTournament)
-
   private fun toValidFantaTournament(entity: FantaTournamentsEntity): FantaTournament =
       ValidFantaTournament(id = entity.id,
                            startingTournamentId = entity.startingTournament,
