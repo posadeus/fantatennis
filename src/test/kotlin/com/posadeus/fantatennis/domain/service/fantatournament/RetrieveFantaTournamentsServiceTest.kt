@@ -3,8 +3,9 @@ package com.posadeus.fantatennis.domain.service.fantatournament
 import com.posadeus.fantatennis.controller.model.tournament.TournamentsDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.domain.model.FantaTournaments.Invalid
+import com.posadeus.fantatennis.domain.model.FantaTournaments.Valid
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -19,9 +20,9 @@ class RetrieveFantaTournamentsServiceTest {
   @Test
   fun `tournaments retrieved`() {
 
-    val fantaTournaments = setOf(aValidFantaTournamentWithId(1),
-                                 aValidFantaTournamentWithId(2),
-                                 aValidFantaTournamentWithId(3))
+    val fantaTournaments = Valid(setOf(aValidFantaTournamentWithId(1),
+                                       aValidFantaTournamentWithId(2),
+                                       aValidFantaTournamentWithId(3)))
 
     val tournaments = TournamentsDto(ids = listOf(1, 2, 3))
     val expected = FoundFantaTournamentsResults(tournaments = tournaments)
@@ -34,7 +35,7 @@ class RetrieveFantaTournamentsServiceTest {
   @Test
   fun `tournaments not found`() {
 
-    val fantaTournaments = setOf<FantaTournament>()
+    val fantaTournaments = Valid(emptySet())
 
     val expected = NotFoundFantaTournaments
 
@@ -46,7 +47,7 @@ class RetrieveFantaTournamentsServiceTest {
   @Test
   fun `error during retrieve`() {
 
-    val fantaTournaments = setOf(InvalidFantaTournament)
+    val fantaTournaments = Invalid
 
     val expected = ErrorFantaTournamentsResults
 

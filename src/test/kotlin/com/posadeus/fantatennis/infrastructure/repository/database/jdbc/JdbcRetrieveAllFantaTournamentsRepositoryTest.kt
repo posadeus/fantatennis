@@ -1,9 +1,9 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
-import com.posadeus.fantatennis.domain.model.FantaTournament
-import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.domain.model.FantaTournaments.Invalid
+import com.posadeus.fantatennis.domain.model.FantaTournaments.Valid
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentDto
 import io.mockk.every
 import io.mockk.mockk
@@ -48,7 +48,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
                                                      endingTournamentId = A_THIRD_TOURNAMENT_ID,
                                                      tournamentYear = ANOTHER_YEAR)
 
-    val expected = setOf(validFantaTournament1, validFantaTournament2, validFantaTournament3)
+    val expected = Valid(setOf(validFantaTournament1, validFantaTournament2, validFantaTournament3))
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } returns fantaTournaments
 
@@ -58,7 +58,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
   @Test
   fun `no fanta tournaments found`() {
 
-    val expected = emptySet<FantaTournament>()
+    val expected = Valid(emptySet())
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } returns emptyList()
 
@@ -68,7 +68,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
   @Test
   fun `error from db`() {
 
-    val expected = setOf(InvalidFantaTournament) // FIXME: This shouldn't be a setOf, just Invalid. Refactor needed
+    val expected = Invalid
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } throws RuntimeException("Scary error!")
 

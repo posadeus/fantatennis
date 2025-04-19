@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
-import com.posadeus.fantatennis.domain.model.FantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.domain.model.FantaTournaments.Valid
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveAllFantaTournamentsRepository
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -35,7 +35,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryIT {
   @Test
   fun `no tournaments found`() {
 
-    val expected = emptySet<FantaTournament>()
+    val expected = Valid(emptySet())
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -59,7 +59,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryIT {
                                         startingTournamentId = 1,
                                         endingTournamentId = 4,
                                         tournamentYear = 2026)
-    val expected = setOf(element1, element2, element3)
+    val expected = Valid(setOf(element1, element2, element3))
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
