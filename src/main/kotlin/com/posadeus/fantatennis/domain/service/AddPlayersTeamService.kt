@@ -2,16 +2,16 @@ package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
-import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
+import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import org.slf4j.LoggerFactory
 
-class AddPlayersTeamService(private val teamsRepository: TeamsRepository) {
+class AddPlayersTeamService(private val addPlayerToTeamRepository: AddPlayersToTeamRepository) {
 
   fun addPlayers(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): Team =
-      when (val addPlayers = teamsRepository.addPlayers(teamId, playerIds, startingTournamentId)) {
+      when (val addPlayers = addPlayerToTeamRepository.add(teamId, playerIds, startingTournamentId)) {
 
         is ValidAddPlayers -> toFoundTeam(addPlayers.players)
         is AddPlayersTeamNotFound -> TeamIdNotFoundTeam

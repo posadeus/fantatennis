@@ -1,0 +1,5 @@
+package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+
+import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
+
+class JdbcAddPlayersToTeamRepository : AddPlayersToTeamRepository
