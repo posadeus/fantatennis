@@ -3,11 +3,11 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.AddPlayers
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTeamDto
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import java.time.LocalDate
 
 class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
 
@@ -33,6 +33,10 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
       return AddPlayersTournamentNotFound
     }
 
+    val players = jdbcTemplate.query(RETRIEVE_PLAYERS_QUERY, mapOf("playerIds" to playerIds), playerRowMapper)
+
+    if (players.size != playerIds.size) return PlayersNotFound(missingPlayerIds = missingPlayerIds(playerIds, players))
+
     return AddPlayersError
   }
 
@@ -42,8 +46,29 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
   }
 
   private val tournamentRowMapper = RowMapper { rs, _ ->
-    JdbcTournamentDto()
+    JdbcTournamentDto(tournamentId = rs.getInt("TOURNAMENT_ID"),
+                      atpTourId = rs.getInt("ATP_TOUR_ID"),
+                      tennisTvId = rs.getInt("TENNIS_TV_ID"),
+                      name = rs.getString("NAME"),
+                      points = rs.getInt("POINTS"),
+                      location = rs.getString("LOCATION"),
+                      surface = rs.getString("SURFACE"),
+                      year = rs.getInt("YEAR"),
+                      startDate = LocalDate.parse(rs.getString("START_DATE")),
+                      endDate = LocalDate.parse(rs.getString("END_DATE")))
   }
+
+  private val playerRowMapper = RowMapper { rs, _ ->
+    JdbcPlayerDto(playerId = rs.getString("PLAYER_ID"),
+                  atpTourId = rs.getString("ATP_TOUR_ID"),
+                  fullName = rs.getString("FULL_NAME"))
+  }
+
+  private fun missingPlayerIds(playerIds: Set<String>,
+                               players: List<JdbcPlayerDto>) =
+      playerIds
+          .filter { id -> id !in players.map { it.playerId } }
+          .toSet()
 
   companion object {
 
@@ -57,6 +82,12 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
       SELECT *
       FROM TOURNAMENTS 
       WHERE TOURNAMENT_ID = :tournamentId;
+    """.trimIndent()
+
+    private val RETRIEVE_PLAYERS_QUERY = """
+      SELECT *
+      FROM PLAYERS 
+      WHERE PLAYER_ID IN :playerIds;
     """.trimIndent()
   }
 }
