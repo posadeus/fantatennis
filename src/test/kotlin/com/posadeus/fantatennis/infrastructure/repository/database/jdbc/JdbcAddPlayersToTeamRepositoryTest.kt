@@ -26,10 +26,9 @@ class JdbcAddPlayersToTeamRepositoryTest {
 
     val expected = AddPlayersTeamNotFound
 
-    // FIXME improve logic with queryForObject
     every {
-      jdbcTemplate.query(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
-    } returns emptyList<FantaTeamDto>()
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+    } throws EmptyResultDataAccessException(1)
 
     assertThat(repository.add(1, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID)).isEqualTo(expected)
   }
@@ -44,8 +43,8 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val expected = AddPlayersTournamentNotFound
 
     every {
-      jdbcTemplate.query(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
-    } returns listOf(fantaTeam)
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+    } returns fantaTeam
     every {
       jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, tournamentQueryParams, any<RowMapper<JdbcTournamentDto>>())
     } throws EmptyResultDataAccessException(1)

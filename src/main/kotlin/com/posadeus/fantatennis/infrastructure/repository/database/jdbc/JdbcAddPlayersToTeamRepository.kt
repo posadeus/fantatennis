@@ -13,9 +13,14 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
 
   override fun add(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
 
-    val fantaTeamDtos = jdbcTemplate.query(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper)
+    try {
 
-    if (fantaTeamDtos.isEmpty()) return AddPlayersTeamNotFound
+      val fantaTeamDto = jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper)
+    }
+    catch (e: EmptyResultDataAccessException) {
+
+      return AddPlayersTeamNotFound
+    }
 
     try {
 
