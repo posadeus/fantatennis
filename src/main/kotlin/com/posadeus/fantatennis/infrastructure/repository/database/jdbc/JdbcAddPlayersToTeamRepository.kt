@@ -3,19 +3,22 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.AddPlayers
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
+import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
 
+  @Transactional
   override fun add(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
 
     try {
 
-      val fantaTeamDto = jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper)
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper)
     }
     catch (e: EmptyResultDataAccessException) {
 
@@ -24,9 +27,7 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
 
     try {
 
-      val tournamentDto = jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY,
-                                                      mapOf("tournamentId" to startingTournamentId),
-                                                      tournamentRowMapper)
+      jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, mapOf("tournamentId" to startingTournamentId), tournamentRowMapper)
     }
     catch (e: EmptyResultDataAccessException) {
 
@@ -35,9 +36,26 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
 
     val players = jdbcTemplate.query(RETRIEVE_PLAYERS_QUERY, mapOf("playerIds" to playerIds), playerRowMapper)
 
-    if (players.size != playerIds.size) return PlayersNotFound(missingPlayerIds = missingPlayerIds(playerIds, players))
+    if (players.size != playerIds.size)
+      return PlayersNotFound(missingPlayerIds = missingPlayerIds(playerIds, players))
 
-    return AddPlayersError
+    try {
+
+      val batchValues = playerIds.map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to startingTournamentId) }
+      val batchUpdate = jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, batchValues.toTypedArray())
+
+      if (batchUpdate.all { it == 1 })
+        return players
+            .map(::toDomainPlayer)
+            .toSet()
+            .let(AddPlayers::ValidAddPlayers)
+      else
+        throw AddPlayersException(error = "Players [${errorPlayers(players, batchUpdate)}] not inserted, operation reverted.")
+    }
+    catch (e: RuntimeException) {
+
+      throw AddPlayersException(error = "Unexpected error during insert: ${e.message}")
+    }
   }
 
   private val fantaTeamRowMapper = RowMapper { rs, _ ->
@@ -70,6 +88,24 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
           .filter { id -> id !in players.map { it.playerId } }
           .toSet()
 
+  private fun toDomainPlayer(player: JdbcPlayerDto) =
+      DomainPlayer(id = player.playerId,
+                   atpId = player.atpTourId,
+                   fullName = player.fullName)
+
+  private fun errorPlayers(players: List<JdbcPlayerDto>, batchUpdate: IntArray): String {
+
+    val errorIndexes = batchUpdate
+        .withIndex()
+        .filter { it.value == 0 }
+        .map { it.index }
+
+    return players
+        .filterIndexed { index, _ -> index in errorIndexes }
+        .map { it.playerId }
+        .reduce { acc, s -> "$acc, $s" }
+  }
+
   companion object {
 
     private val RETRIEVE_FANTA_TEAM_QUERY = """
@@ -88,6 +124,12 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
       SELECT *
       FROM PLAYERS 
       WHERE PLAYER_ID IN :playerIds;
+    """.trimIndent()
+
+    private val INSERT_PLAYERS_QUERY = """
+      INSERT INTO TEAMS
+      (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
+      VALUES(:teamId, :playerId, :startingTournamentId);
     """.trimIndent()
   }
 }

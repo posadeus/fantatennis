@@ -122,7 +122,7 @@ class MySqlTeamsRepositoryTest {
     @Test
     fun `exception thrown by any dao`() {
 
-      val expected = AddPlayersError
+      val expected = AddPlayersException("")
 
       every { fantaTeamsDao.findById(A_TEAM_ID) } throws Exception()
 

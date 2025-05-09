@@ -42,7 +42,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
     }
     catch (e: Exception) {
 
-      return AddPlayersError
+      return AddPlayersException("")
     }
   }
 

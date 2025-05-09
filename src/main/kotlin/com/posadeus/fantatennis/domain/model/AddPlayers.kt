@@ -9,7 +9,7 @@ sealed interface AddPlayers {
     data class PlayersNotFound(val missingPlayerIds: Set<String>) : InvalidAddPlayers
     data object AddPlayersTeamNotFound : InvalidAddPlayers
     data object AddPlayersTournamentNotFound : InvalidAddPlayers
-    data object AddPlayersError : InvalidAddPlayers
+    data class AddPlayersException(val error: String) : InvalidAddPlayers, RuntimeException(error)
   }
 }
 

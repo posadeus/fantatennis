@@ -59,7 +59,7 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players fails - internal error`() {
 
-    val addPlayersError = AddPlayersError
+    val addPlayersError = AddPlayersException("")
     val expected = ErrorTeam
 
     every { addPlayersToTeamRepository.add(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns addPlayersError
