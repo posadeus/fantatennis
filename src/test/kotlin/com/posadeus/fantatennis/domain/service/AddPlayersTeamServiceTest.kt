@@ -2,9 +2,11 @@ package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
+import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
+import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.AddPlayersTeamNotFound
+import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.PlayersNotFound
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import io.mockk.every
 import io.mockk.mockk
@@ -59,10 +61,10 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players fails - internal error`() {
 
-    val addPlayersError = AddPlayersException("")
+    val addPlayersError = InvalidAddPlayersException("")
     val expected = ErrorTeam
 
-    every { addPlayersToTeamRepository.add(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns addPlayersError
+    every { addPlayersToTeamRepository.add(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } throws addPlayersError
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
   }

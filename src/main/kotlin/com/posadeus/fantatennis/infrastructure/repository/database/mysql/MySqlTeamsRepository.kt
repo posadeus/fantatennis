@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
+import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
@@ -42,7 +43,7 @@ class MySqlTeamsRepository(private val fantaTeamsDao: FantaTeamsDao,
     }
     catch (e: Exception) {
 
-      return AddPlayersException("")
+      throw InvalidAddPlayersException("")
     }
   }
 

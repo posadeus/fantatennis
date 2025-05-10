@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
+import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
@@ -122,7 +123,7 @@ class MySqlTeamsRepositoryTest {
     @Test
     fun `exception thrown by any dao`() {
 
-      val expected = AddPlayersException("")
+      val expected = InvalidAddPlayersException("")
 
       every { fantaTeamsDao.findById(A_TEAM_ID) } throws Exception()
 

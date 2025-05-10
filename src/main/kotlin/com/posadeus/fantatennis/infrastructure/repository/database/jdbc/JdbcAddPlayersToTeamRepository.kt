@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.AddPlayers
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
+
+  // TODO See if it can be refactored a little
 
   @Transactional
   override fun add(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
@@ -50,11 +53,11 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
             .toSet()
             .let(AddPlayers::ValidAddPlayers)
       else
-        throw AddPlayersException(error = "Players [${errorPlayers(players, batchUpdate)}] not inserted, operation reverted.")
+        throw InvalidAddPlayersException(error = "Players [${errorPlayers(players, batchUpdate)}] not inserted, operation reverted.")
     }
     catch (e: RuntimeException) {
 
-      throw AddPlayersException(error = "Unexpected error during insert: ${e.message}")
+      throw InvalidAddPlayersException(error = "Unexpected error during insert: ${e.message}")
     }
   }
 

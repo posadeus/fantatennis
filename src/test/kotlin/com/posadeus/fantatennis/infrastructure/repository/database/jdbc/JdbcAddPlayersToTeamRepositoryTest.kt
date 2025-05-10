@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
@@ -112,7 +113,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     } returns listOf(aPlayerDto, anotherPlayerDto)
     every { jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } returns intArrayOf(1, 0)
 
-    assertThrowsWithMessage<AddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
+    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
   }
 
   @Test
@@ -145,7 +146,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     } returns listOf(aPlayerDto, anotherPlayerDto)
     every { jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } throws RuntimeException("Error")
 
-    assertThrowsWithMessage<AddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
+    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
   }
 
   @Test
@@ -191,12 +192,12 @@ class JdbcAddPlayersToTeamRepositoryTest {
     assertThat(repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID)).isEqualTo(expected)
   }
 
-  inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
+  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
 
     val exception = assertThrows<T> { block() }
 
     assertThat(exception.message).isEqualTo(expectedMessage)
-}
+  }
 
   companion object {
 
