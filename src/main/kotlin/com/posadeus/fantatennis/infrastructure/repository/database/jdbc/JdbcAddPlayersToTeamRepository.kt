@@ -17,10 +17,10 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
   @Transactional
   override fun add(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
 
-    if (!hasResultsFor(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper))
+    if (!hasResultFor(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper))
       return AddPlayersTeamNotFound
 
-    if (!hasResultsFor(RETRIEVE_TOURNAMENT_QUERY, mapOf("tournamentId" to startingTournamentId), tournamentRowMapper))
+    if (!hasResultFor(RETRIEVE_TOURNAMENT_QUERY, mapOf("tournamentId" to startingTournamentId), tournamentRowMapper))
       return AddPlayersTournamentNotFound
 
     val players = jdbcTemplate.query(RETRIEVE_PLAYERS_QUERY, mapOf("playerIds" to playerIds), playerRowMapper)
@@ -51,7 +51,7 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
     }
   }
 
-  private fun <T> hasResultsFor(query: String, queryParams: Map<String, Int>, rowMapper: RowMapper<T>): Boolean {
+  private fun <T> hasResultFor(query: String, queryParams: Map<String, Int>, rowMapper: RowMapper<T>): Boolean {
     try {
 
       jdbcTemplate.queryForObject(query, queryParams, rowMapper)
