@@ -226,7 +226,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     private val RETRIEVE_PLAYERS_QUERY = """
       SELECT *
       FROM PLAYERS 
-      WHERE PLAYER_ID IN :playerIds;
+      WHERE PLAYER_ID IN (:playerIds);
     """.trimIndent()
 
     private val INSERT_PLAYERS_QUERY = """

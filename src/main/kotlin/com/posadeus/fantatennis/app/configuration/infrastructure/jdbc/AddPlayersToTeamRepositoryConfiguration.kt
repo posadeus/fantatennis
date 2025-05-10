@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 @Configuration
-class AddPlayerToTeamRepositoryConfiguration {
+class AddPlayersToTeamRepositoryConfiguration {
 
   @Bean
-  fun jdbcAddPlayerToTeamRepository(namedParameterJdbcTemplate: NamedParameterJdbcTemplate): AddPlayersToTeamRepository =
+  fun jdbcAddPlayersToTeamRepository(namedParameterJdbcTemplate: NamedParameterJdbcTemplate): AddPlayersToTeamRepository =
       JdbcAddPlayersToTeamRepository(namedParameterJdbcTemplate)
 }
