@@ -14,28 +14,14 @@ import java.time.LocalDate
 
 class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
 
-  // TODO See if it can be refactored a little
-
   @Transactional
   override fun add(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
 
-    try {
-
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper)
-    }
-    catch (e: EmptyResultDataAccessException) {
-
+    if (!hasResultsFor(RETRIEVE_FANTA_TEAM_QUERY, mapOf("teamId" to teamId), fantaTeamRowMapper))
       return AddPlayersTeamNotFound
-    }
 
-    try {
-
-      jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, mapOf("tournamentId" to startingTournamentId), tournamentRowMapper)
-    }
-    catch (e: EmptyResultDataAccessException) {
-
+    if (!hasResultsFor(RETRIEVE_TOURNAMENT_QUERY, mapOf("tournamentId" to startingTournamentId), tournamentRowMapper))
       return AddPlayersTournamentNotFound
-    }
 
     val players = jdbcTemplate.query(RETRIEVE_PLAYERS_QUERY, mapOf("playerIds" to playerIds), playerRowMapper)
 
@@ -44,21 +30,38 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
 
     try {
 
-      val batchValues = playerIds.map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to startingTournamentId) }
-      val batchUpdate = jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, batchValues.toTypedArray())
+      val batchQueryParams = playerIds.map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to startingTournamentId) }
+      val batchUpdateResult = jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, batchQueryParams.toTypedArray())
 
-      if (batchUpdate.all { it == 1 })
+      if (batchUpdateResult.all { it == 1 }) {
+
         return players
             .map(::toDomainPlayer)
             .toSet()
             .let(AddPlayers::ValidAddPlayers)
-      else
-        throw InvalidAddPlayersException(error = "Players [${errorPlayers(players, batchUpdate)}] not inserted, operation reverted.")
+      }
+      else {
+
+        throw InvalidAddPlayersException(error = "Players [${errorPlayers(players, batchUpdateResult)}] not inserted, operation reverted.")
+      }
     }
     catch (e: RuntimeException) {
 
       throw InvalidAddPlayersException(error = "Unexpected error during insert: ${e.message}")
     }
+  }
+
+  private fun <T> hasResultsFor(query: String, queryParams: Map<String, Int>, rowMapper: RowMapper<T>): Boolean {
+    try {
+
+      jdbcTemplate.queryForObject(query, queryParams, rowMapper)
+    }
+    catch (e: EmptyResultDataAccessException) {
+
+      return false
+    }
+
+    return true
   }
 
   private val fantaTeamRowMapper = RowMapper { rs, _ ->
