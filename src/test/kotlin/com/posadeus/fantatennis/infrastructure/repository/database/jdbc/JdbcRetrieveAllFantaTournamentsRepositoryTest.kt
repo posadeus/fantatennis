@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournaments.Invalid
 import com.posadeus.fantatennis.domain.model.FantaTournaments.Valid
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
@@ -21,18 +21,18 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
   @Test
   fun `retrieve all fanta tournaments`() {
 
-    val fantaTournamentDto1 = FantaTournamentDto(id = AN_ID,
-                                                 startingTournamentId = A_TOURNAMENT_ID,
-                                                 endingTournamentId = ANOTHER_TOURNAMENT_ID,
-                                                 year = AN_YEAR)
-    val fantaTournamentDto2 = FantaTournamentDto(id = ANOTHER_ID,
-                                                 startingTournamentId = ANOTHER_TOURNAMENT_ID,
-                                                 endingTournamentId = A_THIRD_TOURNAMENT_ID,
-                                                 year = AN_YEAR)
-    val fantaTournamentDto3 = FantaTournamentDto(id = A_THIRD_ID,
-                                                 startingTournamentId = A_TOURNAMENT_ID,
-                                                 endingTournamentId = A_THIRD_TOURNAMENT_ID,
-                                                 year = ANOTHER_YEAR)
+    val fantaTournamentDto1 = JdbcFantaTournamentDto(id = AN_ID,
+                                                     startingTournamentId = A_TOURNAMENT_ID,
+                                                     endingTournamentId = ANOTHER_TOURNAMENT_ID,
+                                                     year = AN_YEAR)
+    val fantaTournamentDto2 = JdbcFantaTournamentDto(id = ANOTHER_ID,
+                                                     startingTournamentId = ANOTHER_TOURNAMENT_ID,
+                                                     endingTournamentId = A_THIRD_TOURNAMENT_ID,
+                                                     year = AN_YEAR)
+    val fantaTournamentDto3 = JdbcFantaTournamentDto(id = A_THIRD_ID,
+                                                     startingTournamentId = A_TOURNAMENT_ID,
+                                                     endingTournamentId = A_THIRD_TOURNAMENT_ID,
+                                                     year = ANOTHER_YEAR)
     val fantaTournaments = listOf(fantaTournamentDto1, fantaTournamentDto2, fantaTournamentDto3)
 
     val validFantaTournament1 = ValidFantaTournament(id = AN_ID,
@@ -50,7 +50,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
 
     val expected = Valid(setOf(validFantaTournament1, validFantaTournament2, validFantaTournament3))
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } returns fantaTournaments
+    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<JdbcFantaTournamentDto>>()) } returns fantaTournaments
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -60,7 +60,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
 
     val expected = Valid(emptySet())
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } returns emptyList()
+    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<JdbcFantaTournamentDto>>()) } returns emptyList()
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -70,7 +70,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
 
     val expected = Invalid
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<FantaTournamentDto>>()) } throws RuntimeException("Scary error!")
+    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<JdbcFantaTournamentDto>>()) } throws RuntimeException("Scary error!")
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }

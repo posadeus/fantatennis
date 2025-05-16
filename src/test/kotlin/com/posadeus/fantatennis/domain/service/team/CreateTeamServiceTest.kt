@@ -3,7 +3,7 @@ package com.posadeus.fantatennis.domain.service.team
 import com.posadeus.fantatennis.controller.model.team.TeamCreatedDto
 import com.posadeus.fantatennis.controller.model.team.TeamToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
-import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test
 class CreateTeamServiceTest {
 
   private val fantaTeamsRepository: FantaTeamsRepository = mockk()
-  private val fantaTournamentsRepository: FantaTournamentsRepository = mockk()
+  private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentRepository = mockk()
 
-  private val service = CreateTeamService(fantaTeamsRepository, fantaTournamentsRepository)
+  private val service = CreateTeamService(fantaTeamsRepository, retrieveFantaTournamentsRepository)
 
   @Test
   fun `creation succeeds with already present fanta tournament`() {
@@ -31,12 +31,12 @@ class CreateTeamServiceTest {
 
     val expected: TeamCreation = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = "AN_OWNER_ID"))
 
-    every { fantaTournamentsRepository.retrieve(100) } returns fantaTournament
+    every { retrieveFantaTournamentsRepository.retrieve(100) } returns fantaTournament
     every { fantaTeamsRepository.createTeam("AN_OWNER_ID", fantaTournament) } returns fantaTeam
 
     assertThat(service.create(dto)).isEqualTo(expected)
 
-    verify(exactly = 1) { fantaTournamentsRepository.retrieve(100) }
+    verify(exactly = 1) { retrieveFantaTournamentsRepository.retrieve(100) }
     verify(exactly = 1) { fantaTeamsRepository.createTeam("AN_OWNER_ID", fantaTournament) }
   }
 
@@ -49,11 +49,11 @@ class CreateTeamServiceTest {
 
     val expected: TeamCreation = ErrorTeamCreation
 
-    every { fantaTournamentsRepository.retrieve(A_NOT_EXISTING_TOURNAMENT_ID) } returns fantaTournament
+    every { retrieveFantaTournamentsRepository.retrieve(A_NOT_EXISTING_TOURNAMENT_ID) } returns fantaTournament
 
     assertThat(service.create(dto)).isEqualTo(expected)
 
-    verify(exactly = 1) { fantaTournamentsRepository.retrieve(A_NOT_EXISTING_TOURNAMENT_ID) }
+    verify(exactly = 1) { retrieveFantaTournamentsRepository.retrieve(A_NOT_EXISTING_TOURNAMENT_ID) }
     verify { fantaTeamsRepository wasNot called }
   }
 
@@ -64,7 +64,7 @@ class CreateTeamServiceTest {
 
     val expected = ErrorTeamCreation
 
-    every { fantaTournamentsRepository.retrieve(A_TOURNAMENT_ID) } returns A_VALID_FANTA_TOURNAMENT
+    every { retrieveFantaTournamentsRepository.retrieve(A_TOURNAMENT_ID) } returns A_VALID_FANTA_TOURNAMENT
     every { fantaTeamsRepository.createTeam(AN_OWNER_ID, A_VALID_FANTA_TOURNAMENT) } returns FantaTeamError
 
     assertThat(service.create(request)).isEqualTo(expected)

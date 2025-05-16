@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.infrastructure
 
 import com.posadeus.fantatennis.domain.model.FantaTournament
 
-interface FantaTournamentsRepository {
+interface RetrieveFantaTournamentRepository {
 
-  fun retrieve(tournamentId: Int): FantaTournament
+  fun retrieve(fantaTournamentId: Int): FantaTournament
 }
