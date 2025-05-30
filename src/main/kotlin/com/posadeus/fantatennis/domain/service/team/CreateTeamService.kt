@@ -2,23 +2,29 @@ package com.posadeus.fantatennis.domain.service.team
 
 import com.posadeus.fantatennis.controller.model.team.TeamCreatedDto
 import com.posadeus.fantatennis.controller.model.team.TeamToCreateDto
+import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.*
+import org.slf4j.LoggerFactory
 
 class CreateTeamService(private val createTeamRepository: CreateTeamRepository) {
 
   fun create(dto: TeamToCreateDto): TeamCreation =
-      createTeamRepository.create(dto.ownerId, dto.tournamentId)
-          .let(::toTeamCreation)
+      try {
+        createTeamRepository.create(dto.ownerId, dto.tournamentId)
+          .let(::toTeamCreated)
+      }
+      catch (e: FantaTeamCreationException) {
 
-  private fun toTeamCreation(fantaTeam: FantaTeam): TeamCreation =
-      when (fantaTeam) {
-
-        is FantaTeamOk -> toTeamCreated(fantaTeam)
-        is FantaTeamError -> ErrorTeamCreation
+        ErrorTeamCreation.also { LOGGER.error(e.message) }
       }
 
-  private fun toTeamCreated(fantaTeam: FantaTeamOk): TeamCreated =
+  private fun toTeamCreated(fantaTeam: FantaTeam): TeamCreated =
       TeamCreatedDto(id = fantaTeam.id, ownerId = fantaTeam.ownerId)
           .let(::TeamCreated)
+
+  companion object {
+
+    private val LOGGER = LoggerFactory.getLogger(CreateTeamService::class.java)
+  }
 }

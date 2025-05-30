@@ -1,10 +1,10 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FantaTeam
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.exception.NoInsertException
-import org.slf4j.LoggerFactory
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -26,13 +26,11 @@ class JdbcCreateTeamRepository(private val jdbcTemplate: JdbcTemplate,
       }
       catch (e: EmptyResultDataAccessException) {
 
-        LOGGER.error("Fanta Tournament $fantaTournamentId not found")
-        FantaTeamError
+        throw FantaTeamCreationException("Fanta Tournament $fantaTournamentId not found")
       }
       catch (e: Exception) {
 
-        LOGGER.error("Error during DB operation ${e.message}")
-        FantaTeamError
+        throw FantaTeamCreationException("Error during DB operation ${e.message}")
       }
 
   private val rowMapper = RowMapper { rs, _ ->
@@ -42,31 +40,23 @@ class JdbcCreateTeamRepository(private val jdbcTemplate: JdbcTemplate,
                            year = rs.getInt("TOURNAMENT_YEAR"))
   }
 
-  private fun createTeam(ownerId: String, fantaTournamentId: Int): FantaTeam =
-      try {
+  private fun createTeam(ownerId: String, fantaTournamentId: Int): FantaTeam {
 
-        val keyHolder = GeneratedKeyHolder()
-        val sqlParameterSource = MapSqlParameterSource().addValue("ownerId", ownerId)
-        val rows = namedParameterJdbcTemplate.update(CREATE_QUERY_FANTA_TEAMS, sqlParameterSource, keyHolder)
+    val keyHolder = GeneratedKeyHolder()
+    val sqlParameterSource = MapSqlParameterSource().addValue("ownerId", ownerId)
+    val rows = namedParameterJdbcTemplate.update(CREATE_QUERY_FANTA_TEAMS, sqlParameterSource, keyHolder)
 
-        if (rows == 0 || keyHolder.key == null)
-          throw NoInsertException("Insert failed or no key generated on FANTA_TEAMS")
+    if (rows == 0 || keyHolder.key == null)
+      throw NoInsertException("Insert failed or no key generated on FANTA_TEAMS")
 
-        val fantaTeamId = keyHolder.key!!.toInt()
+    val fantaTeamId = keyHolder.key!!.toInt()
 
-        jdbcTemplate.update(CREATE_QUERY_FANTA_TOURNAMENTS_TEAMS, fantaTournamentId, fantaTeamId)
+    jdbcTemplate.update(CREATE_QUERY_FANTA_TOURNAMENTS_TEAMS, fantaTournamentId, fantaTeamId)
 
-        FantaTeamOk(id = fantaTeamId, ownerId = ownerId)
-      }
-      catch (e: RuntimeException) {
-
-        LOGGER.error("Error during DB operation ${e.message}")
-        FantaTeamError
-      }
+    return FantaTeam(id = fantaTeamId, ownerId = ownerId)
+  }
 
   companion object {
-
-    private val LOGGER = LoggerFactory.getLogger(JdbcCreateTeamRepository::class.java)
 
     private val RETRIEVE_FANTA_TOURNAMENT_QUERY = """
       SELECT *

@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.domain.service.team
 
 import com.posadeus.fantatennis.controller.model.team.TeamCreatedDto
 import com.posadeus.fantatennis.controller.model.team.TeamToCreateDto
+import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.*
 import io.mockk.*
@@ -19,7 +20,7 @@ class CreateTeamServiceTest {
 
     val dto = TeamToCreateDto(ownerId = "AN_OWNER_ID", tournamentId = 100)
 
-    val fantaTeam = FantaTeamOk(id = 1, ownerId = "AN_OWNER_ID")
+    val fantaTeam = FantaTeam(id = 1, ownerId = "AN_OWNER_ID")
 
     val expected: TeamCreation = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = "AN_OWNER_ID"))
 
@@ -37,7 +38,7 @@ class CreateTeamServiceTest {
 
     val expected = ErrorTeamCreation
 
-    every { createTeamRepository.create(AN_OWNER_ID, A_TOURNAMENT_ID) } returns FantaTeamError
+    every { createTeamRepository.create(AN_OWNER_ID, A_TOURNAMENT_ID) } throws FantaTeamCreationException("Scary error")
 
     assertThat(service.create(request)).isEqualTo(expected)
   }
