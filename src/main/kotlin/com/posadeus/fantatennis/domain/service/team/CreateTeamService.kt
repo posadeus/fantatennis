@@ -2,24 +2,13 @@ package com.posadeus.fantatennis.domain.service.team
 
 import com.posadeus.fantatennis.controller.model.team.TeamCreatedDto
 import com.posadeus.fantatennis.controller.model.team.TeamToCreateDto
-import com.posadeus.fantatennis.domain.infrastructure.FantaTeamsRepository
-import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentRepository
+import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
-import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 
-class CreateTeamService(private val fantaTeamsRepository: FantaTeamsRepository,
-                        private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentRepository) {
+class CreateTeamService(private val createTeamRepository: CreateTeamRepository) {
 
   fun create(dto: TeamToCreateDto): TeamCreation =
-      when (val tournament = retrieveFantaTournamentsRepository.retrieve(dto.tournamentId)) {
-
-        is ValidFantaTournament -> createTeam(dto.ownerId, tournament)
-        is InvalidFantaTournament -> ErrorTeamCreation
-      }
-
-  private fun createTeam(ownerId: String, tournament: ValidFantaTournament): TeamCreation =
-      fantaTeamsRepository.createTeam(ownerId, tournament)
+      createTeamRepository.create(dto.ownerId, dto.tournamentId)
           .let(::toTeamCreation)
 
   private fun toTeamCreation(fantaTeam: FantaTeam): TeamCreation =

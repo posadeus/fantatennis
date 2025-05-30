@@ -1,9 +1,9 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
-import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.RetrieveFantaTournamentRepositoryConfiguration
-import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentRepository
-import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
-import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.CreateTeamRepositoryConfiguration
+import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
+import com.posadeus.fantatennis.domain.model.FantaTeamError
+import com.posadeus.fantatennis.domain.model.FantaTeamOk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -16,22 +16,22 @@ import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@Import(IntegrationTestConfiguration::class, RetrieveFantaTournamentRepositoryConfiguration::class)
-class JdbcRetrieveFantaTournamentRepositoryIT {
+@Import(IntegrationTestConfiguration::class, CreateTeamRepositoryConfiguration::class)
+class JdbcCreateTeamRepositoryIT {
 
   @Autowired
   private lateinit var namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 
   @Autowired
-  private lateinit var repository: RetrieveFantaTournamentRepository
+  private lateinit var repository: CreateTeamRepository
 
   @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
   @Test
-  fun `fanta tournament not found`() {
+  fun `team creation fails due to missing fanta tournament`() {
 
-    val expected = InvalidFantaTournament
+    val expected = FantaTeamError
 
-    assertThat(repository.retrieve(1)).isEqualTo(expected)
+    assertThat(repository.create(AN_OWNER_ID, 1)).isEqualTo(expected)
   }
 
   @SqlGroup(
@@ -39,13 +39,15 @@ class JdbcRetrieveFantaTournamentRepositoryIT {
       Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
   )
   @Test
-  fun `fanta tournament found`() {
+  fun `team creation works`() {
 
-    val expected = ValidFantaTournament(id = 1,
-                                        startingTournamentId = 1,
-                                        endingTournamentId = 3,
-                                        tournamentYear = 2025)
+    val expected = FantaTeamOk(id = 9, ownerId = AN_OWNER_ID)
 
-    assertThat(repository.retrieve(1)).isEqualTo(expected)
+    assertThat(repository.create(AN_OWNER_ID, 1)).isEqualTo(expected)
+  }
+
+  companion object {
+
+    private const val AN_OWNER_ID = "AN_OWNER_ID"
   }
 }

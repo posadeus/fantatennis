@@ -20,10 +20,8 @@ class TeamServiceConfiguration {
                           mySqlPlayerPointsRepository)
 
   @Bean
-  fun createTeamService(mySqlFantaTeamsRepository: FantaTeamsRepository,
-                        jdbcRetrieveFantaTournamentRepository : RetrieveFantaTournamentRepository): CreateTeamService =
-      CreateTeamService(mySqlFantaTeamsRepository,
-                        jdbcRetrieveFantaTournamentRepository)
+  fun createTeamService(jdbcCreateTeamRepository: CreateTeamRepository): CreateTeamService =
+      CreateTeamService(jdbcCreateTeamRepository)
 
   @Bean
   fun addPlayersTeamService(jdbcAddPlayersToTeamRepository: AddPlayersToTeamRepository): AddPlayersTeamService =
