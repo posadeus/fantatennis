@@ -3,11 +3,8 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.FantaTeam
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.exception.NoInsertException
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
@@ -16,61 +13,61 @@ import org.springframework.transaction.annotation.Transactional
 class JdbcCreateTeamRepository(private val jdbcTemplate: JdbcTemplate,
                                private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : CreateTeamRepository {
 
-                                 // TODO refactor
   @Transactional
   override fun create(ownerId: String, fantaTournamentId: Int): FantaTeam =
       try {
 
-        namedParameterJdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, mapOf("id" to fantaTournamentId), rowMapper)
-        createTeam(ownerId, fantaTournamentId)
-      }
-      catch (e: EmptyResultDataAccessException) {
+        verifyExistenceOf(fantaTournamentId)
+        val fantaTeamId = createFantaTeamsRecord(ownerId)
+        createFantaTournamentsTeamsRecord(fantaTournamentId, fantaTeamId)
 
-        throw FantaTeamCreationException("Fanta Tournament $fantaTournamentId not found")
+        FantaTeam(id = fantaTeamId, ownerId = ownerId)
       }
       catch (e: Exception) {
 
         throw FantaTeamCreationException("Error during DB operation ${e.message}")
       }
 
-  private val rowMapper = RowMapper { rs, _ ->
-    JdbcFantaTournamentDto(id = rs.getInt("FANTA_TOURNAMENT_ID"),
-                           startingTournamentId = rs.getInt("STARTING_TOURNAMENT"),
-                           endingTournamentId = rs.getInt("ENDING_TOURNAMENT"),
-                           year = rs.getInt("TOURNAMENT_YEAR"))
+  private fun verifyExistenceOf(fantaTournamentId: Int) {
+
+      namedParameterJdbcTemplate.queryForObject(COUNT_FANTA_TOURNAMENT_QUERY, mapOf("id" to fantaTournamentId), Long::class.java)
+      ?: throw IllegalArgumentException("Fanta Tournament $fantaTournamentId not found")
   }
 
-  private fun createTeam(ownerId: String, fantaTournamentId: Int): FantaTeam {
+  private fun createFantaTeamsRecord(ownerId: String): Int {
 
     val keyHolder = GeneratedKeyHolder()
-    val sqlParameterSource = MapSqlParameterSource().addValue("ownerId", ownerId)
-    val rows = namedParameterJdbcTemplate.update(CREATE_QUERY_FANTA_TEAMS, sqlParameterSource, keyHolder)
+    val rows = namedParameterJdbcTemplate.update(CREATE_FANTA_TEAMS_QUERY,
+                                                 MapSqlParameterSource().addValue("ownerId", ownerId),
+                                                 keyHolder,
+                                                 arrayOf("TEAM_ID"))
 
     if (rows == 0 || keyHolder.key == null)
       throw NoInsertException("Insert failed or no key generated on FANTA_TEAMS")
 
-    val fantaTeamId = keyHolder.key!!.toInt()
+    return keyHolder.key!!.toInt()
+  }
 
-    jdbcTemplate.update(CREATE_QUERY_FANTA_TOURNAMENTS_TEAMS, fantaTournamentId, fantaTeamId)
+  private fun createFantaTournamentsTeamsRecord(fantaTournamentId: Int, fantaTeamId: Int) {
 
-    return FantaTeam(id = fantaTeamId, ownerId = ownerId)
+    jdbcTemplate.update(CREATE_FANTA_TOURNAMENTS_TEAMS_QUERY, fantaTournamentId, fantaTeamId)
   }
 
   companion object {
 
-    private val RETRIEVE_FANTA_TOURNAMENT_QUERY = """
-      SELECT *
+    private val COUNT_FANTA_TOURNAMENT_QUERY = """
+      SELECT COUNT(*)
       FROM FANTA_TOURNAMENTS 
       WHERE FANTA_TOURNAMENT_ID = :id;
     """.trimIndent()
 
-    private val CREATE_QUERY_FANTA_TEAMS = """
+    private val CREATE_FANTA_TEAMS_QUERY = """
       INSERT INTO FANTA_TEAMS
       (OWNER_ID)
       VALUES(:ownerId);
     """.trimIndent()
 
-    private val CREATE_QUERY_FANTA_TOURNAMENTS_TEAMS = """
+    private val CREATE_FANTA_TOURNAMENTS_TEAMS_QUERY = """
       INSERT INTO FANTA_TOURNAMENTS_TEAMS
       (FANTA_TOURNAMENT_ID, TEAM_ID)
       VALUES(?, ?);
