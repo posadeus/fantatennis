@@ -41,7 +41,8 @@ class JdbcRetrieveFantaTeamRepositoryTest {
     val fantaTournamentsTeamsDto = FantaTournamentsTeamsDto(teamId = A_TEAM_ID,
                                                             startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                             endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                            tournamentYear = A_TOURNAMENT_YEAR)
+                                                            tournamentYear = A_TOURNAMENT_YEAR,
+                                                            ownerId = AN_OWNER_ID)
     val pointsParams = mapOf("tournamentYear" to A_TOURNAMENT_YEAR,
                              "startingTournamentId" to A_STARTING_TOURNAMENT_ID,
                              "endingTournamentId" to AN_ENDING_TOURNAMENT_ID,
@@ -66,13 +67,14 @@ class JdbcRetrieveFantaTeamRepositoryTest {
     val fantaTournamentsTeamsDto = FantaTournamentsTeamsDto(teamId = A_TEAM_ID,
                                                             startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                             endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                            tournamentYear = A_TOURNAMENT_YEAR)
+                                                            tournamentYear = A_TOURNAMENT_YEAR,
+                                                            ownerId = AN_OWNER_ID)
     val pointsParams = mapOf("tournamentYear" to A_TOURNAMENT_YEAR,
                              "startingTournamentId" to A_STARTING_TOURNAMENT_ID,
                              "endingTournamentId" to AN_ENDING_TOURNAMENT_ID,
                              "teamId" to A_TEAM_ID)
 
-    val expected = FoundTeam(team = TeamDto(owner = "", players = emptyList(), totalScore = 0.00))
+    val expected = FoundTeam(team = TeamDto(owner = AN_OWNER_ID, players = emptyList(), totalScore = 0.00))
 
     every {
       jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<FantaTournamentsTeamsDto>>())
@@ -89,7 +91,8 @@ class JdbcRetrieveFantaTeamRepositoryTest {
     val fantaTournamentsTeamsDto = FantaTournamentsTeamsDto(teamId = A_TEAM_ID,
                                                             startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                             endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                            tournamentYear = A_TOURNAMENT_YEAR)
+                                                            tournamentYear = A_TOURNAMENT_YEAR,
+                                                            ownerId = AN_OWNER_ID)
     val pointsParams = mapOf("tournamentYear" to A_TOURNAMENT_YEAR,
                              "startingTournamentId" to A_STARTING_TOURNAMENT_ID,
                              "endingTournamentId" to AN_ENDING_TOURNAMENT_ID,
@@ -98,7 +101,7 @@ class JdbcRetrieveFantaTeamRepositoryTest {
                                      TeamPlayerPointsDto(playerId = ANOTHER_PLAYER_ID, playerName = ANOTHER_PLAYER_NAME, totalScore = 1.00),
                                      TeamPlayerPointsDto(playerId = A_THIRD_PLAYER_ID, playerName = A_THIRD_PLAYER_NAME, totalScore = 7.00))
 
-    val expected = FoundTeam(team = TeamDto(owner = "",
+    val expected = FoundTeam(team = TeamDto(owner = AN_OWNER_ID,
                                             players = listOf(TeamPlayerDto(fullName = A_PLAYER_NAME, fantaPoints = 12.00),
                                                              TeamPlayerDto(fullName = ANOTHER_PLAYER_NAME, fantaPoints = 1.00),
                                                              TeamPlayerDto(fullName = A_THIRD_PLAYER_NAME, fantaPoints = 7.00)),
@@ -124,23 +127,25 @@ class JdbcRetrieveFantaTeamRepositoryTest {
     private const val A_PLAYER_NAME = "A_PLAYER_NAME"
     private const val ANOTHER_PLAYER_NAME = "ANOTHER_PLAYER_NAME"
     private const val A_THIRD_PLAYER_NAME = "A_THIRD_PLAYER_NAME"
+    private const val AN_OWNER_ID = "AN_OWNER_ID"
 
     private val RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY = """
-      SELECT ftt.TEAM_ID, ft.STARTING_TOURNAMENT, ft.ENDING_TOURNAMENT, ft.TOURNAMENT_YEAR
+      SELECT ftt.TEAM_ID, ft.STARTING_TOURNAMENT, ft.ENDING_TOURNAMENT, ft.TOURNAMENT_YEAR, ft2.OWNER_ID
       FROM FANTA_TOURNAMENTS_TEAMS ftt
       LEFT JOIN FANTA_TOURNAMENTS ft ON ft.FANTA_TOURNAMENT_ID = ftt.FANTA_TOURNAMENT_ID
+      LEFT JOIN FANTA_TEAMS ft2 ON ft2.TEAM_ID = ftt.TEAM_ID
       WHERE ftt.TEAM_ID = :id;
     """.trimIndent()
 
     private val RETRIEVE_PLAYER_POINTS_QUERY = """
       SELECT pp.PLAYER_ID, p.FULL_NAME, SUM(pp.FANTA_POINTS) AS TOTAL_POINTS
-      FROM fanta_tennis_QA.PLAYERS_POINTS pp 
-      LEFT JOIN fanta_tennis_QA.PLAYERS p ON p.PLAYER_ID = pp.PLAYER_ID
+      FROM PLAYERS_POINTS pp 
+      LEFT JOIN PLAYERS p ON p.PLAYER_ID = pp.PLAYER_ID
       WHERE pp.TOURNAMENT_YEAR = :tournamentYear
       AND pp.TOURNAMENT_ID BETWEEN :startingTournamentId AND :endingTournamentId
       AND pp.PLAYER_ID IN (
         SELECT t.PLAYER_ID
-        FROM fanta_tennis_QA.TEAMS t
+        FROM TEAMS t
         WHERE t.TEAM_ID = :teamId
       )
       GROUP BY pp.PLAYER_ID

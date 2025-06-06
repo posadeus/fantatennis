@@ -5,20 +5,20 @@ import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.FantaTeam
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @Import(IntegrationTestConfiguration::class, CreateTeamRepositoryConfiguration::class)
-@TestMethodOrder(OrderAnnotation::class)
 class JdbcCreateTeamRepositoryIT {
 
   @Autowired
@@ -29,7 +29,6 @@ class JdbcCreateTeamRepositoryIT {
 
   @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
   @Test
-  @Order(1)
   fun `team creation fails due to missing fanta tournament`() {
 
     assertThrows<FantaTeamCreationException> { repository.create(AN_OWNER_ID, 1) }
@@ -40,7 +39,6 @@ class JdbcCreateTeamRepositoryIT {
       Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
   )
   @Test
-  @Order(2)
   fun `team creation fails due to insert error on first insert query`() {
 
     val tooLongOwnerId = "A".repeat(101)
@@ -53,7 +51,6 @@ class JdbcCreateTeamRepositoryIT {
       Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
   )
   @Test
-  @Order(3)
   fun `team creation works`() {
 
     val expected = FantaTeam(id = 9, ownerId = AN_OWNER_ID)
@@ -63,10 +60,10 @@ class JdbcCreateTeamRepositoryIT {
 
   @SqlGroup(
       Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/alter-fanta_tournaments_teams-to-have-error.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/alter-fanta_tournaments_teams-to-have-error.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/drop-constraints.sql"], executionPhase = AFTER_TEST_METHOD)
   )
   @Test
-  @Order(4) // Should be the last because it alters a table definition to test an error scenario
   fun `team creation fails due to error on fantaTournamentsTeams insert and verify transaction have been rollback`() {
 
     assertThrows<FantaTeamCreationException> { repository.create(AN_OWNER_ID, 1) }
