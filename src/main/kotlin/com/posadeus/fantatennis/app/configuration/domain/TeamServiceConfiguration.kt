@@ -14,12 +14,8 @@ import org.springframework.context.annotation.Configuration
 class TeamServiceConfiguration {
 
   @Bean
-  fun retrieveTeamService(mySqlFantaTournamentsTeamsRepository: FantaTournamentsTeamsRepository,
-                          mySqlPlayerPointsRepository: PlayerPointsRepository,
-                          jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository): RetrieveTeamService =
-      RetrieveTeamService(mySqlFantaTournamentsTeamsRepository,
-                          mySqlPlayerPointsRepository,
-                          jdbcRetrieveFantaTeamRepository)
+  fun retrieveTeamService(jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository): RetrieveTeamService =
+      RetrieveTeamService(jdbcRetrieveFantaTeamRepository)
 
   @Bean
   fun createTeamService(jdbcCreateTeamRepository: CreateTeamRepository): CreateTeamService =

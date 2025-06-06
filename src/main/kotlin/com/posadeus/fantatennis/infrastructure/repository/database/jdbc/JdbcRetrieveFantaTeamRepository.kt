@@ -4,8 +4,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.FantaTournamentsTeamsDto
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.TeamPlayerPointsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentsTeamsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TeamPlayerPointsDto
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

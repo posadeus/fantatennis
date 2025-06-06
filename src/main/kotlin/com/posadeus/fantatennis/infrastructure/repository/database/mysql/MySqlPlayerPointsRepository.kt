@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.mysql
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
+import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 
 class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao) : PlayerPointsRepository {
@@ -13,24 +13,6 @@ class MySqlPlayerPointsRepository(private val playersPointsDao: PlayersPointsDao
         .let(::toPlayersPointsEntities)
         .let { playersPointsDao.saveAll(it) }
   }
-
-  override fun retrieve(tournamentByTeam: FoundTournamentByTeam): TeamOrderedPlayerPoints =
-      tournamentByTeam
-          .let(::toTeamTournamentDto)
-          .let { playersPointsDao.findPlayersPointsByTeamTournamentDto(it) }
-          .map(::toPlayerPoints)
-          .let(::TeamOrderedPlayerPoints)
-
-  private fun toPlayerPoints(teamPlayerPoints: TeamPlayerPointsDto): PlayerPoints =
-      PlayerPoints(playerId = teamPlayerPoints.playerId,
-                   playerName = teamPlayerPoints.playerName,
-                   totalPoints = teamPlayerPoints.totalScore)
-
-  private fun toTeamTournamentDto(tournamentByTeam: FoundTournamentByTeam): TeamTournamentDto =
-      TeamTournamentDto(teamId = tournamentByTeam.teamId,
-                        startingTournamentId = tournamentByTeam.startingTournamentId,
-                        endingTournamentId = tournamentByTeam.endingTournamentId,
-                        tournamentYear = tournamentByTeam.tournamentYear)
 
   private fun toPlayersPointsEntities(players: Set<AtpPlayer>): Set<PlayersPointsEntity> =
       players

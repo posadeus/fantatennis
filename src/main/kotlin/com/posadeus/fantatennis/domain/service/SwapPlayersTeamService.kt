@@ -15,7 +15,7 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
                              private val teamsRepository: TeamsRepository) {
 
   fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
-      when (val team = retrieveTeamService.getTeam(teamId)) {
+      when (val team = retrieveTeamService.retrieve(teamId)) {
 
         is FoundTeam -> {
 
@@ -34,7 +34,7 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
               }
               ?.let {
                 when (toSwapCommand(teamId, playersToSwap).let(teamsRepository::swapPlayers)) {
-                  is SwapCompleted -> retrieveTeamService.getTeam(teamId)
+                  is SwapCompleted -> retrieveTeamService.retrieve(teamId)
                   is SwapFailed -> ErrorTeam
                 }
               }

@@ -62,7 +62,7 @@ class SwapPlayersTeamServiceTest {
                              totalScore = 40.0)
     val expected = FoundTeam(newTeamDto)
 
-    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto) andThen expected
+    every { retrieveTeamService.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto) andThen expected
     every { playerService.allPlayers() } returns allPlayers
     every { retrieveTournamentsService.retrieveAll() } returns allTournaments
     every { teamsRepository.swapPlayers(swapCommand) } returns SwapCompleted
@@ -75,7 +75,7 @@ class SwapPlayersTeamServiceTest {
 
     val expected = TeamIdNotFoundTeam
 
-    every { retrieveTeamService.getTeam(123) } returns TeamIdNotFoundTeam
+    every { retrieveTeamService.retrieve(123) } returns TeamIdNotFoundTeam
 
     assertThat(service.swap(123, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
 
@@ -100,7 +100,7 @@ class SwapPlayersTeamServiceTest {
 
     val expected = ErrorTeam
 
-    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { retrieveTeamService.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { playerService.allPlayers() } returns emptySet()
 
     assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
@@ -129,7 +129,7 @@ class SwapPlayersTeamServiceTest {
 
     val expected = ErrorTeam
 
-    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { retrieveTeamService.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { playerService.allPlayers() } returns notAllPlayersFound
 
     assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
@@ -159,7 +159,7 @@ class SwapPlayersTeamServiceTest {
 
     val expected = ErrorTeam
 
-    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { retrieveTeamService.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { playerService.allPlayers() } returns allPlayers
     every { retrieveTournamentsService.retrieveAll() } returns notAllTournamentsFound
 
@@ -193,7 +193,7 @@ class SwapPlayersTeamServiceTest {
 
     val expected = ErrorTeam
 
-    every { retrieveTeamService.getTeam(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { retrieveTeamService.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { playerService.allPlayers() } returns allPlayers
     every { retrieveTournamentsService.retrieveAll() } returns allTournaments
     every { teamsRepository.swapPlayers(swapCommand) } returns SwapFailed

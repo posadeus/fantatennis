@@ -1,9 +1,8 @@
 package com.posadeus.fantatennis.domain.infrastructure
 
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.AtpPlayer
 
 interface PlayerPointsRepository {
 
   fun save(players: Set<AtpPlayer>)
-  fun retrieve(tournamentByTeam: FoundTournamentByTeam): TeamOrderedPlayerPoints
 }

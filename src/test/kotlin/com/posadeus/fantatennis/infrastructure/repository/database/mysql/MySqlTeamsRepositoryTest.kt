@@ -11,8 +11,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.*
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import java.util.Optional.empty
 import java.util.Optional.of
 
@@ -123,11 +122,9 @@ class MySqlTeamsRepositoryTest {
     @Test
     fun `exception thrown by any dao`() {
 
-      val expected = InvalidAddPlayersException("")
-
       every { fantaTeamsDao.findById(A_TEAM_ID) } throws Exception()
 
-      assertThat(repository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThrows<InvalidAddPlayersException> { repository.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID) }
     }
   }
 

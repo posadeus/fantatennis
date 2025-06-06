@@ -32,7 +32,7 @@ class TeamController(private val service: RetrieveTeamService,
       }
 
   override fun retrieve(teamId: Int): ResponseEntity<TeamDto> =
-      when (val team = service.getTeam(teamId)) { // TODO change with retrieve method
+      when (val team = service.retrieve(teamId)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)
         is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
