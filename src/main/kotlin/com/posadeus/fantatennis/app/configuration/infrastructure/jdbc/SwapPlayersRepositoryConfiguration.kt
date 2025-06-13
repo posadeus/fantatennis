@@ -6,13 +6,16 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcSwap
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 @Configuration
 class SwapPlayersRepositoryConfiguration {
 
   @Bean
   fun jdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository,
-                                jdbcTemplate: JdbcTemplate): SwapPlayersRepository =
+                                jdbcTemplate: JdbcTemplate,
+                                namedParameterJdbcTemplate: NamedParameterJdbcTemplate): SwapPlayersRepository =
       JdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository,
-                                jdbcTemplate)
+                                jdbcTemplate,
+                                namedParameterJdbcTemplate)
 }

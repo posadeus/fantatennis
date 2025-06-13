@@ -7,11 +7,12 @@ import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
-import java.sql.Types.INTEGER
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.time.LocalDate
 
 class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
-                                private val jdbcTemplate: JdbcTemplate) : SwapPlayersRepository {
+                                private val jdbcTemplate: JdbcTemplate,
+                                private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : SwapPlayersRepository {
 
   override fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
       when (val fantaTeam = retrieveFantaTeamRepository.retrieve(teamId)) {
@@ -26,9 +27,10 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
 
             if (areAllRequestedTournamentsPresent(allTournaments.map { it.tournamentId }, playersToSwap)) {
 
-              val team = jdbcTemplate.query(RETRIEVE_TEAM_BY_ID_QUERY, arrayOf(teamId), intArrayOf(INTEGER), teamRowMapper)
+              val teamQueryParams = mapOf("teamId" to teamId, "playerIds" to playersToSwap.remove.playerIds)
+              val team = namedParameterJdbcTemplate.query(RETRIEVE_TEAM_PK_ID_QUERY, teamQueryParams, teamRowMapper)
 
-              if (team.isEmpty()) ErrorTeam
+              if (team.size != playersToSwap.remove.playerIds.size) ErrorTeam
               else fantaTeam
             }
             else ErrorTeam
@@ -87,10 +89,11 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
       FROM TOURNAMENTS t;
     """.trimIndent()
 
-    private val RETRIEVE_TEAM_BY_ID_QUERY = """
+    private val RETRIEVE_TEAM_PK_ID_QUERY = """
       SELECT *
       FROM TEAMS t
-      WHERE t.TEAM_ID = ?;
+      WHERE t.TEAM_ID = :teamId
+      AND t.PLAYER_ID IN (:playerIds);
     """.trimIndent()
   }
 }

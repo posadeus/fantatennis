@@ -6,20 +6,24 @@ import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTeamDto.aJdbcTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
-import java.sql.Types.INTEGER
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcSwapPlayersRepositoryTest {
 
   private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
   private val jdbcTemplate: JdbcTemplate = mockk()
+  private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = mockk()
 
-  private val repository: SwapPlayersRepository = JdbcSwapPlayersRepository(retrieveFantaTeamRepository, jdbcTemplate)
+  private val repository: SwapPlayersRepository = JdbcSwapPlayersRepository(retrieveFantaTeamRepository,
+                                                                            jdbcTemplate,
+                                                                            namedParameterJdbcTemplate)
 
   @Test
   fun `swap fails due to team not found`() {
@@ -115,9 +119,9 @@ class JdbcSwapPlayersRepositoryTest {
   @Test
   fun `swap fails due to fanta team not found`() {
 
-    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID)
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
     val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
-    val playerToAddIds = setOf(A_NEW_PLAYER_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
@@ -128,10 +132,15 @@ class JdbcSwapPlayersRepositoryTest {
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
-    val allPlayers = listOf(aPlayer, anOldPlayer, aNewPlayer)
+    val anotherOldPlayer = aJdbcPlayerDto(playerId = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
+    val anotherNewPlayer = aJdbcPlayerDto(playerId = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
+    val allPlayers = listOf(aPlayer, anOldPlayer, aNewPlayer, anotherOldPlayer, anotherNewPlayer)
     val endingTournament = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
     val startingTournament = aJdbcTournamentDto(tournamentId = ANOTHER_TOURNAMENT_ID)
     val allTournaments = listOf(endingTournament, startingTournament)
+    val teamQueryParams = mapOf("teamId" to A_TEAM_ID, "playerIds" to playerToRemoveIds)
+    val teamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = AN_OLD_PLAYER_ID)
+    val notAllTeamsFound = listOf(teamDto)
 
     val expected = ErrorTeam
 
@@ -139,8 +148,8 @@ class JdbcSwapPlayersRepositoryTest {
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
     every {
-      jdbcTemplate.query(RETRIEVE_TEAM_BY_ID_QUERY, arrayOf(A_TEAM_ID), intArrayOf(INTEGER), any<RowMapper<JdbcTeamDto>>())
-    } returns emptyList()
+      namedParameterJdbcTemplate.query(RETRIEVE_TEAM_BY_PK_QUERY, teamQueryParams, any<RowMapper<JdbcTeamDto>>())
+    } returns notAllTeamsFound
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
@@ -178,10 +187,11 @@ class JdbcSwapPlayersRepositoryTest {
       FROM TOURNAMENTS t;
     """.trimIndent()
 
-    private val RETRIEVE_TEAM_BY_ID_QUERY = """
+    private val RETRIEVE_TEAM_BY_PK_QUERY = """
       SELECT *
       FROM TEAMS t
-      WHERE t.TEAM_ID = ?;
+      WHERE t.TEAM_ID = :teamId
+      AND t.PLAYER_ID IN (:playerIds);
     """.trimIndent()
   }
 }
