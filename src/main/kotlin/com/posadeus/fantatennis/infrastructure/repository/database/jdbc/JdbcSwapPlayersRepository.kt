@@ -31,7 +31,15 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
               val team = namedParameterJdbcTemplate.query(RETRIEVE_TEAM_PK_ID_QUERY, teamQueryParams, teamRowMapper)
 
               if (team.size != playersToSwap.remove.playerIds.size) ErrorTeam
-              else fantaTeam
+              else {
+
+                val batchQueryParams = playersToSwap.add.playerIds
+                    .map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to playersToSwap.add.startingTournamentId) }
+                val batchUpdateResult = namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, batchQueryParams.toTypedArray())
+
+                if (batchUpdateResult.all { it == 1 }) fantaTeam
+                else ErrorTeam
+              }
             }
             else ErrorTeam
           }
@@ -94,6 +102,12 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
       FROM TEAMS t
       WHERE t.TEAM_ID = :teamId
       AND t.PLAYER_ID IN (:playerIds);
+    """.trimIndent()
+
+    private val INSERT_TEAM_PLAYERS_QUERY = """
+      INSERT INTO TEAMS
+      (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
+      VALUES(:teamId, :playerId, :startingTournamentId);
     """.trimIndent()
   }
 }
