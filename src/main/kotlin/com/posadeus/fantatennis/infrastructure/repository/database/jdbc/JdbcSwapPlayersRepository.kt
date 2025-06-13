@@ -20,8 +20,7 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
 
           val allPlayers = jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, playerRowMapper)
 
-          if (allPlayers.isEmpty()) ErrorTeam
-          else if (areAllRequestedPlayersPresent(allPlayers.map { it.playerId }, playersToSwap)) {
+          if (areAllRequestedPlayersPresent(allPlayers.map { it.playerId }, playersToSwap)) {
 
             val allTournaments = jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, tournamentRowMapper)
 
