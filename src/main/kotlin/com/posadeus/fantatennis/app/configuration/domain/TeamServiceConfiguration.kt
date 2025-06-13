@@ -29,9 +29,11 @@ class TeamServiceConfiguration {
   fun swapPlayersTeamService(retrieveTeamService: RetrieveTeamService,
                              playerService: PlayerService,
                              retrieveTournamentsService: RetrieveTournamentsService,
-                             mySqlTeamsRepository: TeamsRepository): SwapPlayersTeamService =
+                             mySqlTeamsRepository: TeamsRepository,
+                             jdbcSwapPlayersRepository: SwapPlayersRepository): SwapPlayersTeamService =
       SwapPlayersTeamService(retrieveTeamService,
                              playerService,
                              retrieveTournamentsService,
-                             mySqlTeamsRepository)
+                             mySqlTeamsRepository,
+                             jdbcSwapPlayersRepository)
 }

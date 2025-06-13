@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.*
+import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
@@ -20,15 +21,17 @@ class SwapPlayersTeamServiceTest {
   private val playerService: PlayerService = mockk()
   private val retrieveTournamentsService: RetrieveTournamentsService = mockk()
   private val teamsRepository: TeamsRepository = mockk()
+  private val swapPlayersRepository: SwapPlayersRepository = mockk()
 
   private val service = SwapPlayersTeamService(retrieveTeamService,
                                                playerService,
                                                retrieveTournamentsService,
-                                               teamsRepository)
+                                               teamsRepository,
+                                               swapPlayersRepository)
 
   // FIXME: maybe a field could be added if it's an "active" player or not, in the FoundTeam
   @Test
-  fun `swap completed, with new players fantaPoints to ZERO, with removed and already present players still present in team response`() {
+  fun `swap completed, with new players fantaPoints to ZERO, with removed and already present players still present in team response (old)`() {
 
     val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
     val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
@@ -201,6 +204,54 @@ class SwapPlayersTeamServiceTest {
     assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
 
+
+
+
+
+
+  @Test
+  fun `swap fails due to team not found`() {
+
+     val expected = TeamIdNotFoundTeam
+
+    every { swapPlayersRepository.swap(123, ANY_PLAYER_TO_SWAP) } returns TeamIdNotFoundTeam
+
+    assertThat(service.swapNew(123, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `swap fails due to generic error`() {
+
+     val expected = ErrorTeam
+
+    every { swapPlayersRepository.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP) } returns ErrorTeam
+
+    assertThat(service.swapNew(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `swap completed, with new players fantaPoints to ZERO, with removed and already present players still present in team response`() {
+
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
+
+    val newTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0),
+                                              TeamPlayerDto(fullName = A_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0),
+                                              TeamPlayerDto(fullName = ANOTHER_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0)),
+                             totalScore = 40.0,
+                             owner = AN_OWNER)
+    val expected = FoundTeam(team = newTeamDto)
+
+    every { swapPlayersRepository.swap(A_TEAM_ID, playersToSwap) } returns expected
+
+    assertThat(service.swapNew(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+  }
+
   companion object {
 
     private const val A_PLAYER_ID = "A_PLAYER_ID"
@@ -213,7 +264,9 @@ class SwapPlayersTeamServiceTest {
     private const val ANOTHER_OLD_PLAYER_FULL_NAME = "ANOTHER_OLD_PLAYER_FULL_NAME"
     private const val A_NEW_PLAYER_FULL_NAME = "A_NEW_PLAYER_FULL_NAME"
     private const val ANOTHER_NEW_PLAYER_FULL_NAME = "ANOTHER_NEW_PLAYER_FULL_NAME"
+    private const val AN_OWNER = "AN_OWNER"
     private const val A_TEAM_ID = 1
+    private const val ANY_TEAM_ID = 1
     private const val A_TOURNAMENT_ID = 1
     private const val ANOTHER_TOURNAMENT_ID = 2
     private const val A_THIRD_TOURNAMENT_ID = 3

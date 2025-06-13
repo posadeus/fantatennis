@@ -86,7 +86,7 @@ paths:
 
   /team/{teamId}/players/swap:
     post:
-      operationId: swamp
+      operationId: swap
       summary: Swap players for an existing team.
       description: Swap one or more players for an existing team.
       tags:

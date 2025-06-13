@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
+import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
@@ -12,8 +13,10 @@ import com.posadeus.fantatennis.domain.service.tournament.RetrieveTournamentsSer
 class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamService,
                              private val playerService: PlayerService,
                              private val retrieveTournamentsService: RetrieveTournamentsService,
-                             private val teamsRepository: TeamsRepository) {
+                             private val teamsRepository: TeamsRepository,
+                             private val swapPlayersRepository: SwapPlayersRepository) {
 
+  @Deprecated("Use the new version")
   fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
       when (val team = retrieveTeamService.retrieve(teamId)) {
 
@@ -55,4 +58,8 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
       allPlayersIds.isNotEmpty()
       && allPlayersIds.containsAll(playersToSwap.add.playerIds)
       && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
+
+  fun swapNew(teamId: Int, playersToSwap: PlayersToSwapDto): Team {
+    return swapPlayersRepository.swap(teamId, playersToSwap)
+  }
 }
