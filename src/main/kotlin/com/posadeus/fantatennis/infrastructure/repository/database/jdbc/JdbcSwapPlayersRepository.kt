@@ -4,17 +4,17 @@ import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import java.sql.Types.INTEGER
 import java.time.LocalDate
 
 class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
                                 private val jdbcTemplate: JdbcTemplate) : SwapPlayersRepository {
 
   override fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
-      when (val team = retrieveFantaTeamRepository.retrieve(teamId)) {
+      when (val fantaTeam = retrieveFantaTeamRepository.retrieve(teamId)) {
 
         is FoundTeam -> {
 
@@ -24,13 +24,19 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
 
             val allTournaments = jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, tournamentRowMapper)
 
-            if (areAllRequestedTournamentsPresent(allTournaments.map { it.tournamentId }, playersToSwap)) team
+            if (areAllRequestedTournamentsPresent(allTournaments.map { it.tournamentId }, playersToSwap)) {
+
+              val team = jdbcTemplate.query(RETRIEVE_TEAM_BY_ID_QUERY, arrayOf(teamId), intArrayOf(INTEGER), teamRowMapper)
+
+              if (team.isEmpty()) ErrorTeam
+              else fantaTeam
+            }
             else ErrorTeam
           }
           else ErrorTeam
         }
 
-        else -> team
+        else -> fantaTeam
       }
 
   private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) =
@@ -62,6 +68,13 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
                       endDate = LocalDate.parse(rs.getString("END_DATE")))
   }
 
+  private val teamRowMapper = RowMapper { rs, _ ->
+    JdbcTeamDto(teamId = rs.getInt("TEAM_ID"),
+                playerId = rs.getString("PLAYER_ID"),
+                startingTournamentId = rs.getInt("STARTING_TOURNAMENT"),
+                endingTournamentId = rs.getInt("ENDING_TOURNAMENT"))
+  }
+
   companion object {
 
     private val RETRIEVE_ALL_PLAYERS_QUERY = """
@@ -72,6 +85,12 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
     private val RETRIEVE_ALL_TOURNAMENTS_QUERY = """
       SELECT *
       FROM TOURNAMENTS t;
+    """.trimIndent()
+
+    private val RETRIEVE_TEAM_BY_ID_QUERY = """
+      SELECT *
+      FROM TEAMS t
+      WHERE t.TEAM_ID = ?;
     """.trimIndent()
   }
 }
