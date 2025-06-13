@@ -8,9 +8,11 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTeamDto.aJdbcTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.exception.InvalidPlayersSwapException
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -35,29 +37,6 @@ class JdbcSwapPlayersRepositoryTest {
     assertThat(repository.swap(A_NOT_EXISTING_TEAM_ID, ANY_SWAP_PLAYERS)).isEqualTo(expected)
 
     verify { jdbcTemplate wasNot called }
-  }
-
-  @Test
-  fun `swap fails due to players not found, empty set returned`() {
-
-    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
-    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
-    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
-    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
-    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
-
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
-                             totalScore = 40.0,
-                             owner = AN_OWNER)
-
-    val expected = ErrorTeam
-
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
-    every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns emptyList()
-
-    assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
 
   @Test
@@ -186,7 +165,7 @@ class JdbcSwapPlayersRepositoryTest {
     val batchElement2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_NEW_PLAYER_ID, "startingTournamentId" to ANOTHER_TOURNAMENT_ID)
     val paramSource = arrayOf(batchElement1, batchElement2)
 
-    val expected = ErrorTeam
+    val expectedMessage = "Unexpected error during insert/update: Players [ANOTHER_NEW_PLAYER_ID] not inserted, operation reverted."
 
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
@@ -196,7 +175,7 @@ class JdbcSwapPlayersRepositoryTest {
     } returns allTeamPlayers
     every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, paramSource) } returns intArrayOf(1, 0)
 
-    assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+    assertThrowsWithMessage<InvalidPlayersSwapException>(expectedMessage) { repository.swap(A_TEAM_ID, playersToSwap) }
   }
 
   @Test
@@ -233,7 +212,7 @@ class JdbcSwapPlayersRepositoryTest {
     val batchUpdate2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
     val updateParamSource = arrayOf(batchUpdate1, batchUpdate2)
 
-    val expected = ErrorTeam
+    val expectedMessage = "Unexpected error during insert/update: Players [ANOTHER_OLD_PLAYER_ID] not updated, operation reverted."
 
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
@@ -244,7 +223,55 @@ class JdbcSwapPlayersRepositoryTest {
     every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, insertParamSource) } returns intArrayOf(1, 1)
     every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } returns intArrayOf(1, 0)
 
-    assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+    assertThrowsWithMessage<InvalidPlayersSwapException>(expectedMessage) { repository.swap(A_TEAM_ID, playersToSwap) }
+  }
+
+  @Test
+  fun `exception during insert or update operation`() {
+
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
+
+    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+                             totalScore = 34.0,
+                             owner = AN_OWNER)
+    val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
+    val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
+    val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
+    val anotherOldPlayer = aJdbcPlayerDto(playerId = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
+    val anotherNewPlayer = aJdbcPlayerDto(playerId = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
+    val allPlayers = listOf(aPlayer, anOldPlayer, aNewPlayer, anotherOldPlayer, anotherNewPlayer)
+    val endingTournament = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
+    val startingTournament = aJdbcTournamentDto(tournamentId = ANOTHER_TOURNAMENT_ID)
+    val allTournaments = listOf(endingTournament, startingTournament)
+    val teamQueryParams = mapOf("teamId" to A_TEAM_ID, "playerIds" to playerToRemoveIds)
+    val aTeamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = AN_OLD_PLAYER_ID)
+    val anotherTeamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = ANOTHER_OLD_PLAYER_ID)
+    val allTeamPlayers = listOf(aTeamDto, anotherTeamDto)
+    val batchInsert1 = mapOf("teamId" to A_TEAM_ID, "playerId" to A_NEW_PLAYER_ID, "startingTournamentId" to ANOTHER_TOURNAMENT_ID)
+    val batchInsert2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_NEW_PLAYER_ID, "startingTournamentId" to ANOTHER_TOURNAMENT_ID)
+    val insertParamSource = arrayOf(batchInsert1, batchInsert2)
+    val batchUpdate1 = mapOf("teamId" to A_TEAM_ID, "playerId" to AN_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
+    val batchUpdate2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
+    val updateParamSource = arrayOf(batchUpdate1, batchUpdate2)
+
+    val expectedMessage = "Unexpected error during insert/update: Scary Error"
+
+    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
+    every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
+    every {
+      namedParameterJdbcTemplate.query(RETRIEVE_TEAM_BY_PK_QUERY, teamQueryParams, any<RowMapper<JdbcTeamDto>>())
+    } returns allTeamPlayers
+    every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, insertParamSource) } returns intArrayOf(1, 1)
+    every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } throws RuntimeException("Scary Error")
+
+    assertThrowsWithMessage<InvalidPlayersSwapException>(expectedMessage) { repository.swap(A_TEAM_ID, playersToSwap) }
   }
 
   @Test
@@ -300,6 +327,13 @@ class JdbcSwapPlayersRepositoryTest {
     every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } returns intArrayOf(1, 1)
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+  }
+
+  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
+
+    val exception = assertThrows<T> { block() }
+
+    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   companion object {

@@ -5,15 +5,25 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepositor
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
+import com.posadeus.fantatennis.infrastructure.repository.exception.InvalidPlayersSwapException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
                                 private val jdbcTemplate: JdbcTemplate,
                                 private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : SwapPlayersRepository {
 
+  /* TODO add following checks
+  * - startingTournamentId must refer to a tournament in the future (right after the end of endingTournament)
+  * - endingTournamentId must refer to a tournament in the present (current date should be between start and end dates)
+  * - playerToAdd mustn't be already present in the Team
+  * - playerToRemove must have endingTournamentId = null in Team table
+  */
+  // TODO REFACTOR!!!!!
+  @Transactional
   override fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
       when (val fantaTeam = retrieveFantaTeamRepository.retrieve(teamId)) {
 
@@ -33,20 +43,27 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
               if (team.size != playersToSwap.remove.playerIds.size) ErrorTeam
               else {
 
-                val batchInsertQueryParams = playersToSwap.add.playerIds
-                    .map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to playersToSwap.add.startingTournamentId) }
-                val batchInsertResult = namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, batchInsertQueryParams.toTypedArray())
+                try {
 
-                if (batchInsertResult.all { it == 1 }) {
+                  val batchInsertQueryParams = playersToSwap.add.playerIds
+                      .map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to playersToSwap.add.startingTournamentId) }
+                  val batchInsertResult = namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, batchInsertQueryParams.toTypedArray())
 
-                  val batchUpdateQueryParams = playersToSwap.remove.playerIds
-                      .map { mapOf("teamId" to teamId, "playerId" to it, "endingTournamentId" to playersToSwap.remove.endingTournamentId) }
-                  val batchUpdateResult = namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, batchUpdateQueryParams.toTypedArray())
+                  if (batchInsertResult.all { it == 1 }) {
 
-                  if (batchUpdateResult.all { it == 1 }) retrieveFantaTeamRepository.retrieve(teamId)
-                  else ErrorTeam
+                    val batchUpdateQueryParams = playersToSwap.remove.playerIds
+                        .map { mapOf("teamId" to teamId, "playerId" to it, "endingTournamentId" to playersToSwap.remove.endingTournamentId) }
+                    val batchUpdateResult = namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, batchUpdateQueryParams.toTypedArray())
+
+                    if (batchUpdateResult.all { it == 1 }) retrieveFantaTeamRepository.retrieve(teamId)
+                    else throw InvalidPlayersSwapException(error = "Players [${errorPlayers(playersToSwap.remove.playerIds, batchUpdateResult)}] not updated, operation reverted.")
+                  }
+                  else throw InvalidPlayersSwapException(error = "Players [${errorPlayers(playersToSwap.add.playerIds, batchInsertResult)}] not inserted, operation reverted.")
                 }
-                else ErrorTeam
+                catch (e: RuntimeException) {
+
+                  throw InvalidPlayersSwapException(error = "Unexpected error during insert/update: ${e.message}")
+                }
               }
             }
             else ErrorTeam
@@ -66,6 +83,19 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
       tournamentIds.isNotEmpty()
       && playersToSwap.add.startingTournamentId in tournamentIds
       && playersToSwap.remove.endingTournamentId in tournamentIds
+
+  private fun errorPlayers(team: Set<String>, batchUpdate: IntArray): String {
+
+    val errorIndexes = batchUpdate
+        .withIndex()
+        .filter { it.value == 0 }
+        .map { it.index }
+
+    return team
+        .filterIndexed { index, _ -> index in errorIndexes }
+        .map { it }
+        .reduce { acc, s -> "$acc, $s" }
+  }
 
   private val playerRowMapper = RowMapper { rs, _ ->
     JdbcPlayerDto(playerId = rs.getString("PLAYER_ID"),
