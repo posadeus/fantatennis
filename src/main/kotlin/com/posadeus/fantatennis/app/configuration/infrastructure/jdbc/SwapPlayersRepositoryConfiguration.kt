@@ -5,11 +5,14 @@ import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcSwapPlayersRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.jdbc.core.JdbcTemplate
 
 @Configuration
 class SwapPlayersRepositoryConfiguration {
 
   @Bean
-  fun jdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository): SwapPlayersRepository =
-      JdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository)
+  fun jdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository,
+                                jdbcTemplate: JdbcTemplate): SwapPlayersRepository =
+      JdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository,
+                                jdbcTemplate)
 }
