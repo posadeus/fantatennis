@@ -33,11 +33,19 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
               if (team.size != playersToSwap.remove.playerIds.size) ErrorTeam
               else {
 
-                val batchQueryParams = playersToSwap.add.playerIds
+                val batchInsertQueryParams = playersToSwap.add.playerIds
                     .map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to playersToSwap.add.startingTournamentId) }
-                val batchUpdateResult = namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, batchQueryParams.toTypedArray())
+                val batchInsertResult = namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, batchInsertQueryParams.toTypedArray())
 
-                if (batchUpdateResult.all { it == 1 }) fantaTeam
+                if (batchInsertResult.all { it == 1 }) {
+
+                  val batchUpdateQueryParams = playersToSwap.remove.playerIds
+                      .map { mapOf("teamId" to teamId, "playerId" to it, "endingTournamentId" to playersToSwap.remove.endingTournamentId) }
+                  val batchUpdateResult = namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, batchUpdateQueryParams.toTypedArray())
+
+                  if (batchUpdateResult.all { it == 1 }) retrieveFantaTeamRepository.retrieve(teamId)
+                  else ErrorTeam
+                }
                 else ErrorTeam
               }
             }
@@ -108,6 +116,12 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
       INSERT INTO TEAMS
       (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
       VALUES(:teamId, :playerId, :startingTournamentId);
+    """.trimIndent()
+
+    private val UPDATE_TEAM_PLAYERS_QUERY = """
+      UPDATE TEAMS
+      SET ENDING_TOURNAMENT = :endingTournamentId
+      WHERE TEAM_ID = :teamId AND PLAYER_ID = :playerId;
     """.trimIndent()
   }
 }

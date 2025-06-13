@@ -126,8 +126,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
     val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0)),
-                             totalScore = 32.0,
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+                             totalScore = 34.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
@@ -164,8 +165,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
     val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0)),
-                             totalScore = 32.0,
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+                             totalScore = 34.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
@@ -193,6 +195,109 @@ class JdbcSwapPlayersRepositoryTest {
       namedParameterJdbcTemplate.query(RETRIEVE_TEAM_BY_PK_QUERY, teamQueryParams, any<RowMapper<JdbcTeamDto>>())
     } returns allTeamPlayers
     every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, paramSource) } returns intArrayOf(1, 0)
+
+    assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `swap fails due to error during query insert operation - not all players successfully updated`() {
+
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
+
+    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+                             totalScore = 34.0,
+                             owner = AN_OWNER)
+    val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
+    val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
+    val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
+    val anotherOldPlayer = aJdbcPlayerDto(playerId = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
+    val anotherNewPlayer = aJdbcPlayerDto(playerId = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
+    val allPlayers = listOf(aPlayer, anOldPlayer, aNewPlayer, anotherOldPlayer, anotherNewPlayer)
+    val endingTournament = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
+    val startingTournament = aJdbcTournamentDto(tournamentId = ANOTHER_TOURNAMENT_ID)
+    val allTournaments = listOf(endingTournament, startingTournament)
+    val teamQueryParams = mapOf("teamId" to A_TEAM_ID, "playerIds" to playerToRemoveIds)
+    val aTeamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = AN_OLD_PLAYER_ID)
+    val anotherTeamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = ANOTHER_OLD_PLAYER_ID)
+    val allTeamPlayers = listOf(aTeamDto, anotherTeamDto)
+    val batchInsert1 = mapOf("teamId" to A_TEAM_ID, "playerId" to A_NEW_PLAYER_ID, "startingTournamentId" to ANOTHER_TOURNAMENT_ID)
+    val batchInsert2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_NEW_PLAYER_ID, "startingTournamentId" to ANOTHER_TOURNAMENT_ID)
+    val insertParamSource = arrayOf(batchInsert1, batchInsert2)
+    val batchUpdate1 = mapOf("teamId" to A_TEAM_ID, "playerId" to AN_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
+    val batchUpdate2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
+    val updateParamSource = arrayOf(batchUpdate1, batchUpdate2)
+
+    val expected = ErrorTeam
+
+    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
+    every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
+    every {
+      namedParameterJdbcTemplate.query(RETRIEVE_TEAM_BY_PK_QUERY, teamQueryParams, any<RowMapper<JdbcTeamDto>>())
+    } returns allTeamPlayers
+    every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, insertParamSource) } returns intArrayOf(1, 1)
+    every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } returns intArrayOf(1, 0)
+
+    assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `swap successful`() {
+
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
+
+    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+                             totalScore = 34.0,
+                             owner = AN_OWNER)
+    val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
+    val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
+    val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
+    val anotherOldPlayer = aJdbcPlayerDto(playerId = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
+    val anotherNewPlayer = aJdbcPlayerDto(playerId = ANOTHER_NEW_PLAYER_ID, fullName = ANOTHER_NEW_PLAYER_FULL_NAME)
+    val allPlayers = listOf(aPlayer, anOldPlayer, aNewPlayer, anotherOldPlayer, anotherNewPlayer)
+    val endingTournament = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
+    val startingTournament = aJdbcTournamentDto(tournamentId = ANOTHER_TOURNAMENT_ID)
+    val allTournaments = listOf(endingTournament, startingTournament)
+    val teamQueryParams = mapOf("teamId" to A_TEAM_ID, "playerIds" to playerToRemoveIds)
+    val aTeamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = AN_OLD_PLAYER_ID)
+    val anotherTeamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = ANOTHER_OLD_PLAYER_ID)
+    val allTeamPlayers = listOf(aTeamDto, anotherTeamDto)
+    val batchInsert1 = mapOf("teamId" to A_TEAM_ID, "playerId" to A_NEW_PLAYER_ID, "startingTournamentId" to ANOTHER_TOURNAMENT_ID)
+    val batchInsert2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_NEW_PLAYER_ID, "startingTournamentId" to ANOTHER_TOURNAMENT_ID)
+    val insertParamSource = arrayOf(batchInsert1, batchInsert2)
+    val batchUpdate1 = mapOf("teamId" to A_TEAM_ID, "playerId" to AN_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
+    val batchUpdate2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
+    val updateParamSource = arrayOf(batchUpdate1, batchUpdate2)
+
+    val newTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0),
+                                              TeamPlayerDto(fullName = A_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0),
+                                              TeamPlayerDto(fullName = ANOTHER_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0)),
+                             totalScore = 34.0,
+                             owner = AN_OWNER)
+    val expected = FoundTeam(team = newTeamDto)
+
+    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto) andThen expected
+    every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
+    every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
+    every {
+      namedParameterJdbcTemplate.query(RETRIEVE_TEAM_BY_PK_QUERY, teamQueryParams, any<RowMapper<JdbcTeamDto>>())
+    } returns allTeamPlayers
+    every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, insertParamSource) } returns intArrayOf(1, 1)
+    every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } returns intArrayOf(1, 1)
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
@@ -241,6 +346,12 @@ class JdbcSwapPlayersRepositoryTest {
       INSERT INTO TEAMS
       (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
       VALUES(:teamId, :playerId, :startingTournamentId);
+    """.trimIndent()
+
+    private val UPDATE_TEAM_PLAYERS_QUERY = """
+      UPDATE TEAMS
+      SET ENDING_TOURNAMENT = :endingTournamentId
+      WHERE TEAM_ID = :teamId AND PLAYER_ID = :playerId;
     """.trimIndent()
   }
 }
