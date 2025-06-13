@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.controller.model.team.*
+import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -8,7 +9,6 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTeamDto.aJdbcTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
-import com.posadeus.fantatennis.infrastructure.repository.exception.InvalidPlayersSwapException
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test

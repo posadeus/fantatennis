@@ -1,3 +1,3 @@
-package com.posadeus.fantatennis.infrastructure.repository.exception
+package com.posadeus.fantatennis.domain.exception
 
 data class InvalidPlayersSwapException(val error: String) : RuntimeException(error)

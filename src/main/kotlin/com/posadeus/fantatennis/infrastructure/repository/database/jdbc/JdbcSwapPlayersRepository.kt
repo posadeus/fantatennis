@@ -1,11 +1,11 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
+import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
-import com.posadeus.fantatennis.infrastructure.repository.exception.InvalidPlayersSwapException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

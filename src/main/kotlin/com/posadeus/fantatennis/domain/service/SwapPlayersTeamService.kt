@@ -59,6 +59,7 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
       && allPlayersIds.containsAll(playersToSwap.add.playerIds)
       && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
 
+  // TODO: Manage the exception InvalidPlayersSwapException
   fun swapNew(teamId: Int, playersToSwap: PlayersToSwapDto): Team {
     return swapPlayersRepository.swap(teamId, playersToSwap)
   }
