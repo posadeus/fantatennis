@@ -19,11 +19,17 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
           val allPlayers = jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, playerRowMapper)
 
           if (allPlayers.isEmpty()) ErrorTeam
-          else team
+          else if (areAllRequestedPlayersPresent(allPlayers.map { it.playerId }, playersToSwap)) team
+          else ErrorTeam
         }
 
         else -> team
       }
+
+  private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) =
+      allPlayersIds.isNotEmpty()
+      && allPlayersIds.containsAll(playersToSwap.add.playerIds)
+      && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
 
   private val playerRowMapper = RowMapper { rs, _ ->
     JdbcPlayerDto(playerId = rs.getString("PLAYER_ID"),

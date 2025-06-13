@@ -5,6 +5,7 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepositor
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
@@ -53,13 +54,42 @@ class JdbcSwapPlayersRepositoryTest {
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
 
+  @Test
+  fun `swap fails due to one or more players not found`() {
+
+    val playerToRemoveIds = setOf(AN_OLD_PLAYER_ID, ANOTHER_OLD_PLAYER_ID)
+    val playersToRemoveDto = PlayersToRemoveDto(playerIds = playerToRemoveIds, endingTournamentId = A_TOURNAMENT_ID)
+    val playerToAddIds = setOf(A_NEW_PLAYER_ID, ANOTHER_NEW_PLAYER_ID)
+    val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
+    val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
+
+    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
+                             totalScore = 40.0,
+                             owner = AN_OWNER)
+    val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
+    val anotherOldPlayer = aJdbcPlayerDto(playerId = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
+    val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
+    val notAllPlayersFound = listOf(A_PLAYER, anOldPlayer, anotherOldPlayer, aNewPlayer)
+
+    val expected = ErrorTeam
+
+    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
+    every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns notAllPlayersFound
+
+    assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+  }
+
   companion object {
 
     private const val A_NOT_EXISTING_TEAM_ID = 1
     private const val A_TEAM_ID = 1
     private const val A_TOURNAMENT_ID = 1
     private const val ANOTHER_TOURNAMENT_ID = 2
+    private const val A_THIRD_TOURNAMENT_ID = 3
     private const val AN_OWNER = "AN_OWNER"
+    private const val A_PLAYER_ID = "A_PLAYER_ID"
     private const val AN_OLD_PLAYER_ID = "AN_OLD_PLAYER_ID"
     private const val ANOTHER_OLD_PLAYER_ID = "ANOTHER_OLD_PLAYER_ID"
     private const val A_NEW_PLAYER_ID = "A_NEW_PLAYER_ID"
@@ -67,8 +97,11 @@ class JdbcSwapPlayersRepositoryTest {
     private const val A_PLAYER_FULL_NAME = "A_PLAYER_FULL_NAME"
     private const val AN_OLD_PLAYER_FULL_NAME = "AN_OLD_PLAYER_FULL_NAME"
     private const val ANOTHER_OLD_PLAYER_FULL_NAME = "ANOTHER_OLD_PLAYER_FULL_NAME"
+    private const val A_NEW_PLAYER_FULL_NAME = "A_NEW_PLAYER_FULL_NAME"
+    private const val ANOTHER_NEW_PLAYER_FULL_NAME = "ANOTHER_NEW_PLAYER_FULL_NAME"
 
     private val ANY_SWAP_PLAYERS = PlayersToSwapDto()
+    private val A_PLAYER = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
 
     private val RETRIEVE_ALL_PLAYERS_QUERY = """
       SELECT *
