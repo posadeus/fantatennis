@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
+import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -59,8 +60,14 @@ class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamServic
       && allPlayersIds.containsAll(playersToSwap.add.playerIds)
       && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
 
-  // TODO: Manage the exception InvalidPlayersSwapException
-  fun swapNew(teamId: Int, playersToSwap: PlayersToSwapDto): Team {
-    return swapPlayersRepository.swap(teamId, playersToSwap)
-  }
+
+  fun swapNew(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
+      try {
+
+        swapPlayersRepository.swap(teamId, playersToSwap)
+      }
+      catch (e: InvalidPlayersSwapException) {
+
+        ErrorTeam
+      }
 }

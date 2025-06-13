@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.*
+import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -225,6 +226,16 @@ class SwapPlayersTeamServiceTest {
      val expected = ErrorTeam
 
     every { swapPlayersRepository.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP) } returns ErrorTeam
+
+    assertThat(service.swapNew(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `swap throws InvalidPlayersSwapException`() {
+
+     val expected = ErrorTeam
+
+    every { swapPlayersRepository.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP) } throws InvalidPlayersSwapException("OMG an error")
 
     assertThat(service.swapNew(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
   }
