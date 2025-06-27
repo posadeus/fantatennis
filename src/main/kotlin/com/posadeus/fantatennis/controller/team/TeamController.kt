@@ -40,7 +40,7 @@ class TeamController(private val retrieveTeamService: RetrieveTeamService,
       }
 
   override fun swap(teamId: Int, playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto> =
-      when (val team = swapPlayersTeamService.swapNew(teamId, playersToSwapDto)) {
+      when (val team = swapPlayersTeamService.swap(teamId, playersToSwapDto)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)
         is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
