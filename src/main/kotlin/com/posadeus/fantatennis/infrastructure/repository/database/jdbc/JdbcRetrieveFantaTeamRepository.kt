@@ -4,8 +4,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentsTeamsDto
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TeamPlayerPointsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentsTeamsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamPlayerPointsDto
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -45,17 +45,17 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
   }
 
   private val fantaTournamentTeamRowMapper = RowMapper { rs, _ ->
-    FantaTournamentsTeamsDto(teamId = rs.getInt("TEAM_ID"),
-                             startingTournamentId = rs.getInt("STARTING_TOURNAMENT"),
-                             endingTournamentId = rs.getInt("ENDING_TOURNAMENT"),
-                             tournamentYear = rs.getInt("TOURNAMENT_YEAR"),
-                             ownerId = rs.getString("OWNER_ID"))
+    JdbcFantaTournamentsTeamsDto(teamId = rs.getInt("TEAM_ID"),
+                                 startingTournamentId = rs.getInt("STARTING_TOURNAMENT"),
+                                 endingTournamentId = rs.getInt("ENDING_TOURNAMENT"),
+                                 tournamentYear = rs.getInt("TOURNAMENT_YEAR"),
+                                 ownerId = rs.getString("OWNER_ID"))
   }
 
   private val pointsRowMapper = RowMapper { rs, _ ->
-    TeamPlayerPointsDto(playerId = rs.getString("PLAYER_ID"),
-                        playerName = rs.getString("FULL_NAME"),
-                        totalScore = rs.getDouble("TOTAL_POINTS"))
+    JdbcTeamPlayerPointsDto(playerId = rs.getString("PLAYER_ID"),
+                            playerName = rs.getString("FULL_NAME"),
+                            totalScore = rs.getDouble("TOTAL_POINTS"))
   }
 
   companion object {

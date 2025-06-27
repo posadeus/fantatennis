@@ -31,7 +31,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val expected = AddPlayersTeamNotFound
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<JdbcFantaTeamDto>>())
     } throws EmptyResultDataAccessException(1)
 
     assertThat(repository.add(1, setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID), A_TOURNAMENT_ID)).isEqualTo(expected)
@@ -41,13 +41,13 @@ class JdbcAddPlayersToTeamRepositoryTest {
   fun `tournament not found`() {
 
     val fantaTeamsQueryParams = mapOf("teamId" to A_TEAM_ID)
-    val fantaTeam = FantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
+    val fantaTeam = JdbcFantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
     val tournamentQueryParams = mapOf("tournamentId" to 1234)
 
     val expected = AddPlayersTournamentNotFound
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<JdbcFantaTeamDto>>())
     } returns fantaTeam
     every {
       jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, tournamentQueryParams, any<RowMapper<JdbcTournamentDto>>())
@@ -62,7 +62,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val playerIds = setOf("A_PLAYER_ID", "ANOTHER_PLAYER_ID")
 
     val fantaTeamsQueryParams = mapOf("teamId" to A_TEAM_ID)
-    val fantaTeam = FantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
+    val fantaTeam = JdbcFantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
     val tournamentQueryParams = mapOf("tournamentId" to A_TOURNAMENT_ID)
     val tournamentDto = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
     val playersQueryParams = mapOf("playerIds" to playerIds)
@@ -71,7 +71,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val expected = PlayersNotFound(missingPlayerIds = setOf("ANOTHER_PLAYER_ID"))
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<JdbcFantaTeamDto>>())
     } returns fantaTeam
     every {
       jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, tournamentQueryParams, any<RowMapper<JdbcTournamentDto>>())
@@ -89,7 +89,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
 
     val fantaTeamsQueryParams = mapOf("teamId" to A_TEAM_ID)
-    val fantaTeam = FantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
+    val fantaTeam = JdbcFantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
     val tournamentQueryParams = mapOf("tournamentId" to A_TOURNAMENT_ID)
     val tournamentDto = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
     val playersQueryParams = mapOf("playerIds" to playerIds)
@@ -103,7 +103,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val expectedMessage = "Unexpected error during insert: Players [ANOTHER_PLAYER_ID] not inserted, operation reverted."
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<JdbcFantaTeamDto>>())
     } returns fantaTeam
     every {
       jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, tournamentQueryParams, any<RowMapper<JdbcTournamentDto>>())
@@ -122,7 +122,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
 
     val fantaTeamsQueryParams = mapOf("teamId" to A_TEAM_ID)
-    val fantaTeam = FantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
+    val fantaTeam = JdbcFantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
     val tournamentQueryParams = mapOf("tournamentId" to A_TOURNAMENT_ID)
     val tournamentDto = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
     val playersQueryParams = mapOf("playerIds" to playerIds)
@@ -136,7 +136,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val expectedMessage = "Unexpected error during insert: Error"
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<JdbcFantaTeamDto>>())
     } returns fantaTeam
     every {
       jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, tournamentQueryParams, any<RowMapper<JdbcTournamentDto>>())
@@ -155,7 +155,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val playerIds = setOf(A_PLAYER_ID, ANOTHER_PLAYER_ID)
 
     val fantaTeamsQueryParams = mapOf("teamId" to A_TEAM_ID)
-    val fantaTeam = FantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
+    val fantaTeam = JdbcFantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
     val tournamentQueryParams = mapOf("tournamentId" to A_TOURNAMENT_ID)
     val tournamentDto = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
     val playersQueryParams = mapOf("playerIds" to playerIds)
@@ -179,7 +179,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
     val expected = ValidAddPlayers(players = setOf(aDomainPlayer, anotherDomainPlayer))
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<FantaTeamDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, fantaTeamsQueryParams, any<RowMapper<JdbcFantaTeamDto>>())
     } returns fantaTeam
     every {
       jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, tournamentQueryParams, any<RowMapper<JdbcTournamentDto>>())

@@ -65,8 +65,8 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
   }
 
   private val fantaTeamRowMapper = RowMapper { rs, _ ->
-    FantaTeamDto(teamId = rs.getInt("TEAM_ID"),
-                 ownerId = rs.getString("OWNER_ID"))
+    JdbcFantaTeamDto(teamId = rs.getInt("TEAM_ID"),
+                     ownerId = rs.getString("OWNER_ID"))
   }
 
   private val tournamentRowMapper = RowMapper { rs, _ ->

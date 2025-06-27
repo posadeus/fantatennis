@@ -5,7 +5,7 @@ import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TournamentResultsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -25,7 +25,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
     val params = mapOf("tournamentId" to A_TOURNAMENT_ID)
     val expected = ErrorFantaTournamentResults
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<TournamentResultsDto>>()) } throws RuntimeException()
+    every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<JdbcTournamentResultsDto>>()) } throws RuntimeException()
 
     assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
   }
@@ -36,7 +36,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
     val params = mapOf("tournamentId" to A_TOURNAMENT_ID)
     val expected = NotFoundFantaTournamentId
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<TournamentResultsDto>>()) } returns emptyList()
+    every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<JdbcTournamentResultsDto>>()) } returns emptyList()
 
     assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
   }
@@ -46,24 +46,24 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
 
     val params = mapOf("tournamentId" to A_TOURNAMENT_ID)
 
-    val tournamentResultsDto1 = TournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
-                                                     teamId = A_TEAM_ID,
-                                                     ownerId = AN_OWNER_ID,
-                                                     playerId = A_PLAYER_ID,
-                                                     playerFullName = A_PLAYER_FULL_NAME,
-                                                     playerTotalScore = 2.00)
-    val tournamentResultsDto2 = TournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
-                                                     teamId = A_TEAM_ID,
-                                                     ownerId = AN_OWNER_ID,
-                                                     playerId = ANOTHER_PLAYER_ID,
-                                                     playerFullName = ANOTHER_PLAYER_FULL_NAME,
-                                                     playerTotalScore = 1.00)
-    val tournamentResultsDto3 = TournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
-                                                     teamId = ANOTHER_TEAM_ID,
-                                                     ownerId = ANOTHER_OWNER_ID,
-                                                     playerId = A_THIRD_PLAYER_ID,
-                                                     playerFullName = A_THIRD_PLAYER_FULL_NAME,
-                                                     playerTotalScore = 4.00)
+    val tournamentResultsDto1 = JdbcTournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
+                                                         teamId = A_TEAM_ID,
+                                                         ownerId = AN_OWNER_ID,
+                                                         playerId = A_PLAYER_ID,
+                                                         playerFullName = A_PLAYER_FULL_NAME,
+                                                         playerTotalScore = 2.00)
+    val tournamentResultsDto2 = JdbcTournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
+                                                         teamId = A_TEAM_ID,
+                                                         ownerId = AN_OWNER_ID,
+                                                         playerId = ANOTHER_PLAYER_ID,
+                                                         playerFullName = ANOTHER_PLAYER_FULL_NAME,
+                                                         playerTotalScore = 1.00)
+    val tournamentResultsDto3 = JdbcTournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
+                                                         teamId = ANOTHER_TEAM_ID,
+                                                         ownerId = ANOTHER_OWNER_ID,
+                                                         playerId = A_THIRD_PLAYER_ID,
+                                                         playerFullName = A_THIRD_PLAYER_FULL_NAME,
+                                                         playerTotalScore = 4.00)
     val tournamentResultsDto = listOf(tournamentResultsDto1, tournamentResultsDto2, tournamentResultsDto3)
 
     val aPlayer = TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 2.00)
@@ -73,7 +73,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
     val anotherTeam = TeamDto(owner = ANOTHER_OWNER_ID, players = listOf(aThirdPlayer), totalScore = 4.00)
     val expected = FoundFantaTournamentResults(TournamentDto(teams = listOf(anotherTeam, aTeam)))
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<TournamentResultsDto>>()) } returns tournamentResultsDto
+    every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<JdbcTournamentResultsDto>>()) } returns tournamentResultsDto
 
     assertThat(repository.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
   }

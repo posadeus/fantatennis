@@ -4,8 +4,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.FantaTournamentsTeamsDto
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TeamPlayerPointsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentsTeamsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamPlayerPointsDto
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
@@ -28,7 +28,7 @@ class JdbcRetrieveFantaTeamRepositoryTest {
     val expected = TeamIdNotFoundTeam
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<FantaTournamentsTeamsDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<JdbcFantaTournamentsTeamsDto>>())
     } throws EmptyResultDataAccessException(1)
 
     assertThat(repository.retrieve(A_TEAM_ID)).isEqualTo(expected)
@@ -38,11 +38,11 @@ class JdbcRetrieveFantaTeamRepositoryTest {
   fun `retrieve fanta team fails due to db error`() {
 
     val teamParams = mapOf("id" to A_TEAM_ID)
-    val fantaTournamentsTeamsDto = FantaTournamentsTeamsDto(teamId = A_TEAM_ID,
-                                                            startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                            endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                            tournamentYear = A_TOURNAMENT_YEAR,
-                                                            ownerId = AN_OWNER_ID)
+    val fantaTournamentsTeamsDto = JdbcFantaTournamentsTeamsDto(teamId = A_TEAM_ID,
+                                                                startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                                endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                                tournamentYear = A_TOURNAMENT_YEAR,
+                                                                ownerId = AN_OWNER_ID)
     val pointsParams = mapOf("tournamentYear" to A_TOURNAMENT_YEAR,
                              "startingTournamentId" to A_STARTING_TOURNAMENT_ID,
                              "endingTournamentId" to AN_ENDING_TOURNAMENT_ID,
@@ -51,10 +51,10 @@ class JdbcRetrieveFantaTeamRepositoryTest {
     val expected = ErrorTeam
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<FantaTournamentsTeamsDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<JdbcFantaTournamentsTeamsDto>>())
     } returns fantaTournamentsTeamsDto
     every {
-      jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, pointsParams, any<RowMapper<TeamPlayerPointsDto>>())
+      jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, pointsParams, any<RowMapper<JdbcTeamPlayerPointsDto>>())
     } throws RuntimeException("Scary error!")
 
     assertThat(repository.retrieve(A_TEAM_ID)).isEqualTo(expected)
@@ -64,11 +64,11 @@ class JdbcRetrieveFantaTeamRepositoryTest {
   fun `retrieve fanta team succeeded but the team as no players`() {
 
     val teamParams = mapOf("id" to A_TEAM_ID)
-    val fantaTournamentsTeamsDto = FantaTournamentsTeamsDto(teamId = A_TEAM_ID,
-                                                            startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                            endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                            tournamentYear = A_TOURNAMENT_YEAR,
-                                                            ownerId = AN_OWNER_ID)
+    val fantaTournamentsTeamsDto = JdbcFantaTournamentsTeamsDto(teamId = A_TEAM_ID,
+                                                                startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                                endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                                tournamentYear = A_TOURNAMENT_YEAR,
+                                                                ownerId = AN_OWNER_ID)
     val pointsParams = mapOf("tournamentYear" to A_TOURNAMENT_YEAR,
                              "startingTournamentId" to A_STARTING_TOURNAMENT_ID,
                              "endingTournamentId" to AN_ENDING_TOURNAMENT_ID,
@@ -77,9 +77,9 @@ class JdbcRetrieveFantaTeamRepositoryTest {
     val expected = FoundTeam(team = TeamDto(owner = AN_OWNER_ID, players = emptyList(), totalScore = 0.00))
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<FantaTournamentsTeamsDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<JdbcFantaTournamentsTeamsDto>>())
     } returns fantaTournamentsTeamsDto
-    every { jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, pointsParams, any<RowMapper<TeamPlayerPointsDto>>()) } returns emptyList()
+    every { jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, pointsParams, any<RowMapper<JdbcTeamPlayerPointsDto>>()) } returns emptyList()
 
     assertThat(repository.retrieve(A_TEAM_ID)).isEqualTo(expected)
   }
@@ -88,18 +88,18 @@ class JdbcRetrieveFantaTeamRepositoryTest {
   fun `retrieve fanta team succeeded`() {
 
     val teamParams = mapOf("id" to A_TEAM_ID)
-    val fantaTournamentsTeamsDto = FantaTournamentsTeamsDto(teamId = A_TEAM_ID,
-                                                            startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                            endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                            tournamentYear = A_TOURNAMENT_YEAR,
-                                                            ownerId = AN_OWNER_ID)
+    val fantaTournamentsTeamsDto = JdbcFantaTournamentsTeamsDto(teamId = A_TEAM_ID,
+                                                                startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                                endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                                tournamentYear = A_TOURNAMENT_YEAR,
+                                                                ownerId = AN_OWNER_ID)
     val pointsParams = mapOf("tournamentYear" to A_TOURNAMENT_YEAR,
                              "startingTournamentId" to A_STARTING_TOURNAMENT_ID,
                              "endingTournamentId" to AN_ENDING_TOURNAMENT_ID,
                              "teamId" to A_TEAM_ID)
-    val teamPlayerPointsDto = listOf(TeamPlayerPointsDto(playerId = A_PLAYER_ID, playerName = A_PLAYER_NAME, totalScore = 12.00),
-                                     TeamPlayerPointsDto(playerId = ANOTHER_PLAYER_ID, playerName = ANOTHER_PLAYER_NAME, totalScore = 1.00),
-                                     TeamPlayerPointsDto(playerId = A_THIRD_PLAYER_ID, playerName = A_THIRD_PLAYER_NAME, totalScore = 7.00))
+    val teamPlayerPointsDto = listOf(JdbcTeamPlayerPointsDto(playerId = A_PLAYER_ID, playerName = A_PLAYER_NAME, totalScore = 12.00),
+                                     JdbcTeamPlayerPointsDto(playerId = ANOTHER_PLAYER_ID, playerName = ANOTHER_PLAYER_NAME, totalScore = 1.00),
+                                     JdbcTeamPlayerPointsDto(playerId = A_THIRD_PLAYER_ID, playerName = A_THIRD_PLAYER_NAME, totalScore = 7.00))
 
     val expected = FoundTeam(team = TeamDto(owner = AN_OWNER_ID,
                                             players = listOf(TeamPlayerDto(fullName = A_PLAYER_NAME, fantaPoints = 12.00),
@@ -108,9 +108,9 @@ class JdbcRetrieveFantaTeamRepositoryTest {
                                             totalScore = 20.00))
 
     every {
-      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<FantaTournamentsTeamsDto>>())
+      jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY, teamParams, any<RowMapper<JdbcFantaTournamentsTeamsDto>>())
     } returns fantaTournamentsTeamsDto
-    every { jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, pointsParams, any<RowMapper<TeamPlayerPointsDto>>()) } returns teamPlayerPointsDto
+    every { jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, pointsParams, any<RowMapper<JdbcTeamPlayerPointsDto>>()) } returns teamPlayerPointsDto
 
     assertThat(repository.retrieve(A_TEAM_ID)).isEqualTo(expected)
   }
