@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.infrastructure
 
 import com.posadeus.fantatennis.domain.model.AtpPlayer
 
-interface PlayerPointsRepository {
+interface PersistPlayersPointsRepository {
 
-  fun save(players: Set<AtpPlayer>)
+  fun persistAll(players: Set<AtpPlayer>)
 }
