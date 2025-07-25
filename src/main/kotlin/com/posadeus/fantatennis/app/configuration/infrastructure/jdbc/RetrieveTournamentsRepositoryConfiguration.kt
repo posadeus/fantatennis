@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
 
 @Configuration
-class JdbcRetrieveTournamentsRepositoryConfiguration {
+class RetrieveTournamentsRepositoryConfiguration {
 
   @Bean
   fun jdbcRetrieveTournamentsRepository(jdbcTemplate: JdbcTemplate): RetrieveTournamentsRepository =

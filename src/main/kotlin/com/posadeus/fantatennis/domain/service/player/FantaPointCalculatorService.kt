@@ -5,6 +5,7 @@ import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Round.*
 
+// FIX: it's not working properly with 1000 because the provider changed the contract
 class FantaPointCalculatorService(private val tournamentInfoRepositories: List<TournamentInfoRepository>,
                                   private val retrieveTournamentsRepository: RetrieveTournamentsRepository) {
 
