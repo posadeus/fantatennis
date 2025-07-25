@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.FantaTeam
@@ -10,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.transaction.annotation.Transactional
 
+@OpenForSpring
 class JdbcCreateTeamRepository(private val jdbcTemplate: JdbcTemplate,
                                private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : CreateTeamRepository {
 

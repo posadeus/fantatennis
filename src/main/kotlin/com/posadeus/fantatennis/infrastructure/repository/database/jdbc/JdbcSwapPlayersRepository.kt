@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
+@OpenForSpring
 class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
                                 private val jdbcTemplate: JdbcTemplate,
                                 private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : SwapPlayersRepository {

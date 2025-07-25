@@ -1,12 +1,14 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 
-class JdbcPersistPlayersRepository(val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : PersistPlayersRepository {
+@OpenForSpring
+class JdbcPersistPlayersRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : PersistPlayersRepository {
 
   @Transactional
   override fun persistAll(players: Set<DomainPlayer>) {

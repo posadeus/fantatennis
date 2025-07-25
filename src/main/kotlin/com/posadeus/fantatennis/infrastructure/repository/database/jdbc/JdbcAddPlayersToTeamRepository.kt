@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.AddPlayers
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
+@OpenForSpring
 class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
 
   @Transactional

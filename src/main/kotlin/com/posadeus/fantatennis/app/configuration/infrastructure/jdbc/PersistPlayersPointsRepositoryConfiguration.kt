@@ -10,6 +10,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 class PersistPlayersPointsRepositoryConfiguration {
 
   @Bean
-  fun jdbcPersistPlayerPointsRepository(namedParameterJdbcTemplate: NamedParameterJdbcTemplate): PersistPlayersPointsRepository =
+  fun jdbcPersistPlayersPointsRepository(namedParameterJdbcTemplate: NamedParameterJdbcTemplate): PersistPlayersPointsRepository =
       JdbcPersistPlayersPointsRepository(namedParameterJdbcTemplate)
 }

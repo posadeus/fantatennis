@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.app.configuration.domain
 
+import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.service.player.PlayerService
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcPersistPlayersRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -11,7 +11,7 @@ class PlayerServiceConfiguration {
 
   @Bean
   fun playerService(jdbcRetrievePlayersRepository: RetrievePlayersRepository,
-                    jdbcPersistPlayersRepository: JdbcPersistPlayersRepository): PlayerService =
+                    jdbcPersistPlayersRepository: PersistPlayersRepository): PlayerService =
       PlayerService(jdbcRetrievePlayersRepository,
                     jdbcPersistPlayersRepository)
 }

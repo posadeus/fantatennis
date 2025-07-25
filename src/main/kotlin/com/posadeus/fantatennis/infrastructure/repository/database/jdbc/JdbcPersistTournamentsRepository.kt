@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
@@ -7,6 +8,7 @@ import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournament
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 
+@OpenForSpring
 class JdbcPersistTournamentsRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : PersistTournamentsRepository {
 
   @Transactional
