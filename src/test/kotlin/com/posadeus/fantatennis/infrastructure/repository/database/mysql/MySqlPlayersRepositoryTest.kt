@@ -5,7 +5,6 @@ import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.dao.PlayersDao
 import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.PlayersEntity
 import io.mockk.*
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -14,35 +13,6 @@ class MySqlPlayersRepositoryTest {
   private val playersDao: PlayersDao = mockk()
 
   private val repository: PlayersRepository = MySqlPlayersRepository(playersDao)
-
-  @Nested
-  inner class RetrievePlayers {
-
-    @Test
-    fun `retrieve all players`() {
-
-      val playersEntity1 = PlayersEntity(id = AN_ID,
-                                         atpTourId = AN_ATP_ID,
-                                         fullName = A_FULL_NAME)
-
-      val playersEntity2 = PlayersEntity(id = ANOTHER_ID,
-                                         atpTourId = ANOTHER_ATP_ID,
-                                         fullName = ANOTHER_FULL_NAME)
-      val playersEntities = listOf(playersEntity1, playersEntity2)
-
-      val domainPlayer1 = DomainPlayer(id = AN_ID,
-                                       atpId = AN_ATP_ID,
-                                       fullName = A_FULL_NAME)
-      val domainPlayer2 = DomainPlayer(id = ANOTHER_ID,
-                                       atpId = ANOTHER_ATP_ID,
-                                       fullName = ANOTHER_FULL_NAME)
-      val expected = setOf(domainPlayer1, domainPlayer2)
-
-      every { playersDao.findAll() } returns playersEntities
-
-      assertThat(repository.getAllPlayers()).isEqualTo(expected)
-    }
-  }
 
   @Nested
   inner class SavePlayers {

@@ -7,11 +7,6 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.P
 
 class MySqlPlayersRepository(private val playersDao: PlayersDao) : PlayersRepository {
 
-  override fun getAllPlayers(): Set<DomainPlayer> =
-      playersDao.findAll()
-          .map(::toDomainPlayer)
-          .toSet()
-
   override fun saveAll(players: Set<DomainPlayer>) {
 
     players
@@ -19,11 +14,6 @@ class MySqlPlayersRepository(private val playersDao: PlayersDao) : PlayersReposi
         .toSet()
         .let { playersDao.saveAll(it) }
   }
-
-  private fun toDomainPlayer(playersEntity: PlayersEntity) =
-      DomainPlayer(id = playersEntity.id,
-                   atpId = playersEntity.atpTourId,
-                   fullName = playersEntity.fullName)
 
   private fun toPlayersEntity(domainPlayer: DomainPlayer) =
       PlayersEntity(id = domainPlayer.id,

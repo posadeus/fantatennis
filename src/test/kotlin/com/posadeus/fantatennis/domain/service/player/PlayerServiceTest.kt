@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
@@ -9,8 +10,9 @@ import org.junit.jupiter.api.Test
 class PlayerServiceTest {
 
   private val playersRepository: PlayersRepository = mockk()
+  private val retrievePlayersRepository: RetrievePlayersRepository = mockk()
 
-  private val service = PlayerService(playersRepository)
+  private val service = PlayerService(playersRepository, retrievePlayersRepository)
 
   @Test
   fun `get all players`() {
@@ -23,7 +25,7 @@ class PlayerServiceTest {
                                      fullName = ANOTHER_FULL_NAME)
     val expected = setOf(domainPlayer1, domainPlayer2)
 
-    every { playersRepository.getAllPlayers() } returns expected
+    every { retrievePlayersRepository.retrieve() } returns expected
 
     assertThat(service.allPlayers()).isEqualTo(expected)
   }

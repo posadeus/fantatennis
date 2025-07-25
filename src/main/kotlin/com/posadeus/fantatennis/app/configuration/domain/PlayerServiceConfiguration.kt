@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.app.configuration.domain
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.service.player.PlayerService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -9,6 +10,8 @@ import org.springframework.context.annotation.Configuration
 class PlayerServiceConfiguration {
 
   @Bean
-  fun playerService(mySqlPlayersRepository: PlayersRepository): PlayerService =
-      PlayerService(mySqlPlayersRepository)
+  fun playerService(mySqlPlayersRepository: PlayersRepository,
+                    jdbcRetrievePlayersRepository: RetrievePlayersRepository): PlayerService =
+      PlayerService(mySqlPlayersRepository,
+                    jdbcRetrievePlayersRepository)
 }

@@ -32,35 +32,6 @@ class MySqlPlayersRepositoryIT {
   }
 
   @Nested
-  inner class RetrievePlayers {
-
-    @Test
-    fun `retrieve saved players`() {
-
-      assertThat(playersDao.findAll()).isEqualTo(arrayListOf<PlayersEntity>())
-
-      val player1 = PlayersEntity(id = "AN_ID",
-                                  atpTourId = "AN_ATP_TOUR_ID",
-                                  fullName = "A_FULL_NAME")
-      val player2 = PlayersEntity(id = "ANOTHER_ID",
-                                  atpTourId = "ANOTHER_ATP_TOUR_ID",
-                                  fullName = "ANOTHER_FULL_NAME")
-
-      playersDao.saveAll(listOf(player1, player2))
-
-      val domainPlayer1 = DomainPlayer(id = "AN_ID",
-                                       atpId = "AN_ATP_TOUR_ID",
-                                       fullName = "A_FULL_NAME")
-      val domainPlayer2 = DomainPlayer(id = "ANOTHER_ID",
-                                       atpId = "ANOTHER_ATP_TOUR_ID",
-                                       fullName = "ANOTHER_FULL_NAME")
-      val expected = setOf(domainPlayer1, domainPlayer2)
-
-      assertThat(mySqlPlayersRepository.getAllPlayers()).isEqualTo(expected)
-    }
-  }
-
-  @Nested
   inner class SavePlayers {
 
     @Test
