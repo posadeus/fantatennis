@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.domain.service.player
 
-import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
+import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import io.mockk.*
@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test
 
 class PlayerServiceTest {
 
-  private val playersRepository: PlayersRepository = mockk()
   private val retrievePlayersRepository: RetrievePlayersRepository = mockk()
+  private val persistPlayersRepository: PersistPlayersRepository = mockk()
 
-  private val service = PlayerService(playersRepository, retrievePlayersRepository)
+  private val service = PlayerService(retrievePlayersRepository, persistPlayersRepository)
 
   @Test
   fun `get all players`() {
@@ -37,11 +37,11 @@ class PlayerServiceTest {
                                            atpId = AN_ATP_ID,
                                            fullName = A_FULL_NAME))
 
-    every { playersRepository.saveAll(domainPlayers) } just runs
+    every { persistPlayersRepository.persistAll(domainPlayers) } just runs
 
     service.saveAll(domainPlayers)
 
-    verify(exactly = 1) { playersRepository.saveAll(domainPlayers) }
+    verify(exactly = 1) { persistPlayersRepository.persistAll(domainPlayers) }
   }
 
   companion object {

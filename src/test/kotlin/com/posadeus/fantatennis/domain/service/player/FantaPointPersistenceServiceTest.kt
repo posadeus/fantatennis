@@ -1,7 +1,6 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
-import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
 import com.posadeus.fantatennis.domain.model.AtpPlayer
 import io.mockk.*
 import org.junit.jupiter.api.Test
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test
 class FantaPointPersistenceServiceTest {
 
   private val playerPointsRepository: PlayerPointsRepository = mockk()
-  private val playersRepository: PlayersRepository = mockk()
 
   private val service = FantaPointPersistenceService(playerPointsRepository)
 
@@ -26,7 +24,6 @@ class FantaPointPersistenceServiceTest {
     service.persistScores(players)
 
     verify(exactly = 1) { playerPointsRepository.save(players) }
-    verify { playersRepository wasNot called }
   }
 
   @Test
@@ -37,7 +34,6 @@ class FantaPointPersistenceServiceTest {
     service.persistScores(players)
 
     verify { playerPointsRepository wasNot called }
-    verify { playersRepository wasNot called }
   }
 
   companion object {

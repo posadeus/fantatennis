@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.infrastructure
 
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 
-interface PlayersRepository {
+interface PersistPlayersRepository {
 
-  fun saveAll(players: Set<DomainPlayer>)
+  fun persistAll(players: Set<DomainPlayer>)
 }
