@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.infrastructure
 
 import com.posadeus.fantatennis.domain.model.Tournament
 
-interface TournamentsRepository {
+interface RetrieveTournamentsRepository {
 
-  fun getAllTournaments(): List<Tournament>
+  fun retrieveAllBy(year: Int): List<Tournament>
 }

@@ -11,9 +11,9 @@ class FantaPointServiceConfiguration {
 
   @Bean
   fun fantaPointCalculatorService(tournamentInfoRepositories: List<TournamentInfoRepository>,
-                                       mySqlTournamentsRepository: TournamentsRepository): FantaPointCalculatorService =
+                                  jdbcRetrieveTournamentsRepository: RetrieveTournamentsRepository): FantaPointCalculatorService =
       FantaPointCalculatorService(tournamentInfoRepositories,
-                                  mySqlTournamentsRepository)
+                                  jdbcRetrieveTournamentsRepository)
 
   @Bean
   fun fantaPointPersistenceService(mySqlPlayerPointsRepository: PlayerPointsRepository): FantaPointPersistenceService =

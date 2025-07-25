@@ -7,11 +7,6 @@ import com.posadeus.fantatennis.infrastructure.repository.database.mysql.model.T
 
 class MySqlTournamentsRepository(private val dao: TournamentsDao) : TournamentsRepository {
 
-  override fun readTournaments(year: Int): List<Tournament> =
-      year
-          .let(dao::findByYear)
-          .map(::toTournament)
-
   override fun getAllTournaments(): List<Tournament> =
       dao.findAll()
          .map(::toTournament)
