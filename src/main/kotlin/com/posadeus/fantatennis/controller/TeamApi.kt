@@ -45,5 +45,5 @@ interface TeamApi {
             produces = ["application/json"],
             consumes = ["application/json"]
     )
-    fun swamp( @PathVariable("teamId") teamId: Int, @RequestBody playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto>
+    fun swap(@PathVariable("teamId") teamId: Int, @RequestBody playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto>
 }

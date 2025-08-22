@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class TeamController(private val service: RetrieveTeamService,
+class TeamController(private val retrieveTeamService: RetrieveTeamService,
                      private val createTeamService: CreateTeamService,
                      private val addPlayersTeamService: AddPlayersTeamService,
                      private val swapPlayersTeamService: SwapPlayersTeamService) : TeamApi {
@@ -32,14 +32,14 @@ class TeamController(private val service: RetrieveTeamService,
       }
 
   override fun retrieve(teamId: Int): ResponseEntity<TeamDto> =
-      when (val team = service.getTeam(teamId)) {
+      when (val team = retrieveTeamService.retrieve(teamId)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)
         is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
         is ErrorTeam -> ResponseEntity.internalServerError().build()
       }
 
-  override fun swamp(teamId: Int, playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto> =
+  override fun swap(teamId: Int, playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto> =
       when (val team = swapPlayersTeamService.swap(teamId, playersToSwapDto)) {
 
         is FoundTeam -> ResponseEntity.ok(team.team)

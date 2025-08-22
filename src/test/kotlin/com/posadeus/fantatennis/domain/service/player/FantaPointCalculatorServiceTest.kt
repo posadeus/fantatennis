@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.player
 
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
-import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Round.*
 import io.mockk.*
@@ -12,10 +12,10 @@ class FantaPointCalculatorServiceTest {
 
   private val tournamentInfoRepository: TournamentInfoRepository = mockk()
   private val anotherTournamentInfoRepository: TournamentInfoRepository = mockk()
-  private val tournamentsRepository: TournamentsRepository = mockk()
+  private val retrieveTournamentsRepository: RetrieveTournamentsRepository = mockk()
 
   private val service = FantaPointCalculatorService(listOf(tournamentInfoRepository, anotherTournamentInfoRepository),
-                                                    tournamentsRepository)
+                                                    retrieveTournamentsRepository)
 
   @Test
   fun `calculate points for 1000 points tournament with tournamentInfoRepository`() {
@@ -51,7 +51,7 @@ class FantaPointCalculatorServiceTest {
                          AtpPlayer(id = "PlayerId7",
                                    tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
@@ -94,7 +94,7 @@ class FantaPointCalculatorServiceTest {
                          AtpPlayer(id = "PlayerId7",
                                    tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns false
     every { anotherTournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { anotherTournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
@@ -141,7 +141,7 @@ class FantaPointCalculatorServiceTest {
                          AtpPlayer(id = "PlayerId8",
                                    tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 8.0))))
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
@@ -187,7 +187,7 @@ class FantaPointCalculatorServiceTest {
                          AtpPlayer(id = "PlayerId8",
                                    tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 4.0))))
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
@@ -230,7 +230,7 @@ class FantaPointCalculatorServiceTest {
                          AtpPlayer(id = "PlayerId7",
                                    tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 2.0))))
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
@@ -273,7 +273,7 @@ class FantaPointCalculatorServiceTest {
                          AtpPlayer(id = "PlayerId7",
                                    tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))))
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
@@ -313,7 +313,7 @@ class FantaPointCalculatorServiceTest {
                          AtpPlayer(id = "PlayerId6",
                                    tournamentPoints = mapOf(A_YEAR to mapOf(AN_ID to 1.0))))
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 
@@ -333,7 +333,7 @@ class FantaPointCalculatorServiceTest {
 
     val expected = emptySet<AtpPlayer>()
 
-    every { tournamentsRepository.readTournaments(A_YEAR) } returns tournaments
+    every { retrieveTournamentsRepository.retrieveAllBy(A_YEAR) } returns tournaments
     every { tournamentInfoRepository.canProcess(A_TOURNAMENT_ID) } returns true
     every { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns tournamentInfo
 

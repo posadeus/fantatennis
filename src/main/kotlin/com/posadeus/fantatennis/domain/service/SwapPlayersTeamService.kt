@@ -1,58 +1,20 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
-import com.posadeus.fantatennis.domain.infrastructure.TeamsRepository
-import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
-import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
-import com.posadeus.fantatennis.domain.service.player.PlayerService
-import com.posadeus.fantatennis.domain.service.team.RetrieveTeamService
-import com.posadeus.fantatennis.domain.service.tournament.RetrieveTournamentsService
+import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
+import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
+import com.posadeus.fantatennis.domain.model.ErrorTeam
+import com.posadeus.fantatennis.domain.model.Team
 
-class SwapPlayersTeamService(private val retrieveTeamService: RetrieveTeamService,
-                             private val playerService: PlayerService,
-                             private val retrieveTournamentsService: RetrieveTournamentsService,
-                             private val teamsRepository: TeamsRepository) {
+class SwapPlayersTeamService(private val swapPlayersRepository: SwapPlayersRepository) {
 
   fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
-      when (val team = retrieveTeamService.getTeam(teamId)) {
+      try {
 
-        is FoundTeam -> {
-
-          playerService.allPlayers()
-              .map(DomainPlayer::id)
-              .takeIf { areAllRequestedPlayersPresent(it, playersToSwap) }
-              ?.flatMap {
-                retrieveTournamentsService.retrieveAll()
-                  .map(Tournament::id)
-              }
-              // TODO: Add a rule to fail the service if the startingTournament is before the endingTournament OR already started OR not right after the endingTournament
-              ?.takeIf {
-                it.isNotEmpty()
-                && playersToSwap.add.startingTournamentId in it
-                && playersToSwap.remove.endingTournamentId in it
-              }
-              ?.let {
-                when (toSwapCommand(teamId, playersToSwap).let(teamsRepository::swapPlayers)) {
-                  is SwapCompleted -> retrieveTeamService.getTeam(teamId)
-                  is SwapFailed -> ErrorTeam
-                }
-              }
-          ?: ErrorTeam
-        }
-
-        is TeamIdNotFoundTeam, ErrorTeam -> team
+        swapPlayersRepository.swap(teamId, playersToSwap)
       }
+      catch (e: InvalidPlayersSwapException) {
 
-  private fun toSwapCommand(teamId: Int, playersToSwapDto: PlayersToSwapDto) =
-      SwapCommand(teamId = teamId,
-                  playersToRemove = playersToSwapDto.remove.playerIds,
-                  playersToAdd = playersToSwapDto.add.playerIds,
-                  endingTournament = playersToSwapDto.remove.endingTournamentId,
-                  startingTournament = playersToSwapDto.add.startingTournamentId)
-
-  private fun areAllRequestedPlayersPresent(allPlayersIds: List<String>, playersToSwap: PlayersToSwapDto) =
-      allPlayersIds.isNotEmpty()
-      && allPlayersIds.containsAll(playersToSwap.add.playerIds)
-      && allPlayersIds.containsAll(playersToSwap.remove.playerIds)
+        ErrorTeam
+      }
 }

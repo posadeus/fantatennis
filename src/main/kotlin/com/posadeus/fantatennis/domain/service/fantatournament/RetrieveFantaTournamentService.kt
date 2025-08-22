@@ -1,10 +1,10 @@
 package com.posadeus.fantatennis.domain.service.fantatournament
 
-import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.FantaTournamentResults
 
-class RetrieveFantaTournamentService(private val fantaTournamentsRepository: FantaTournamentsRepository) {
+class RetrieveFantaTournamentService(private val retrieveFantaTournamentResultsRepository: RetrieveFantaTournamentResultsRepository) {
 
   fun retrieve(tournamentId: Int): FantaTournamentResults =
-      fantaTournamentsRepository.retrieveTournamentResults(tournamentId)
+      retrieveFantaTournamentResultsRepository.retrieve(tournamentId)
 }

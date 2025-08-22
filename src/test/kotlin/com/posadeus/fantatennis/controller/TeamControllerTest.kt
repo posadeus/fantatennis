@@ -187,7 +187,7 @@ class TeamControllerTest {
       val expected = TeamDto(AN_OWNER, A_LIST_OF_PLAYERS, A_TOTAL_SCORE)
       val team = FoundTeam(expected)
 
-      every { retrieveTeamService.getTeam(A_TEAM_ID) } returns team
+      every { retrieveTeamService.retrieve(A_TEAM_ID) } returns team
 
       mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
                       .contentType(MediaType.APPLICATION_JSON))
@@ -204,7 +204,7 @@ class TeamControllerTest {
 
       val team = TeamIdNotFoundTeam
 
-      every { retrieveTeamService.getTeam(A_TEAM_ID) } returns team
+      every { retrieveTeamService.retrieve(A_TEAM_ID) } returns team
 
       mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
                       .contentType(MediaType.APPLICATION_JSON))
@@ -220,7 +220,7 @@ class TeamControllerTest {
 
       val team = ErrorTeam
 
-      every { retrieveTeamService.getTeam(A_TEAM_ID) } returns team
+      every { retrieveTeamService.retrieve(A_TEAM_ID) } returns team
 
       mvc.perform(get("$TEAM_ENDPOINT/$A_TEAM_ID")
                       .contentType(MediaType.APPLICATION_JSON))

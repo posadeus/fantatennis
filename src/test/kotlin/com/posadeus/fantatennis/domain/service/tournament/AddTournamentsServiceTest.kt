@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.domain.service.tournament
 
 import com.posadeus.fantatennis.domain.exception.InvalidYearException
+import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentsRegistryRepository
-import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
@@ -14,9 +14,9 @@ import org.junit.jupiter.api.assertThrows
 class AddTournamentsServiceTest {
 
   private val tournamentsRegistryRepository: TournamentsRegistryRepository = mockk()
-  private val tournamentsRepository: TournamentsRepository = mockk()
+  private val persistTournamentsRepository: PersistTournamentsRepository = mockk()
 
-  private val service = AddTournamentsService(tournamentsRegistryRepository, tournamentsRepository)
+  private val service = AddTournamentsService(tournamentsRegistryRepository, persistTournamentsRepository)
 
   @Test
   fun `add tournaments successfully`() {
@@ -42,12 +42,12 @@ class AddTournamentsServiceTest {
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
     every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns tournaments
-    every { tournamentsRepository.persist(tournaments) } just runs
+    every { persistTournamentsRepository.persistAll(tournaments) } just runs
 
     service.addTournamentsFor(A_YEAR)
 
     verify(exactly = 1) { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) }
-    verify(exactly = 1) { tournamentsRepository.persist(tournaments) }
+    verify(exactly = 1) { persistTournamentsRepository.persistAll(tournaments) }
   }
 
   @Test
@@ -58,7 +58,7 @@ class AddTournamentsServiceTest {
     assertThrows<InvalidYearException> { service.addTournamentsFor (A_YEAR) }
 
     verify(exactly = 1) { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) }
-    verify { tournamentsRepository wasNot called }
+    verify { persistTournamentsRepository wasNot called }
   }
 
   @Test
@@ -85,12 +85,12 @@ class AddTournamentsServiceTest {
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
     every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns tournaments
-    every { tournamentsRepository.persist(tournaments) } throws RuntimeException()
+    every { persistTournamentsRepository.persistAll(tournaments) } throws RuntimeException()
 
     assertThrows<RuntimeException> { service.addTournamentsFor(A_YEAR) }
 
     verify(exactly = 1) { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) }
-    verify(exactly = 1) { tournamentsRepository.persist(tournaments) }
+    verify(exactly = 1) { persistTournamentsRepository.persistAll(tournaments) }
   }
 
   companion object {

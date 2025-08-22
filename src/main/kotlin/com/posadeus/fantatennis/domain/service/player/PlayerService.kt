@@ -1,15 +1,18 @@
 package com.posadeus.fantatennis.domain.service.player
 
-import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
+import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 
-class PlayerService(private val playersRepository: PlayersRepository) {
+// TODO: create a RetrievePlayerService and a PersistPlayerService to separate responsibilities
+class PlayerService(private val retrievePlayersRepository: RetrievePlayersRepository,
+                    private val persistPlayersRepository: PersistPlayersRepository) {
 
   fun allPlayers(): Set<DomainPlayer> =
-      playersRepository.getAllPlayers()
+      retrievePlayersRepository.retrieve()
 
   fun saveAll(players: Set<DomainPlayer>) {
 
-    playersRepository.saveAll(players)
+    persistPlayersRepository.persistAll(players)
   }
 }

@@ -1,17 +1,15 @@
 package com.posadeus.fantatennis.domain.service.player
 
-import com.posadeus.fantatennis.domain.infrastructure.PlayerPointsRepository
-import com.posadeus.fantatennis.domain.infrastructure.PlayersRepository
+import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.AtpPlayer
 import io.mockk.*
 import org.junit.jupiter.api.Test
 
 class FantaPointPersistenceServiceTest {
 
-  private val playerPointsRepository: PlayerPointsRepository = mockk()
-  private val playersRepository: PlayersRepository = mockk()
+  private val persistPlayersPointsRepository: PersistPlayersPointsRepository = mockk()
 
-  private val service = FantaPointPersistenceService(playerPointsRepository)
+  private val service = FantaPointPersistenceService(persistPlayersPointsRepository)
 
   @Test
   fun `persist scores`() {
@@ -21,12 +19,11 @@ class FantaPointPersistenceServiceTest {
                         AtpPlayer(id = "PlayerId2",
                                   tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
 
-    every { playerPointsRepository.save(players) } just runs
+    every { persistPlayersPointsRepository.persistAll(players) } just runs
 
     service.persistScores(players)
 
-    verify(exactly = 1) { playerPointsRepository.save(players) }
-    verify { playersRepository wasNot called }
+    verify(exactly = 1) { persistPlayersPointsRepository.persistAll(players) }
   }
 
   @Test
@@ -36,8 +33,7 @@ class FantaPointPersistenceServiceTest {
 
     service.persistScores(players)
 
-    verify { playerPointsRepository wasNot called }
-    verify { playersRepository wasNot called }
+    verify { persistPlayersPointsRepository wasNot called }
   }
 
   companion object {

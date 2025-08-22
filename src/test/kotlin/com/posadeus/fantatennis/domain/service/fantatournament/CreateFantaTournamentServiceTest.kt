@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.service.fantatournament
 
 import com.posadeus.fantatennis.controller.model.tournament.TournamentCreatedDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
-import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
+import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
 import com.posadeus.fantatennis.domain.model.ErrorTournamentCreation
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test
 
 class CreateFantaTournamentServiceTest {
 
-  private val fantaTournamentsRepository: FantaTournamentsRepository = mockk()
+  private val createFantaTournamentsRepository: CreateFantaTournamentRepository = mockk()
 
-  private val service = CreateFantaTournamentService(fantaTournamentsRepository)
+  private val service = CreateFantaTournamentService(createFantaTournamentsRepository)
 
   @Test
   fun `create tournament successfully`() {
@@ -34,7 +34,7 @@ class CreateFantaTournamentServiceTest {
                                                                  endingTournamentId = AN_ENDING_TOURNAMENT_ID,
                                                                  tournamentYear = A_TOURNAMENT_YEAR))
 
-    every { fantaTournamentsRepository.create(dto) } returns fantaTournament
+    every { createFantaTournamentsRepository.create(dto) } returns fantaTournament
 
     assertThat(service.create(dto)).isEqualTo(expected)
   }
@@ -49,7 +49,7 @@ class CreateFantaTournamentServiceTest {
 
     val expected = ErrorTournamentCreation
 
-    every { fantaTournamentsRepository.create(dto) } returns fantaTournament
+    every { createFantaTournamentsRepository.create(dto) } returns fantaTournament
 
     assertThat(service.create(dto)).isEqualTo(expected)
   }

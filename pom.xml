@@ -67,8 +67,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-      <version>3.3.2</version>
+      <artifactId>spring-boot-starter-data-jdbc</artifactId>
+      <version>3.4.4</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -154,6 +154,7 @@
       <version>3.0.1</version>
       <scope>test</scope>
     </dependency>
+    <!-- TO REMOVE H2 -->
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
@@ -164,6 +165,14 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <version>3.3.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- DOCKER -->
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>mysql</artifactId>
+      <version>1.20.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -200,7 +209,7 @@
           <pluginOptions>
             <!-- Each annotation is placed on its own line -->
             <option>
-              all-open:annotation=com.posadeus.fantatennis.infrastructure.repository.database.mysql.MySqlFantaTeamsRepository
+              all-open:annotation=com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
             </option>
           </pluginOptions>
           <annotationProcessors>

@@ -1,16 +1,17 @@
 package com.posadeus.fantatennis.domain.service.player
 
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
-import com.posadeus.fantatennis.domain.infrastructure.TournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Round.*
 
+// FIX: it's not working properly with 1000 because the provider changed the contract
 class FantaPointCalculatorService(private val tournamentInfoRepositories: List<TournamentInfoRepository>,
-                                  private val tournamentsRepository: TournamentsRepository) {
+                                  private val retrieveTournamentsRepository: RetrieveTournamentsRepository) {
 
   fun calculateFantaPointsFor(tournamentId: Int, year: Int): Set<AtpPlayer> {
 
-    val tournament = tournamentsRepository.readTournaments(year).associateBy { it.id }[tournamentId]
+    val tournament = retrieveTournamentsRepository.retrieveAllBy(year).associateBy { it.id }[tournamentId]
     val tennisTvId = tournament?.tennisTvId
                      ?: return emptySet()
 

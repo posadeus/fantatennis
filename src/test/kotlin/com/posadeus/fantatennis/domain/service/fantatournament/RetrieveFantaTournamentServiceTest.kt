@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.service.fantatournament
 
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
-import com.posadeus.fantatennis.domain.infrastructure.FantaTournamentsRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
 import io.mockk.every
 import io.mockk.mockk
@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test
 
 class RetrieveFantaTournamentServiceTest {
 
-  private val fantaTournamentsRepository: FantaTournamentsRepository = mockk()
+  private val retrieveFantaTournamentResultsRepository: RetrieveFantaTournamentResultsRepository = mockk()
 
-  private val service = RetrieveFantaTournamentService(fantaTournamentsRepository)
+  private val service = RetrieveFantaTournamentService(retrieveFantaTournamentResultsRepository)
 
   @Test
   fun `retrieve tournament successfully`() {
@@ -21,7 +21,7 @@ class RetrieveFantaTournamentServiceTest {
     val tournamentDto = TournamentDto(A_LIST_OF_TEAMS)
     val expected = FoundFantaTournamentResults(tournamentDto)
 
-    every { fantaTournamentsRepository.retrieveTournamentResults(A_TOURNAMENT_ID) } returns expected
+    every { retrieveFantaTournamentResultsRepository.retrieve(A_TOURNAMENT_ID) } returns expected
 
     assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
   }
