@@ -36,13 +36,15 @@ class JdbcPersistPlayersPointsRepositoryIT {
   fun `exception happens during inserts, transaction reverted`() {
 
     val player1 = AtpPlayer(id = "C0D1", mapOf(2026 to mapOf(2 to 10.00)))
-    val player2 = AtpPlayer(id = "A0B1", mapOf(2026 to mapOf(1 to 1.00, 2 to 20.00)))
+    val player2 = AtpPlayer(id = "TOO_LONG_NAME", mapOf(2026 to mapOf(1 to 1.00, 2 to 20.00)))
     val players = setOf(player1, player2)
 
     val expectedMessage = """
       Unexpected error during insert: PreparedStatementCallback; SQL [INSERT INTO PLAYERS_POINTS
       (TOURNAMENT_YEAR, TOURNAMENT_ID, PLAYER_ID, FANTA_POINTS)
-      VALUES(?, ?, ?, ?);]; Duplicate entry '2026-1-A0B1' for key 'PLAYERS_POINTS.PRIMARY'
+      VALUES(?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+      FANTA_POINTS = VALUES(FANTA_POINTS);]; Data truncation: Data too long for column 'PLAYER_ID' at row 1
     """.trimIndent()
 
     assertThrowsWithMessage<InvalidPlayerPointsException>(expectedMessage) { repository.persistAll(players) }
@@ -54,9 +56,9 @@ class JdbcPersistPlayersPointsRepositoryIT {
       AND TOURNAMENT_YEAR = 2026;
     """.trimIndent()
 
-    val queryParams = mapOf("playerId" to listOf("C0D1", "A0B1"))
+    val queryParams = mapOf("playerId" to listOf("C0D1", "TOO_LONG_NAME"))
 
-    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(2)
+    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(1)
   }
 
   @SqlGroup(
@@ -81,6 +83,30 @@ class JdbcPersistPlayersPointsRepositoryIT {
     val queryParams = mapOf("playerId" to listOf("QR43", "A0B1"))
 
     assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(13)
+  }
+
+  @SqlGroup(
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+  )
+  @Test
+  fun `persist success for all inputs with record already present`() {
+
+    val player1 = AtpPlayer(id = "QR43", mapOf(2025 to mapOf(4 to 0.00), 2026 to mapOf(2 to 10.00)))
+    val player2 = AtpPlayer(id = "A0B1", mapOf(2026 to mapOf(1 to 1.00, 2 to 20.00)))
+    val players = setOf(player1, player2)
+
+    repository.persistAll(players)
+
+    val query = """
+      SELECT *
+      FROM PLAYERS_POINTS
+      WHERE PLAYER_ID IN (:playerId);
+    """.trimIndent()
+
+    val queryParams = mapOf("playerId" to listOf("QR43", "A0B1"))
+
+    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(12)
   }
 
   private val playerPointsRowMapper = RowMapper { rs, _ ->

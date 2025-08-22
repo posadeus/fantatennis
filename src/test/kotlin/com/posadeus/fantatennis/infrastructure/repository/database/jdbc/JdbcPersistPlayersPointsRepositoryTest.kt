@@ -149,7 +149,9 @@ class JdbcPersistPlayersPointsRepositoryTest {
     private val INSERT_PLAYERS_POINTS_QUERY = """
       INSERT INTO PLAYERS_POINTS
       (TOURNAMENT_YEAR, TOURNAMENT_ID, PLAYER_ID, FANTA_POINTS)
-      VALUES(:tournamentYear, :tournamentId, :playerId, :fantaPoints);
+      VALUES(:tournamentYear, :tournamentId, :playerId, :fantaPoints)
+      ON DUPLICATE KEY UPDATE
+      FANTA_POINTS = VALUES(FANTA_POINTS);
     """.trimIndent()
   }
 }
