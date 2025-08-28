@@ -2,11 +2,13 @@ package com.posadeus.fantatennis.app.configuration.infrastructure
 
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.infrastructure.client.ausopen.AusOpenClient
+import com.posadeus.fantatennis.infrastructure.client.rolandgarros.RolandGarrosClient
 import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
 import com.posadeus.fantatennis.infrastructure.client.usopen.UsOpenClient
 import com.posadeus.fantatennis.infrastructure.client.wimbledon.WimbledonClient
 import com.posadeus.fantatennis.infrastructure.repository.ausopen.AusOpenTournamentEventIdService
 import com.posadeus.fantatennis.infrastructure.repository.ausopen.AusOpenTournamentInfoRepository
+import com.posadeus.fantatennis.infrastructure.repository.rolandgarros.RolandGarrosTournamentInfoRepository
 import com.posadeus.fantatennis.infrastructure.repository.tennistv.TennisTvTournamentInfoRepository
 import com.posadeus.fantatennis.infrastructure.repository.usopen.UsOpenTournamentInfoRepository
 import com.posadeus.fantatennis.infrastructure.repository.wimbledon.WimbledonTournamentInfoRepository
@@ -36,4 +38,9 @@ class TournamentInfoRepositoryConfiguration {
   @Order(3)
   fun ausOpenTournamentInfoRepository(ausOpenClient: AusOpenClient): TournamentInfoRepository =
       AusOpenTournamentInfoRepository(ausOpenClient, AusOpenTournamentEventIdService())
+
+  @Bean
+  @Order(4)
+  fun rolandGarrosTournamentInfoRepository(rolandGarrosClient: RolandGarrosClient): TournamentInfoRepository =
+      RolandGarrosTournamentInfoRepository(rolandGarrosClient)
 }

@@ -45,3 +45,9 @@ client:
     http:
       connection-timeout: 2000
       connection-request-timeout: 2000
+
+  roland-garros:
+    uri: https://www.rolandgarros.com
+    http:
+      connection-timeout: 2000
+      connection-request-timeout: 2000
