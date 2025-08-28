@@ -1,11 +1,13 @@
 package com.posadeus.fantatennis.infrastructure.client.atptour.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 sealed interface AtpTourRankingResponse
 
 data class AtpTourRankingsOkResponse(val ranking: List<AtpTourRankingOkResponse>) : AtpTourRankingResponse
 data object AtpTourRankingErrorResponse : AtpTourRankingResponse
 
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class AtpTourRankingOkResponse(val RankNo: Int,
                                     val Name: String,
                                     val Points: String,

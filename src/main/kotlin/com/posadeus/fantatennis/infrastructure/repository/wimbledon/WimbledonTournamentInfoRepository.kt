@@ -46,10 +46,10 @@ class WimbledonTournamentInfoRepository(private val client: WimbledonClient) : T
         "F" -> F
         "SF" -> SF
         "QF" -> QF
-        "4R" -> R4
-        "3R" -> R3
-        "2R" -> R2
-        "1R" -> R1
+        "4R", "R4" -> R4
+        "3R", "R3" -> R3
+        "2R", "R2" -> R2
+        "1R", "R1" -> R1
         else -> throw UnexpectedRoundException("Round not found: $roundNameShort")
       }
 

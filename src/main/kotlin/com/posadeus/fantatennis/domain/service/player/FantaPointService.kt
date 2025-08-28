@@ -35,6 +35,8 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
     }
     else {
 
+      LOGGER.warn("Missing players: $notRegisteredPlayersAtpIds")
+
       val rankedPlayers = rankingService.retrieveRankedPlayer(1000) as RankedPlayers
       val playersToRegister = findMissingPlayersInRankedPlayers(notRegisteredPlayersAtpIds, rankedPlayers)
 

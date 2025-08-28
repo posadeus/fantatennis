@@ -12,8 +12,8 @@ data class TournamentResponse(val MS: MS,
 
 data class MS(val EventTypeCode: String?,
               val Description: String?,
-              val DrawSize: Int?,
-              val NumByes: Int?,
+              val DrawSize: Int,
+              val NumByes: Int,
               val HasRoundRobin: Boolean?,
               val IsTeamEvent: Boolean?,
               val Breakdown: Array<Breakdown>,
@@ -44,8 +44,8 @@ data class MS(val EventTypeCode: String?,
   override fun hashCode(): Int {
     var result = EventTypeCode?.hashCode() ?: 0
     result = 31 * result + (Description?.hashCode() ?: 0)
-    result = 31 * result + (DrawSize ?: 0)
-    result = 31 * result + (NumByes ?: 0)
+    result = 31 * result + DrawSize
+    result = 31 * result + NumByes
     result = 31 * result + (HasRoundRobin?.hashCode() ?: 0)
     result = 31 * result + (IsTeamEvent?.hashCode() ?: 0)
     result = 31 * result + Breakdown.contentHashCode()
@@ -63,7 +63,7 @@ data class Breakdown(val Id: Int?,
                      val Points: String)
 
 data class Round(val RoundId: Int?,
-                 val RoundIdModernized: Int?,
+                 val RoundIdModernized: Int,
                  val RoundName: String,
                  val Fixtures: Array<Fixture>,
                  val TeamFixtures: Array<Any>?) {
@@ -89,7 +89,7 @@ data class Round(val RoundId: Int?,
 
   override fun hashCode(): Int {
     var result = RoundId ?: 0
-    result = 31 * result + (RoundIdModernized ?: 0)
+    result = 31 * result + RoundIdModernized
     result = 31 * result + RoundName.hashCode()
     result = 31 * result + Fixtures.contentHashCode()
     result = 31 * result + (TeamFixtures?.contentHashCode() ?: 0)

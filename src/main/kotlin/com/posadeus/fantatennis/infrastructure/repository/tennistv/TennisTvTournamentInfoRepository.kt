@@ -7,6 +7,7 @@ import com.posadeus.fantatennis.domain.model.Round.*
 import com.posadeus.fantatennis.infrastructure.client.tennistv.TennisTvClient
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.*
 import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedRoundException
+import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedTournamentFormatException
 
 class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : TournamentInfoRepository {
 
@@ -16,17 +17,18 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
   override fun retrieveTournamentInfo(tournamentId: Int, year: Int): TournamentInfo =
       when (val response = client.retrieveTournamentInfo(tournamentId, year)) {
 
-        is TennisTvTournamentOkResponse -> toTournamentInfo(tournamentId, response)
+        is TennisTvTournamentOkResponse -> toTournamentInfo(tournamentId, response, year)
         is TennisTvTournamentErrorResponse -> ErrorTournamentInfo
       }
 
-  private fun toTournamentInfo(tournamentId: Int, response: TennisTvTournamentOkResponse): CompleteTournamentInfo {
+  private fun toTournamentInfo(tournamentId: Int, response: TennisTvTournamentOkResponse, year: Int): CompleteTournamentInfo {
 
     val tournament = response.tournament.MS
+    val totalPlayers = tournament.DrawSize + tournament.NumByes
 
     val winners = tournament.Rounds
         .associate { round ->
-          (toRound(round.RoundName)
+          (toRound(round.RoundIdModernized, totalPlayers)
               to winners(round.Fixtures))
         }
 
@@ -41,16 +43,56 @@ class TennisTvTournamentInfoRepository(private val client: TennisTvClient) : Tou
                                   winners = winners)
   }
 
-  private fun toRound(roundName: String): Round =
-      when (roundName) {
-        "Final" -> F
-        "Semifinals", "Semifinal" -> SF
-        "Quarterfinals", "Quarterfinal" -> QF
-        "Fourth Round" -> R4
-        "Third Round" -> R3
-        "Second Round", "Round of 16" -> R2
-        "First Round", "Round of 28", "Round of 32" -> R1
-        else -> throw UnexpectedRoundException("Round not found: $roundName")
+  private fun toRound(roundId: Int, totalPlayers: Int): Round =
+
+      when (totalPlayers) {
+        128 -> to128Tournament(roundId)
+        64 -> to64Tournament(roundId)
+        32 -> to32Tournament(roundId)
+        16 -> to16Tournament(roundId)
+        else -> throw UnexpectedTournamentFormatException("Tournament format not found: $totalPlayers")
+      }
+
+  private fun to16Tournament(roundId: Int): Round =
+      when (roundId) {
+        7 -> F
+        6 -> SF
+        5 -> QF
+        4 -> R1
+        else -> throw UnexpectedRoundException("Round not found: $roundId")
+      }
+
+  private fun to32Tournament(roundId: Int): Round =
+      when (roundId) {
+        7 -> F
+        6 -> SF
+        5 -> QF
+        4 -> R2
+        3 -> R1
+        else -> throw UnexpectedRoundException("Round not found: $roundId")
+      }
+
+  private fun to64Tournament(roundId: Int): Round =
+      when (roundId) {
+        7 -> F
+        6 -> SF
+        5 -> QF
+        4 -> R3
+        3 -> R2
+        2 -> R1
+        else -> throw UnexpectedRoundException("Round not found: $roundId")
+      }
+
+  private fun to128Tournament(roundId: Int): Round =
+      when (roundId) {
+        7 -> F
+        6 -> SF
+        5 -> QF
+        4 -> R4
+        3 -> R3
+        2 -> R2
+        1 -> R1
+        else -> throw UnexpectedRoundException("Round not found: $roundId")
       }
 
   private fun winners(round: Array<Fixture>): Set<AtpPlayerId> {

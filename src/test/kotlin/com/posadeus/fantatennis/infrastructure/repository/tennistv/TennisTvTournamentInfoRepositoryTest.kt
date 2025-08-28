@@ -17,6 +17,7 @@ import com.posadeus.fantatennis.infrastructure.client.tennistv.model.ResultTeamP
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.RoundBuilder.Companion.aRound
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.TournamentResponseBuilder.Companion.aTournamentResponse
 import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedRoundException
+import com.posadeus.fantatennis.infrastructure.repository.exception.UnexpectedTournamentFormatException
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -39,14 +40,16 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `get tournament information`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aRound("Second Round",
+    val clientResponse = aClientResponseWith(arrayOf(aRound(4,
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER"),
-                                                     aRound("First Round",
+                                                     aRound(3,
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER",
                                                             "FIRST_ROUND_LOSER_1",
-                                                            "FIRST_ROUND_LOSER_2")))
+                                                            "FIRST_ROUND_LOSER_2")),
+                                             32,
+                                             0)
     val participants = setOf("A_WINNER", "ANOTHER_WINNER", "FIRST_ROUND_LOSER_1", "FIRST_ROUND_LOSER_2")
 
     val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
@@ -62,16 +65,18 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `get tournament information - winner against bye`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aRound("Second Round",
+    val clientResponse = aClientResponseWith(arrayOf(aRound(4,
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER"),
-                                                     aRound("First Round",
+                                                     aRound(3,
                                                             "A_WINNER",
                                                             "FIRST_ROUND_LOSER_1",
                                                             aResultTeamPlayer()
                                                                 .withPlayerId("ANOTHER_WINNER")
                                                                 .build(),
-                                                            null)))
+                                                            null)),
+                                             32,
+                                             0)
     val participants = setOf("A_WINNER", "FIRST_ROUND_LOSER_1", "ANOTHER_WINNER")
 
     val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
@@ -87,10 +92,12 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `get tournament information - match not played`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aNotPlayedRound("First Round",
+    val clientResponse = aClientResponseWith(arrayOf(aNotPlayedRound(3,
                                                                      null,
                                                                      0,
-                                                                     null)))
+                                                                     null)),
+                                             32,
+                                             0)
 
     val expected = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                           participants = emptySet(),
@@ -102,11 +109,27 @@ class TennisTvTournamentInfoRepositoryTest {
   }
 
   @Test
+  fun `tournament format exception`() {
+
+    val clientResponse = aClientResponseWith(arrayOf(aRound(ANY_ROUND_ID,
+                                                            A_FIXTURE_PLAYER,
+                                                            A_FIXTURE_PLAYER)),
+                                             0,
+                                             10)
+
+    every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
+
+    assertThrows<UnexpectedTournamentFormatException> { tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) }
+  }
+
+  @Test
   fun `round exception`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aRound("A_NOT_EXISTING_ROUND",
+    val clientResponse = aClientResponseWith(arrayOf(aRound(2,
                                                             A_FIXTURE_PLAYER,
-                                                            A_FIXTURE_PLAYER)))
+                                                            A_FIXTURE_PLAYER)),
+                                             32,
+                                             0)
 
     every { client.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR) } returns clientResponse
 
@@ -123,10 +146,12 @@ class TennisTvTournamentInfoRepositoryTest {
     assertThat(tournamentInfoRepository.retrieveTournamentInfo(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
   }
 
-  private fun aClientResponseWith(rounds: Array<Round>) =
+  private fun aClientResponseWith(rounds: Array<Round>, drawSize: Int, numOfByes: Int) =
       TennisTvTournamentOkResponseBuilder()
           .withTournament(aTournamentResponse()
                               .withMS(aMS()
+                                          .withDrawSize(drawSize)
+                                          .withNumByes(numOfByes)
                                           .withBreakdown(arrayOf(aBreakdown()
                                                                      .build()))
                                           .withRounds(rounds)
@@ -134,41 +159,41 @@ class TennisTvTournamentInfoRepositoryTest {
                               .build())
           .build()
 
-  private fun aRound(roundName: String,
+  private fun aRound(roundId: Int,
                      fixture1Winner: String,
                      fixture2Winner: String,
                      fixture1Loser: String,
                      fixture2Loser: String) =
       aRound()
-          .withRoundName(roundName)
+          .withRoundIdModernized(roundId)
           .withFixtures(arrayOf(aFixture(fixture1Winner, fixture1Loser),
                                 aFixture(fixture2Winner, fixture2Loser)))
           .build()
 
-  private fun aRound(roundName: String,
+  private fun aRound(roundId: Int,
                      fixtureWinner: String,
                      fixtureLoser: String) =
       aRound()
-          .withRoundName(roundName)
+          .withRoundIdModernized(roundId)
           .withFixtures(arrayOf(aFixture(fixtureWinner, fixtureLoser)))
           .build()
 
-  private fun aNotPlayedRound(roundName: String,
+  private fun aNotPlayedRound(roundId: Int,
                               match: Match?,
                               winner: Int,
                               result: Result?) =
       aRound()
-          .withRoundName(roundName)
+          .withRoundIdModernized(roundId)
           .withFixtures(arrayOf(aFixtureNotPlayed(match, winner, result)))
           .build()
 
-  private fun aRound(roundName: String,
+  private fun aRound(roundId: Int,
                      fixture1Winner: String,
                      fixture1Loser: String,
                      resultTeamPlayer1: ResultTeamPlayer,
                      resultTeamPlayer2: ResultTeamPlayer?) =
       aRound()
-          .withRoundName(roundName)
+          .withRoundIdModernized(roundId)
           .withFixtures(arrayOf(aFixture(fixture1Winner, fixture1Loser),
                                 aFixtureWithoutAMatch(resultTeamPlayer1, resultTeamPlayer2)))
           .build()
@@ -216,6 +241,7 @@ class TennisTvTournamentInfoRepositoryTest {
     private const val A_TOURNAMENT_ID = 123
     private const val ANY_TOURNAMENT_ID = 2345
     private const val A_YEAR = 2000
+    private const val ANY_ROUND_ID = 1
     private const val A_FIXTURE_PLAYER = "A_FIXTURE_PLAYER"
   }
 }

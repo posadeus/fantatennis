@@ -5,14 +5,24 @@ import com.posadeus.fantatennis.infrastructure.client.tennistv.model.RoundBuilde
 
 class MSBuilder(private var EventTypeCode: String? = null,
                 private var Description: String? = null,
-                private var DrawSize: Int? = null,
-                private var NumByes: Int? = null,
+                private var DrawSize: Int = 32,
+                private var NumByes: Int = 0,
                 private var HasRoundRobin: Boolean? = null,
                 private var IsTeamEvent: Boolean? = null,
                 private var Breakdown: Array<Breakdown> = arrayOf(aBreakdown().build()),
                 private var RoundRobinRound: Any? = null,
                 private var Rounds: Array<Round> = arrayOf(aRound().build()),
                 private var Withdrawals: Any? = null) {
+
+  fun withDrawSize(DrawSize: Int): MSBuilder {
+    this.DrawSize = DrawSize
+    return this
+  }
+
+  fun withNumByes(NumByes: Int): MSBuilder {
+    this.NumByes = NumByes
+    return this
+  }
 
   fun withBreakdown(Breakdown: Array<Breakdown>): MSBuilder {
     this.Breakdown = Breakdown
