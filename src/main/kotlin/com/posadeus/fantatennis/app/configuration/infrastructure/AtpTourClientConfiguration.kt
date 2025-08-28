@@ -13,7 +13,7 @@ class AtpTourClientConfiguration {
 
   @Bean
   fun atpTourGetClient(@Value("\${client.atp-tour.uri}") atpTourURI: String,
-                            atpTourRestTemplate: RestTemplate): AtpTourClient =
+                       atpTourRestTemplate: RestTemplate): AtpTourClient =
     RestAtpTourClient(atpTourURI, atpTourRestTemplate)
 
   @Bean

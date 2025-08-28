@@ -1,5 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.client.atptour.impl
 
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import com.posadeus.fantatennis.infrastructure.client.atptour.AtpTourClient
 import com.posadeus.fantatennis.infrastructure.client.atptour.model.*
 import org.springframework.http.*
@@ -28,23 +30,39 @@ class RestAtpTourClient(private val baseUrl: String,
     }
     catch (e: Exception) {
 
-      return AtpTourRankingErrorResponse
+      return try {
+
+        fallbackOnJSONBackup()
+      }
+      catch (e: Exception) {
+
+        AtpTourRankingErrorResponse
+      }
     }
+  }
+
+  private fun fallbackOnJSONBackup(): AtpTourRankingsOkResponse {
+    
+    val fileContent = this::class.java.classLoader.getResource("backupAtpRanking.json")!!.readText()
+    val listType = object : TypeToken<List<AtpTourRankingOkResponse>>() {}.type
+    val myList: List<AtpTourRankingOkResponse> = Gson().fromJson(fileContent, listType)
+    
+    return myList.let(::AtpTourRankingsOkResponse)
   }
 
   private fun convert(body: Array<*>): AtpTourRankingsOkResponse =
       body.map { it as Map<String, Any> }
           .map {
-            AtpTourRankingOkResponse(rankNo = it["RankNo"].toString().toInt(),
-                                     name = it["Name"].toString(),
-                                     points = it["Points"].toString(),
-                                     urlHeadshotImage = it["UrlHeadshotImage"].toString(),
-                                     urlCountryFlag = it["UrlCountryFlag"].toString(),
-                                     movement = it["Movement"].toString().toInt(),
-                                     country = it["Country"].toString(),
-                                     countryCode = it["CountryCode"].toString(),
-                                     playerId = it["PlayerId"].toString(),
-                                     playerProfileUrl = it["PlayerProfileUrl"].toString())
+            AtpTourRankingOkResponse(RankNo = it["RankNo"].toString().toInt(),
+                                     Name = it["Name"].toString(),
+                                     Points = it["Points"].toString(),
+                                     UrlHeadshotImage = it["UrlHeadshotImage"].toString(),
+                                     UrlCountryFlag = it["UrlCountryFlag"].toString(),
+                                     Movement = it["Movement"].toString().toInt(),
+                                     Country = it["Country"].toString(),
+                                     CountryCode = it["CountryCode"].toString(),
+                                     PlayerId = it["PlayerId"].toString(),
+                                     PlayerProfileUrl = it["PlayerProfileUrl"].toString())
           }
           .let { AtpTourRankingsOkResponse(it) }
 

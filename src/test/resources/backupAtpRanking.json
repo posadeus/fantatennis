@@ -1,0 +1,26 @@
+[
+  {
+    "RankNo": 1,
+    "Name": "Jannik Sinner",
+    "Points": "11,480",
+    "UrlHeadshotImage": "/-/media/alias/player-headshot/s0ag",
+    "UrlCountryFlag": "/-/media/images/flags/ita.svg",
+    "Movement": 0,
+    "Country": "Italy",
+    "CountryCode": "ITA",
+    "PlayerId": "S0AG",
+    "PlayerProfileUrl": "/en/players/jannik-sinner/s0ag/overview"
+  },
+  {
+    "RankNo": 2,
+    "Name": "Carlos Alcaraz",
+    "Points": "9,590",
+    "UrlHeadshotImage": "/-/media/alias/player-headshot/a0e2",
+    "UrlCountryFlag": "/-/media/images/flags/esp.svg",
+    "Movement": 0,
+    "Country": "Spain",
+    "CountryCode": "ESP",
+    "PlayerId": "A0E2",
+    "PlayerProfileUrl": "/en/players/carlos-alcaraz/a0e2/overview"
+  }
+]

@@ -24,8 +24,8 @@ class AtpTourRankingRepository(private val atpTourClient: AtpTourClient) : Ranki
       }
 
   private fun toRankedPlayer(atpTourRankingOkResponse: AtpTourRankingOkResponse): RankedPlayerDto =
-      RankedPlayerDto(id = atpTourRankingOkResponse.playerId,
-                      fullName = atpTourRankingOkResponse.name,
-                      rank = atpTourRankingOkResponse.rankNo,
-                      points = atpTourRankingOkResponse.points.replace(",", "").toInt())
+      RankedPlayerDto(id = atpTourRankingOkResponse.PlayerId,
+                      fullName = atpTourRankingOkResponse.Name,
+                      rank = atpTourRankingOkResponse.RankNo,
+                      points = atpTourRankingOkResponse.Points.replace(",", "").toInt())
 }

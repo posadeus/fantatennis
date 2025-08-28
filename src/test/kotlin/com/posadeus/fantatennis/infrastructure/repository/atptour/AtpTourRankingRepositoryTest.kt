@@ -20,16 +20,16 @@ class AtpTourRankingRepositoryTest {
   @Test
   fun `client success, returned converted successful response`() {
 
-    val clientResponse = AtpTourRankingsOkResponse(listOf(AtpTourRankingOkResponse(rankNo = 1,
-                                                                                   name = "A_NAME",
-                                                                                   points = "10,000",
-                                                                                   urlHeadshotImage = "",
-                                                                                   urlCountryFlag = "",
-                                                                                   movement = 0,
-                                                                                   country = "A_COUNTRY",
-                                                                                   countryCode = "AC",
-                                                                                   playerId = "AN_ID",
-                                                                                   playerProfileUrl = "")))
+    val clientResponse = AtpTourRankingsOkResponse(listOf(AtpTourRankingOkResponse(RankNo = 1,
+                                                                                   Name = "A_NAME",
+                                                                                   Points = "10,000",
+                                                                                   UrlHeadshotImage = "",
+                                                                                   UrlCountryFlag = "",
+                                                                                   Movement = 0,
+                                                                                   Country = "A_COUNTRY",
+                                                                                   CountryCode = "AC",
+                                                                                   PlayerId = "AN_ID",
+                                                                                   PlayerProfileUrl = "")))
     val expected = RankedPlayers(listOf(RankedPlayerDto(id = "AN_ID",
                                                         fullName = "A_NAME",
                                                         rank = 1,

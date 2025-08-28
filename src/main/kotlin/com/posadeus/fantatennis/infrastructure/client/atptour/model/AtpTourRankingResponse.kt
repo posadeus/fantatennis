@@ -1,20 +1,18 @@
 package com.posadeus.fantatennis.infrastructure.client.atptour.model
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-
 sealed interface AtpTourRankingResponse
 
 data class AtpTourRankingsOkResponse(val ranking: List<AtpTourRankingOkResponse>) : AtpTourRankingResponse
 data object AtpTourRankingErrorResponse : AtpTourRankingResponse
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class AtpTourRankingOkResponse(val rankNo: Int,
-                                    val name: String,
-                                    val points: String,
-                                    val urlHeadshotImage: String,
-                                    val urlCountryFlag: String,
-                                    val movement: Int,
-                                    val country: String,
-                                    val countryCode: String,
-                                    val playerId: String,
-                                    val playerProfileUrl: String)
+//@JsonIgnoreProperties(ignoreUnknown = true)
+data class AtpTourRankingOkResponse(val RankNo: Int,
+                                    val Name: String,
+                                    val Points: String,
+                                    val UrlHeadshotImage: String,
+                                    val UrlCountryFlag: String,
+                                    val Movement: Int,
+                                    val Country: String,
+                                    val CountryCode: String,
+                                    val PlayerId: String,
+                                    val PlayerProfileUrl: String)
