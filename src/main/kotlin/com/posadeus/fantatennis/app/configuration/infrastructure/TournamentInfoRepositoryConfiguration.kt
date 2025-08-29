@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.app.configuration.infrastructure
 
+import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.infrastructure.client.ausopen.AusOpenClient
 import com.posadeus.fantatennis.infrastructure.client.rolandgarros.RolandGarrosClient
@@ -41,6 +42,7 @@ class TournamentInfoRepositoryConfiguration {
 
   @Bean
   @Order(4)
-  fun rolandGarrosTournamentInfoRepository(rolandGarrosClient: RolandGarrosClient): TournamentInfoRepository =
-      RolandGarrosTournamentInfoRepository(rolandGarrosClient)
+  fun rolandGarrosTournamentInfoRepository(rolandGarrosClient: RolandGarrosClient,
+                                           jdbcRetrievePlayersRepository: RetrievePlayersRepository): TournamentInfoRepository =
+      RolandGarrosTournamentInfoRepository(rolandGarrosClient, jdbcRetrievePlayersRepository)
 }
