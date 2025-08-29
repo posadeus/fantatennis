@@ -25,13 +25,15 @@ class JdbcRetrievePlayersRepository(private val jdbcTemplate: JdbcTemplate) : Re
   private val playerRowMapper = RowMapper { rs, _ ->
     JdbcPlayerDto(playerId = rs.getString("PLAYER_ID"),
                   atpTourId = rs.getString("ATP_TOUR_ID"),
-                  fullName = rs.getString("FULL_NAME"))
+                  fullName = rs.getString("FULL_NAME"),
+                  rolandGarrosId = rs.getBigDecimal("RG_ID"))
   }
 
   private fun toDomainPlayer(player: JdbcPlayerDto) =
       DomainPlayer(id = player.playerId,
                    atpId = player.atpTourId,
-                   fullName = player.fullName)
+                   fullName = player.fullName,
+                   rolandGarrosId = player.rolandGarrosId)
 
   companion object {
 

@@ -14,6 +14,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.math.BigDecimal
 
 @ExtendWith(SpringExtension::class)
 @Import(IntegrationTestConfiguration::class)
@@ -46,7 +47,7 @@ class JdbcRetrievePlayersRepositoryIT {
   @Test
   fun `players found`() {
 
-    val player1 = DomainPlayer(id = "A0B1", atpId = "A0B1", fullName = "AAA BBB")
+    val player1 = DomainPlayer(id = "A0B1", atpId = "A0B1", fullName = "AAA BBB", rolandGarrosId = BigDecimal(123))
     val player2 = DomainPlayer(id = "C0D1", atpId = "C0D1", fullName = "CCC DDD")
     val player3 = DomainPlayer(id = "E2F8", atpId = "E2F8", fullName = "EEE FFF")
     val player4 = DomainPlayer(id = "GH00", atpId = "GH00", fullName = "GGG HHH")
