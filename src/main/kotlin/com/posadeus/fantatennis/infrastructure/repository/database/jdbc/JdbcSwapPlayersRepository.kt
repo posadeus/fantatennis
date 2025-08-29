@@ -57,7 +57,7 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
         else -> fantaTeam
       }
 
-  private fun updateTeam(playersToSwap: PlayersToSwapDto, teamId: Int) =
+  private fun updateTeam(playersToSwap: PlayersToSwapDto, teamId: Int): Team =
       try {
 
         val batchInsertQueryParams = playersToSwap.add.playerIds

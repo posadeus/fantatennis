@@ -82,7 +82,7 @@ class JdbcAddPlayersToTeamRepositoryIT {
     val expectedMessage = """
       Unexpected error during insert: PreparedStatementCallback; SQL [INSERT INTO TEAMS
       (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
-      VALUES(?, ?, ?);]; Duplicate entry '1-A0B1' for key 'TEAMS.PRIMARY'
+      VALUES(?, ?, ?);]; Duplicate entry '1-A0B1-1' for key 'TEAMS.PRIMARY'
     """.trimIndent()
 
     assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
