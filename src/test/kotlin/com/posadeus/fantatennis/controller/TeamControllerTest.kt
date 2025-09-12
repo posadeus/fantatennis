@@ -236,6 +236,7 @@ class TeamControllerTest {
 
   @Nested
   inner class SwapPlayers {
+    // FIXME: These tests work only if there is a default on PlayersToSwapDto fields. This is incorrect. Must be solved
 
     @Test
     fun `200 response - players added`() {
@@ -265,13 +266,13 @@ class TeamControllerTest {
     }
 
     @Test
-    fun `500 response - incorrect request body`() {
+    fun `400 response - incorrect request body`() {
 
       mvc.perform(post("$TEAM_ENDPOINT/$A_TEAM_ID/$PLAYER_PATH/$PLAYER_SWAP_PATH")
                       .contentType(MediaType.APPLICATION_JSON)
                       .accept(MediaType.APPLICATION_JSON))
           .andDo(print())
-          .andExpect(status().isInternalServerError)
+          .andExpect(status().isBadRequest)
 
       verify { swapPlayersTeamService wasNot called }
       verify { addPlayersTeamService wasNot called }
