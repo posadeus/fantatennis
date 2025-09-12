@@ -67,10 +67,10 @@ class JdbcRetrieveFantaTeamRepositoryIT {
 
     val expected = FoundTeam(team = TeamDto(owner = "AN_OWNER",
                                             players = listOf(TeamPlayerDto(fullName = "KKK LLL", fantaPoints = 34.00),
-                                                             TeamPlayerDto(fullName = "SSS TTT", fantaPoints = 14.00),
                                                              TeamPlayerDto(fullName = "AAA BBB", fantaPoints = 12.00),
-                                                             TeamPlayerDto(fullName = "MMM NNN", fantaPoints = 2.00)),
-                                            totalScore = 62.00))
+                                                             TeamPlayerDto(fullName = "SSS TTT", fantaPoints = 8.00),
+                                                             TeamPlayerDto(fullName = "MMM NNN", fantaPoints = 1.00)),
+                                            totalScore = 55.00))
 
     assertThat(repository.retrieve(1)).isEqualTo(expected)
   }
