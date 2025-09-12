@@ -4,7 +4,10 @@ import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FoundTeam
+import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
+import com.posadeus.fantatennis.domain.model.TeamIdNotFoundTeam
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTeamDto.aJdbcTeamDto
@@ -30,7 +33,7 @@ class JdbcSwapPlayersRepositoryTest {
   @Test
   fun `swap fails due to team not found`() {
 
-    val expected = TeamIdNotFoundTeam
+    val expected = SwapFailed
 
     every { retrieveFantaTeamRepository.retrieve(A_NOT_EXISTING_TEAM_ID) } returns TeamIdNotFoundTeam
 
@@ -58,7 +61,7 @@ class JdbcSwapPlayersRepositoryTest {
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
     val notAllPlayersFound = listOf(A_PLAYER, anOldPlayer, anotherOldPlayer, aNewPlayer)
 
-    val expected = ErrorTeam
+    val expected = SwapFailed
 
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns notAllPlayersFound
@@ -86,7 +89,7 @@ class JdbcSwapPlayersRepositoryTest {
     val endingTournament = aJdbcTournamentDto(tournamentId = A_TOURNAMENT_ID)
     val notAllTournamentsFound = listOf(endingTournament, A_TOURNAMENT)
 
-    val expected = ErrorTeam
+    val expected = SwapFailed
 
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
@@ -122,7 +125,7 @@ class JdbcSwapPlayersRepositoryTest {
     val aTeamDto = aJdbcTeamDto(teamId = A_TEAM_ID, playerId = AN_OLD_PLAYER_ID)
     val notAllTeamsFound = listOf(aTeamDto)
 
-    val expected = ErrorTeam
+    val expected = SwapFailed
 
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
@@ -308,16 +311,9 @@ class JdbcSwapPlayersRepositoryTest {
     val batchUpdate2 = mapOf("teamId" to A_TEAM_ID, "playerId" to ANOTHER_OLD_PLAYER_ID, "endingTournamentId" to A_TOURNAMENT_ID)
     val updateParamSource = arrayOf(batchUpdate1, batchUpdate2)
 
-    val newTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0),
-                                              TeamPlayerDto(fullName = A_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0),
-                                              TeamPlayerDto(fullName = ANOTHER_NEW_PLAYER_FULL_NAME, fantaPoints = 0.0)),
-                             totalScore = 34.0,
-                             owner = AN_OWNER)
-    val expected = FoundTeam(team = newTeamDto)
+    val expected = SwapCompleted
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto) andThen expected
+    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
     every {

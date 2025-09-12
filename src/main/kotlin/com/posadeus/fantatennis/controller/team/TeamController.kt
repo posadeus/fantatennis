@@ -3,6 +3,8 @@ package com.posadeus.fantatennis.controller.team
 import com.posadeus.fantatennis.controller.TeamApi
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
 import com.posadeus.fantatennis.domain.service.SwapPlayersTeamService
 import com.posadeus.fantatennis.domain.service.team.CreateTeamService
@@ -39,11 +41,10 @@ class TeamController(private val retrieveTeamService: RetrieveTeamService,
         is ErrorTeam -> ResponseEntity.internalServerError().build()
       }
 
-  override fun swap(teamId: Int, playersToSwapDto: PlayersToSwapDto): ResponseEntity<TeamDto> =
-      when (val team = swapPlayersTeamService.swap(teamId, playersToSwapDto)) {
+  override fun swap(teamId: Int, playersToSwapDto: PlayersToSwapDto): ResponseEntity<Unit> =
+      when (swapPlayersTeamService.swap(teamId, playersToSwapDto)) {
 
-        is FoundTeam -> ResponseEntity.ok(team.team)
-        is TeamIdNotFoundTeam -> ResponseEntity.badRequest().build()
-        is ErrorTeam -> ResponseEntity.internalServerError().build()
+        is SwapCompleted -> ResponseEntity.noContent().build()
+        is SwapFailed -> ResponseEntity.internalServerError().build()
       }
 }

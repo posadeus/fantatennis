@@ -5,8 +5,12 @@ import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FoundTeam
+import com.posadeus.fantatennis.domain.model.Swap
+import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
+import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -21,13 +25,13 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
   /* TODO add following checks
   * - startingTournamentId must refer to a tournament in the future (right after the end of endingTournament)
   * - endingTournamentId must refer to a tournament in the present (current date should be between start and end dates)
-  * - playerToAdd mustn't be already present in the Team
+  * - playerToAdd mustn't be already present in the Team without an endingTournamentId
   * - playerToRemove must have endingTournamentId = null in Team table
   */
   // TODO Refactor: move operations inside sub-repositories directly connected to a table
   @Transactional
-  override fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Team =
-      when (val fantaTeam = retrieveFantaTeamRepository.retrieve(teamId)) {
+  override fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Swap =
+      when (retrieveFantaTeamRepository.retrieve(teamId)) {
 
         is FoundTeam -> {
 
@@ -43,21 +47,25 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
               val team = namedParameterJdbcTemplate.query(RETRIEVE_TEAM_PK_ID_QUERY, teamQueryParams, teamRowMapper)
 
               if (team.size != playersToSwap.remove.playerIds.size)
-                ErrorTeam
+                SwapFailed
+                    .also { LOGGER.error("One or more team players not found") } // TODO add players
               else
                 updateTeam(playersToSwap, teamId)
             }
             else
-              ErrorTeam
+              SwapFailed
+                .also { LOGGER.error("One or more requested tournaments not found.") } // TODO add tournaments
           }
           else
-            ErrorTeam
+            SwapFailed
+                .also { LOGGER.error("One or more requested players not found.") } // TODO add players
         }
 
-        else -> fantaTeam
+        else -> SwapFailed
+            .also { LOGGER.error("Team not found: $teamId.") }
       }
 
-  private fun updateTeam(playersToSwap: PlayersToSwapDto, teamId: Int): Team =
+  private fun updateTeam(playersToSwap: PlayersToSwapDto, teamId: Int): Swap =
       try {
 
         val batchInsertQueryParams = playersToSwap.add.playerIds
@@ -71,7 +79,7 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
           val batchUpdateResult = namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, batchUpdateQueryParams.toTypedArray())
 
           if (batchUpdateResult.all { it == 1 })
-            retrieveFantaTeamRepository.retrieve(teamId)
+            SwapCompleted
           else
             throw InvalidPlayersSwapException(
                 error = "Players [${errorPlayers(playersToSwap.remove.playerIds, batchUpdateResult)}] not updated, operation reverted.")
@@ -136,6 +144,8 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
   }
 
   companion object {
+
+    private val LOGGER = LoggerFactory.getLogger(JdbcSwapPlayersRepository::class.java)
 
     private val RETRIEVE_ALL_PLAYERS_QUERY = """
       SELECT *

@@ -105,12 +105,8 @@ paths:
             schema:
               $ref: './openApi-schemas.yml#/components/schemas/PlayersToSwapDto'
       responses:
-        '200':
+        '204':
           description: IDs processed successfully and players swapped for the team
-          content:
-            application/json:
-              schema:
-                $ref: './openApi-schemas.yml#/components/schemas/TeamDto'
         '400':
           description: Wrong input body
         '500':

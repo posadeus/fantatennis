@@ -2,8 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
-import com.posadeus.fantatennis.domain.model.ErrorTeam
-import com.posadeus.fantatennis.domain.model.TeamIdNotFoundTeam
+import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveFantaTeamRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcSwapPlayersRepository
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
@@ -46,7 +45,7 @@ class JdbcSwapPlayersRepositoryIT {
   @Test
   fun `no team found`() {
 
-    val expected = TeamIdNotFoundTeam
+    val expected = SwapFailed
 
     assertThat(repository.swap(100, ANY_PLAYERS_TO_SWAP)).isEqualTo(expected)
   }
@@ -61,7 +60,7 @@ class JdbcSwapPlayersRepositoryIT {
     val playersToSwap = PlayersToSwapDto(remove = PlayersToRemoveDto(playerIds = setOf("NOT_EXISTING_PLAYER_ID")),
                                          add = PlayersToAddDto(playerIds = setOf(AN_EXISTING_PLAYER)))
 
-    val expected = ErrorTeam
+    val expected = SwapFailed
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
@@ -77,7 +76,7 @@ class JdbcSwapPlayersRepositoryIT {
     val add = PlayersToAddDto(playerIds = setOf(AN_EXISTING_PLAYER), startingTournamentId = AN_EXISTING_TOURNAMENT)
     val playersToSwap = PlayersToSwapDto(remove = remove, add = add)
 
-    val expected = ErrorTeam
+    val expected = SwapFailed
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
@@ -93,12 +92,13 @@ class JdbcSwapPlayersRepositoryIT {
     val add = PlayersToAddDto(playerIds = setOf(AN_EXISTING_PLAYER), startingTournamentId = AN_EXISTING_TOURNAMENT)
     val playersToSwap = PlayersToSwapDto(remove = remove, add = add)
 
-    val expected = ErrorTeam
+    val expected = SwapFailed
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
   }
 
   // TODO Find a way to test the fail of the transaction
+  // TODO Test a success
 
   companion object {
 
