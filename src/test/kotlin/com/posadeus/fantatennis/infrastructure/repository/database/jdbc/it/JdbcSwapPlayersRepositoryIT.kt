@@ -108,6 +108,6 @@ class JdbcSwapPlayersRepositoryIT {
     private const val AN_EXISTING_PLAYER = "K5L8"
     private const val AN_EXISTING_PLAYER_NOT_IN_THE_TEAM = "C0D1"
 
-    private val ANY_PLAYERS_TO_SWAP = PlayersToSwapDto()
+    private val ANY_PLAYERS_TO_SWAP = PlayersToSwapDto(remove = PlayersToRemoveDto(), add = PlayersToAddDto())
   }
 }

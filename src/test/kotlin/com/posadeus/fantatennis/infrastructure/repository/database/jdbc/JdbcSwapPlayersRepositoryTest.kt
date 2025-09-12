@@ -351,7 +351,7 @@ class JdbcSwapPlayersRepositoryTest {
     private const val A_NEW_PLAYER_FULL_NAME = "A_NEW_PLAYER_FULL_NAME"
     private const val ANOTHER_NEW_PLAYER_FULL_NAME = "ANOTHER_NEW_PLAYER_FULL_NAME"
 
-    private val ANY_SWAP_PLAYERS = PlayersToSwapDto()
+    private val ANY_SWAP_PLAYERS = PlayersToSwapDto(remove = PlayersToRemoveDto(), add = PlayersToAddDto())
     private val A_PLAYER = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     private val A_TOURNAMENT = aJdbcTournamentDto(tournamentId = A_THIRD_TOURNAMENT_ID)
 

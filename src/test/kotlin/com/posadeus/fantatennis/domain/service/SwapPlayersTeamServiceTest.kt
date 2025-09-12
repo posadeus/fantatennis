@@ -61,6 +61,6 @@ class SwapPlayersTeamServiceTest {
     private const val A_TOURNAMENT_ID = 1
     private const val ANOTHER_TOURNAMENT_ID = 2
 
-    private val ANY_PLAYER_TO_SWAP = PlayersToSwapDto()
+    private val ANY_PLAYER_TO_SWAP = PlayersToSwapDto(remove = PlayersToRemoveDto(), add = PlayersToAddDto())
   }
 }
