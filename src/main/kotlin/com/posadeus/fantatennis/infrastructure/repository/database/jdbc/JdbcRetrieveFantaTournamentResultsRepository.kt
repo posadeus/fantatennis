@@ -13,6 +13,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate)
   : RetrieveFantaTournamentResultsRepository {
 
+    // FIXME It returns the players used in multiple team with the same score in all the teams instead of the score calculated for each team
+
   override fun retrieve(tournamentId: Int): FantaTournamentResults =
       try {
 
