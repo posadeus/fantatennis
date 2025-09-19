@@ -78,6 +78,63 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
 
   companion object {
 
+    // TODO Use this query instead of all the others and remove logic to calculate total points
+    private val RETRIEVE_QUERY = """
+      SELECT 
+        playerStandsForTeam.PLAYER_ID, 
+        playerStandsForTeam.FULL_NAME, 
+        SUM(pointPerPlayerByTournament.FANTA_POINTS) AS TOTAL_SCORE
+      FROM
+      (
+      	SELECT 
+          t.TEAM_ID, 
+          t.PLAYER_ID, 
+          p.FULL_NAME, 
+          t.STARTING_TOURNAMENT, 
+          t.ENDING_TOURNAMENT  
+      	FROM TEAMS t 
+      	LEFT JOIN PLAYERS p ON t.PLAYER_ID = p.PLAYER_ID
+      	WHERE t.TEAM_ID = 26
+      ) as playerStandsForTeam,
+      (
+      	SELECT 
+          pp.PLAYER_ID, 
+          pp.TOURNAMENT_ID, 
+          pp.FANTA_POINTS
+      	FROM PLAYERS_POINTS pp,
+      	(
+      		SELECT 
+            ftt.TEAM_ID, 
+            ft.STARTING_TOURNAMENT, 
+            ft.ENDING_TOURNAMENT, 
+            ft.TOURNAMENT_YEAR, 
+            ft2.OWNER_ID
+      		FROM FANTA_TOURNAMENTS_TEAMS ftt
+      		LEFT JOIN FANTA_TOURNAMENTS ft ON ft.FANTA_TOURNAMENT_ID = ftt.FANTA_TOURNAMENT_ID
+      		LEFT JOIN FANTA_TEAMS ft2 ON ft2.TEAM_ID = ftt.TEAM_ID
+      		WHERE ftt.TEAM_ID = 26
+      	) as fantaTournament
+      	WHERE pp.TOURNAMENT_YEAR = fantaTournament.TOURNAMENT_YEAR 
+      	AND pp.TOURNAMENT_ID >= fantaTournament.STARTING_TOURNAMENT 
+      	AND pp.TOURNAMENT_ID <= fantaTournament.ENDING_TOURNAMENT 
+      	AND pp.PLAYER_ID IN (
+      		SELECT t.PLAYER_ID 
+      		FROM TEAMS t 
+      		WHERE t.TEAM_ID = 26
+      	)
+      	ORDER BY pp.PLAYER_ID ASC, pp.TOURNAMENT_ID ASC
+      ) as pointPerPlayerByTournament
+      WHERE pointPerPlayerByTournament.PLAYER_ID = playerStandsForTeam.PLAYER_ID
+      AND
+      (
+      	IF (playerStandsForTeam.ENDING_TOURNAMENT IS NULL,
+      		pointPerPlayerByTournament.TOURNAMENT_ID >= playerStandsForTeam.STARTING_TOURNAMENT,
+      		pointPerPlayerByTournament.TOURNAMENT_ID BETWEEN playerStandsForTeam.STARTING_TOURNAMENT and playerStandsForTeam.ENDING_TOURNAMENT)
+      )
+      GROUP BY playerStandsForTeam.PLAYER_ID
+      ORDER BY TOTAL_SCORE DESC;
+    """.trimIndent()
+
     private val RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY = """
       SELECT ftt.TEAM_ID, ft.STARTING_TOURNAMENT, ft.ENDING_TOURNAMENT, ft.TOURNAMENT_YEAR, ft2.OWNER_ID
       FROM FANTA_TOURNAMENTS_TEAMS ftt
