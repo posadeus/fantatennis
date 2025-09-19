@@ -22,7 +22,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
   @Test
   fun `error on repository operation`() {
 
-    val params = mapOf("tournamentId" to A_TOURNAMENT_ID)
+    val params = mapOf("fantaTournamentId" to A_TOURNAMENT_ID)
     val expected = ErrorFantaTournamentResults
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<JdbcTournamentResultsDto>>()) } throws RuntimeException()
@@ -33,7 +33,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
   @Test
   fun `no results returned by the query`() {
 
-    val params = mapOf("tournamentId" to A_TOURNAMENT_ID)
+    val params = mapOf("fantaTournamentId" to A_TOURNAMENT_ID)
     val expected = NotFoundFantaTournamentId
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<JdbcTournamentResultsDto>>()) } returns emptyList()
@@ -44,22 +44,19 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
   @Test
   fun `retrieve results successfully`() {
 
-    val params = mapOf("tournamentId" to A_TOURNAMENT_ID)
+    val params = mapOf("fantaTournamentId" to A_TOURNAMENT_ID)
 
-    val tournamentResultsDto1 = JdbcTournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
-                                                         teamId = A_TEAM_ID,
+    val tournamentResultsDto1 = JdbcTournamentResultsDto(teamId = A_TEAM_ID,
                                                          ownerId = AN_OWNER_ID,
                                                          playerId = A_PLAYER_ID,
                                                          playerFullName = A_PLAYER_FULL_NAME,
                                                          playerTotalScore = 2.00)
-    val tournamentResultsDto2 = JdbcTournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
-                                                         teamId = A_TEAM_ID,
+    val tournamentResultsDto2 = JdbcTournamentResultsDto(teamId = A_TEAM_ID,
                                                          ownerId = AN_OWNER_ID,
                                                          playerId = ANOTHER_PLAYER_ID,
                                                          playerFullName = ANOTHER_PLAYER_FULL_NAME,
                                                          playerTotalScore = 1.00)
-    val tournamentResultsDto3 = JdbcTournamentResultsDto(tournamentId = A_TOURNAMENT_ID,
-                                                         teamId = ANOTHER_TEAM_ID,
+    val tournamentResultsDto3 = JdbcTournamentResultsDto(teamId = ANOTHER_TEAM_ID,
                                                          ownerId = ANOTHER_OWNER_ID,
                                                          playerId = A_THIRD_PLAYER_ID,
                                                          playerFullName = A_THIRD_PLAYER_FULL_NAME,
@@ -93,31 +90,63 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
     private const val ANOTHER_OWNER_ID = "ANOTHER_OWNER_ID"
 
     private val RETRIEVE_QUERY = """
-      SELECT ft.FANTA_TOURNAMENT_ID, ft2.TEAM_ID, p.FULL_NAME, p.PLAYER_ID, pps.TOTAL_SCORE, ft2.OWNER_ID 
-      FROM fanta_tennis.FANTA_TOURNAMENTS ft 
-        LEFT JOIN fanta_tennis.FANTA_TOURNAMENTS_TEAMS ftt ON ft.FANTA_TOURNAMENT_ID = ftt.FANTA_TOURNAMENT_ID 
-        LEFT JOIN fanta_tennis.FANTA_TEAMS ft2 ON ftt.TEAM_ID = ft2.TEAM_ID
-        LEFT JOIN fanta_tennis.TEAMS t ON ft2.TEAM_ID = t.TEAM_ID
-        LEFT JOIN fanta_tennis.PLAYERS p ON t.PLAYER_ID = p.PLAYER_ID
-        LEFT JOIN (	
+      SELECT 
+        playerStandsForTeam.TEAM_ID, 
+        ft2.OWNER_ID,
+        playerStandsForTeam.PLAYER_ID, 
+        playerPointsByTournament.FULL_NAME, 
+        SUM(playerPointsByTournament.FANTA_POINTS) AS TOTAL_SCORE 
+      FROM 
+      (
+        SELECT 
+          pp.PLAYER_ID, 
+          pl.FULL_NAME, 
+          pp.TOURNAMENT_ID, 
+          pp.FANTA_POINTS
+        FROM PLAYERS_POINTS pp
+        LEFT JOIN PLAYERS pl ON pl.PLAYER_ID = pp.PLAYER_ID,
+        (
           SELECT 
-            pp.PLAYER_ID AS ID,
-            SUM(pp.FANTA_POINTS) AS TOTAL_SCORE
-          FROM 
-            fanta_tennis.PLAYERS_POINTS pp
-            LEFT JOIN fanta_tennis.TEAMS t2 ON pp.PLAYER_ID = t2.PLAYER_ID
-            LEFT JOIN fanta_tennis.FANTA_TOURNAMENTS_TEAMS ftt2 ON ftt2.TEAM_ID = t2.TEAM_ID
-            LEFT JOIN fanta_tennis.FANTA_TOURNAMENTS fto ON ftt2.FANTA_TOURNAMENT_ID = fto.FANTA_TOURNAMENT_ID 
-          WHERE 
-            fto.FANTA_TOURNAMENT_ID = :tournamentId
-            AND pp.TOURNAMENT_YEAR = fto.TOURNAMENT_YEAR
-            AND t2.STARTING_TOURNAMENT BETWEEN fto.STARTING_TOURNAMENT AND fto.ENDING_TOURNAMENT
-            AND pp.TOURNAMENT_ID BETWEEN t2.STARTING_TOURNAMENT AND fto.ENDING_TOURNAMENT
-            AND (t2.ENDING_TOURNAMENT IS NULL OR pp.TOURNAMENT_ID <= t2.ENDING_TOURNAMENT) 
-          GROUP BY pp.PLAYER_ID
-        ) AS pps ON pps.ID = p.PLAYER_ID 
-      WHERE ft.FANTA_TOURNAMENT_ID = :tournamentId
-      ORDER BY t.TEAM_ID, pps.TOTAL_SCORE DESC;
+            ft.STARTING_TOURNAMENT, 
+            ft.ENDING_TOURNAMENT, 
+            ft.TOURNAMENT_YEAR
+          FROM FANTA_TOURNAMENTS ft 
+          WHERE ft.FANTA_TOURNAMENT_ID = :fantaTournamentId
+        ) AS fttt
+        WHERE pp.TOURNAMENT_YEAR = fttt.TOURNAMENT_YEAR 
+        AND pp.TOURNAMENT_ID >= fttt.STARTING_TOURNAMENT 
+        AND pp.TOURNAMENT_ID <= fttt.ENDING_TOURNAMENT 
+        ORDER BY 
+          pp.PLAYER_ID ASC, 
+          pp.TOURNAMENT_ID ASC
+      ) as playerPointsByTournament,
+      (
+        SELECT 
+          tm.TEAM_ID, 
+          tm.PLAYER_ID, 
+          tm.STARTING_TOURNAMENT, 
+          tm.ENDING_TOURNAMENT  
+        FROM TEAMS tm 
+        WHERE tm.TEAM_ID IN (
+          SELECT ftts.TEAM_ID
+          FROM FANTA_TOURNAMENTS_TEAMS as ftts
+          WHERE ftts.FANTA_TOURNAMENT_ID = :fantaTournamentId
+        ) ORDER BY tm.TEAM_ID
+      ) as playerStandsForTeam
+      LEFT JOIN FANTA_TEAMS ft2 ON playerStandsForTeam.TEAM_ID = ft2.TEAM_ID
+      WHERE playerStandsForTeam.PLAYER_ID = playerPointsByTournament.PLAYER_ID 
+      AND 
+      (
+        IF (playerStandsForTeam.ENDING_TOURNAMENT IS NULL,
+          playerPointsByTournament.TOURNAMENT_ID >= playerStandsForTeam.STARTING_TOURNAMENT,
+          playerPointsByTournament.TOURNAMENT_ID BETWEEN playerStandsForTeam.STARTING_TOURNAMENT and playerStandsForTeam.ENDING_TOURNAMENT)
+      )
+      GROUP BY 
+        playerStandsForTeam.PLAYER_ID, 
+        playerStandsForTeam.TEAM_ID
+      ORDER BY 
+        TEAM_ID ASC, 
+        TOTAL_SCORE DESC;
     """.trimIndent()
   }
 }
