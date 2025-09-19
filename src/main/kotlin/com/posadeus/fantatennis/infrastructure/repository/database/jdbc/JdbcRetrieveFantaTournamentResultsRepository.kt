@@ -47,10 +47,10 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 
   private fun toTeamDto(entries: Map.Entry<Int, List<JdbcTournamentResultsDto>>) =
       TeamDto(owner = entries.value.first().ownerId,
-              players = entries.value.map(::toTeamPlayerDto),
-              totalScore = calculateTeamTotalScore(entries.value))
+              players = entries.value.toSet().map(::toTeamPlayerDto),
+              totalScore = calculateTeamTotalScore(entries.value.toSet()))
 
-  private fun calculateTeamTotalScore(tournamentResultsDtoList: List<JdbcTournamentResultsDto>) =
+  private fun calculateTeamTotalScore(tournamentResultsDtoList: Set<JdbcTournamentResultsDto>) =
       tournamentResultsDtoList
           .map(JdbcTournamentResultsDto::playerTotalScore)
           .reduce { teamTotalScore, singlePlayerScore -> teamTotalScore + singlePlayerScore }

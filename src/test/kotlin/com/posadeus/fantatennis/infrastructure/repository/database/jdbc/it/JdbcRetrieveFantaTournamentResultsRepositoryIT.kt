@@ -52,7 +52,6 @@ class JdbcRetrieveFantaTournamentResultsRepositoryIT {
 
     val a0b1 = TeamPlayerDto(fullName = "AAA BBB", fantaPoints = 12.00)
     val mn98 = TeamPlayerDto(fullName = "MMM NNN", fantaPoints = 1.00)
-    val mn98_1 = TeamPlayerDto(fullName = "MMM NNN", fantaPoints = 1.00) // FIXME: Should not be present, it's an error
     val k5l8 = TeamPlayerDto(fullName = "KKK LLL", fantaPoints = 34.00)
     val s7t5 = TeamPlayerDto(fullName = "SSS TTT", fantaPoints = 8.00)
 
@@ -64,7 +63,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryIT {
     val gh00 = TeamPlayerDto(fullName = "GGG HHH", fantaPoints = 6.00)
     val i0j7 = TeamPlayerDto(fullName = "III JJJ", fantaPoints = 5.00)
 
-    val team1 = TeamDto(owner = "AN_OWNER", players = listOf(k5l8, a0b1, s7t5, mn98, mn98_1), totalScore = 56.00)
+    val team1 = TeamDto(owner = "AN_OWNER", players = listOf(k5l8, a0b1, s7t5, mn98), totalScore = 55.00)
     val team2 = TeamDto(owner = "ANOTHER_OWNER", players = listOf(qr43, o7p6, c0d1), totalScore = 86.00)
     val team3 = TeamDto(owner = "THIRD_OWNER", players = listOf(gh00, i0j7, e2f8), totalScore = 15.00)
     val teamOrderedListByTotalScore = listOf(team2, team1, team3)
