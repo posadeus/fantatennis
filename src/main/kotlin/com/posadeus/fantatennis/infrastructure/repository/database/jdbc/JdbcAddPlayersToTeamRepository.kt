@@ -6,12 +6,14 @@ import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.AddPlayers
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.DomainPlayer
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTeamDto.Companion.fantaTeamRowMapper
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto.Companion.playerRowMapper
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto.Companion.tournamentRowMapper
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
 
 @OpenForSpring
 class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
@@ -64,30 +66,6 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
     }
 
     return true
-  }
-
-  private val fantaTeamRowMapper = RowMapper { rs, _ ->
-    JdbcFantaTeamDto(teamId = rs.getInt("TEAM_ID"),
-                     ownerId = rs.getString("OWNER_ID"))
-  }
-
-  private val tournamentRowMapper = RowMapper { rs, _ ->
-    JdbcTournamentDto(tournamentId = rs.getInt("TOURNAMENT_ID"),
-                      atpTourId = rs.getInt("ATP_TOUR_ID"),
-                      tennisTvId = rs.getInt("TENNIS_TV_ID"),
-                      name = rs.getString("NAME"),
-                      points = rs.getInt("POINTS"),
-                      location = rs.getString("LOCATION"),
-                      surface = rs.getString("SURFACE"),
-                      year = rs.getInt("YEAR"),
-                      startDate = LocalDate.parse(rs.getString("START_DATE")),
-                      endDate = LocalDate.parse(rs.getString("END_DATE")))
-  }
-
-  private val playerRowMapper = RowMapper { rs, _ ->
-    JdbcPlayerDto(playerId = rs.getString("PLAYER_ID"),
-                  atpTourId = rs.getString("ATP_TOUR_ID"),
-                  fullName = rs.getString("FULL_NAME"))
   }
 
   private fun missingPlayerIds(playerIds: Set<String>,

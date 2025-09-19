@@ -3,11 +3,10 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Tournament
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto.Companion.tournamentRowMapper
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 import java.sql.Types
-import java.time.LocalDate
 
 class JdbcRetrieveTournamentsRepository(private val jdbcTemplate: JdbcTemplate) : RetrieveTournamentsRepository {
 
@@ -32,19 +31,6 @@ class JdbcRetrieveTournamentsRepository(private val jdbcTemplate: JdbcTemplate) 
                  tennisTvId = dto.tennisTvId,
                  points = dto.points,
                  year = dto.year)
-
-  private val tournamentRowMapper = RowMapper { rs, _ ->
-    JdbcTournamentDto(tournamentId = rs.getInt("TOURNAMENT_ID"),
-                      atpTourId = rs.getInt("ATP_TOUR_ID"),
-                      tennisTvId = rs.getInt("TENNIS_TV_ID"),
-                      name = rs.getString("NAME"),
-                      points = rs.getInt("POINTS"),
-                      location = rs.getString("LOCATION"),
-                      surface = rs.getString("SURFACE"),
-                      year = rs.getInt("YEAR"),
-                      startDate = LocalDate.parse(rs.getString("START_DATE")),
-                      endDate = LocalDate.parse(rs.getString("END_DATE")))
-  }
 
   companion object {
 

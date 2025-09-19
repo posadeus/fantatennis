@@ -4,9 +4,12 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentsTeamsDto.Companion.fantaTournamentsTeamsRowMapper
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto.Companion.teamRowMapper
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamPlayerPointsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamPlayerPointsDto.Companion.teamPlayerPointsRowMapper
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : RetrieveFantaTeamRepository {
@@ -17,7 +20,7 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
 
       val fantaTournamentsTeamsDto = jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_BY_TEAM_QUERY,
                                                                  mapOf("id" to teamId),
-                                                                 fantaTournamentTeamRowMapper)
+                                                                 fantaTournamentsTeamsRowMapper)
       val teamsDto = jdbcTemplate.query(RETRIEVE_TEAMS_QUERY, mapOf("id" to teamId), teamRowMapper)
 
       if (teamsDto.isEmpty())
@@ -28,7 +31,7 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
                               "endingTournamentId" to fantaTournamentsTeamsDto.endingTournamentId,
                               "players" to teamsDto.map { it.playerId }.toSet(),
                               "tournamentYear" to fantaTournamentsTeamsDto.tournamentYear)
-      val teamPlayerPointsDto = jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, inputParams, pointsRowMapper)
+      val teamPlayerPointsDto = jdbcTemplate.query(RETRIEVE_PLAYER_POINTS_QUERY, inputParams, teamPlayerPointsRowMapper)
 
       val playerScores = teamPlayerPointsDto
           .groupBy { it.playerId }
@@ -68,28 +71,6 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
             teamPlayerRows.any { tpp.tournamentId in it.startingTournamentId .. (it.endingTournamentId ?: defaultEndingTournament) }
           }
           .sumOf { it.tournamentScore }
-
-  private val fantaTournamentTeamRowMapper = RowMapper { rs, _ ->
-    JdbcFantaTournamentsTeamsDto(teamId = rs.getInt("TEAM_ID"),
-                                 startingTournamentId = rs.getInt("STARTING_TOURNAMENT"),
-                                 endingTournamentId = rs.getInt("ENDING_TOURNAMENT"),
-                                 tournamentYear = rs.getInt("TOURNAMENT_YEAR"),
-                                 ownerId = rs.getString("OWNER_ID"))
-  }
-
-  private val teamRowMapper = RowMapper { rs, _ ->
-    JdbcTeamDto(teamId = rs.getInt("TEAM_ID"),
-                playerId = rs.getString("PLAYER_ID"),
-                startingTournamentId = rs.getInt("STARTING_TOURNAMENT"),
-                endingTournamentId = rs.getObject("ENDING_TOURNAMENT", Integer::class.java)?.toInt())
-  }
-
-  private val pointsRowMapper = RowMapper { rs, _ ->
-    JdbcTeamPlayerPointsDto(playerId = rs.getString("PLAYER_ID"),
-                            playerName = rs.getString("FULL_NAME"),
-                            tournamentId = rs.getInt("TOURNAMENT_ID"),
-                            tournamentScore = rs.getDouble("FANTA_POINTS"))
-  }
 
   private data class TempPlayerPoints(val playerId: String,
                                       val playerName: String,

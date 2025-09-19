@@ -6,8 +6,8 @@ import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto.Companion.tournamentResultsRowMapper
 import org.slf4j.LoggerFactory
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate)
@@ -19,7 +19,7 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
       try {
 
         val params = mapOf("tournamentId" to tournamentId)
-        namedParameterJdbcTemplate.query(RETRIEVE_QUERY, params, rowMapper)
+        namedParameterJdbcTemplate.query(RETRIEVE_QUERY, params, tournamentResultsRowMapper)
             .takeIf { it.isNotEmpty() }
             ?.let(::toTournamentDto)
             ?.let(::FoundFantaTournamentResults)
@@ -30,15 +30,6 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
         LOGGER.error("Error during retrieve operation for tournament id: $tournamentId", e)
         ErrorFantaTournamentResults
       }
-
-  private val rowMapper = RowMapper { rs, _ ->
-    JdbcTournamentResultsDto(tournamentId = rs.getInt("FANTA_TOURNAMENT_ID"),
-                             teamId = rs.getInt("TEAM_ID"),
-                             ownerId = rs.getString("OWNER_ID"),
-                             playerId = rs.getString("PLAYER_ID"),
-                             playerFullName = rs.getString("FULL_NAME"),
-                             playerTotalScore = rs.getDouble("TOTAL_SCORE"))
-  }
 
   private fun toTournamentDto(resultsDto: List<JdbcTournamentResultsDto>): TournamentDto =
       resultsDto
