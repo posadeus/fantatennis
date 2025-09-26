@@ -9,6 +9,7 @@ import com.posadeus.fantatennis.domain.model.FoundTeam
 import com.posadeus.fantatennis.domain.model.Swap
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto.Companion.playerRowMapper
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto.Companion.teamRowMapper
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto.Companion.tournamentRowMapper
@@ -82,11 +83,11 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
             SwapCompleted
           else
             throw InvalidPlayersSwapException(
-                error = "Players [${errorPlayers(playersToSwap.remove.playerIds, batchUpdateResult)}] not updated, operation reverted.")
+                error = "Players [${manageError(playersToSwap.remove.playerIds, batchUpdateResult) { it }}] not updated, operation reverted.")
         }
         else
           throw InvalidPlayersSwapException(
-              error = "Players [${errorPlayers(playersToSwap.add.playerIds, batchInsertResult)}] not inserted, operation reverted.")
+              error = "Players [${manageError(playersToSwap.add.playerIds, batchInsertResult) { it }}] not inserted, operation reverted.")
       }
       catch (e: RuntimeException) {
 
@@ -102,20 +103,6 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
       tournamentIds.isNotEmpty()
       && playersToSwap.add.startingTournamentId in tournamentIds
       && playersToSwap.remove.endingTournamentId in tournamentIds
-
-  // TODO: can be moved in a support class for repositories
-  private fun errorPlayers(team: Set<String>, batchUpdate: IntArray): String {
-
-    val errorIndexes = batchUpdate
-        .withIndex()
-        .filter { it.value == 0 }
-        .map { it.index }
-
-    return team
-        .filterIndexed { index, _ -> index in errorIndexes }
-        .map { it }
-        .reduce { acc, s -> "$acc, $s" }
-  }
 
   companion object {
 
