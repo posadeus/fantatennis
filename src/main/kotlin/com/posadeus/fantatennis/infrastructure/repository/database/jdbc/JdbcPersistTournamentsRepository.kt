@@ -5,6 +5,7 @@ import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,7 +21,7 @@ class JdbcPersistTournamentsRepository(private val namedParameterJdbcTemplate: N
           .let(::persistAll)
 
       if (batchResult.any { it != 1 })
-        throw InvalidTournamentException(error = "Tournaments [${errorTournaments(tournaments, batchResult)}] not inserted, operation reverted.")
+        throw InvalidTournamentException(error = "Tournaments [${manageError(tournaments.tournaments, batchResult) { it.atpTourId.toString() }}] not inserted, operation reverted.")
     }
     catch (e: RuntimeException) {
 
@@ -41,20 +42,6 @@ class JdbcPersistTournamentsRepository(private val namedParameterJdbcTemplate: N
             "year" to tournamentRegistry.year,
             "startDate" to tournamentRegistry.startDate,
             "endDate" to tournamentRegistry.endDate)
-
-  // TODO Can be moved outside and generalised
-  private fun errorTournaments(tournaments: FoundTournamentsRegistry, batchUpdate: IntArray): String {
-
-    val errorIndexes = batchUpdate
-        .withIndex()
-        .filter { it.value == 0 }
-        .map { it.index }
-
-    return tournaments.tournaments
-        .filterIndexed { index, _ -> index in errorIndexes }
-        .map { it.atpTourId.toString() }
-        .reduce { acc, s -> "$acc, $s" }
-  }
 
   companion object {
 

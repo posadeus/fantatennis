@@ -4,6 +4,7 @@ import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,7 +20,7 @@ class JdbcPersistPlayersRepository(private val namedParameterJdbcTemplate: Named
           .let(::persistAll)
 
       if (batchResult.any { it != 1 })
-        throw InvalidPlayerException(error = "Players [${errorPlayers(players, batchResult)}] not inserted, operation reverted.")
+        throw InvalidPlayerException(error = "Players [${manageError(players, batchResult) { it.id }}] not inserted, operation reverted.")
     }
     catch (e: RuntimeException) {
 
@@ -34,20 +35,6 @@ class JdbcPersistPlayersRepository(private val namedParameterJdbcTemplate: Named
       mapOf("playerId" to player.id,
             "atpTourId" to player.atpId,
             "fullName" to player.fullName)
-
-  // TODO Can be moved outside and generalised
-  private fun errorPlayers(players: Set<DomainPlayer>, batchUpdate: IntArray): String {
-
-    val errorIndexes = batchUpdate
-        .withIndex()
-        .filter { it.value == 0 }
-        .map { it.index }
-
-    return players
-        .filterIndexed { index, _ -> index in errorIndexes }
-        .map { it.id }
-        .reduce { acc, s -> "$acc, $s" }
-  }
 
   companion object {
 
