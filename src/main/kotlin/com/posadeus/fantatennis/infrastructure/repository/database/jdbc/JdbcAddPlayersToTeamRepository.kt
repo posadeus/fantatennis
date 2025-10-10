@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 @OpenForSpring
 class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
 
+  // TODO Add validation: if a player is already present and without an endingTournamentId before the new startingTournamentId, it cannot be added
   @Transactional
   override fun add(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): AddPlayers {
 
@@ -93,6 +94,32 @@ class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdb
   }
 
   companion object {
+
+    // TODO These two queries can improve the validation, but with less knowledge of the specific error. Evaluate how to improve these or the already present query to have efficiency and precision on errors
+    private val RETRIEVE_TEAM_PLAYERS_QUERY = """
+      SELECT
+      	t.PLAYER_ID,
+      	t.STARTING_TOURNAMENT,
+      	t.ENDING_TOURNAMENT
+      FROM fanta_tennis.FANTA_TEAMS ft
+      JOIN fanta_tennis.TEAMS t ON ft.TEAM_ID = t.TEAM_ID
+      JOIN fanta_tennis.FANTA_TOURNAMENTS_TEAMS ftt ON ftt.TEAM_ID = t.TEAM_ID
+      JOIN fanta_tennis.FANTA_TOURNAMENTS fto ON ftt.FANTA_TOURNAMENT_ID = fto.FANTA_TOURNAMENT_ID
+      WHERE ft.TEAM_ID = :teamId
+      AND
+      (
+      	SELECT TOURNAMENT_ID
+      	FROM fanta_tennis.TOURNAMENTS
+      	WHERE TOURNAMENT_ID = :tournamentId
+      ) BETWEEN fto.STARTING_TOURNAMENT AND fto.ENDING_TOURNAMENT;
+    """.trimIndent()
+
+    private val RETRIEVE_PLAYERS_ASSOCIATION_QUERY = """
+      SELECT p.PLAYER_ID, t.TEAM_ID, t.STARTING_TOURNAMENT, t.ENDING_TOURNAMENT
+      FROM fanta_tennis.PLAYERS p
+      LEFT JOIN fanta_tennis.TEAMS t ON p.PLAYER_ID = t.PLAYER_ID
+      WHERE p.PLAYER_ID IN (:playerIds);
+    """.trimIndent()
 
     private val RETRIEVE_FANTA_TEAM_QUERY = """
       SELECT *
