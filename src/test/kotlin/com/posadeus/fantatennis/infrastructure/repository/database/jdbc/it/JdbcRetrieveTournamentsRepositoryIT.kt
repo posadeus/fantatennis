@@ -1,33 +1,34 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
+import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.TournamentDaoConfiguration
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Tournament
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveTournamentsRepository
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@Import(IntegrationTestConfiguration::class)
+@Import(IntegrationTestConfiguration::class, TournamentDaoConfiguration::class)
 class JdbcRetrieveTournamentsRepositoryIT {
 
   @Autowired
-  private lateinit var jdbcTemplate: JdbcTemplate
+  private lateinit var cachedTournamentDao: TournamentDao
 
   private lateinit var repository: RetrieveTournamentsRepository
 
   @BeforeEach
   fun setUp() {
 
-    repository = JdbcRetrieveTournamentsRepository(jdbcTemplate)
+    repository = JdbcRetrieveTournamentsRepository(cachedTournamentDao)
   }
 
   @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)

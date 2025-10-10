@@ -97,6 +97,13 @@
       <version>${kotlin.version}</version>
     </dependency>
 
+    <!-- CAFFEINE -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+
     <!-- HTTP CLIENT -->
     <dependency>
       <groupId>org.apache.httpcomponents.client5</groupId>
