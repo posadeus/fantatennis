@@ -4,10 +4,10 @@ import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistPla
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -86,13 +86,6 @@ class JdbcPersistPlayersRepositoryIT {
     JdbcPlayerDto(playerId = rs.getString("PLAYER_ID"),
                   atpTourId = rs.getString("ATP_TOUR_ID"),
                   fullName = rs.getString("FULL_NAME"))
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   companion object {

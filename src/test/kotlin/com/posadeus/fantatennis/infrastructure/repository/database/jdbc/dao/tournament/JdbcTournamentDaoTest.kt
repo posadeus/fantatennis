@@ -43,7 +43,7 @@ class JdbcTournamentDaoTest {
   }
 
   @Test
-  fun `retrieve results successfully`() {
+  fun `results retrieved successfully`() {
 
     val jdbcTournament1 = aJdbcTournamentDto(tournamentId = AN_ID,
                                              atpTourId = AN_ATP_TOUR_ID,

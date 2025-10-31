@@ -7,6 +7,7 @@ import com.posadeus.fantatennis.domain.model.ErrorTournamentInfo
 import com.posadeus.fantatennis.domain.model.Round.R1
 import com.posadeus.fantatennis.domain.model.Round.R2
 import com.posadeus.fantatennis.domain.model.TestDomainPlayer.aDomainPlayer
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.client.rolandgarros.RolandGarrosClient
 import com.posadeus.fantatennis.infrastructure.client.rolandgarros.model.RolandGarrosErrorResponse
 import com.posadeus.fantatennis.infrastructure.client.rolandgarros.model.RolandGarrosMatchBuilder.Companion.aRolandGarrosMatch
@@ -22,9 +23,7 @@ import com.posadeus.fantatennis.infrastructure.repository.exception.RolandGarros
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.AssertionsForInterfaceTypes
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -217,13 +216,6 @@ class RolandGarrosTournamentInfoRepositoryTest {
           .withTeamA(aRolandGarrosTeam().withPlayers(arrayOf(aRolandGarrosPlayer().withId(winner).build())).withWinner(false).build())
           .withTeamB(aRolandGarrosTeam().withPlayers(arrayOf(aRolandGarrosPlayer().withId(loser).build())).withWinner(false).build())
           .build()
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    AssertionsForInterfaceTypes.assertThat(exception.message).isEqualTo(expectedMessage)
-  }
 
   companion object {
 

@@ -8,6 +8,7 @@ import com.posadeus.fantatennis.domain.model.FoundTeam
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.domain.model.TeamIdNotFoundTeam
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTeamDto.aJdbcTeamDto
@@ -15,7 +16,6 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Test
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -323,13 +323,6 @@ class JdbcSwapPlayersRepositoryTest {
     every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } returns intArrayOf(1, 1)
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   companion object {

@@ -6,10 +6,10 @@ import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsReposito
 import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -128,13 +128,6 @@ class JdbcPersistTournamentsRepositoryIT {
                       year = rs.getInt("YEAR"),
                       startDate = LocalDate.parse(rs.getString("START_DATE")),
                       endDate = LocalDate.parse(rs.getString("END_DATE")))
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   companion object {

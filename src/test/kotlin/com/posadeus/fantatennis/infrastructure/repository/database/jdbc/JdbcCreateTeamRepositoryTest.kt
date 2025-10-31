@@ -3,10 +3,10 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.FantaTeam
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
@@ -119,13 +119,6 @@ class JdbcCreateTeamRepositoryTest {
     every { jdbcTemplate.update(CREATE_FANTA_TOURNAMENTS_TEAMS_QUERY, 77, 42) } returns A_FANTA_TOURNAMENTS_TEAMS_ID
 
     assertThat(repository.create("AN_OWNER_ID", 77)).isEqualTo(expected)
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   companion object {
