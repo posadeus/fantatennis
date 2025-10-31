@@ -51,3 +51,11 @@ client:
     http:
       connection-timeout: 2000
       connection-request-timeout: 2000
+
+# Duration is always in minutes
+caches:
+  caffeine:
+    tournament-cache:
+      expire-after-write-duration: 1440
+      expire-after-access-duration: 1440
+      maximum-size: 300

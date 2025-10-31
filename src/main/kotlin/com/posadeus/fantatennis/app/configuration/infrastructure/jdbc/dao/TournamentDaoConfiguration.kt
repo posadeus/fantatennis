@@ -6,6 +6,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.Tour
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tournament.CachedTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tournament.JdbcTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
@@ -24,11 +25,15 @@ class TournamentDaoConfiguration {
       CachedTournamentDao(tournamentCache,
                           jdbcTournamentDao)
 
-  // TODO Take the configuration from the yml and choose the correct values
   @Bean
-  fun tournamentCache(): Cache<Int, List<JdbcTournamentDto>> =
+  fun tournamentCache(
+      @Value("\${caches.caffeine.tournament-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
+      @Value("\${caches.caffeine.tournament-cache.expire-after-access-duration}") expireAfterAccessDuration: Long,
+      @Value("\${caches.caffeine.tournament-cache.maximum-size}") maximumSize: Long
+  ): Cache<Int, List<JdbcTournamentDto>> =
       Caffeine.newBuilder()
-          .expireAfterWrite(1440, TimeUnit.MINUTES)
-          .maximumSize(300)
+          .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)
+          .expireAfterAccess(expireAfterAccessDuration, TimeUnit.MINUTES)
+          .maximumSize(maximumSize)
           .build()
 }
