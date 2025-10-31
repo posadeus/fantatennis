@@ -2,27 +2,26 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 import java.math.BigDecimal
 
 class JdbcRetrievePlayersRepositoryTest {
 
-  private val jdbcTemplate: JdbcTemplate = mockk()
+  private val cachedPlayerDao: PlayerDao = mockk()
 
-  private val repository: RetrievePlayersRepository = JdbcRetrievePlayersRepository(jdbcTemplate)
+  private val repository: RetrievePlayersRepository = JdbcRetrievePlayersRepository(cachedPlayerDao)
 
   @Test
   fun `retrieve fails due to exception`() {
 
     val expected = emptySet<DomainPlayer>()
 
-    every { jdbcTemplate.query(RETRIEVE_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } throws RuntimeException()
+    every { cachedPlayerDao.retrieveAll() } throws RuntimeException()
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -32,7 +31,7 @@ class JdbcRetrievePlayersRepositoryTest {
 
     val expected = emptySet<DomainPlayer>()
 
-    every { jdbcTemplate.query(RETRIEVE_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns emptyList<JdbcPlayerDto>()
+    every { cachedPlayerDao.retrieveAll() } returns emptyList()
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -50,7 +49,7 @@ class JdbcRetrievePlayersRepositoryTest {
     val player3 = DomainPlayer(id = A_THIRD_ID, atpId = A_THIRD_ATP_ID, fullName = A_THIRD_FULL_NAME, rolandGarrosId = A_RG_ID)
     val expected = setOf(player1, player2, player3)
 
-    every { jdbcTemplate.query(RETRIEVE_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns jdbcPlayers
+    every { cachedPlayerDao.retrieveAll() } returns jdbcPlayers
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -68,10 +67,5 @@ class JdbcRetrievePlayersRepositoryTest {
     private const val A_THIRD_FULL_NAME = "A_THIRD_FULL_NAME"
 
     private val A_RG_ID = BigDecimal(123)
-
-    private val RETRIEVE_PLAYERS_QUERY = """
-      SELECT *
-      FROM PLAYERS;
-    """.trimIndent()
   }
 }

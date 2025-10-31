@@ -29,7 +29,7 @@ class PlayerDaoConfiguration {
   fun playerCache(
       @Value("\${caches.caffeine.player-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
       @Value("\${caches.caffeine.player-cache.maximum-size}") maximumSize: Long
-  ): Cache<Int, List<JdbcPlayerDto>> =
+  ): Cache<Unit, List<JdbcPlayerDto>> =
       Caffeine.newBuilder()
           .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)
           .maximumSize(maximumSize)

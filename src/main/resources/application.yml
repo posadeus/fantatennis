@@ -63,4 +63,4 @@ caches:
       maximum-size: 300
     player-cache:
       expire-after-write-duration: 10080
-      maximum-size: 300
+      maximum-size: 1000

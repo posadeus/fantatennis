@@ -1,15 +1,20 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.PlayerDaoConfiguration
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrievePlayersRepository
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.player.CachedPlayerDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
@@ -17,18 +22,29 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.math.BigDecimal
 
 @ExtendWith(SpringExtension::class)
-@Import(IntegrationTestConfiguration::class)
+@Import(IntegrationTestConfiguration::class, PlayerDaoConfiguration::class)
+@TestPropertySource(properties = [
+    "caches.caffeine.player-cache.expire-after-write-duration=10080",
+    "caches.caffeine.player-cache.maximum-size=1000"
+])
 class JdbcRetrievePlayersRepositoryIT {
 
   @Autowired
-  private lateinit var jdbcTemplate: JdbcTemplate
+  private lateinit var playerCache: Cache<Unit, List<JdbcPlayerDto>>
+
+  @Autowired
+  private lateinit var jdbcPlayerDao: PlayerDao
 
   private lateinit var repository: RetrievePlayersRepository
 
   @BeforeEach
   fun setUp() {
 
-    repository = JdbcRetrievePlayersRepository(jdbcTemplate)
+    val cachedPlayerDao = CachedPlayerDao(playerCache, jdbcPlayerDao)
+
+    repository = JdbcRetrievePlayersRepository(cachedPlayerDao)
+
+    playerCache.invalidateAll()
   }
 
   @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
