@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Tournament
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
 import io.mockk.every
 import io.mockk.mockk
@@ -14,6 +15,16 @@ class JdbcRetrieveTournamentsRepositoryTest {
   private val tournamentDao: TournamentDao = mockk()
 
   private val repository: RetrieveTournamentsRepository = JdbcRetrieveTournamentsRepository(tournamentDao)
+
+  @Test
+  fun `error on repository operation`() {
+
+    val expected = emptyList<JdbcTournamentDto>()
+
+    every { tournamentDao.retrieveAllBy(A_YEAR) } throws RuntimeException()
+
+    assertThat(repository.retrieveAllBy(A_YEAR)).isEqualTo(expected)
+  }
 
   @Test
   fun `no results returned by the query`() {

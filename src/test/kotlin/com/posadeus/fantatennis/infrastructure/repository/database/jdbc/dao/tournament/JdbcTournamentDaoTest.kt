@@ -1,5 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tournament
 
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
@@ -21,13 +22,13 @@ class JdbcTournamentDaoTest {
   @Test
   fun `error on repository operation`() {
 
-    val expected = emptyList<JdbcTournamentDto>()
+    val expectedMessage = "Error message"
 
     every {
       jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, arrayOf(A_YEAR), intArrayOf(Types.INTEGER), any<RowMapper<JdbcTournamentDto>>())
-    } throws RuntimeException()
+    } throws RuntimeException(expectedMessage)
 
-    assertThat(dao.retrieveAllBy(A_YEAR)).isEqualTo(expected)
+    assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveAllBy(A_YEAR) }
   }
 
   @Test
