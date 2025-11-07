@@ -23,9 +23,11 @@ class FantaPointServiceConfiguration {
   fun fantaPointService(fantaPointCalculatorService: FantaPointCalculatorService,
                         fantaPointPersistenceService: FantaPointPersistenceService,
                         playerService: PlayerService,
+                        persistPlayerService: PersistPlayerService,
                         rankingService: RankingService): FantaPointService =
       FantaPointService(fantaPointCalculatorService,
                         fantaPointPersistenceService,
                         playerService,
+                        persistPlayerService,
                         rankingService)
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 class FantaPointService(private val fantaPointCalculatorService: FantaPointCalculatorService,
                         private val fantaPointPersistenceService: FantaPointPersistenceService,
                         private val playerService: PlayerService,
+                        private val persistPlayerService: PersistPlayerService,
                         private val rankingService: RankingService) {
 
   fun playerFantaPointsFor(tournamentId: Int, year: Int) {
@@ -40,7 +41,7 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
       val rankedPlayers = rankingService.retrieveRankedPlayer(1000) as RankedPlayers
       val playersToRegister = findMissingPlayersInRankedPlayers(notRegisteredPlayersAtpIds, rankedPlayers)
 
-      playerService.saveAll(playersToRegister)
+      persistPlayerService.persistAll(playersToRegister)
 
       if (playersToRegister.size != notRegisteredPlayersAtpIds.size) {
 

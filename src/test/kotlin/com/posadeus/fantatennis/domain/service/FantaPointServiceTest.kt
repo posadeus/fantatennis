@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.domain.service
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSucceeded
 import com.posadeus.fantatennis.domain.service.player.*
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import io.mockk.*
@@ -13,12 +14,14 @@ class FantaPointServiceTest {
 
   private val fantaPointCalculatorService: FantaPointCalculatorService = mockk()
   private val playerService: PlayerService = mockk()
+  private val persistPlayerService: PersistPlayerService = mockk()
   private val rankingService: RankingService = mockk()
   private val fantaPointPersistenceService: FantaPointPersistenceService = mockk()
 
   private val service = FantaPointService(fantaPointCalculatorService,
                                           fantaPointPersistenceService,
                                           playerService,
+                                          persistPlayerService,
                                           rankingService)
 
   @Test
@@ -49,6 +52,7 @@ class FantaPointServiceTest {
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { fantaPointPersistenceService.persistScores(atpPlayers) }
     verify { rankingService wasNot called }
+    verify { persistPlayerService wasNot called }
   }
 
   @Test
@@ -76,7 +80,7 @@ class FantaPointServiceTest {
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
     every { playerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { playerService.saveAll(missingDomainPlayers) } just runs
+    every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSucceeded
     every { fantaPointPersistenceService.persistScores(atpPlayers) } just runs
 
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
@@ -84,7 +88,7 @@ class FantaPointServiceTest {
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
-    verify(exactly = 1) { playerService.saveAll(missingDomainPlayers) }
+    verify(exactly = 1) { persistPlayerService.persistAll(missingDomainPlayers) }
     verify(exactly = 1) { fantaPointPersistenceService.persistScores(atpPlayers) }
   }
 
@@ -119,7 +123,7 @@ class FantaPointServiceTest {
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
     every { playerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { playerService.saveAll(missingDomainPlayers) } just runs
+    every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSucceeded
     every { fantaPointPersistenceService.persistScores(playerScoresToUpdate) } just runs
 
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
@@ -127,7 +131,7 @@ class FantaPointServiceTest {
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
-    verify(exactly = 1) { playerService.saveAll(missingDomainPlayers) }
+    verify(exactly = 1) { persistPlayerService.persistAll(missingDomainPlayers) }
     verify(exactly = 1) { fantaPointPersistenceService.persistScores(playerScoresToUpdate) }
   }
 
@@ -140,6 +144,7 @@ class FantaPointServiceTest {
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
     verify { playerService wasNot called }
+    verify { persistPlayerService wasNot called }
     verify { rankingService wasNot called }
     verify { fantaPointPersistenceService wasNot called }
   }
@@ -167,6 +172,7 @@ class FantaPointServiceTest {
     verify(exactly = 1) { playerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
     verify { fantaPointPersistenceService wasNot called }
+    verify { persistPlayerService wasNot called }
   }
 
   companion object {
