@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.domain.service.player
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSucceeded
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -37,7 +38,7 @@ class PlayerServiceTest {
                                            atpId = AN_ATP_ID,
                                            fullName = A_FULL_NAME))
 
-    every { persistPlayersRepository.persistAll(domainPlayers) } just runs
+    every { persistPlayersRepository.persistAll(domainPlayers) } returns PlayerPersistenceSucceeded
 
     service.saveAll(domainPlayers)
 

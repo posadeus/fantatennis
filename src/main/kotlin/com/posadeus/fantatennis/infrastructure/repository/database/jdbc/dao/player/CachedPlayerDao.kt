@@ -9,4 +9,10 @@ class CachedPlayerDao(private val cache: Cache<Unit, List<JdbcPlayerDto>>,
 
   override fun retrieveAll(): List<JdbcPlayerDto> =
       cache.get(Unit) { delegate.retrieveAll() }
+
+  override fun persistAll(players: Set<JdbcPlayerDto>) {
+
+    delegate.persistAll(players)
+    cache.invalidate(Unit)
+  }
 }

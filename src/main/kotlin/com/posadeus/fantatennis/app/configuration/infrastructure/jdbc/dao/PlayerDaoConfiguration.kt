@@ -9,15 +9,15 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Jdbc
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.util.concurrent.TimeUnit
 
 @Configuration
 class PlayerDaoConfiguration {
 
   @Bean
-  fun jdbcPlayerDao(jdbcTemplate: JdbcTemplate): PlayerDao =
-      JdbcPlayerDao(jdbcTemplate)
+  fun jdbcPlayerDao(namedParameterJdbcTemplate: NamedParameterJdbcTemplate): PlayerDao =
+      JdbcPlayerDao(namedParameterJdbcTemplate)
 
   @Bean
   fun cachedPlayerDao(playerCache: Cache<Unit, List<JdbcPlayerDto>>,

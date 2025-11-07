@@ -1,47 +1,48 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
-import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.transaction.annotation.Transactional
+import com.posadeus.fantatennis.domain.model.PlayerPersistence
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSucceeded
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
+import org.slf4j.LoggerFactory
 
-@OpenForSpring
-class JdbcPersistPlayersRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : PersistPlayersRepository {
+class JdbcPersistPlayersRepository(private val playerDao: PlayerDao) : PersistPlayersRepository {
 
-  @Transactional
-  override fun persistAll(players: Set<DomainPlayer>) {
-    try {
+  override fun persistAll(players: Set<DomainPlayer>): PlayerPersistence =
+      try {
 
-      val batchResult = players
-          .map(::toEntryParams)
-          .let(::persistAll)
+        players
+            .map(::toJdbcPlayerDto)
+            .toSet()
+            .let(playerDao::persistAll)
 
-      if (batchResult.any { it != 1 })
-        throw InvalidPlayerException(error = "Players [${manageError(players, batchResult) { it.id }}] not inserted, operation reverted.")
-    }
-    catch (e: RuntimeException) {
+        PlayerPersistenceSucceeded
+      }
+      catch (e: InvalidPlayerException) {
 
-      throw InvalidPlayerException(error = "Unexpected error during insert: ${e.message}")
-    }
-  }
+        LOGGER.error("Invalid player exception: ${e.error}")
 
-  private fun persistAll(params: List<Map<String, Any>>): IntArray =
-      namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, params.toTypedArray())
+        PlayerPersistenceFailure(message = "Operation failed, no players persisted.", error = e.error)
+      }
+      catch (e: RuntimeException) {
 
-  private fun toEntryParams(player: DomainPlayer): Map<String, Any> =
-      mapOf("playerId" to player.id,
-            "atpTourId" to player.atpId,
-            "fullName" to player.fullName)
+        LOGGER.error("Something went wrong during player persistence: ${e.message}")
+
+        PlayerPersistenceFailure(message = "Insert failure, please verify your input.", error = e.message)
+      }
+
+  private fun toJdbcPlayerDto(domainPlayer: DomainPlayer): JdbcPlayerDto =
+      JdbcPlayerDto(playerId = domainPlayer.id,
+                    atpTourId = domainPlayer.atpId,
+                    fullName = domainPlayer.fullName,
+                    rolandGarrosId = domainPlayer.rolandGarrosId)
 
   companion object {
 
-    private val INSERT_PLAYERS_QUERY = """
-      INSERT INTO PLAYERS
-      (PLAYER_ID, ATP_TOUR_ID, FULL_NAME)
-      VALUES(:playerId, :atpTourId, :fullName);
-    """.trimIndent()
+    private val LOGGER = LoggerFactory.getLogger(JdbcPersistPlayersRepository::class.java)
   }
 }

@@ -2,11 +2,13 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.pla
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class CachedPlayerDaoTest {
@@ -16,28 +18,67 @@ class CachedPlayerDaoTest {
 
   private val dao: PlayerDao = CachedPlayerDao(cache, delegate)
 
-  @Test
-  fun `no results from cache so it call delegate and cache the result`() {
+  @Nested
+  inner class Retrieve {
 
-    val expected = listOf(aJdbcPlayerDto())
+    @Test
+    fun `no results from cache so it call delegate and cache the result`() {
 
-    every { delegate.retrieveAll() } returns expected
+      val expected = listOf(aJdbcPlayerDto())
 
-    assertThat(dao.retrieveAll()).isEqualTo(expected)
-    assertThat(dao.retrieveAll()).isEqualTo(expected)
+      every { delegate.retrieveAll() } returns expected
 
-    verify(exactly = 1) { delegate.retrieveAll() }
+      assertThat(dao.retrieveAll()).isEqualTo(expected)
+      assertThat(dao.retrieveAll()).isEqualTo(expected)
+
+      verify(exactly = 1) { delegate.retrieveAll() }
+    }
+
+    @Test
+    fun `no call to delegate if already in cache`() {
+
+      val expected = listOf(aJdbcPlayerDto())
+
+      cache.put(Unit, expected)
+
+      assertThat(dao.retrieveAll()).isEqualTo(expected)
+
+      verify { delegate wasNot called }
+    }
   }
 
-  @Test
-  fun `no call to delegate if already in cache`() {
+  @Nested
+  inner class Persist {
 
-    val expected = listOf(aJdbcPlayerDto())
+    @Test
+    fun `throws any error from delegate`() {
 
-    cache.put(Unit, expected)
+      val expectedMessage = "Error!!"
 
-    assertThat(dao.retrieveAll()).isEqualTo(expected)
+      every { delegate.persistAll(PLAYERS) } throws RuntimeException(expectedMessage)
 
-    verify { delegate wasNot called }
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.persistAll(PLAYERS) }
+    }
+
+    @Test
+    fun `persisted by delegate and flush cache`() {
+
+      cache.put(Unit, listOf(aJdbcPlayerDto()))
+
+      assertThat(cache.getIfPresent(Unit)!!.size).isEqualTo(1)
+
+      every { delegate.persistAll(PLAYERS) } returns Unit
+
+      dao.persistAll(PLAYERS)
+
+      verify(exactly = 1) { delegate.persistAll(PLAYERS) }
+
+      assertThat(cache.getIfPresent(Unit)?.size).isEqualTo(null)
+    }
+  }
+
+  companion object {
+
+    private val PLAYERS = emptySet<JdbcPlayerDto>()
   }
 }
