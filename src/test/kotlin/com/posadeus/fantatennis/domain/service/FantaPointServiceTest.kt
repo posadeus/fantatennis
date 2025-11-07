@@ -4,12 +4,17 @@ import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.exception.MissingPlayersPersistenceException
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FailureReason.MISSING_PLAYERS
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
+import com.posadeus.fantatennis.domain.model.TestAtpPlayer.anAtpPlayer
 import com.posadeus.fantatennis.domain.service.player.*
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import io.mockk.*
+import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -26,6 +31,33 @@ class FantaPointServiceTest {
                                           retrievePlayerService,
                                           persistPlayerService,
                                           rankingService)
+
+  @Test
+  fun `tournament players not found`() {
+
+    val expected = FantaPointPersistenceFailure(reason = MISSING_PLAYERS)
+
+    every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns emptySet()
+
+    assertThat(service.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `tournament player persistence fails`() {
+
+    val atpPlayers = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                           anAtpPlayer(id = ANOTHER_ATP_PLAYER_ID))
+
+    val expected = FantaPointPersistenceFailure(reason = PERSISTENCE_ERROR)
+
+    every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
+    every { fantaPointPersistenceService.persist(atpPlayers) } returns expected
+
+    assertThat(service.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)).isEqualTo(expected)
+  }
+
+
+
 
   @Test
   fun `all tournament's players found`() {
@@ -231,6 +263,7 @@ class FantaPointServiceTest {
     private const val A_DOMAIN_PLAYER_ID = "A_DOMAIN_PLAYER_ID"
     private const val A_DOMAIN_PLAYER_ID_3 = "A_DOMAIN_PLAYER_ID_3"
     private const val AN_ATP_PLAYER_ID = "AN_ATP_PLAYER_ID"
+    private const val ANOTHER_ATP_PLAYER_ID = "ANOTHER_ATP_PLAYER_ID"
     private const val A_FAILURE_PERSISTENCE_MESSAGE = "A_FAILURE_PERSISTENCE_MESSAGE"
     private const val A_FAILURE_PERSISTENCE_ERROR = "A_FAILURE_PERSISTENCE_ERROR"
   }

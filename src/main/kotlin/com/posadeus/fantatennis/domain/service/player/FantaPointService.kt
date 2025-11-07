@@ -3,6 +3,8 @@ package com.posadeus.fantatennis.domain.service.player
 import com.posadeus.fantatennis.domain.exception.MissingPlayersPersistenceException
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FailureReason.MISSING_PLAYERS
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
@@ -14,7 +16,16 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
                         private val persistPlayerService: PersistPlayerService,
                         private val rankingService: RankingService) {
 
-  // TODO Refactor with return instead of throwing an exception
+  fun updateFantaPointsFor(tournamentId: Int, year: Int): FantaPointPersistence =
+      fantaPointCalculatorService.calculateFantaPointsFor(tournamentId, year)
+          .takeIf(Set<AtpPlayer>::isNotEmpty)
+          ?.let(fantaPointPersistenceService::persist)
+      ?: FantaPointPersistenceFailure(MISSING_PLAYERS)
+
+
+
+
+  @Deprecated("Use updateFantaPointsFor")
   fun playerFantaPointsFor(tournamentId: Int, year: Int) {
 
     fantaPointCalculatorService.calculateFantaPointsFor(tournamentId, year)
