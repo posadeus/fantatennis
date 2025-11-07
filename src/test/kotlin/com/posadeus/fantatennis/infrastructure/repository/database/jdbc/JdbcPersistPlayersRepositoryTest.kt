@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
-import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSucceeded
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import io.mockk.*
@@ -74,7 +74,7 @@ class JdbcPersistPlayersRepositoryTest {
     val jdbcPlayer3 = JdbcPlayerDto(playerId = A_THIRD_PLAYER_ID, atpTourId = A_THIRD_ATP_PLAYER_ID, fullName = A_THIRD_FULL_NAME)
     val jdbcPlayers = setOf(jdbcPlayer1, jdbcPlayer2, jdbcPlayer3)
 
-    val expected = PlayerPersistenceSucceeded
+    val expected = PlayerPersistenceSuccess
 
     every { playerDao.persistAll(jdbcPlayers) } just runs
 

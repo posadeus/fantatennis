@@ -1,7 +1,10 @@
 package com.posadeus.fantatennis.domain.service.player
 
+import com.posadeus.fantatennis.domain.exception.MissingPlayersPersistenceException
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import org.slf4j.LoggerFactory
 
@@ -11,6 +14,7 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
                         private val persistPlayerService: PersistPlayerService,
                         private val rankingService: RankingService) {
 
+  // TODO Refactor with return instead of throwing an exception
   fun playerFantaPointsFor(tournamentId: Int, year: Int) {
 
     fantaPointCalculatorService.calculateFantaPointsFor(tournamentId, year)
@@ -41,17 +45,26 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
       val rankedPlayers = rankingService.retrieveRankedPlayer(1000) as RankedPlayers
       val playersToRegister = findMissingPlayersInRankedPlayers(notRegisteredPlayersAtpIds, rankedPlayers)
 
-      persistPlayerService.persistAll(playersToRegister)
+      when (val playerPersistence = persistPlayerService.persistAll(playersToRegister)) {
 
-      if (playersToRegister.size != notRegisteredPlayersAtpIds.size) {
-
-        removeNotRegisteredPlayers(playersToRegister, notRegisteredPlayersAtpIds, playersScores)
-            .let { fantaPointPersistenceService.persistScores(it) }
+        is PlayerPersistenceFailure -> throw MissingPlayersPersistenceException(playerPersistence.message)
+        is PlayerPersistenceSuccess -> persist(playersToRegister, notRegisteredPlayersAtpIds, playersScores)
       }
-      else {
+    }
+  }
 
-        fantaPointPersistenceService.persistScores(playersScores)
-      }
+  private fun persist(playersToRegister: Set<DomainPlayer>,
+                      notRegisteredPlayersAtpIds: Set<AtpPlayerId>,
+                      playersScores: Set<AtpPlayer>) {
+
+    if (playersToRegister.size != notRegisteredPlayersAtpIds.size) {
+
+      removeNotRegisteredPlayers(playersToRegister, notRegisteredPlayersAtpIds, playersScores)
+          .let { fantaPointPersistenceService.persistScores(it) }
+    }
+    else {
+
+      fantaPointPersistenceService.persistScores(playersScores)
     }
   }
 

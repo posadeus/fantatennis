@@ -5,7 +5,7 @@ import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.domain.model.PlayerPersistence
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
-import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSucceeded
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import org.slf4j.LoggerFactory
@@ -20,7 +20,7 @@ class JdbcPersistPlayersRepository(private val playerDao: PlayerDao) : PersistPl
             .toSet()
             .let(playerDao::persistAll)
 
-        PlayerPersistenceSucceeded
+        PlayerPersistenceSuccess
       }
       catch (e: InvalidPlayerException) {
 

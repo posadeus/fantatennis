@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
-import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSucceeded
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.model.TestDomainPlayer.aDomainPlayer
 import io.mockk.every
 import io.mockk.mockk
@@ -32,7 +32,7 @@ class PersistRetrievePlayerServiceTest {
 
     val players = setOf(aDomainPlayer(), aDomainPlayer())
 
-    val expected = PlayerPersistenceSucceeded
+    val expected = PlayerPersistenceSuccess
 
     every { persistPlayersRepository.persistAll(players) } returns expected
 

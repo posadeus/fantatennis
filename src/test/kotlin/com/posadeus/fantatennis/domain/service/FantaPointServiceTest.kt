@@ -1,11 +1,14 @@
 package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
+import com.posadeus.fantatennis.domain.exception.MissingPlayersPersistenceException
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSucceeded
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.service.player.*
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import io.mockk.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -80,7 +83,7 @@ class FantaPointServiceTest {
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSucceeded
+    every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSuccess
     every { fantaPointPersistenceService.persistScores(atpPlayers) } just runs
 
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
@@ -123,7 +126,7 @@ class FantaPointServiceTest {
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSucceeded
+    every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSuccess
     every { fantaPointPersistenceService.persistScores(playerScoresToUpdate) } just runs
 
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
@@ -175,6 +178,45 @@ class FantaPointServiceTest {
     verify { persistPlayerService wasNot called }
   }
 
+  @Test
+  fun `missing players persistence fails`() {
+
+    val atpPlayers = setOf(AtpPlayer(id = AN_ATP_PLAYER_ID,
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
+                           AtpPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                     tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
+    val domainPlayers = setOf(DomainPlayer(id = A_DOMAIN_PLAYER_ID,
+                                           atpId = AN_ATP_PLAYER_ID,
+                                           fullName = A_FULL_NAME))
+    val ranking = RankedPlayers(listOf(RankedPlayerDto(id = AN_ATP_PLAYER_ID,
+                                                       fullName = A_FULL_NAME,
+                                                       rank = A_RANKING,
+                                                       points = A_POINTS),
+                                       RankedPlayerDto(id = "ANOTHER_ATP_PLAYER_ID",
+                                                       fullName = "ANOTHER_FULL_NAME",
+                                                       rank = ANOTHER_RANKING,
+                                                       points = ANOTHER_POINTS)))
+    val missingDomainPlayers = setOf(DomainPlayer(id = "ANOTHER_ATP_PLAYER_ID",
+                                                  atpId = "ANOTHER_ATP_PLAYER_ID",
+                                                  fullName = "ANOTHER_FULL_NAME"))
+    val playerPersistenceFailure = PlayerPersistenceFailure(message = A_FAILURE_PERSISTENCE_MESSAGE, error = A_FAILURE_PERSISTENCE_ERROR)
+
+    every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+    every { persistPlayerService.persistAll(missingDomainPlayers) } returns playerPersistenceFailure
+
+    assertThrowsWithMessage<MissingPlayersPersistenceException>(A_FAILURE_PERSISTENCE_MESSAGE) {
+      service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
+    }
+
+    verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
+    verify(exactly = 1) { retrievePlayerService.allPlayers() }
+    verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
+    verify(exactly = 1) { persistPlayerService.persistAll(missingDomainPlayers) }
+    verify { fantaPointPersistenceService wasNot called }
+  }
+
   companion object {
 
     private const val A_TOURNAMENT_ID = 1
@@ -189,5 +231,7 @@ class FantaPointServiceTest {
     private const val A_DOMAIN_PLAYER_ID = "A_DOMAIN_PLAYER_ID"
     private const val A_DOMAIN_PLAYER_ID_3 = "A_DOMAIN_PLAYER_ID_3"
     private const val AN_ATP_PLAYER_ID = "AN_ATP_PLAYER_ID"
+    private const val A_FAILURE_PERSISTENCE_MESSAGE = "A_FAILURE_PERSISTENCE_MESSAGE"
+    private const val A_FAILURE_PERSISTENCE_ERROR = "A_FAILURE_PERSISTENCE_ERROR"
   }
 }
