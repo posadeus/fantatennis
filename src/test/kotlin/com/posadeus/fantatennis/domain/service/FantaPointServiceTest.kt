@@ -13,14 +13,14 @@ import org.junit.jupiter.api.assertThrows
 class FantaPointServiceTest {
 
   private val fantaPointCalculatorService: FantaPointCalculatorService = mockk()
-  private val playerService: PlayerService = mockk()
+  private val retrievePlayerService: RetrievePlayerService = mockk()
   private val persistPlayerService: PersistPlayerService = mockk()
   private val rankingService: RankingService = mockk()
   private val fantaPointPersistenceService: FantaPointPersistenceService = mockk()
 
   private val service = FantaPointService(fantaPointCalculatorService,
                                           fantaPointPersistenceService,
-                                          playerService,
+                                          retrievePlayerService,
                                           persistPlayerService,
                                           rankingService)
 
@@ -43,13 +43,13 @@ class FantaPointServiceTest {
                                            fullName = A_THIRD_FULL_NAME))
 
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
-    every { playerService.allPlayers() } returns domainPlayers
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { fantaPointPersistenceService.persistScores(atpPlayers) } just runs
 
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
-    verify(exactly = 1) { playerService.allPlayers() }
+    verify(exactly = 1) { retrievePlayerService.allPlayers() }
     verify(exactly = 1) { fantaPointPersistenceService.persistScores(atpPlayers) }
     verify { rankingService wasNot called }
     verify { persistPlayerService wasNot called }
@@ -78,7 +78,7 @@ class FantaPointServiceTest {
                                                   fullName = "ANOTHER_FULL_NAME"))
 
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
-    every { playerService.allPlayers() } returns domainPlayers
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
     every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSucceeded
     every { fantaPointPersistenceService.persistScores(atpPlayers) } just runs
@@ -86,7 +86,7 @@ class FantaPointServiceTest {
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
-    verify(exactly = 1) { playerService.allPlayers() }
+    verify(exactly = 1) { retrievePlayerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
     verify(exactly = 1) { persistPlayerService.persistAll(missingDomainPlayers) }
     verify(exactly = 1) { fantaPointPersistenceService.persistScores(atpPlayers) }
@@ -121,7 +121,7 @@ class FantaPointServiceTest {
                                                tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
 
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
-    every { playerService.allPlayers() } returns domainPlayers
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
     every { persistPlayerService.persistAll(missingDomainPlayers) } returns PlayerPersistenceSucceeded
     every { fantaPointPersistenceService.persistScores(playerScoresToUpdate) } just runs
@@ -129,7 +129,7 @@ class FantaPointServiceTest {
     service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
-    verify(exactly = 1) { playerService.allPlayers() }
+    verify(exactly = 1) { retrievePlayerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
     verify(exactly = 1) { persistPlayerService.persistAll(missingDomainPlayers) }
     verify(exactly = 1) { fantaPointPersistenceService.persistScores(playerScoresToUpdate) }
@@ -143,7 +143,7 @@ class FantaPointServiceTest {
     assertThrows<NoPointsForTournamentException> { service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
-    verify { playerService wasNot called }
+    verify { retrievePlayerService wasNot called }
     verify { persistPlayerService wasNot called }
     verify { rankingService wasNot called }
     verify { fantaPointPersistenceService wasNot called }
@@ -163,13 +163,13 @@ class FantaPointServiceTest {
                                            fullName = A_FULL_NAME))
 
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns atpPlayers
-    every { playerService.allPlayers() } returns domainPlayers
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns EmptyRanking
 
     assertThrows<ClassCastException> { service.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
 
     verify(exactly = 1) { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) }
-    verify(exactly = 1) { playerService.allPlayers() }
+    verify(exactly = 1) { retrievePlayerService.allPlayers() }
     verify(exactly = 1) { rankingService.retrieveRankedPlayer(1000) }
     verify { fantaPointPersistenceService wasNot called }
     verify { persistPlayerService wasNot called }

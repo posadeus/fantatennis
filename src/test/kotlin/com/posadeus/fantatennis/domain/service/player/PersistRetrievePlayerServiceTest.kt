@@ -9,7 +9,7 @@ import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 
-class PersistPlayerServiceTest {
+class PersistRetrievePlayerServiceTest {
 
   private val persistPlayersRepository: PersistPlayersRepository = mockk()
 

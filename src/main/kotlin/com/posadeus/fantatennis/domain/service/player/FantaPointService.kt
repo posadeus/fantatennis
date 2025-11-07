@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 
 class FantaPointService(private val fantaPointCalculatorService: FantaPointCalculatorService,
                         private val fantaPointPersistenceService: FantaPointPersistenceService,
-                        private val playerService: PlayerService,
+                        private val retrievePlayerService: RetrievePlayerService,
                         private val persistPlayerService: PersistPlayerService,
                         private val rankingService: RankingService) {
 
@@ -22,7 +22,7 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
 
   private fun persist(playersScores: Set<AtpPlayer>) {
 
-    val players = playerService.allPlayers()
+    val players = retrievePlayerService.allPlayers()
 
     val notRegisteredPlayersAtpIds =
         playersScores
