@@ -1,18 +1,17 @@
 package com.posadeus.fantatennis.domain.service.player
 
-import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class PlayerServiceTest {
+class RetrievePlayerServiceTest {
 
   private val retrievePlayersRepository: RetrievePlayersRepository = mockk()
-  private val persistPlayersRepository: PersistPlayersRepository = mockk()
 
-  private val service = PlayerService(retrievePlayersRepository, persistPlayersRepository)
+  private val service = RetrievePlayerService(retrievePlayersRepository)
 
   @Test
   fun `get all players`() {
@@ -28,20 +27,6 @@ class PlayerServiceTest {
     every { retrievePlayersRepository.retrieve() } returns expected
 
     assertThat(service.allPlayers()).isEqualTo(expected)
-  }
-
-  @Test
-  fun `persist players`() {
-
-    val domainPlayers = setOf(DomainPlayer(id = AN_ID,
-                                           atpId = AN_ATP_ID,
-                                           fullName = A_FULL_NAME))
-
-    every { persistPlayersRepository.persistAll(domainPlayers) } just runs
-
-    service.saveAll(domainPlayers)
-
-    verify(exactly = 1) { persistPlayersRepository.persistAll(domainPlayers) }
   }
 
   companion object {

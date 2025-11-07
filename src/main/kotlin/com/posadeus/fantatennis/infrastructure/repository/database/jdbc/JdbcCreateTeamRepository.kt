@@ -16,7 +16,7 @@ class JdbcCreateTeamRepository(private val jdbcTemplate: JdbcTemplate,
                                private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : CreateTeamRepository {
 
   @Transactional
-  override fun create(ownerId: String, fantaTournamentId: Int): FantaTeam =
+  override fun create(ownerId: String, fantaTournamentId: Int): FantaTeam = // TODO Evaluate to change return class to a sealed, to not manage exceptions in domain
       try {
 
         verifyExistenceOf(fantaTournamentId)

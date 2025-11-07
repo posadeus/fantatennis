@@ -51,3 +51,16 @@ client:
     http:
       connection-timeout: 2000
       connection-request-timeout: 2000
+
+# Duration is always in minutes
+# 24h = 1440m
+# 7d  = 10080m
+caches:
+  caffeine:
+    tournament-cache:
+      expire-after-write-duration: 1440
+      expire-after-access-duration: 1440
+      maximum-size: 300
+    player-cache:
+      expire-after-write-duration: 10080
+      maximum-size: 1000

@@ -3,44 +3,40 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import io.mockk.*
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcPersistPlayersRepositoryTest {
 
-  private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = mockk()
+  private val playerDao: PlayerDao = mockk()
 
-  private val repository: PersistPlayersRepository = JdbcPersistPlayersRepository(namedParameterJdbcTemplate)
+  private val repository: PersistPlayersRepository = JdbcPersistPlayersRepository(playerDao)
 
   @Test
-  fun `not all players are persisted`() {
+  fun `playerDao throws InvalidPlayerException`() {
 
     val player1 = DomainPlayer(id = A_PLAYER_ID, atpId = AN_ATP_PLAYER_ID, fullName = A_FULL_NAME)
     val player2 = DomainPlayer(id = ANOTHER_PLAYER_ID, atpId = ANOTHER_ATP_PLAYER_ID, fullName = ANOTHER_FULL_NAME)
     val player3 = DomainPlayer(id = A_THIRD_PLAYER_ID, atpId = A_THIRD_ATP_PLAYER_ID, fullName = A_THIRD_FULL_NAME)
     val players = setOf(player1, player2, player3)
 
-    val batchElement1 = mapOf("playerId" to A_PLAYER_ID,
-                              "atpTourId" to AN_ATP_PLAYER_ID,
-                              "fullName" to A_FULL_NAME)
-    val batchElement2 = mapOf("playerId" to ANOTHER_PLAYER_ID,
-                              "atpTourId" to ANOTHER_ATP_PLAYER_ID,
-                              "fullName" to ANOTHER_FULL_NAME)
-    val batchElement3 = mapOf("playerId" to A_THIRD_PLAYER_ID,
-                              "atpTourId" to A_THIRD_ATP_PLAYER_ID,
-                              "fullName" to A_THIRD_FULL_NAME)
-    val paramSource = arrayOf(batchElement1, batchElement2, batchElement3)
+    val jdbcPlayer1 = JdbcPlayerDto(playerId = A_PLAYER_ID, atpTourId = AN_ATP_PLAYER_ID, fullName = A_FULL_NAME)
+    val jdbcPlayer2 = JdbcPlayerDto(playerId = ANOTHER_PLAYER_ID, atpTourId = ANOTHER_ATP_PLAYER_ID, fullName = ANOTHER_FULL_NAME)
+    val jdbcPlayer3 = JdbcPlayerDto(playerId = A_THIRD_PLAYER_ID, atpTourId = A_THIRD_ATP_PLAYER_ID, fullName = A_THIRD_FULL_NAME)
+    val jdbcPlayers = setOf(jdbcPlayer1, jdbcPlayer2, jdbcPlayer3)
 
-    val expectedMessage = "Unexpected error during insert: Players [A_PLAYER_ID, A_THIRD_PLAYER_ID] not inserted, operation reverted."
+    val expectedError = "You are doing something wrong!"
+    val expectedMessage = "Operation failed, no players persisted."
+    val expected = PlayerPersistenceFailure(message = expectedMessage, error = expectedError)
 
-    every { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } returns intArrayOf(0, 1, 0)
+    every { playerDao.persistAll(jdbcPlayers) } throws InvalidPlayerException(expectedError)
 
-    assertThrowsWithMessage<InvalidPlayerException>(expectedMessage) { repository.persistAll(players) }
-
-    verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) }
+    assertThat(repository.persistAll(players)).isEqualTo(expected)
   }
 
   @Test
@@ -51,24 +47,18 @@ class JdbcPersistPlayersRepositoryTest {
     val player3 = DomainPlayer(id = A_THIRD_PLAYER_ID, atpId = A_THIRD_ATP_PLAYER_ID, fullName = A_THIRD_FULL_NAME)
     val players = setOf(player1, player2, player3)
 
-    val batchElement1 = mapOf("playerId" to A_PLAYER_ID,
-                              "atpTourId" to AN_ATP_PLAYER_ID,
-                              "fullName" to A_FULL_NAME)
-    val batchElement2 = mapOf("playerId" to ANOTHER_PLAYER_ID,
-                              "atpTourId" to ANOTHER_ATP_PLAYER_ID,
-                              "fullName" to ANOTHER_FULL_NAME)
-    val batchElement3 = mapOf("playerId" to A_THIRD_PLAYER_ID,
-                              "atpTourId" to A_THIRD_ATP_PLAYER_ID,
-                              "fullName" to A_THIRD_FULL_NAME)
-    val paramSource = arrayOf(batchElement1, batchElement2, batchElement3)
+    val jdbcPlayer1 = JdbcPlayerDto(playerId = A_PLAYER_ID, atpTourId = AN_ATP_PLAYER_ID, fullName = A_FULL_NAME)
+    val jdbcPlayer2 = JdbcPlayerDto(playerId = ANOTHER_PLAYER_ID, atpTourId = ANOTHER_ATP_PLAYER_ID, fullName = ANOTHER_FULL_NAME)
+    val jdbcPlayer3 = JdbcPlayerDto(playerId = A_THIRD_PLAYER_ID, atpTourId = A_THIRD_ATP_PLAYER_ID, fullName = A_THIRD_FULL_NAME)
+    val jdbcPlayers = setOf(jdbcPlayer1, jdbcPlayer2, jdbcPlayer3)
 
-    val expectedMessage = "Unexpected error during insert: I'm an error."
+    val expectedError = "Runtime exception"
+    val expectedMessage = "Insert failure, please verify your input."
+    val expected = PlayerPersistenceFailure(message = expectedMessage, error = expectedError)
 
-    every { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } throws RuntimeException("I'm an error.")
+    every { playerDao.persistAll(jdbcPlayers) } throws RuntimeException(expectedError)
 
-    assertThrowsWithMessage<InvalidPlayerException>(expectedMessage) { repository.persistAll(players) }
-
-    verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) }
+    assertThat(repository.persistAll(players)).isEqualTo(expected)
   }
 
   @Test
@@ -79,30 +69,18 @@ class JdbcPersistPlayersRepositoryTest {
     val player3 = DomainPlayer(id = A_THIRD_PLAYER_ID, atpId = A_THIRD_ATP_PLAYER_ID, fullName = A_THIRD_FULL_NAME)
     val players = setOf(player1, player2, player3)
 
-    val batchElement1 = mapOf("playerId" to A_PLAYER_ID,
-                              "atpTourId" to AN_ATP_PLAYER_ID,
-                              "fullName" to A_FULL_NAME)
-    val batchElement2 = mapOf("playerId" to ANOTHER_PLAYER_ID,
-                              "atpTourId" to ANOTHER_ATP_PLAYER_ID,
-                              "fullName" to ANOTHER_FULL_NAME)
-    val batchElement3 = mapOf("playerId" to A_THIRD_PLAYER_ID,
-                              "atpTourId" to A_THIRD_ATP_PLAYER_ID,
-                              "fullName" to A_THIRD_FULL_NAME)
-    val paramSource = arrayOf(batchElement1, batchElement2, batchElement3)
+    val jdbcPlayer1 = JdbcPlayerDto(playerId = A_PLAYER_ID, atpTourId = AN_ATP_PLAYER_ID, fullName = A_FULL_NAME)
+    val jdbcPlayer2 = JdbcPlayerDto(playerId = ANOTHER_PLAYER_ID, atpTourId = ANOTHER_ATP_PLAYER_ID, fullName = ANOTHER_FULL_NAME)
+    val jdbcPlayer3 = JdbcPlayerDto(playerId = A_THIRD_PLAYER_ID, atpTourId = A_THIRD_ATP_PLAYER_ID, fullName = A_THIRD_FULL_NAME)
+    val jdbcPlayers = setOf(jdbcPlayer1, jdbcPlayer2, jdbcPlayer3)
 
-    every { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } returns intArrayOf(1, 1, 1)
+    val expected = PlayerPersistenceSuccess
 
-    repository.persistAll(players)
+    every { playerDao.persistAll(jdbcPlayers) } just runs
 
+    assertThat(repository.persistAll(players)).isEqualTo(expected)
 
-    verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) }
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
+    verify(exactly = 1) { playerDao.persistAll(jdbcPlayers) }
   }
 
   companion object {
@@ -116,11 +94,5 @@ class JdbcPersistPlayersRepositoryTest {
     private const val A_THIRD_PLAYER_ID = "A_THIRD_PLAYER_ID"
     private const val A_THIRD_ATP_PLAYER_ID = "A_THIRD_ATP_PLAYER_ID"
     private const val A_THIRD_FULL_NAME = "A_THIRD_FULL_NAME"
-
-    private val INSERT_PLAYERS_QUERY = """
-      INSERT INTO PLAYERS
-      (PLAYER_ID, ATP_TOUR_ID, FULL_NAME)
-      VALUES(:playerId, :atpTourId, :fullName);
-    """.trimIndent()
   }
 }

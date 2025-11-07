@@ -4,10 +4,10 @@ import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistPla
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerPointsException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.AtpPlayer
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -114,12 +114,5 @@ class JdbcPersistPlayersPointsRepositoryIT {
                         tournamentId = rs.getInt("TOURNAMENT_ID"),
                         playerId = rs.getString("PLAYER_ID"),
                         fantaPoints = rs.getDouble("FANTA_POINTS"))
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 }

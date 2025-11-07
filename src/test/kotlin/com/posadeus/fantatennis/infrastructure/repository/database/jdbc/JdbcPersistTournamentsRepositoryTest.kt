@@ -5,10 +5,9 @@ import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsReposito
 import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import io.mockk.*
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcPersistTournamentsRepositoryTest {
@@ -221,13 +220,6 @@ class JdbcPersistTournamentsRepositoryTest {
     repository.persistAll(tournaments)
 
     verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) }
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   companion object {

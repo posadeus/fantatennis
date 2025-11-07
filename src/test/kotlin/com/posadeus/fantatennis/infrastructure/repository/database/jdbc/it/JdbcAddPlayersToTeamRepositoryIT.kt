@@ -6,10 +6,10 @@ import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.AddPlayers.InvalidAddPlayers.*
 import com.posadeus.fantatennis.domain.model.AddPlayers.ValidAddPlayers
 import com.posadeus.fantatennis.domain.model.DomainPlayer
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -107,13 +107,6 @@ class JdbcAddPlayersToTeamRepositoryIT {
     val expected = ValidAddPlayers(players = setOf(aDomainPlayer, anotherDomainPlayer))
 
     assertThat(repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID)).isEqualTo(expected)
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   private val teamRowMapper = RowMapper { rs, _ ->

@@ -3,10 +3,9 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerPointsException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.AtpPlayer
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import io.mockk.*
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcPersistPlayersPointsRepositoryTest {
@@ -127,13 +126,6 @@ class JdbcPersistPlayersPointsRepositoryTest {
 
 
     verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_POINTS_QUERY, paramSource) }
-  }
-
-  private inline fun <reified T : Throwable> assertThrowsWithMessage(expectedMessage: String, block: () -> Unit) {
-
-    val exception = assertThrows<T> { block() }
-
-    assertThat(exception.message).isEqualTo(expectedMessage)
   }
 
   companion object {
