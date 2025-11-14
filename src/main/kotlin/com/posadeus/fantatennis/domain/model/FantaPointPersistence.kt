@@ -9,5 +9,6 @@ sealed interface FantaPointPersistence {
 enum class FailureReason {
 
   MISSING_PLAYERS,
-  PERSISTENCE_ERROR
+  PERSISTENCE_ERROR,
+  EMPTY_RANKING
 }
