@@ -1,9 +1,10 @@
 package com.posadeus.fantatennis.domain.service.player
 
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
-import com.posadeus.fantatennis.domain.model.AtpPlayer
-import com.posadeus.fantatennis.domain.model.EmptyRanking
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FailureReason.EMPTY_RANKING
+import com.posadeus.fantatennis.domain.model.FailureReason.MISSING_PLAYERS
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.TestAtpPlayer.anAtpPlayer
 import com.posadeus.fantatennis.domain.model.TestDomainPlayer.aDomainPlayer
@@ -32,6 +33,25 @@ class FantaPointPersistenceServiceTest {
     val ranking = EmptyRanking
 
     val expected = FantaPointPersistenceFailure(reason = EMPTY_RANKING)
+
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+
+    assertThat(service.persist(players)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `missing players that are missing also in ranking cannot be persisted`() {
+
+    val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                        anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"))
+
+    val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID))
+    val rankedPlayers = listOf(RankedPlayerDto(id = AN_ATP_PLAYER_ID, rank = 1, points = SOME_POINTS),
+                               RankedPlayerDto(id = ANOTHER_ATP_PLAYER_ID, rank = 2, points = SOME_POINTS))
+    val ranking = RankedPlayers(rankedPlayers)
+
+    val expected = FantaPointPersistenceFailure(reason = MISSING_PLAYERS)
 
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
@@ -73,7 +93,9 @@ class FantaPointPersistenceServiceTest {
   companion object {
 
     private const val AN_ATP_PLAYER_ID = "AN_ATP_PLAYER_ID"
+    private const val ANOTHER_ATP_PLAYER_ID = "ANOTHER_ATP_PLAYER_ID"
     private const val A_TOURNAMENT_ID = 123
     private const val A_YEAR = 2222
+    private const val SOME_POINTS = 100
   }
 }
