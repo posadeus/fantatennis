@@ -1,17 +1,16 @@
 package com.posadeus.fantatennis.domain.service.player
 
+import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FailureReason.EMPTY_RANKING
-import com.posadeus.fantatennis.domain.model.FailureReason.MISSING_PLAYERS
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSuccess
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import org.slf4j.LoggerFactory
 
 class FantaPointPersistenceService(private val persistPlayersPointsRepository: PersistPlayersPointsRepository,
                                    private val retrievePlayerService: RetrievePlayerService,
-                                   private val rankingService: RankingService) {
+                                   private val rankingService: RankingService,
+                                   private val persistPlayerService: PersistPlayerService) {
 
   fun persistScores(players: Set<AtpPlayer>) {
 
@@ -26,31 +25,66 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
 
     return players
                .takeIf { it.size == allPlayers.size }
+               ?.let { persistPlayersPointsRepository.persistAll(it) }
                ?.let { FantaPointPersistenceSuccess }
-           ?: players
-               .filterNot { it.id in allPlayers.keys }
-               .let(::retrieveMissingPlayers)
+           ?: persistPoints(players, allPlayers)
   }
 
-  private fun retrieveMissingPlayers(missingPlayers: List<AtpPlayer>): FantaPointPersistence =
+  private fun persistPoints(players: Set<AtpPlayer>, allPlayers: Map<String, List<DomainPlayer>>): FantaPointPersistence {
+
+    val playerToSearch = players.filterNot { it.id in allPlayers.keys }
+    val missingPlayers = playerToSearch.let(::retrieveMissingPlayers)
+
+    if (missingPlayers.notRegistered.isEmpty()) {
+
+      val playersScoresToPersist = players subtract playerToSearch.toSet()
+
+      persistPlayersPointsRepository.persistAll(playersScoresToPersist)
+
+      return FantaPointPersistenceSuccess
+    }
+    else {
+
+      persistPlayerService.persistAll(missingPlayers.notRegistered)
+
+      players
+          .filter { it.id !in (missingPlayers.notFound ?: emptySet()) }
+          .let { persistPlayersPointsRepository.persistAll(it.toSet()) }
+
+      return FantaPointPersistenceSuccess
+    }
+  }
+
+  private fun retrieveMissingPlayers(missingPlayers: List<AtpPlayer>): MissingPlayers =
       when (val rankedPlayers = rankingService.retrieveRankedPlayer(1000)) {
 
-        is EmptyRanking -> FantaPointPersistenceFailure(reason = EMPTY_RANKING)
+        is EmptyRanking -> MissingPlayers(emptySet(), missingPlayers.map { it.id }.toSet())
         is RankedPlayers -> {
 
-          val notRegisteredPlayers = missingPlayers.filter { it.id in rankedPlayers.players.map { rankedPlayer -> rankedPlayer.id } }
+          val rankedPlayersByAtpId = rankedPlayers.players.associateBy { it.id }
 
-          notRegisteredPlayers
-              .takeIf { it.size == missingPlayers.size }
-              ?.let { FantaPointPersistenceSuccess }
-          ?: (missingPlayers subtract notRegisteredPlayers.toSet())
-              .map { it.id }
-              .let { missingRankingPlayersIds ->
-                FantaPointPersistenceFailure(reason = MISSING_PLAYERS)
+          val notRegisteredPlayers = missingPlayers
+              .filter { rankedPlayersByAtpId[it.id] != null }
+              .map { toDomain(rankedPlayersByAtpId[it.id]!!) }
+              .toSet()
+
+          (missingPlayers.map { it.id } subtract notRegisteredPlayers.map { it.id }.toSet())
+              .takeIf { it.isNotEmpty() }
+              ?.let { missingRankingPlayersIds ->
+                MissingPlayers(notRegistered = notRegisteredPlayers, notFound = missingRankingPlayersIds)
                     .also { LOGGER.warn("Players $missingRankingPlayersIds not present in top 1000") }
               }
+          ?: MissingPlayers(notRegistered = notRegisteredPlayers)
         }
       }
+
+  private fun toDomain(rankedPlayer: RankedPlayerDto): DomainPlayer =
+      DomainPlayer(id = rankedPlayer.id,
+                   atpId = rankedPlayer.id,
+                   fullName = rankedPlayer.fullName)
+
+  private data class MissingPlayers(val notRegistered: Set<DomainPlayer>,
+                                    val notFound: Set<AtpPlayerId>? = null)
 
   companion object {
 
