@@ -31,7 +31,7 @@ class JdbcPersistPlayersRepositoryTest {
     val jdbcPlayers = setOf(jdbcPlayer1, jdbcPlayer2, jdbcPlayer3)
 
     val expectedError = "You are doing something wrong!"
-    val expectedMessage = "Operation failed, no players persisted."
+    val expectedMessage = "Players $players not persisted."
     val expected = PlayerPersistenceFailure(message = expectedMessage, error = expectedError)
 
     every { playerDao.persistAll(jdbcPlayers) } throws InvalidPlayerException(expectedError)
@@ -53,7 +53,7 @@ class JdbcPersistPlayersRepositoryTest {
     val jdbcPlayers = setOf(jdbcPlayer1, jdbcPlayer2, jdbcPlayer3)
 
     val expectedError = "Runtime exception"
-    val expectedMessage = "Insert failure, please verify your input."
+    val expectedMessage = "Persistence failure, please verify your input."
     val expected = PlayerPersistenceFailure(message = expectedMessage, error = expectedError)
 
     every { playerDao.persistAll(jdbcPlayers) } throws RuntimeException(expectedError)

@@ -2,10 +2,11 @@ package com.posadeus.fantatennis.controller.job
 
 import com.posadeus.fantatennis.controller.JobApi
 import com.posadeus.fantatennis.domain.exception.InvalidYearException
-import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
 import com.posadeus.fantatennis.domain.service.player.FantaPointService
 import com.posadeus.fantatennis.domain.service.tournament.AddTournamentsService
-import org.slf4j.LoggerFactory
+import org.openapitools.model.JobSucceedWithErrorsDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
@@ -29,25 +30,14 @@ class JobController(private val fantaPointService: FantaPointService,
         ResponseEntity.internalServerError().build()
       }
 
-  override fun updatePlayersFantaPoints(tournamentId: Int, year: Int): ResponseEntity<Unit> =
-      try {
+  override fun updatePlayersFantaPoints(tournamentId: Int, year: Int): ResponseEntity<JobSucceedWithErrorsDto> =
+      when (val result = fantaPointService.updateFantaPointsFor(tournamentId, year)) {
 
-        fantaPointService.playerFantaPointsFor(tournamentId, year)
-
-        ResponseEntity.noContent().build()
+        is FantaPointPersistenceSuccess -> ResponseEntity.noContent().build()
+        is FantaPointPersistenceSucceedWithErrors ->
+          ResponseEntity.ok(JobSucceedWithErrorsDto("Job succeed with following error: ${result.message}"))
+        is FantaPointPersistenceFailure ->
+          if (result.reason == PERSISTENCE_ERROR) ResponseEntity.internalServerError().build()
+          else ResponseEntity.badRequest().build()
       }
-      catch (e: NoPointsForTournamentException) {
-
-        ResponseEntity.badRequest().build()
-      }
-      catch (e: Exception) {
-
-        LOGGER.error(e.message, e.printStackTrace())
-        ResponseEntity.internalServerError().build()
-      }
-
-  companion object {
-
-    private val LOGGER = LoggerFactory.getLogger(JobController::class.java)
-  }
 }

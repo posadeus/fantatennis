@@ -204,3 +204,11 @@ components:
           type: array
           items:
             type: integer
+
+    JobSucceedWithErrorsDto:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message

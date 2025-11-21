@@ -1,18 +1,21 @@
 package com.posadeus.fantatennis.controller
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.job.JobController
 import com.posadeus.fantatennis.domain.exception.InvalidYearException
-import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
+import com.posadeus.fantatennis.domain.model.FailureReason.*
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
 import com.posadeus.fantatennis.domain.service.player.FantaPointService
 import com.posadeus.fantatennis.domain.service.tournament.AddTournamentsService
 import io.mockk.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.openapitools.model.JobSucceedWithErrorsDto
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class JobControllerTest {
@@ -67,7 +70,7 @@ class JobControllerTest {
     @Test
     fun `204 response`() {
 
-      every { fantaPointService.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } just runs
+      every { fantaPointService.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns FantaPointPersistenceSuccess
 
       mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
           .andDo(print())
@@ -75,9 +78,24 @@ class JobControllerTest {
     }
 
     @Test
+    fun `200 response`() {
+
+      val expected = JobSucceedWithErrorsDto("Job succeed with following error: I failed")
+
+      every { fantaPointService.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns FantaPointPersistenceSucceedWithErrors("I failed")
+
+      mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
+          .andDo(print())
+          .andExpect(status().isOk)
+        .andExpect(content().json(toJson(expected)))
+    }
+
+    @Test
     fun `400 response`() {
 
-      every { fantaPointService.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } throws NoPointsForTournamentException()
+      every {
+        fantaPointService.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR)
+      } returns FantaPointPersistenceFailure(NO_POINTS_FOR_TOURNAMENT)
 
       mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
           .andDo(print())
@@ -87,13 +105,17 @@ class JobControllerTest {
     @Test
     fun `500 response`() {
 
-      every { fantaPointService.playerFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } throws Exception()
+      every { fantaPointService.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns FantaPointPersistenceFailure(PERSISTENCE_ERROR)
 
       mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
           .andDo(print())
           .andExpect(status().isInternalServerError)
     }
   }
+
+  @Throws(JsonProcessingException::class)
+  private fun toJson(obj: Any): String =
+      objectMapper.writeValueAsString(obj)
 
   companion object {
 

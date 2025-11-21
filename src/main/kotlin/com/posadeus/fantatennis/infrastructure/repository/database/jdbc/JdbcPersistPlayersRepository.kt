@@ -26,13 +26,13 @@ class JdbcPersistPlayersRepository(private val playerDao: PlayerDao) : PersistPl
 
         LOGGER.error("Invalid player exception: ${e.error}")
 
-        PlayerPersistenceFailure(message = "Operation failed, no players persisted.", error = e.error)
+        PlayerPersistenceFailure(message = "Players $players not persisted.", error = e.error)
       }
       catch (e: RuntimeException) {
 
         LOGGER.error("Something went wrong during player persistence: ${e.message}")
 
-        PlayerPersistenceFailure(message = "Insert failure, please verify your input.", error = e.message)
+        PlayerPersistenceFailure(message = "Persistence failure, please verify your input.", error = e.message)
       }
 
   private fun toJdbcPlayerDto(domainPlayer: DomainPlayer): JdbcPlayerDto =

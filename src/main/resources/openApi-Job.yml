@@ -24,6 +24,12 @@ paths:
           required: true
           description: Year to update.
       responses:
+        '200':
+          description: Players fanta points updated succeed with errors
+          content:
+            application/json:
+              schema:
+                $ref: './openApi-schemas.yml#/components/schemas/JobSucceedWithErrorsDto'
         '204':
           description: Players fanta points updated successfully
         '400':

@@ -4,7 +4,7 @@ import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.exception.MissingPlayersPersistenceException
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FailureReason.MISSING_PLAYERS
+import com.posadeus.fantatennis.domain.model.FailureReason.NO_POINTS_FOR_TOURNAMENT
 import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
@@ -35,7 +35,7 @@ class FantaPointServiceTest {
   @Test
   fun `tournament players not found`() {
 
-    val expected = FantaPointPersistenceFailure(reason = MISSING_PLAYERS)
+    val expected = FantaPointPersistenceFailure(reason = NO_POINTS_FOR_TOURNAMENT)
 
     every { fantaPointCalculatorService.calculateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns emptySet()
 

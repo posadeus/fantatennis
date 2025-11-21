@@ -55,7 +55,7 @@ class JdbcPersistPlayersRepositoryIT {
       VALUES(?, ?, ?);]; Duplicate entry 'A0B1' for key 'PLAYERS.PRIMARY'
     """.trimIndent()
 
-    val expected = PlayerPersistenceFailure(message = "Insert failure, please verify your input.", error = expectedError)
+    val expected = PlayerPersistenceFailure(message = "Persistence failure, please verify your input.", error = expectedError)
 
     assertThat(repository.persistAll(players)).isEqualTo(expected)
 

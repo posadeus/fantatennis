@@ -3,7 +3,7 @@ package com.posadeus.fantatennis.domain.service.player
 import com.posadeus.fantatennis.domain.exception.MissingPlayersPersistenceException
 import com.posadeus.fantatennis.domain.exception.NoPointsForTournamentException
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FailureReason.MISSING_PLAYERS
+import com.posadeus.fantatennis.domain.model.FailureReason.NO_POINTS_FOR_TOURNAMENT
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
@@ -20,7 +20,7 @@ class FantaPointService(private val fantaPointCalculatorService: FantaPointCalcu
       fantaPointCalculatorService.calculateFantaPointsFor(tournamentId, year)
           .takeIf(Set<AtpPlayer>::isNotEmpty)
           ?.let(fantaPointPersistenceService::persist)
-      ?: FantaPointPersistenceFailure(MISSING_PLAYERS)
+      ?: FantaPointPersistenceFailure(NO_POINTS_FOR_TOURNAMENT)
 
 
 
