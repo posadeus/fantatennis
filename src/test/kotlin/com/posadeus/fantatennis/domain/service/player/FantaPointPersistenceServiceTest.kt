@@ -3,7 +3,10 @@ package com.posadeus.fantatennis.domain.service.player
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSuccess
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.model.TestAtpPlayer.anAtpPlayer
 import com.posadeus.fantatennis.domain.model.TestDomainPlayer.aDomainPlayer
@@ -63,6 +66,92 @@ class FantaPointPersistenceServiceTest {
   }
 
   @Test
+  fun `persistPlayerService fails, only already registered players scores persisted`() {
+
+    val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                        anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"))
+
+    val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID))
+    val rankedPlayers = listOf(RankedPlayerDto(id = AN_ATP_PLAYER_ID, rank = 1, points = SOME_POINTS))
+    val ranking = RankedPlayers(rankedPlayers)
+    val domainPlayerToPersist = DomainPlayer(id = "A_MISSING_ATP_PLAYER_ID", atpId = "A_MISSING_ATP_PLAYER_ID", fullName = A_FULL_NAME)
+    val domainPlayersToPersist = setOf(domainPlayerToPersist)
+    val playerPersistence = PlayerPersistenceFailure("Something wrong", "ERROR!")
+    val atpPlayersToPersist = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID))
+
+    val expected = FantaPointPersistenceSuccess
+
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+    every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns Unit
+
+    assertThat(service.persist(players)).isEqualTo(expected)
+
+    verify(exactly = 1) { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) }
+  }
+
+  @Test
+  fun `missing players found in ranking, all persisted`() {
+
+    val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                        anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"),
+                        anAtpPlayer(id = "ANOTHER_MISSING_ATP_PLAYER_ID"))
+
+    val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID))
+    val rankedPlayers = listOf(RankedPlayerDto(id = AN_ATP_PLAYER_ID, rank = 1, points = SOME_POINTS),
+                               RankedPlayerDto(id = "A_MISSING_ATP_PLAYER_ID", rank = 2, points = SOME_POINTS, fullName = A_FULL_NAME),
+                               RankedPlayerDto(id = "ANOTHER_MISSING_ATP_PLAYER_ID", rank = 3, points = SOME_POINTS, fullName = A_FULL_NAME))
+    val ranking = RankedPlayers(rankedPlayers)
+    val domainPlayerToPersist1 = DomainPlayer(id = "A_MISSING_ATP_PLAYER_ID", atpId = "A_MISSING_ATP_PLAYER_ID", fullName = A_FULL_NAME)
+    val domainPlayerToPersist2 = DomainPlayer(id = "ANOTHER_MISSING_ATP_PLAYER_ID", atpId = "ANOTHER_MISSING_ATP_PLAYER_ID", fullName = A_FULL_NAME)
+    val domainPlayersToPersist = setOf(domainPlayerToPersist1, domainPlayerToPersist2)
+    val playerPersistence = PlayerPersistenceSuccess
+    val atpPlayersToPersist = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                                    anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"),
+                                    anAtpPlayer(id = "ANOTHER_MISSING_ATP_PLAYER_ID"))
+
+    val expected = FantaPointPersistenceSuccess
+
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+    every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns Unit
+
+    assertThat(service.persist(players)).isEqualTo(expected)
+
+    verify(exactly = 1) { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) }
+  }
+
+  @Test
+  fun `missing players found in ranking, new players persistence fails`() {
+
+    val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                        anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"),
+                        anAtpPlayer(id = "ANOTHER_MISSING_ATP_PLAYER_ID"))
+
+    val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID))
+    val rankedPlayers = listOf(RankedPlayerDto(id = AN_ATP_PLAYER_ID, rank = 1, points = SOME_POINTS),
+                               RankedPlayerDto(id = "A_MISSING_ATP_PLAYER_ID", rank = 2, points = SOME_POINTS, fullName = A_FULL_NAME),
+                               RankedPlayerDto(id = "ANOTHER_MISSING_ATP_PLAYER_ID", rank = 3, points = SOME_POINTS, fullName = A_FULL_NAME))
+    val ranking = RankedPlayers(rankedPlayers)
+    val domainPlayerToPersist1 = DomainPlayer(id = "A_MISSING_ATP_PLAYER_ID", atpId = "A_MISSING_ATP_PLAYER_ID", fullName = A_FULL_NAME)
+    val domainPlayerToPersist2 = DomainPlayer(id = "ANOTHER_MISSING_ATP_PLAYER_ID", atpId = "ANOTHER_MISSING_ATP_PLAYER_ID", fullName = A_FULL_NAME)
+    val domainPlayersToPersist = setOf(domainPlayerToPersist1, domainPlayerToPersist2)
+    val playerPersistence = PlayerPersistenceFailure(message = "You have an error", error = "I'm an error")
+
+    val expected = FantaPointPersistenceFailure(reason = PERSISTENCE_ERROR)
+
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+    every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
+
+    assertThat(service.persist(players)).isEqualTo(expected)
+
+    verify { persistPlayersPointsRepository wasNot called }
+  }
+
+  @Test
   fun `while missing players, rankingService returns EmptyRanking, persist only already registered players scores`() {
 
     val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
@@ -82,6 +171,26 @@ class FantaPointPersistenceServiceTest {
 
     verify { persistPlayerService wasNot called }
     verify(exactly = 1) { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) }
+  }
+
+  @Test
+  fun `all players found and persisted`() {
+
+    val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                        anAtpPlayer(id = ANOTHER_ATP_PLAYER_ID))
+
+    val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID), aDomainPlayer(atpId = ANOTHER_ATP_PLAYER_ID))
+
+    val expected = FantaPointPersistenceSuccess
+
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { persistPlayersPointsRepository.persistAll(players) } returns Unit
+
+    assertThat(service.persist(players)).isEqualTo(expected)
+
+    verify { rankingService wasNot called }
+    verify { persistPlayerService wasNot called }
+    verify(exactly = 1) { persistPlayersPointsRepository.persistAll(players) }
   }
 
 

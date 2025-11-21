@@ -3,7 +3,11 @@ package com.posadeus.fantatennis.domain.service.player
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSuccess
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
+import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import org.slf4j.LoggerFactory
 
@@ -32,12 +36,12 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
 
   private fun persistPoints(players: Set<AtpPlayer>, allPlayers: Map<String, List<DomainPlayer>>): FantaPointPersistence {
 
-    val playerToSearch = players.filterNot { it.id in allPlayers.keys }
-    val missingPlayers = playerToSearch.let(::retrieveMissingPlayers)
+    val playersToSearch = players.filterNot { it.id in allPlayers.keys }
+    val missingPlayers = playersToSearch.let(::retrieveMissingPlayers)
 
     if (missingPlayers.notRegistered.isEmpty()) {
 
-      val playersScoresToPersist = players subtract playerToSearch.toSet()
+      val playersScoresToPersist = players subtract playersToSearch.toSet()
 
       persistPlayersPointsRepository.persistAll(playersScoresToPersist)
 
@@ -45,13 +49,18 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
     }
     else {
 
-      persistPlayerService.persistAll(missingPlayers.notRegistered)
+      when (persistPlayerService.persistAll(missingPlayers.notRegistered)) {
 
-      players
-          .filter { it.id !in (missingPlayers.notFound ?: emptySet()) }
-          .let { persistPlayersPointsRepository.persistAll(it.toSet()) }
+        is PlayerPersistenceFailure -> return FantaPointPersistenceFailure(reason = PERSISTENCE_ERROR)
+        is PlayerPersistenceSuccess -> {
 
-      return FantaPointPersistenceSuccess
+          players
+              .filter { it.id !in (missingPlayers.notFound ?: emptySet()) }
+              .let { persistPlayersPointsRepository.persistAll(it.toSet()) } // TODO Test failure (throws exception)
+
+          return FantaPointPersistenceSuccess
+        }
+      }
     }
   }
 
