@@ -42,30 +42,30 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
       if (missingPlayers.toRegister.isNotEmpty())
         when (val result = persistPlayerService.persistAll(missingPlayers.toRegister)) {
 
-          is PlayerPersistenceFailure ->
-            players
-                .filterNot { it.id in missingPlayers.toSearchIds }
-                .let { persistPlayersPointsRepository.persistAll(it.toSet()) } // TODO Test failure (throws exception)
-                .let { FantaPointPersistenceSucceedWithErrors(result.message) }
-
-          is PlayerPersistenceSuccess -> players
-              .filterNot { it.id in (missingPlayers.notFound ?: emptySet()) }
-              .let { persistPlayersPointsRepository.persistAll(it.toSet()) } // TODO Test failure (throws exception)
-              .let { FantaPointPersistenceSuccess }
+          is PlayerPersistenceFailure -> persistFilteredPlayers(players, result.message) { it.id in missingPlayers.toSearchIds }
+          is PlayerPersistenceSuccess -> persistFilteredPlayers(players) { it.id in missingPlayers.notFound }
         }
       else
-        players
-            .filterNot { it.id in missingPlayers.toSearchIds }
-            .toSet()
-            .let(::persistPlayersPoints)
+        persistFilteredPlayers(players) { it.id in missingPlayers.toSearchIds }
     }
   }
 
-  private fun persistPlayersPoints(playersScoresToPersist: Set<AtpPlayer>): FantaPointPersistence {
+  private fun persistFilteredPlayers(players: Set<AtpPlayer>,
+                                     errorMessage: String? = null,
+                                     arePlayersToPersist: (AtpPlayer) -> Boolean): FantaPointPersistence =
+      players
+          .filterNot(arePlayersToPersist)
+          .toSet()
+          .let { persistPlayersPoints(it, errorMessage) }
 
-      persistPlayersPointsRepository.persistAll(playersScoresToPersist)
+  private fun persistPlayersPoints(playersScoresToPersist: Set<AtpPlayer>, errorMessage: String? = null): FantaPointPersistence {
 
-      return FantaPointPersistenceSuccess
+    persistPlayersPointsRepository.persistAll(playersScoresToPersist) // TODO Test failure (throws exception)
+
+    return if (errorMessage == null)
+      FantaPointPersistenceSuccess
+    else
+      FantaPointPersistenceSucceedWithErrors(errorMessage)
   }
 
   private fun retrieveMissingPlayers(notRegisteredPlayersIds: Set<AtpPlayerId>): MissingPlayers =
@@ -108,7 +108,7 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
 
   private data class MissingPlayers(val toSearchIds: Set<AtpPlayerId>,
                                     val toRegister: Set<DomainPlayer>,
-                                    val notFound: Set<AtpPlayerId>? = null)
+                                    val notFound: Set<AtpPlayerId> = emptySet())
 
   companion object {
 
