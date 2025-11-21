@@ -16,13 +16,6 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
                                    private val rankingService: RankingService,
                                    private val persistPlayerService: PersistPlayerService) {
 
-  @Deprecated("Use persist")
-  fun persistScores(players: Set<AtpPlayer>) {
-
-    if (players.isNotEmpty())
-      persistPlayersPointsRepository.persistAll(players)
-  }
-
   fun persist(players: Set<AtpPlayer>): FantaPointPersistence {
 
     val allPlayersByAtpId = retrievePlayerService.allPlayers()

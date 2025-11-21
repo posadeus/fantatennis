@@ -33,15 +33,9 @@ class ServiceConfiguration {
 
   @Bean
   fun fantaPointService(fantaPointCalculatorService: FantaPointCalculatorService,
-                        fantaPointPersistenceService: FantaPointPersistenceService,
-                        retrievePlayerService: RetrievePlayerService,
-                        persistPlayerService: PersistPlayerService,
-                        rankingService: RankingService): FantaPointService =
+                        fantaPointPersistenceService: FantaPointPersistenceService): FantaPointService =
       FantaPointService(fantaPointCalculatorService,
-                        fantaPointPersistenceService,
-                        retrievePlayerService,
-                        persistPlayerService,
-                        rankingService)
+                        fantaPointPersistenceService)
 
   @Bean
   fun createFantaTournamentService(jdbcCreateFantaTournamentRepository: CreateFantaTournamentRepository): CreateFantaTournamentService =

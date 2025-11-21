@@ -203,44 +203,11 @@ class FantaPointPersistenceServiceTest {
     verify(exactly = 1) { persistPlayersPointsRepository.persistAll(players) }
   }
 
-
-
-
-
-
-
-  @Test
-  fun `persist scores`() {
-
-    val players = setOf(AtpPlayer(id = "PlayerId1",
-                                  tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 28.0))),
-                        AtpPlayer(id = "PlayerId2",
-                                  tournamentPoints = mapOf(A_YEAR to mapOf(A_TOURNAMENT_ID to 16.0))))
-
-    every { persistPlayersPointsRepository.persistAll(players) } just runs
-
-    service.persistScores(players)
-
-    verify(exactly = 1) { persistPlayersPointsRepository.persistAll(players) }
-  }
-
-  @Test
-  fun `repository not called if players is empty`() {
-
-    val players = emptySet<AtpPlayer>()
-
-    service.persistScores(players)
-
-    verify { persistPlayersPointsRepository wasNot called }
-  }
-
   companion object {
 
     private const val AN_ATP_PLAYER_ID = "AN_ATP_PLAYER_ID"
     private const val ANOTHER_ATP_PLAYER_ID = "ANOTHER_ATP_PLAYER_ID"
     private const val A_FULL_NAME = "A_FULL_NAME"
-    private const val A_TOURNAMENT_ID = 123
-    private const val A_YEAR = 2222
     private const val SOME_POINTS = 100
   }
 }
