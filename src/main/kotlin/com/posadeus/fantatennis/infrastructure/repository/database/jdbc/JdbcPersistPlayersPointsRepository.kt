@@ -22,11 +22,11 @@ class JdbcPersistPlayersPointsRepository(private val namedParameterJdbcTemplate:
           .let(::persistAll)
 
       if (batchResult.any { it == 0 })
-        throw InvalidPlayerPointsException(error = "PlayersPoints for playerId-tournamentId-year [${manageError(entryParams, batchResult) { "${it["playerId"]}-${it["tournamentId"]}-${it["tournamentYear"]}" }}] not inserted, operation reverted.")
+        throw InvalidPlayerPointsException(message = "PlayersPoints for playerId-tournamentId-year [${manageError(entryParams, batchResult) { "${it["playerId"]}-${it["tournamentId"]}-${it["tournamentYear"]}" }}] not inserted, operation reverted.")
     }
     catch (e: RuntimeException) {
 
-      throw InvalidPlayerPointsException(error = "Unexpected error during insert: ${e.message}")
+      throw InvalidPlayerPointsException(message = "Unexpected error during insert: ${e.message}")
     }
   }
 

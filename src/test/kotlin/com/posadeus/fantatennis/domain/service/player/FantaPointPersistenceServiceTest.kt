@@ -1,10 +1,11 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
+import com.posadeus.fantatennis.domain.exception.InvalidPlayerPointsException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceedWithErrors
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSuccess
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.model.TestAtpPlayer.anAtpPlayer
@@ -180,6 +181,26 @@ class FantaPointPersistenceServiceTest {
     assertThat(service.persist(players)).isEqualTo(expected)
 
     verify(exactly = 1) { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) }
+  }
+
+  @Test
+  fun `persist fails when persistPlayersPointsRepository throws an exception`() {
+
+    val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
+                        anAtpPlayer(id = ANOTHER_ATP_PLAYER_ID))
+
+    val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID), aDomainPlayer(atpId = ANOTHER_ATP_PLAYER_ID))
+
+    val expected = FantaPointPersistenceFailure(reason = PERSISTENCE_ERROR)
+
+    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { persistPlayersPointsRepository.persistAll(players) } throws InvalidPlayerPointsException("I'm broken!")
+
+    assertThat(service.persist(players)).isEqualTo(expected)
+
+    verify { rankingService wasNot called }
+    verify { persistPlayerService wasNot called }
+    verify(exactly = 1) { persistPlayersPointsRepository.persistAll(players) }
   }
 
 

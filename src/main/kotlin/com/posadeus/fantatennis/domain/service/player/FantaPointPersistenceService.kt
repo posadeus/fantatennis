@@ -1,10 +1,11 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
+import com.posadeus.fantatennis.domain.exception.InvalidPlayerPointsException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceedWithErrors
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSuccess
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
@@ -15,6 +16,7 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
                                    private val rankingService: RankingService,
                                    private val persistPlayerService: PersistPlayerService) {
 
+  @Deprecated("Use persist")
   fun persistScores(players: Set<AtpPlayer>) {
 
     if (players.isNotEmpty())
@@ -60,7 +62,16 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
 
   private fun persistPlayersPoints(playersScoresToPersist: Set<AtpPlayer>, errorMessage: String? = null): FantaPointPersistence {
 
-    persistPlayersPointsRepository.persistAll(playersScoresToPersist) // TODO Test failure (throws exception)
+    try {
+
+      persistPlayersPointsRepository.persistAll(playersScoresToPersist)
+    }
+    catch (e: InvalidPlayerPointsException) {
+
+      LOGGER.error(e.message)
+
+      return FantaPointPersistenceFailure(PERSISTENCE_ERROR)
+    }
 
     return if (errorMessage == null)
       FantaPointPersistenceSuccess
