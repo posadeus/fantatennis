@@ -194,8 +194,8 @@ class FantaTournamentControllerTest {
 
   companion object {
 
-    private const val TOURNAMENT_ENDPOINT = "/tournament"
-    private const val TOURNAMENTS_ENDPOINT = "/tournaments"
+    private const val TOURNAMENT_ENDPOINT = "/fanta-tournament"
+    private const val TOURNAMENTS_ENDPOINT = "/fanta-tournaments"
     private const val A_TOURNAMENT_ID = 1
     private const val A_STARTING_TOURNAMENT_ID = 1
     private const val AN_ENDING_TOURNAMENT_ID = 1
