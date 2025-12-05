@@ -2,9 +2,9 @@ package com.posadeus.fantatennis.controller
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.posadeus.fantatennis.controller.fantatournament.FantaTournamentController
 import com.posadeus.fantatennis.controller.model.fantatournament.*
 import com.posadeus.fantatennis.controller.model.team.*
-import com.posadeus.fantatennis.controller.tournament.FantaTournamentController
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.fantatournament.*
 import com.posadeus.fantatennis.domain.service.tournament.*

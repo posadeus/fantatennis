@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.app.configuration.controller
 
 import com.posadeus.fantatennis.controller.FantaTournamentApi
-import com.posadeus.fantatennis.controller.tournament.FantaTournamentController
+import com.posadeus.fantatennis.controller.fantatournament.FantaTournamentController
 import com.posadeus.fantatennis.domain.service.fantatournament.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

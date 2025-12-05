@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.controller.tournament
+package com.posadeus.fantatennis.controller.fantatournament
 
 import com.posadeus.fantatennis.controller.FantaTournamentApi
 import com.posadeus.fantatennis.controller.model.fantatournament.*
