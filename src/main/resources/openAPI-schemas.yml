@@ -32,7 +32,7 @@ components:
           default: ""
           description: The owner of the team
         players:
-          $ref: '#/components/schemas/TeamPlayersDto'
+          $ref: '#/components/schemas/PlayersPointsDto'
         totalScore:
           type: double
           default: 0
@@ -42,12 +42,12 @@ components:
         - players
         - totalScore
 
-    TeamPlayersDto:
+    PlayersPointsDto:
       type: array
       items:
-        $ref: '#/components/schemas/TeamPlayerDto'
+        $ref: '#/components/schemas/PlayerPointsDto'
 
-    TeamPlayerDto:
+    PlayerPointsDto:
       type: object
       properties:
         fullName:
@@ -212,3 +212,27 @@ components:
           type: string
       required:
         - message
+
+    TournamentDto:
+      type: object
+      properties:
+        tournamentName:
+          type: string
+        tournamentPoints:
+          type: integer
+        playersScore:
+          $ref: '#/components/schemas/PlayersPointsDto'
+      required:
+        - tournamentName
+        - tournamentPoints
+        - playersScore
+
+    TournamentsDto:
+      type: object
+      properties:
+        tournaments:
+          type: array
+          items:
+            $ref: '#/components/schemas/TournamentDto'
+      required:
+        - tournaments

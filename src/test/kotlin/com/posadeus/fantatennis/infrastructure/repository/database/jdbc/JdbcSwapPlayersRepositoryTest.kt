@@ -51,9 +51,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
+    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
                              totalScore = 40.0,
                              owner = AN_OWNER)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
@@ -78,8 +78,8 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0)),
+    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0)),
                              totalScore = 40.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
@@ -107,9 +107,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
                              totalScore = 34.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
@@ -146,9 +146,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
                              totalScore = 34.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
@@ -190,9 +190,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
                              totalScore = 34.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
@@ -238,9 +238,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
                              totalScore = 34.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
@@ -286,9 +286,9 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              TeamPlayerDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              TeamPlayerDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
+    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
+                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
+                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
                              totalScore = 34.0,
                              owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)

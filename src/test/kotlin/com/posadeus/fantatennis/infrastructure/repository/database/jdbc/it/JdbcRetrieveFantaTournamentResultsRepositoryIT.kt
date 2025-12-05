@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
 import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
 import com.posadeus.fantatennis.domain.model.NotFoundFantaTournamentId
@@ -50,18 +50,18 @@ class JdbcRetrieveFantaTournamentResultsRepositoryIT {
   @Test
   fun `tournament results successfully retrieved`() {
 
-    val a0b1 = TeamPlayerDto(fullName = "AAA BBB", fantaPoints = 12.00)
-    val mn98 = TeamPlayerDto(fullName = "MMM NNN", fantaPoints = 1.00)
-    val k5l8 = TeamPlayerDto(fullName = "KKK LLL", fantaPoints = 34.00)
-    val s7t5 = TeamPlayerDto(fullName = "SSS TTT", fantaPoints = 8.00)
+    val a0b1 = PlayerPointsDto(fullName = "AAA BBB", fantaPoints = 12.00)
+    val mn98 = PlayerPointsDto(fullName = "MMM NNN", fantaPoints = 1.00)
+    val k5l8 = PlayerPointsDto(fullName = "KKK LLL", fantaPoints = 34.00)
+    val s7t5 = PlayerPointsDto(fullName = "SSS TTT", fantaPoints = 8.00)
 
-    val c0d1 = TeamPlayerDto(fullName = "CCC DDD", fantaPoints = 7.00)
-    val o7p6 = TeamPlayerDto(fullName = "OOO PPP", fantaPoints = 38.00)
-    val qr43 = TeamPlayerDto(fullName = "QQQ RRR", fantaPoints = 41.00)
+    val c0d1 = PlayerPointsDto(fullName = "CCC DDD", fantaPoints = 7.00)
+    val o7p6 = PlayerPointsDto(fullName = "OOO PPP", fantaPoints = 38.00)
+    val qr43 = PlayerPointsDto(fullName = "QQQ RRR", fantaPoints = 41.00)
 
-    val e2f8 = TeamPlayerDto(fullName = "EEE FFF", fantaPoints = 4.00)
-    val gh00 = TeamPlayerDto(fullName = "GGG HHH", fantaPoints = 6.00)
-    val i0j7 = TeamPlayerDto(fullName = "III JJJ", fantaPoints = 5.00)
+    val e2f8 = PlayerPointsDto(fullName = "EEE FFF", fantaPoints = 4.00)
+    val gh00 = PlayerPointsDto(fullName = "GGG HHH", fantaPoints = 6.00)
+    val i0j7 = PlayerPointsDto(fullName = "III JJJ", fantaPoints = 5.00)
 
     val team1 = TeamDto(owner = "AN_OWNER", players = listOf(k5l8, a0b1, s7t5, mn98), totalScore = 55.00)
     val team2 = TeamDto(owner = "ANOTHER_OWNER", players = listOf(qr43, o7p6, c0d1), totalScore = 86.00)

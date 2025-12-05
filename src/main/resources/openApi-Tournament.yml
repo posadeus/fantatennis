@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: Fanta Tournament
+  version: 1.0.0
+paths:
+  /tournament/{tournamentId}:
+    get:
+      operationId: retrieve
+      summary: Returns a Tournament by its ID
+      description: Returns an ordered list based on players points.
+      tags:
+        - Tournament
+      parameters:
+        - in: path
+          name: tournamentId
+          schema:
+            type: integer
+          required: true
+          description: ID of the tournament
+      responses:
+        '200':
+          description: Tournament found
+          content:
+            application/json:
+              schema:
+                $ref: './openApi-schemas.yml#/components/schemas/TournamentDto'
+        '400':
+          description: Not found tournament ID
+        '500':
+          description: Error during tournament retrieval
+
+  /tournaments/{year}:
+    get:
+      operationId: retrieveAll
+      summary: Returns all the Tournaments for a specific year
+      description: Returns the list of all Tournaments for a specific year.
+      tags:
+        - Tournament
+      parameters:
+        - in: path
+          name: year
+          schema:
+            type: integer
+          required: true
+          description: year for the tournaments
+      responses:
+        '200':
+          description: Tournaments found
+          content:
+            application/json:
+              schema:
+                $ref: './openApi-schemas.yml#/components/schemas/TournamentsDto'
+        '404':
+          description: Not found tournaments for the year specified
+        '500':
+          description: Error during tournaments retrieval

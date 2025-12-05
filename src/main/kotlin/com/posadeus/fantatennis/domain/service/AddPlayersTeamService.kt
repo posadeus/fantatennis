@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -29,7 +29,7 @@ class AddPlayersTeamService(private val addPlayerToTeamRepository: AddPlayersToT
 
   private fun toFoundTeam(players: Set<DomainPlayer>): FoundTeam =
       players
-          .map { TeamPlayerDto(fullName = it.fullName, fantaPoints = 0.0) }
+          .map { PlayerPointsDto(fullName = it.fullName, fantaPoints = 0.0) }
           .let { FoundTeam(team = TeamDto(players = it, totalScore = 0.0)) }
 
   companion object {

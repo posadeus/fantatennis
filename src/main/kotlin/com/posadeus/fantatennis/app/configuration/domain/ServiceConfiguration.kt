@@ -1,8 +1,7 @@
 package com.posadeus.fantatennis.app.configuration.domain
 
 import com.posadeus.fantatennis.domain.infrastructure.*
-import com.posadeus.fantatennis.domain.service.AddPlayersTeamService
-import com.posadeus.fantatennis.domain.service.SwapPlayersTeamService
+import com.posadeus.fantatennis.domain.service.*
 import com.posadeus.fantatennis.domain.service.fantatournament.*
 import com.posadeus.fantatennis.domain.service.player.*
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
@@ -48,6 +47,14 @@ class ServiceConfiguration {
   @Bean
   fun retrieveFantaTournamentsService(jdbcRetrieveAllFantaTournamentsRepository: RetrieveAllFantaTournamentsRepository): RetrieveFantaTournamentsService =
       RetrieveFantaTournamentsService(jdbcRetrieveAllFantaTournamentsRepository)
+
+  @Bean
+  fun retrieveTournamentService(): RetrieveTournamentService =
+      RetrieveTournamentService()
+
+  @Bean
+  fun retrieveTournamentsService(): RetrieveTournamentsService =
+      RetrieveTournamentsService()
 
   @Bean
   fun retrievePlayerService(jdbcRetrievePlayersRepository: RetrievePlayersRepository): RetrievePlayerService =

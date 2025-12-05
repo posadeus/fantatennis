@@ -1,12 +1,12 @@
 package com.posadeus.fantatennis.controller.job
 
 import com.posadeus.fantatennis.controller.JobApi
+import com.posadeus.fantatennis.controller.model.job.JobSucceedWithErrorsDto
 import com.posadeus.fantatennis.domain.exception.InvalidYearException
 import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
 import com.posadeus.fantatennis.domain.service.player.FantaPointService
 import com.posadeus.fantatennis.domain.service.tournament.AddTournamentsService
-import org.openapitools.model.JobSucceedWithErrorsDto
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 

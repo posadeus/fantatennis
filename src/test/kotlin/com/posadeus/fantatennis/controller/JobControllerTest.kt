@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.controller
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.job.JobController
+import com.posadeus.fantatennis.controller.model.job.JobSucceedWithErrorsDto
 import com.posadeus.fantatennis.domain.exception.InvalidYearException
 import com.posadeus.fantatennis.domain.model.FailureReason.*
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
@@ -11,7 +12,6 @@ import com.posadeus.fantatennis.domain.service.tournament.AddTournamentsService
 import io.mockk.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.openapitools.model.JobSucceedWithErrorsDto
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print

@@ -45,8 +45,8 @@ class TeamControllerTest {
       val request = PlayersToAddDto(playerIds = playerIds,
                                     startingTournamentId = A_STARTING_TOURNAMENT_ID)
 
-      val expected = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 0.0),
-                                              TeamPlayerDto(fullName = ANOTHER_PLAYER_FULL_NAME, fantaPoints = 0.0)),
+      val expected = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 0.0),
+                                              PlayerPointsDto(fullName = ANOTHER_PLAYER_FULL_NAME, fantaPoints = 0.0)),
                              totalScore = 0.0)
       val foundTeam = FoundTeam(expected)
 
@@ -333,6 +333,6 @@ class TeamControllerTest {
     private const val ANOTHER_PLAYER_FULL_NAME = "ANOTHER_PLAYER_FULL_NAME"
     private const val AN_OWNER = "AN_OWNER"
 
-    private val A_LIST_OF_PLAYERS = emptyList<TeamPlayerDto>()
+    private val A_LIST_OF_PLAYERS = emptyList<PlayerPointsDto>()
   }
 }

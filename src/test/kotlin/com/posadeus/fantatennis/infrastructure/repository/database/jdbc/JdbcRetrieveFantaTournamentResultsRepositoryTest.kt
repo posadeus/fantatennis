@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto
@@ -63,10 +63,10 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
                                                          playerTotalScore = 4.00)
     val tournamentResultsDto = listOf(tournamentResultsDto1, tournamentResultsDto2, tournamentResultsDto3)
 
-    val aPlayer = TeamPlayerDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 2.00)
-    val anotherPlayer = TeamPlayerDto(fullName = ANOTHER_PLAYER_FULL_NAME, fantaPoints = 1.00)
+    val aPlayer = PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 2.00)
+    val anotherPlayer = PlayerPointsDto(fullName = ANOTHER_PLAYER_FULL_NAME, fantaPoints = 1.00)
     val aTeam = TeamDto(owner = AN_OWNER_ID, players = listOf(aPlayer, anotherPlayer), totalScore = 3.00)
-    val aThirdPlayer = TeamPlayerDto(fullName = A_THIRD_PLAYER_FULL_NAME, fantaPoints = 4.00)
+    val aThirdPlayer = PlayerPointsDto(fullName = A_THIRD_PLAYER_FULL_NAME, fantaPoints = 4.00)
     val anotherTeam = TeamDto(owner = ANOTHER_OWNER_ID, players = listOf(aThirdPlayer), totalScore = 4.00)
     val expected = FoundFantaTournamentResults(FantaTournamentDto(teams = listOf(anotherTeam, aTeam)))
 

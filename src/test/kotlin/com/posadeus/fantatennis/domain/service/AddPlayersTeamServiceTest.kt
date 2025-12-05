@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
 import com.posadeus.fantatennis.domain.model.*
@@ -27,8 +27,8 @@ class AddPlayersTeamServiceTest {
                                            fullName = A_PLAYER_FULL_NAME))
     val validAddPlayers = ValidAddPlayers(players = domainPlayers)
 
-    val expected = FoundTeam(team = TeamDto(players = listOf(TeamPlayerDto(fullName = A_PLAYER_FULL_NAME,
-                                                                           fantaPoints = 0.0)),
+    val expected = FoundTeam(team = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME,
+                                                                             fantaPoints = 0.0)),
                                             totalScore = 0.0))
 
     every { addPlayersToTeamRepository.add(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns validAddPlayers

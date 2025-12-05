@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.FoundTeam
 import com.posadeus.fantatennis.domain.model.TeamIdNotFoundTeam
@@ -66,10 +66,10 @@ class JdbcRetrieveFantaTeamRepositoryIT {
   fun `fanta team retrieved`() {
 
     val expected = FoundTeam(team = TeamDto(owner = "AN_OWNER",
-                                            players = listOf(TeamPlayerDto(fullName = "KKK LLL", fantaPoints = 34.00),
-                                                             TeamPlayerDto(fullName = "AAA BBB", fantaPoints = 12.00),
-                                                             TeamPlayerDto(fullName = "SSS TTT", fantaPoints = 8.00),
-                                                             TeamPlayerDto(fullName = "MMM NNN", fantaPoints = 1.00)),
+                                            players = listOf(PlayerPointsDto(fullName = "KKK LLL", fantaPoints = 34.00),
+                                                             PlayerPointsDto(fullName = "AAA BBB", fantaPoints = 12.00),
+                                                             PlayerPointsDto(fullName = "SSS TTT", fantaPoints = 8.00),
+                                                             PlayerPointsDto(fullName = "MMM NNN", fantaPoints = 1.00)),
                                             totalScore = 55.00))
 
     assertThat(repository.retrieve(1)).isEqualTo(expected)

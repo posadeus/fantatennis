@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTeamDto.Companion.fantaTeamRowMapper
@@ -25,7 +25,7 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
           .let { instance ->
             TeamDto(owner = fantaTeamDto!!.ownerId,
                     players = instance
-                        .map { TeamPlayerDto(fullName = it.playerFullName, fantaPoints = it.playerTotalScore) }
+                        .map { PlayerPointsDto(fullName = it.playerFullName, fantaPoints = it.playerTotalScore) }
                         .sortedByDescending { it.fantaPoints },
                     totalScore = instance.sumOf { it.playerTotalScore })
           }

@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTeamDto
@@ -100,9 +100,9 @@ class JdbcRetrieveFantaTeamRepositoryTest {
                                                              playerTotalScore = 12.00))
 
     val expected = FoundTeam(team = TeamDto(owner = AN_OWNER_ID,
-                                            players = listOf(TeamPlayerDto(fullName = ANOTHER_PLAYER_NAME, fantaPoints = 18.00),
-                                                             TeamPlayerDto(fullName = A_THIRD_PLAYER_NAME, fantaPoints = 12.00),
-                                                             TeamPlayerDto(fullName = A_PLAYER_NAME, fantaPoints = 5.00)),
+                                            players = listOf(PlayerPointsDto(fullName = ANOTHER_PLAYER_NAME, fantaPoints = 18.00),
+                                                             PlayerPointsDto(fullName = A_THIRD_PLAYER_NAME, fantaPoints = 12.00),
+                                                             PlayerPointsDto(fullName = A_PLAYER_NAME, fantaPoints = 5.00)),
                                             totalScore = 35.00))
 
     every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, teamParams, any<RowMapper<JdbcFantaTeamDto>>()) } returns fantaTeam

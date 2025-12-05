@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto
@@ -47,8 +47,8 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
           .reduce { teamTotalScore, singlePlayerScore -> teamTotalScore + singlePlayerScore }
 
   private fun toTeamPlayerDto(dto: JdbcTournamentResultsDto) =
-      TeamPlayerDto(fullName = dto.playerFullName,
-                    fantaPoints = dto.playerTotalScore)
+      PlayerPointsDto(fullName = dto.playerFullName,
+                      fantaPoints = dto.playerTotalScore)
 
   companion object {
 

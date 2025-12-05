@@ -336,6 +336,7 @@
               <generateSupportingFiles>false</generateSupportingFiles>
               <configOptions>
                 <apiPackage>com.posadeus.fantatennis.controller</apiPackage>
+                <modelPackage>com.posadeus.fantatennis.controller.model.job</modelPackage>
                 <documentationProvider>none</documentationProvider>
                 <exceptionHandler>false</exceptionHandler>
                 <gradleBuildFile>false</gradleBuildFile>
@@ -351,7 +352,7 @@
 
           <execution>
 
-            <id>GENERATE TOURNAMENT-API</id>
+            <id>GENERATE FANTA-TOURNAMENT-API</id>
 
             <goals>
               <goal>generate</goal>
@@ -380,6 +381,40 @@
               <typeMappings>
                 object+teamDto=TeamDto
               </typeMappings>
+            </configuration>
+          </execution>
+
+          <execution>
+
+            <id>GENERATE TOURNAMENT-API</id>
+
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorName>kotlin-spring</generatorName>
+              <library>spring-boot</library>
+              <inputSpec>${project.basedir}/src/main/resources/openApi-Tournament.yml</inputSpec>
+              <generateSupportingFiles>false</generateSupportingFiles>
+              <configOptions>
+                <apiPackage>com.posadeus.fantatennis.controller</apiPackage>
+                <modelPackage>com.posadeus.fantatennis.controller.model.tournament</modelPackage>
+                <documentationProvider>none</documentationProvider>
+                <exceptionHandler>false</exceptionHandler>
+                <gradleBuildFile>false</gradleBuildFile>
+                <interfaceOnly>true</interfaceOnly>
+                <useBeanValidation>false</useBeanValidation>
+                <useSpringBoot3>true</useSpringBoot3>
+                <serializableModel>true</serializableModel>
+                <skipDefaultInterface>true</skipDefaultInterface>
+                <useTags>true</useTags>
+              </configOptions>
+              <schemaMappings>
+                PlayerPointsDto=com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
+              </schemaMappings>
+              <importMappings>
+                PlayerPointsDto=com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
+              </importMappings>
             </configuration>
           </execution>
 

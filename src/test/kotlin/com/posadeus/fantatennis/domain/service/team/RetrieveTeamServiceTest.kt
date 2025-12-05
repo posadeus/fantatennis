@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.team
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.model.*
 import io.mockk.every
@@ -38,8 +38,8 @@ class RetrieveTeamServiceTest {
   @Test
   fun `team found`() {
 
-    val teamPlayerDto1 = TeamPlayerDto(fullName = "A_PLAYER_NAME_1", fantaPoints = 20.0)
-    val teamPlayerDto2 = TeamPlayerDto(fullName = "A_PLAYER_NAME_2", fantaPoints = 18.0)
+    val teamPlayerDto1 = PlayerPointsDto(fullName = "A_PLAYER_NAME_1", fantaPoints = 20.0)
+    val teamPlayerDto2 = PlayerPointsDto(fullName = "A_PLAYER_NAME_2", fantaPoints = 18.0)
     val expected = FoundTeam(TeamDto(owner = "", listOf(teamPlayerDto1, teamPlayerDto2), 38.0))
 
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns expected
