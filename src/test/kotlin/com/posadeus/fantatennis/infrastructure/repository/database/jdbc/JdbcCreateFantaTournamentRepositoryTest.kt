@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
-import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
@@ -19,9 +19,9 @@ class JdbcCreateFantaTournamentRepositoryTest {
   @Test
   fun `fanta tournament created successfully`() {
 
-    val dto = TournamentToCreateDto(startingTournamentId = 2,
-                                    endingTournamentId = 10,
-                                    tournamentYear = 2022)
+    val dto = FantaTournamentToCreateDto(startingTournamentId = 2,
+                                         endingTournamentId = 10,
+                                         tournamentYear = 2022)
 
     val expected = ValidFantaTournament(id = A_TOURNAMENT_ID,
                                         startingTournamentId = 2,
@@ -36,9 +36,9 @@ class JdbcCreateFantaTournamentRepositoryTest {
   @Test
   fun `creation fails due to exception from jdbc`() {
 
-    val dto = TournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                    endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                    tournamentYear = A_TOURNAMENT_YEAR)
+    val dto = FantaTournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                         endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                         tournamentYear = A_TOURNAMENT_YEAR)
 
     val expected = InvalidFantaTournament
 

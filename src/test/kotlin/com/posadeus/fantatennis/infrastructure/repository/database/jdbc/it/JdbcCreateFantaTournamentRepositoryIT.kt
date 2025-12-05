@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
-import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcCreateFantaTournamentRepository
@@ -31,9 +31,9 @@ class JdbcCreateFantaTournamentRepositoryIT {
   @Test
   fun `tournament successfully created`() {
 
-    val dto = TournamentToCreateDto(startingTournamentId = 2,
-                                    endingTournamentId = 10,
-                                    tournamentYear = 2022)
+    val dto = FantaTournamentToCreateDto(startingTournamentId = 2,
+                                         endingTournamentId = 10,
+                                         tournamentYear = 2022)
 
     val expected = ValidFantaTournament(id = 1,
                                         startingTournamentId = 2,

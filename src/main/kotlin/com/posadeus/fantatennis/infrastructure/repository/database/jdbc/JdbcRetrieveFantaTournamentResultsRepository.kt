@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
-import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto
@@ -29,12 +29,12 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
         ErrorFantaTournamentResults
       }
 
-  private fun toTournamentDto(resultsDto: List<JdbcTournamentResultsDto>): TournamentDto =
+  private fun toTournamentDto(resultsDto: List<JdbcTournamentResultsDto>): FantaTournamentDto =
       resultsDto
           .groupBy(JdbcTournamentResultsDto::teamId)
           .map(::toTeamDto)
           .sortedByDescending(TeamDto::totalScore)
-          .let(::TournamentDto)
+          .let(::FantaTournamentDto)
 
   private fun toTeamDto(entries: Map.Entry<Int, List<JdbcTournamentResultsDto>>) =
       TeamDto(owner = entries.value.first().ownerId,

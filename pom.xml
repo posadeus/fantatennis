@@ -359,11 +359,11 @@
             <configuration>
               <generatorName>kotlin-spring</generatorName>
               <library>spring-boot</library>
-              <inputSpec>${project.basedir}/src/main/resources/openApi-Tournament.yml</inputSpec>
+              <inputSpec>${project.basedir}/src/main/resources/openApi-FantaTournament.yml</inputSpec>
               <generateSupportingFiles>false</generateSupportingFiles>
               <configOptions>
                 <apiPackage>com.posadeus.fantatennis.controller</apiPackage>
-                <modelPackage>com.posadeus.fantatennis.controller.model.tournament</modelPackage>
+                <modelPackage>com.posadeus.fantatennis.controller.model.fantatournament</modelPackage>
                 <documentationProvider>none</documentationProvider>
                 <exceptionHandler>false</exceptionHandler>
                 <gradleBuildFile>false</gradleBuildFile>

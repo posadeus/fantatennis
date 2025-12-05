@@ -1,24 +1,23 @@
 package com.posadeus.fantatennis.controller.tournament
 
-import com.posadeus.fantatennis.controller.TournamentApi
-import com.posadeus.fantatennis.controller.model.tournament.*
+import com.posadeus.fantatennis.controller.FantaTournamentApi
+import com.posadeus.fantatennis.controller.model.fantatournament.*
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.service.fantatournament.*
 import org.springframework.http.ResponseEntity
 
-// FIXME: Rename it into FantaTournamentController and rename the interface too
-class TournamentController(private val createFantaTournamentService: CreateFantaTournamentService,
-                           private val retrieveFantaTournamentService: RetrieveFantaTournamentService,
-                           private val retrieveFantaTournamentsService: RetrieveFantaTournamentsService) : TournamentApi {
+class FantaTournamentController(private val createFantaTournamentService: CreateFantaTournamentService,
+                                private val retrieveFantaTournamentService: RetrieveFantaTournamentService,
+                                private val retrieveFantaTournamentsService: RetrieveFantaTournamentsService) : FantaTournamentApi {
 
-  override fun create(tournamentToCreateDto: TournamentToCreateDto): ResponseEntity<TournamentCreatedDto> =
-      when (val response = createFantaTournamentService.create(tournamentToCreateDto)) {
+  override fun create(fantaTournamentToCreateDto: FantaTournamentToCreateDto): ResponseEntity<FantaTournamentCreatedDto> =
+      when (val response = createFantaTournamentService.create(fantaTournamentToCreateDto)) {
 
         is SuccessTournamentCreated -> ResponseEntity.ok(response.tournament)
         is ErrorTournamentCreation -> ResponseEntity.internalServerError().build()
       }
 
-  override fun retrieve(tournamentId: Int): ResponseEntity<TournamentDto> =
+  override fun retrieve(tournamentId: Int): ResponseEntity<FantaTournamentDto> =
       when (val response = retrieveFantaTournamentService.retrieve(tournamentId)) {
 
         is FoundFantaTournamentResults -> ResponseEntity.ok(response.tournament)
@@ -26,7 +25,7 @@ class TournamentController(private val createFantaTournamentService: CreateFanta
         is ErrorFantaTournamentResults -> ResponseEntity.internalServerError().build()
       }
 
-  override fun retrieveAll(): ResponseEntity<TournamentsDto> =
+  override fun retrieveAll(): ResponseEntity<FantaTournamentsDto> =
       when (val response = retrieveFantaTournamentsService.retrieveAll()) {
 
         is FoundFantaTournamentsResults -> ResponseEntity.ok(response.tournaments)

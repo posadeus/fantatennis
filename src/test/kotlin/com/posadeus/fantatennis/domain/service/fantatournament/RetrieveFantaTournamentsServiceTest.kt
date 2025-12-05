@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.domain.service.fantatournament
 
-import com.posadeus.fantatennis.controller.model.tournament.TournamentsDto
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentsDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
@@ -24,7 +24,7 @@ class RetrieveFantaTournamentsServiceTest {
                                        aValidFantaTournamentWithId(2),
                                        aValidFantaTournamentWithId(3)))
 
-    val tournaments = TournamentsDto(ids = listOf(1, 2, 3))
+    val tournaments = FantaTournamentsDto(ids = listOf(1, 2, 3))
     val expected = FoundFantaTournamentsResults(tournaments = tournaments)
 
     every { retrieveAllFantaTournamentsRepository.retrieve() } returns fantaTournaments

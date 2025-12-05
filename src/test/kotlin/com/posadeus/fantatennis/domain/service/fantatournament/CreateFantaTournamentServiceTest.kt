@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.fantatournament
 
-import com.posadeus.fantatennis.controller.model.tournament.TournamentCreatedDto
-import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentCreatedDto
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
 import com.posadeus.fantatennis.domain.model.ErrorTournamentCreation
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
@@ -21,18 +21,18 @@ class CreateFantaTournamentServiceTest {
   @Test
   fun `create tournament successfully`() {
 
-    val dto = TournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                    endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                    tournamentYear = A_TOURNAMENT_YEAR)
+    val dto = FantaTournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                         endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                         tournamentYear = A_TOURNAMENT_YEAR)
     val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
                                                startingTournamentId = A_STARTING_TOURNAMENT_ID,
                                                endingTournamentId = AN_ENDING_TOURNAMENT_ID,
                                                tournamentYear = A_TOURNAMENT_YEAR)
 
-    val expected = SuccessTournamentCreated(TournamentCreatedDto(id = A_TOURNAMENT_ID,
-                                                                 startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                                                 endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                                                 tournamentYear = A_TOURNAMENT_YEAR))
+    val expected = SuccessTournamentCreated(FantaTournamentCreatedDto(id = A_TOURNAMENT_ID,
+                                                                      startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                                      endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                                      tournamentYear = A_TOURNAMENT_YEAR))
 
     every { createFantaTournamentsRepository.create(dto) } returns fantaTournament
 
@@ -42,9 +42,9 @@ class CreateFantaTournamentServiceTest {
   @Test
   fun `create tournament fails due to error from repository`() {
 
-    val dto = TournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                    endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                    tournamentYear = A_TOURNAMENT_YEAR)
+    val dto = FantaTournamentToCreateDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                         endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                         tournamentYear = A_TOURNAMENT_YEAR)
     val fantaTournament = InvalidFantaTournament
 
     val expected = ErrorTournamentCreation

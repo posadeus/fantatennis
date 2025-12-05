@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.fantatournament
 
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
 import io.mockk.every
@@ -18,7 +18,7 @@ class RetrieveFantaTournamentServiceTest {
   @Test
   fun `retrieve tournament successfully`() {
 
-    val tournamentDto = TournamentDto(A_LIST_OF_TEAMS)
+    val tournamentDto = FantaTournamentDto(A_LIST_OF_TEAMS)
     val expected = FoundFantaTournamentResults(tournamentDto)
 
     every { retrieveFantaTournamentResultsRepository.retrieve(A_TOURNAMENT_ID) } returns expected

@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
-import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
 import com.posadeus.fantatennis.domain.model.NotFoundFantaTournamentId
@@ -68,7 +68,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryIT {
     val team3 = TeamDto(owner = "THIRD_OWNER", players = listOf(gh00, i0j7, e2f8), totalScore = 15.00)
     val teamOrderedListByTotalScore = listOf(team2, team1, team3)
 
-    val expected = FoundFantaTournamentResults(TournamentDto(teams = teamOrderedListByTotalScore))
+    val expected = FoundFantaTournamentResults(FantaTournamentDto(teams = teamOrderedListByTotalScore))
 
     assertThat(repository.retrieve(1)).isEqualTo(expected)
   }

@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.controller.model.team.TeamPlayerDto
-import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto
@@ -68,7 +68,7 @@ class JdbcRetrieveFantaTournamentResultsRepositoryTest {
     val aTeam = TeamDto(owner = AN_OWNER_ID, players = listOf(aPlayer, anotherPlayer), totalScore = 3.00)
     val aThirdPlayer = TeamPlayerDto(fullName = A_THIRD_PLAYER_FULL_NAME, fantaPoints = 4.00)
     val anotherTeam = TeamDto(owner = ANOTHER_OWNER_ID, players = listOf(aThirdPlayer), totalScore = 4.00)
-    val expected = FoundFantaTournamentResults(TournamentDto(teams = listOf(anotherTeam, aTeam)))
+    val expected = FoundFantaTournamentResults(FantaTournamentDto(teams = listOf(anotherTeam, aTeam)))
 
     every { jdbcTemplate.query(RETRIEVE_QUERY, params, any<RowMapper<JdbcTournamentResultsDto>>()) } returns tournamentResultsDto
 

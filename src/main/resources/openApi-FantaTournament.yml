@@ -1,15 +1,15 @@
 openapi: 3.0.0
 info:
-  title: Tournament
+  title: Fanta Tournament
   version: 1.0.0
 paths:
-  /tournament/{tournamentId}:
+  /fanta-tournament/{tournamentId}:
     get:
       operationId: retrieve
       summary: Returns a Fanta Tournament by its ID
       description: Returns an ordered list based on your team points.
       tags:
-        - Tournament
+        - FantaTournament
       parameters:
         - in: path
           name: tournamentId
@@ -19,55 +19,55 @@ paths:
           description: ID of the tournament
       responses:
         '200':
-          description: Tournament found
+          description: Fanta Tournament found
           content:
             application/json:
               schema:
-                $ref: './openApi-schemas.yml#/components/schemas/TournamentDto'
+                $ref: './openApi-schemas.yml#/components/schemas/FantaTournamentDto'
         '400':
           description: Not found tournament ID
         '500':
           description: Error during tournament retrieval
 
-  /tournament:
+  /fanta-tournament:
     post:
       operationId: create
       summary: Create a Fanta Tournament.
       description: Create an empty Tournament.
       tags:
-        - Tournament
+        - FantaTournament
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: './openApi-schemas.yml#/components/schemas/TournamentToCreateDto'
+              $ref: './openApi-schemas.yml#/components/schemas/FantaTournamentToCreateDto'
       responses:
         '201':
-          description: Tournament created
+          description: Fanta Tournament created
           content:
             application/json:
               schema:
-                $ref: './openApi-schemas.yml#/components/schemas/TournamentCreatedDto'
+                $ref: './openApi-schemas.yml#/components/schemas/FantaTournamentCreatedDto'
         '400':
           description: Wrong input body
         '500':
           description: Error during tournament retrieval
 
-  /tournaments:
+  /fanta-tournaments:
     get:
       operationId: retrieveAll
       summary: Returns all the Fanta Tournaments
       description: Returns the list of all Fanta Tournaments.
       tags:
-        - Tournament
+        - FantaTournament
       responses:
         '200':
-          description: Tournaments found
+          description: Fanta Tournaments found
           content:
             application/json:
               schema:
-                $ref: './openApi-schemas.yml#/components/schemas/TournamentsDto'
+                $ref: './openApi-schemas.yml#/components/schemas/FantaTournamentsDto'
         '404':
           description: Not found tournament ID
         '500':

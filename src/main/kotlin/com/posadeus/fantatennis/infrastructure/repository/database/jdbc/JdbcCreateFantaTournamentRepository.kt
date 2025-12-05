@@ -1,6 +1,6 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
-import com.posadeus.fantatennis.controller.model.tournament.TournamentToCreateDto
+import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 
 class JdbcCreateFantaTournamentRepository(private val jdbcTemplate: JdbcTemplate) : CreateFantaTournamentRepository {
 
-  override fun create(dto: TournamentToCreateDto): FantaTournament =
+  override fun create(dto: FantaTournamentToCreateDto): FantaTournament =
       try {
 
         jdbcTemplate.update(CREATE_FANTA_TOURNAMENT_QUERY,

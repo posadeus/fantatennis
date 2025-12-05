@@ -142,7 +142,7 @@ components:
         - remove
         - add
 
-    TournamentDto:
+    FantaTournamentDto:
       type: object
       properties:
         teams:
@@ -156,7 +156,7 @@ components:
         type: object
         format: teamDto
 
-    TournamentToCreateDto:
+    FantaTournamentToCreateDto:
       type: object
       properties:
         startingTournamentId:
@@ -176,7 +176,7 @@ components:
         - endingTournamentId
         - tournamentYear
 
-    TournamentCreatedDto:
+    FantaTournamentCreatedDto:
       type: object
       properties:
         id:
@@ -197,7 +197,7 @@ components:
         - endingTournamentId
         - tournamentYear
 
-    TournamentsDto:
+    FantaTournamentsDto:
       type: object
       properties:
         ids:
