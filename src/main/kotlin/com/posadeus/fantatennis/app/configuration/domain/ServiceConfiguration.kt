@@ -49,9 +49,9 @@ class ServiceConfiguration {
       RetrieveFantaTournamentsService(jdbcRetrieveAllFantaTournamentsRepository)
 
   @Bean
-  fun retrieveTournamentService(tournamentRegistryRepository: TournamentsRegistryRepository,
+  fun retrieveTournamentService(jdbcRetrieveTournamentsRepository: RetrieveTournamentsRepository,
                                 jdbcRetrievePlayersPointsRepository: RetrievePlayersPointsRepository): RetrieveTournamentService =
-      RetrieveTournamentService(tournamentRegistryRepository,
+      RetrieveTournamentService(jdbcRetrieveTournamentsRepository,
                                 jdbcRetrievePlayersPointsRepository)
 
   @Bean

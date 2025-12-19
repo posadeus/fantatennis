@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
+import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
 import com.posadeus.fantatennis.domain.model.Tournament
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
@@ -49,14 +50,14 @@ class JdbcRetrieveTournamentsRepositoryTest {
                                              year = A_YEAR)
     val jdbcTournaments = listOf(jdbcTournament1, jdbcTournament2)
 
-    val tournament1 = Tournament(id = AN_ID,
-                                 tennisTvId = A_TENNIS_TV_ID,
-                                 points = A_POINTS,
-                                 year = A_YEAR)
-    val tournament2 = Tournament(id = ANOTHER_ID,
-                                 tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                 points = ANOTHER_POINTS,
-                                 year = A_YEAR)
+    val tournament1 = aTournament(id = AN_ID,
+                                  tennisTvId = A_TENNIS_TV_ID,
+                                  points = A_POINTS,
+                                  year = A_YEAR)
+    val tournament2 = aTournament(id = ANOTHER_ID,
+                                  tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                  points = ANOTHER_POINTS,
+                                  year = A_YEAR)
     val expected = listOf(tournament1, tournament2)
 
     every { tournamentDao.retrieveAllBy(A_YEAR) } returns jdbcTournaments

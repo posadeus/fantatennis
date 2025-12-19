@@ -3,9 +3,9 @@ package com.posadeus.fantatennis.domain.service
 import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepository
-import com.posadeus.fantatennis.domain.infrastructure.TournamentsRegistryRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TestPlayerPoints.aPlayerPoints
-import com.posadeus.fantatennis.domain.model.TestTournamentRegistry.aTournamentRegistry
+import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
 import com.posadeus.fantatennis.domain.model.TournamentResults.FoundTournamentResults
 import io.mockk.every
 import io.mockk.mockk
@@ -14,15 +14,15 @@ import org.junit.jupiter.api.Test
 
 class RetrieveTournamentServiceTest {
 
-  private val tournamentRegistryRepository: TournamentsRegistryRepository = mockk()
+  private val retrieveTournamentsRepository: RetrieveTournamentsRepository = mockk()
   private val retrievePlayersPointsRepository: RetrievePlayersPointsRepository = mockk()
 
-  private val service = RetrieveTournamentService(tournamentRegistryRepository, retrievePlayersPointsRepository)
+  private val service = RetrieveTournamentService(retrieveTournamentsRepository, retrievePlayersPointsRepository)
 
   @Test
   fun `retrieve tournament succeed`() {
 
-    val tournamentRegistry = aTournamentRegistry(name = A_TOURNAMENT_NAME, points = A_TOURNAMENT_POINTS)
+    val tournament = aTournament(name = A_TOURNAMENT_NAME, points = A_TOURNAMENT_POINTS)
     val playersPoints1 = aPlayerPoints(playerName = "A_FULL_NAME", totalPoints = 20.00)
     val playersPoints2 = aPlayerPoints(playerName = "ANOTHER_FULL_NAME", totalPoints = 10.00)
     val playersPoints3 = aPlayerPoints(playerName = "A_THIRD_FULL_NAME", totalPoints = 14.00)
@@ -37,7 +37,7 @@ class RetrieveTournamentServiceTest {
                                                                                            playerPointsDto2,
                                                                                            playerPointsDto3)))
 
-    every { tournamentRegistryRepository.retrieveBy(A_TOURNAMENT_ID) } returns tournamentRegistry
+    every { retrieveTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns tournament
     every { retrievePlayersPointsRepository.retrieveBy(A_TOURNAMENT_ID) } returns playersPoints
 
     assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)

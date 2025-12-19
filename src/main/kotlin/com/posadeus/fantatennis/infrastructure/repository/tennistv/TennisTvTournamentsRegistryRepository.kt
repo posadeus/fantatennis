@@ -20,10 +20,6 @@ class TennisTvTournamentsRegistryRepository(private val tennisTvClient: TennisTv
           ?.let(::FoundTournamentsRegistry)
       ?: NotFoundTournamentsRegistry
 
-  override fun retrieveBy(tournamentId: Int): TournamentRegistry {
-    TODO("Not yet implemented")
-  }
-
   private fun isAcceptableTournament(it: TennisTvTournamentRegistry) =
       it.type in ACCEPTED_TOURNAMENT_TYPES
 

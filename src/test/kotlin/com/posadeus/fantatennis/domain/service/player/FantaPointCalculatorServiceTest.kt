@@ -4,6 +4,7 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsReposit
 import com.posadeus.fantatennis.domain.infrastructure.TournamentInfoRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Round.*
+import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
 import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -28,7 +29,7 @@ class FantaPointCalculatorServiceTest {
                         R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
                         R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
-    val tournaments = listOf(Tournament(id = AN_ID,
+    val tournaments = listOf(aTournament(id = AN_ID,
                                         tennisTvId = A_TOURNAMENT_ID,
                                         points = 1000,
                                         year = A_YEAR))
@@ -71,10 +72,10 @@ class FantaPointCalculatorServiceTest {
                         R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
                         R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
-    val tournaments = listOf(Tournament(id = AN_ID,
-                                        tennisTvId = A_TOURNAMENT_ID,
-                                        points = 1000,
-                                        year = A_YEAR))
+    val tournaments = listOf(aTournament(id = AN_ID,
+                                         tennisTvId = A_TOURNAMENT_ID,
+                                         points = 1000,
+                                         year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -116,10 +117,10 @@ class FantaPointCalculatorServiceTest {
                         R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7", "PlayerId8"),
                         R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7", "PlayerId8"))
 
-    val tournaments = listOf(Tournament(id = AN_ID,
-                                        tennisTvId = A_TOURNAMENT_ID,
-                                        points = 2000,
-                                        year = A_YEAR))
+    val tournaments = listOf(aTournament(id = AN_ID,
+                                         tennisTvId = A_TOURNAMENT_ID,
+                                         points = 2000,
+                                         year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -162,10 +163,10 @@ class FantaPointCalculatorServiceTest {
                         R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7", "PlayerId8"),
                         R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7", "PlayerId8"))
 
-    val tournaments = listOf(Tournament(id = AN_ID,
-                                        tennisTvId = A_TOURNAMENT_ID,
-                                        points = 1000,
-                                        year = A_YEAR))
+    val tournaments = listOf(aTournament(id = AN_ID,
+                                         tennisTvId = A_TOURNAMENT_ID,
+                                         points = 1000,
+                                         year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -207,10 +208,10 @@ class FantaPointCalculatorServiceTest {
                         R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
                         R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
-    val tournaments = listOf(Tournament(id = AN_ID,
-                                        tennisTvId = A_TOURNAMENT_ID,
-                                        points = 500,
-                                        year = A_YEAR))
+    val tournaments = listOf(aTournament(id = AN_ID,
+                                         tennisTvId = A_TOURNAMENT_ID,
+                                         points = 500,
+                                         year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -250,10 +251,10 @@ class FantaPointCalculatorServiceTest {
                         R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId7"),
                         R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6", "PlayerId7"))
 
-    val tournaments = listOf(Tournament(id = AN_ID,
-                                        tennisTvId = A_TOURNAMENT_ID,
-                                        points = 250,
-                                        year = A_YEAR))
+    val tournaments = listOf(aTournament(id = AN_ID,
+                                         tennisTvId = A_TOURNAMENT_ID,
+                                         points = 250,
+                                         year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -292,10 +293,10 @@ class FantaPointCalculatorServiceTest {
                         R2 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5"),
                         R1 to setOf("PlayerId1", "PlayerId2", "PlayerId4", "PlayerId5", "PlayerId6"))
 
-    val tournaments = listOf(Tournament(id = AN_ID,
-                                        tennisTvId = A_TOURNAMENT_ID,
-                                        points = 250,
-                                        year = A_YEAR))
+    val tournaments = listOf(aTournament(id = AN_ID,
+                                         tennisTvId = A_TOURNAMENT_ID,
+                                         points = 250,
+                                         year = A_YEAR))
     val tournamentInfo = CompleteTournamentInfo(tournamentId = A_TOURNAMENT_ID,
                                                 participants = participants,
                                                 winners = winners)
@@ -325,10 +326,10 @@ class FantaPointCalculatorServiceTest {
   @Test
   fun `error from repository`() {
 
-    val tournaments = listOf(Tournament(id = AN_ID,
-                                        tennisTvId = A_TOURNAMENT_ID,
-                                        points = ANY_POINTS,
-                                        year = A_YEAR))
+    val tournaments = listOf(aTournament(id = AN_ID,
+                                         tennisTvId = A_TOURNAMENT_ID,
+                                         points = ANY_POINTS,
+                                         year = A_YEAR))
     val tournamentInfo = ErrorTournamentInfo
 
     val expected = emptySet<AtpPlayer>()

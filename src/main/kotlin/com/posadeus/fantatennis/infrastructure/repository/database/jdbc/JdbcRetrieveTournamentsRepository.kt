@@ -19,9 +19,14 @@ class JdbcRetrieveTournamentsRepository(private val tournamentDao: TournamentDao
         emptyList()
       }
 
+  override fun retrieveBy(tournamentId: Int): Tournament {
+    TODO("Not yet implemented")
+  }
+
   private fun toTournament(dto: JdbcTournamentDto): Tournament =
       Tournament(id = dto.tournamentId,
                  tennisTvId = dto.tennisTvId,
+                 name = dto.name,
                  points = dto.points,
                  year = dto.year)
 
