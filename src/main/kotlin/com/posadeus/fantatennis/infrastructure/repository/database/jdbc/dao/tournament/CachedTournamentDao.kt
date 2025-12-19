@@ -9,4 +9,8 @@ class CachedTournamentDao(private val cache: Cache<Int, List<JdbcTournamentDto>>
 
   override fun retrieveAllBy(year: Int): List<JdbcTournamentDto> =
       cache.get(year) { delegate.retrieveAllBy(year) }
+
+  override fun retrieveBy(id: Int): JdbcTournamentDto {
+    TODO("Not yet implemented")
+  }
 }

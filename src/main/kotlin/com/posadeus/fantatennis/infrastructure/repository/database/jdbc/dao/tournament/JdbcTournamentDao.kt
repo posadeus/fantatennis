@@ -11,6 +11,10 @@ class JdbcTournamentDao(private val jdbcTemplate: JdbcTemplate) : TournamentDao 
   override fun retrieveAllBy(year: Int): List<JdbcTournamentDto> =
       jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, arrayOf(year), intArrayOf(Types.INTEGER), tournamentRowMapper)
 
+  override fun retrieveBy(id: Int): JdbcTournamentDto {
+    TODO("Not yet implemented")
+  }
+
   companion object {
 
     private val RETRIEVE_TOURNAMENTS_QUERY = """
