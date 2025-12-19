@@ -6,9 +6,10 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepos
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TestPlayerPoints.aPlayerPoints
 import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
+import com.posadeus.fantatennis.domain.model.Tournament.NotFoundTournament
 import com.posadeus.fantatennis.domain.model.TournamentResults.FoundTournamentResults
-import io.mockk.every
-import io.mockk.mockk
+import com.posadeus.fantatennis.domain.model.TournamentResults.NotFoundTournamentId
+import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 
@@ -18,6 +19,18 @@ class RetrieveTournamentServiceTest {
   private val retrievePlayersPointsRepository: RetrievePlayersPointsRepository = mockk()
 
   private val service = RetrieveTournamentService(retrieveTournamentsRepository, retrievePlayersPointsRepository)
+
+  @Test
+  fun `retrieve tournament fails due to tournament not found`() {
+
+    val expected = NotFoundTournamentId
+
+    every { retrieveTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns NotFoundTournament
+
+    assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+
+    verify { retrievePlayersPointsRepository wasNot called }
+  }
 
   @Test
   fun `retrieve tournament succeed`() {
