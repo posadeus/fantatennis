@@ -9,6 +9,7 @@ import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentsDto
 import com.posadeus.fantatennis.controller.tournament.TournamentController
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.TournamentResults.*
 import com.posadeus.fantatennis.domain.service.RetrieveTournamentService
 import com.posadeus.fantatennis.domain.service.RetrieveTournamentsService
 import com.posadeus.fantatennis.domain.service.fantatournament.*
