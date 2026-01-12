@@ -2,11 +2,16 @@ package com.posadeus.fantatennis.infrastructure.client.tennistv.model
 
 import com.posadeus.fantatennis.infrastructure.client.tennistv.model.FixtureBuilder.Companion.aFixture
 
-class RoundBuilder(private var RoundId: Int? = null,
-                   private var RoundIdModernized: Int = 7,
+class RoundBuilder(private var RoundId: Int = 1,
+                   private var RoundIdModernized: Int? = null,
                    private var RoundName: String = "Final",
                    private var Fixtures: Array<Fixture> = arrayOf(aFixture().build()),
                    private var TeamFixtures: Array<Any>? = null) {
+
+  fun withRoundId(RoundId: Int): RoundBuilder {
+    this.RoundId = RoundId
+    return this
+  }
 
   fun withRoundIdModernized(RoundIdModernized: Int): RoundBuilder {
     this.RoundIdModernized = RoundIdModernized

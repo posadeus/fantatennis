@@ -43,7 +43,7 @@ class TennisTvTournamentInfoRepositoryTest {
     val clientResponse = aClientResponseWith(arrayOf(aRound(4,
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER"),
-                                                     aRound(3,
+                                                     aRound(5,
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER",
                                                             "FIRST_ROUND_LOSER_1",
@@ -68,7 +68,7 @@ class TennisTvTournamentInfoRepositoryTest {
     val clientResponse = aClientResponseWith(arrayOf(aRound(4,
                                                             "A_WINNER",
                                                             "ANOTHER_WINNER"),
-                                                     aRound(3,
+                                                     aRound(5,
                                                             "A_WINNER",
                                                             "FIRST_ROUND_LOSER_1",
                                                             aResultTeamPlayer()
@@ -92,7 +92,7 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `get tournament information - match not played`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aNotPlayedRound(3,
+    val clientResponse = aClientResponseWith(arrayOf(aNotPlayedRound(5,
                                                                      null,
                                                                      0,
                                                                      null)),
@@ -125,7 +125,7 @@ class TennisTvTournamentInfoRepositoryTest {
   @Test
   fun `round exception`() {
 
-    val clientResponse = aClientResponseWith(arrayOf(aRound(2,
+    val clientResponse = aClientResponseWith(arrayOf(aRound(6,
                                                             A_FIXTURE_PLAYER,
                                                             A_FIXTURE_PLAYER)),
                                              32,
@@ -165,7 +165,7 @@ class TennisTvTournamentInfoRepositoryTest {
                      fixture1Loser: String,
                      fixture2Loser: String) =
       aRound()
-          .withRoundIdModernized(roundId)
+          .withRoundId(roundId)
           .withFixtures(arrayOf(aFixture(fixture1Winner, fixture1Loser),
                                 aFixture(fixture2Winner, fixture2Loser)))
           .build()
@@ -174,7 +174,7 @@ class TennisTvTournamentInfoRepositoryTest {
                      fixtureWinner: String,
                      fixtureLoser: String) =
       aRound()
-          .withRoundIdModernized(roundId)
+          .withRoundId(roundId)
           .withFixtures(arrayOf(aFixture(fixtureWinner, fixtureLoser)))
           .build()
 
@@ -183,7 +183,7 @@ class TennisTvTournamentInfoRepositoryTest {
                               winner: Int,
                               result: Result?) =
       aRound()
-          .withRoundIdModernized(roundId)
+          .withRoundId(roundId)
           .withFixtures(arrayOf(aFixtureNotPlayed(match, winner, result)))
           .build()
 
@@ -193,7 +193,7 @@ class TennisTvTournamentInfoRepositoryTest {
                      resultTeamPlayer1: ResultTeamPlayer,
                      resultTeamPlayer2: ResultTeamPlayer?) =
       aRound()
-          .withRoundIdModernized(roundId)
+          .withRoundId(roundId)
           .withFixtures(arrayOf(aFixture(fixture1Winner, fixture1Loser),
                                 aFixtureWithoutAMatch(resultTeamPlayer1, resultTeamPlayer2)))
           .build()

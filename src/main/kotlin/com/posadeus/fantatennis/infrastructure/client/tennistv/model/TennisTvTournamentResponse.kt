@@ -62,8 +62,8 @@ data class Breakdown(val Id: Int?,
                      val PrizeMoney: String?,
                      val Points: String)
 
-data class Round(val RoundId: Int?,
-                 val RoundIdModernized: Int,
+data class Round(val RoundId: Int,
+                 val RoundIdModernized: Int?,
                  val RoundName: String,
                  val Fixtures: Array<Fixture>,
                  val TeamFixtures: Array<Any>?) {
@@ -88,8 +88,8 @@ data class Round(val RoundId: Int?,
   }
 
   override fun hashCode(): Int {
-    var result = RoundId ?: 0
-    result = 31 * result + RoundIdModernized
+    var result = RoundId
+    result = 31 * result + (RoundIdModernized ?: 0)
     result = 31 * result + RoundName.hashCode()
     result = 31 * result + Fixtures.contentHashCode()
     result = 31 * result + (TeamFixtures?.contentHashCode() ?: 0)
