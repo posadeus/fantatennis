@@ -14,36 +14,30 @@ import org.slf4j.LoggerFactory
 class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPointsDao,
                                           private val playerDao: PlayerDao) : RetrievePlayersPointsRepository {
 
-  override fun retrieveBy(tournamentId: Int): PlayersPoints {
+  override fun retrieveBy(tournamentId: Int): PlayersPoints =
+      try {
 
-    try {
+        playerPointsDao.retrieveByTournamentId(tournamentId)
+            .takeIf(List<JdbcPlayerPointsDto>::isNotEmpty)
+            ?.let { playersPoints ->
 
-      val playersPointsResult = playerPointsDao.retrieveByTournamentId(tournamentId)
+              val allPlayers = playerDao.retrieveAll()
 
-      if (playersPointsResult.isEmpty()) return FoundPlayersPoints(playersPoints = emptyList())
-      else {
-        try {
-          val allPlayers = playerDao.retrieveAll()
-          return playersPointsResult.mapNotNull { playerPoints ->
-            allPlayers.firstOrNull { it.playerId == playerPoints.playerId }
-                ?.let { toPlayerPoints(playerPoints, it) }
-
-          }
-              .let { FoundPlayersPoints(it) }
-        }
-        catch (e: RuntimeException) {
-
-          LOGGER.error(e.message)
-          return InternalErrorPlayersPoints
-        }
+              playersPoints
+                  .mapNotNull { playerPoints ->
+                    allPlayers
+                        .firstOrNull { it.playerId == playerPoints.playerId }
+                        ?.let { toPlayerPoints(playerPoints, it) }
+                  }
+                  .let(::FoundPlayersPoints)
+            }
+        ?: FoundPlayersPoints(playersPoints = emptyList())
       }
-    }
-    catch (e: RuntimeException) {
+      catch (e: RuntimeException) {
 
-      LOGGER.error(e.message)
-      return InternalErrorPlayersPoints
-    }
-  }
+        LOGGER.error(e.message)
+        InternalErrorPlayersPoints
+      }
 
   private fun toPlayerPoints(playerPoints: JdbcPlayerPointsDto, jdbcPlayerDto: JdbcPlayerDto): PlayerPoints =
       PlayerPoints(playerId = playerPoints.playerId,
