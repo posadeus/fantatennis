@@ -2,8 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
-import com.posadeus.fantatennis.domain.model.Tournament.FoundTournament
-import com.posadeus.fantatennis.domain.model.Tournament.NotFoundTournament
+import com.posadeus.fantatennis.domain.model.Tournament.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
 import io.mockk.every
@@ -73,6 +72,16 @@ class JdbcRetrieveTournamentsRepositoryTest {
 
   @Nested
   inner class RetrieveSingleTournament {
+
+    @Test
+    fun `error returned by the query`() {
+
+      val expected = InternalErrorTournament
+
+      every { tournamentDao.retrieveBy(A_TOURNAMENT_ID) } throws RuntimeException()
+
+      assertThat(repository.retrieveBy(A_TOURNAMENT_ID)).isEqualTo(expected)
+    }
 
     @Test
     fun `no results returned by the query`() {

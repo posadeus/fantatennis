@@ -2,8 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Tournament
-import com.posadeus.fantatennis.domain.model.Tournament.FoundTournament
-import com.posadeus.fantatennis.domain.model.Tournament.NotFoundTournament
+import com.posadeus.fantatennis.domain.model.Tournament.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import org.slf4j.LoggerFactory
@@ -31,6 +30,11 @@ class JdbcRetrieveTournamentsRepository(private val tournamentDao: TournamentDao
 
         LOGGER.warn("Missing tournament with ID $tournamentId")
         NotFoundTournament
+      }
+      catch (e: RuntimeException) {
+
+        LOGGER.error(e.message)
+        InternalErrorTournament
       }
 
   private fun toTournament(dto: JdbcTournamentDto): FoundTournament =

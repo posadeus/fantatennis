@@ -9,4 +9,5 @@ sealed interface Tournament {
                              val year: Int) : Tournament
 
   data object NotFoundTournament : Tournament
+  data object InternalErrorTournament: Tournament
 }

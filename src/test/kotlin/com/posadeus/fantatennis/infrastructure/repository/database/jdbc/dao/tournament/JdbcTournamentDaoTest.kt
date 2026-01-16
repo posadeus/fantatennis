@@ -7,72 +7,138 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Test
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
-import java.sql.Types
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import java.time.LocalDate
 
 class JdbcTournamentDaoTest {
 
-  private val jdbcTemplate: JdbcTemplate = mockk()
+  private val jdbcTemplate: NamedParameterJdbcTemplate = mockk()
 
   private val dao: TournamentDao = JdbcTournamentDao(jdbcTemplate)
 
-  @Test
-  fun `error on repository operation`() {
+  @Nested
+  inner class RetrieveAllTournaments {
 
-    val expectedMessage = "Error message"
+    @Test
+    fun `error on repository operation`() {
 
-    every {
-      jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, arrayOf(A_YEAR), intArrayOf(Types.INTEGER), any<RowMapper<JdbcTournamentDto>>())
-    } throws RuntimeException(expectedMessage)
+      val params = mapOf("year" to A_YEAR)
 
-    assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveAllBy(A_YEAR) }
+      val expectedMessage = "Error message"
+
+      every {
+        jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, params, any<RowMapper<JdbcTournamentDto>>())
+      } throws RuntimeException(expectedMessage)
+
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveAllBy(A_YEAR) }
+    }
+
+    @Test
+    fun `no results returned by the query`() {
+
+      val params = mapOf("year" to A_YEAR)
+
+      val expected = emptyList<JdbcTournamentDto>()
+
+      every {
+        jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, params, any<RowMapper<JdbcTournamentDto>>())
+      } returns emptyList()
+
+      assertThat(dao.retrieveAllBy(A_YEAR)).isEqualTo(expected)
+    }
+
+    @Test
+    fun `results retrieved successfully`() {
+
+      val params = mapOf("year" to A_YEAR)
+
+      val jdbcTournament1 = aJdbcTournamentDto(tournamentId = AN_ID,
+                                               atpTourId = AN_ATP_TOUR_ID,
+                                               tennisTvId = A_TENNIS_TV_ID,
+                                               name = A_NAME,
+                                               points = A_POINTS,
+                                               location = A_LOCATION,
+                                               surface = A_SURFACE,
+                                               year = A_YEAR,
+                                               startDate = A_START_DATE,
+                                               endDate = AN_END_DATE)
+      val jdbcTournament2 = aJdbcTournamentDto(tournamentId = ANOTHER_ID,
+                                               atpTourId = ANOTHER_ATP_TOUR_ID,
+                                               tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                               name = ANOTHER_NAME,
+                                               points = ANOTHER_POINTS,
+                                               location = ANOTHER_LOCATION,
+                                               surface = ANOTHER_SURFACE,
+                                               year = A_YEAR,
+                                               startDate = ANOTHER_START_DATE,
+                                               endDate = ANOTHER_END_DATE)
+      val expected = listOf(jdbcTournament1, jdbcTournament2)
+
+      every {
+        jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, params, any<RowMapper<JdbcTournamentDto>>())
+      } returns expected
+
+      assertThat(dao.retrieveAllBy(A_YEAR)).isEqualTo(expected)
+    }
   }
 
-  @Test
-  fun `no results returned by the query`() {
+  @Nested
+  inner class RetrieveSingleTournament {
 
-    val expected = emptyList<JdbcTournamentDto>()
+    @Test
+    fun `error on repository operation`() {
 
-    every {
-      jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, arrayOf(A_YEAR), intArrayOf(Types.INTEGER), any<RowMapper<JdbcTournamentDto>>())
-    } returns emptyList()
+      val params = mapOf("id" to AN_ID)
 
-    assertThat(dao.retrieveAllBy(A_YEAR)).isEqualTo(expected)
-  }
+      val expectedMessage = "Error message"
 
-  @Test
-  fun `results retrieved successfully`() {
+      every {
+        jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, params, any<RowMapper<JdbcTournamentDto>>())
+      } throws RuntimeException(expectedMessage)
 
-    val jdbcTournament1 = aJdbcTournamentDto(tournamentId = AN_ID,
-                                             atpTourId = AN_ATP_TOUR_ID,
-                                             tennisTvId = A_TENNIS_TV_ID,
-                                             name = A_NAME,
-                                             points = A_POINTS,
-                                             location = A_LOCATION,
-                                             surface = A_SURFACE,
-                                             year = A_YEAR,
-                                             startDate = A_START_DATE,
-                                             endDate = AN_END_DATE)
-    val jdbcTournament2 = aJdbcTournamentDto(tournamentId = ANOTHER_ID,
-                                             atpTourId = ANOTHER_ATP_TOUR_ID,
-                                             tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                             name = ANOTHER_NAME,
-                                             points = ANOTHER_POINTS,
-                                             location = ANOTHER_LOCATION,
-                                             surface = ANOTHER_SURFACE,
-                                             year = A_YEAR,
-                                             startDate = ANOTHER_START_DATE,
-                                             endDate = ANOTHER_END_DATE)
-    val expected = listOf(jdbcTournament1, jdbcTournament2)
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveBy(AN_ID) }
+    }
 
-    every {
-      jdbcTemplate.query(RETRIEVE_TOURNAMENTS_QUERY, arrayOf(A_YEAR), intArrayOf(Types.INTEGER), any<RowMapper<JdbcTournamentDto>>())
-    } returns expected
+    @Test
+    fun `id not found`() {
 
-    assertThat(dao.retrieveAllBy(A_YEAR)).isEqualTo(expected)
+      val params = mapOf("id" to AN_ID)
+
+      val expectedMessage = "No tournament found with id $AN_ID"
+
+      every {
+        jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, params, any<RowMapper<JdbcTournamentDto>>())
+      } returns null
+
+      assertThrowsWithMessage<EmptyResultDataAccessException>(expectedMessage) { dao.retrieveBy(AN_ID) }
+    }
+
+    @Test
+    fun `tournament retrieved successfully`() {
+
+      val params = mapOf("id" to AN_ID)
+
+      val expected = aJdbcTournamentDto(tournamentId = AN_ID,
+                                        atpTourId = AN_ATP_TOUR_ID,
+                                        tennisTvId = A_TENNIS_TV_ID,
+                                        name = A_NAME,
+                                        points = A_POINTS,
+                                        location = A_LOCATION,
+                                        surface = A_SURFACE,
+                                        year = A_YEAR,
+                                        startDate = A_START_DATE,
+                                        endDate = AN_END_DATE)
+
+      every {
+        jdbcTemplate.queryForObject(RETRIEVE_TOURNAMENT_QUERY, params, any<RowMapper<JdbcTournamentDto>>())
+      } returns expected
+
+      assertThat(dao.retrieveBy(AN_ID)).isEqualTo(expected)
+    }
   }
 
   companion object {
@@ -101,7 +167,13 @@ class JdbcTournamentDaoTest {
     private val RETRIEVE_TOURNAMENTS_QUERY = """
       SELECT *
       FROM TOURNAMENTS
-      WHERE `YEAR` = ?;
+      WHERE `YEAR` = :year;
+    """.trimIndent()
+
+    private val RETRIEVE_TOURNAMENT_QUERY = """
+      SELECT *
+      FROM TOURNAMENTS
+      WHERE ID = :id;
     """.trimIndent()
   }
 }

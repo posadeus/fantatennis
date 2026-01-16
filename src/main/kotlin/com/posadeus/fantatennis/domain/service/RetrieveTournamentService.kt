@@ -4,11 +4,9 @@ import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.tournament.TournamentDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepository
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
-import com.posadeus.fantatennis.domain.model.Tournament.FoundTournament
-import com.posadeus.fantatennis.domain.model.Tournament.NotFoundTournament
+import com.posadeus.fantatennis.domain.model.Tournament.*
 import com.posadeus.fantatennis.domain.model.TournamentResults
-import com.posadeus.fantatennis.domain.model.TournamentResults.FoundTournamentResults
-import com.posadeus.fantatennis.domain.model.TournamentResults.NotFoundTournamentId
+import com.posadeus.fantatennis.domain.model.TournamentResults.*
 
 class RetrieveTournamentService(private val retrieveTournamentsRepository: RetrieveTournamentsRepository,
                                 private val retrievePlayersPointsRepository: RetrievePlayersPointsRepository) {
@@ -21,6 +19,7 @@ class RetrieveTournamentService(private val retrieveTournamentsRepository: Retri
                                                                                 playersScore = getPlayersScore(tournamentId)))
 
         is NotFoundTournament -> NotFoundTournamentId
+        is InternalErrorTournament -> ErrorTournamentResults
       }
 
   private fun getPlayersScore(tournamentId: Int) =

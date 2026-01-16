@@ -65,18 +65,22 @@ class JdbcRetrieveTournamentsRepositoryIT {
   fun `tournaments found`() {
 
     val tournament1 = aTournament(id = 1,
+                                  name = "FIRST_TOURNAMENT",
                                   tennisTvId = 123,
                                   points = 1000,
                                   year = 2025)
     val tournament2 = aTournament(id = 2,
+                                  name = "SECOND_TOURNAMENT",
                                   tennisTvId = 456,
                                   points = 250,
                                   year = 2025)
     val tournament3 = aTournament(id = 3,
+                                  name = "THIRD_TOURNAMENT",
                                   tennisTvId = 789,
                                   points = 500,
                                   year = 2025)
     val tournament4 = aTournament(id = 4,
+                                  name = "FOURTH_TOURNAMENT",
                                   tennisTvId = 12,
                                   points = 250,
                                   year = 2025)
