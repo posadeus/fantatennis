@@ -24,10 +24,9 @@ class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPoi
       else {
         try {
           val allPlayers = playerDao.retrieveAll()
-          return playersPointsResult.map { playerPoints ->
-            val jdbcPlayerDto = allPlayers.first { it.playerId == playerPoints.playerId }
-
-            toPlayerPoints(playerPoints, jdbcPlayerDto)
+          return playersPointsResult.mapNotNull { playerPoints ->
+            allPlayers.firstOrNull { it.playerId == playerPoints.playerId }
+                ?.let { toPlayerPoints(playerPoints, it) }
 
           }
               .let { FoundPlayersPoints(it) }

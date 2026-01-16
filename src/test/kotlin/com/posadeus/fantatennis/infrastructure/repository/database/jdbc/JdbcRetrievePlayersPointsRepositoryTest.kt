@@ -59,6 +59,25 @@ class JdbcRetrievePlayersPointsRepositoryTest {
   }
 
   @Test
+  fun `playerPoints playerId not found among allPlayers is excluded`() {
+
+    val playerPointsDto1 = aJdbcPlayerPointsDto(tournamentId = A_TOURNAMENT_ID, playerId = A_PLAYER_ID, fantaPoints = 10.0)
+    val playerPointsDto2 = aJdbcPlayerPointsDto(tournamentId = A_TOURNAMENT_ID, playerId = A_THIRD_PLAYER_ID)
+    val playersPointsDto = listOf(playerPointsDto1, playerPointsDto2)
+    val player1 = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_NAME)
+    val player2 = aJdbcPlayerDto(playerId = ANOTHER_PLAYER_ID)
+    val players = listOf(player1, player2)
+
+    val playerPoints1 = PlayerPoints(playerId = A_PLAYER_ID, playerName = A_PLAYER_NAME, totalPoints = 10.0)
+    val expected = FoundPlayersPoints(playersPoints = listOf(playerPoints1))
+
+    every { playerPointsDao.retrieveByTournamentId(A_TOURNAMENT_ID) } returns playersPointsDto
+    every { playerDao.retrieveAll() } returns players
+
+    assertThat(repository.retrieveBy(A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
+
+  @Test
   fun `players points found for tournament`() {
 
     val playerPointsDto1 = aJdbcPlayerPointsDto(tournamentId = A_TOURNAMENT_ID, playerId = A_PLAYER_ID, fantaPoints = 10.0)
