@@ -24,6 +24,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @ExtendWith(SpringExtension::class)
 @Import(IntegrationTestConfiguration::class, TournamentDaoConfiguration::class)
 @TestPropertySource(properties = [
+  "caches.caffeine.tournaments-cache.expire-after-write-duration=1440",
+  "caches.caffeine.tournaments-cache.expire-after-access-duration=1440",
+  "caches.caffeine.tournaments-cache.maximum-size=300",
   "caches.caffeine.tournament-cache.expire-after-write-duration=1440",
   "caches.caffeine.tournament-cache.expire-after-access-duration=1440",
   "caches.caffeine.tournament-cache.maximum-size=300"
@@ -31,7 +34,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 class JdbcRetrieveTournamentsRepositoryIT {
 
   @Autowired
-  private lateinit var tournamentCache: Cache<Int, List<JdbcTournamentDto>>
+  private lateinit var tournamentsCache: Cache<Int, List<JdbcTournamentDto>>
+
+  @Autowired
+  private lateinit var tournamentCache: Cache<Int, JdbcTournamentDto>
 
   @Autowired
   private lateinit var jdbcTournamentDao: TournamentDao
@@ -41,10 +47,11 @@ class JdbcRetrieveTournamentsRepositoryIT {
   @BeforeEach
   fun setUp() {
 
-    val cachedTournamentDao = CachedTournamentDao(tournamentCache, jdbcTournamentDao)
+    val cachedTournamentDao = CachedTournamentDao(tournamentsCache, tournamentCache, jdbcTournamentDao)
 
     repository = JdbcRetrieveTournamentsRepository(cachedTournamentDao)
 
+    tournamentsCache.invalidateAll()
     tournamentCache.invalidateAll()
   }
 

@@ -20,17 +20,31 @@ class TournamentDaoConfiguration {
       JdbcTournamentDao(namedParameterJdbcTemplate)
 
   @Bean
-  fun cachedTournamentDao(tournamentCache: Cache<Int, List<JdbcTournamentDto>>,
+  fun cachedTournamentDao(tournamentsCache: Cache<Int, List<JdbcTournamentDto>>,
+                          tournamentCache: Cache<Int, JdbcTournamentDto>,
                           jdbcTournamentDao: TournamentDao): TournamentDao =
-      CachedTournamentDao(tournamentCache,
+      CachedTournamentDao(tournamentsCache,
+                          tournamentCache,
                           jdbcTournamentDao)
+
+  @Bean
+  fun tournamentsCache(
+      @Value("\${caches.caffeine.tournaments-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
+      @Value("\${caches.caffeine.tournaments-cache.expire-after-access-duration}") expireAfterAccessDuration: Long,
+      @Value("\${caches.caffeine.tournaments-cache.maximum-size}") maximumSize: Long
+  ): Cache<Int, List<JdbcTournamentDto>> =
+      Caffeine.newBuilder()
+          .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)
+          .expireAfterAccess(expireAfterAccessDuration, TimeUnit.MINUTES)
+          .maximumSize(maximumSize)
+          .build()
 
   @Bean
   fun tournamentCache(
       @Value("\${caches.caffeine.tournament-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
       @Value("\${caches.caffeine.tournament-cache.expire-after-access-duration}") expireAfterAccessDuration: Long,
       @Value("\${caches.caffeine.tournament-cache.maximum-size}") maximumSize: Long
-  ): Cache<Int, List<JdbcTournamentDto>> =
+  ): Cache<Int, JdbcTournamentDto> =
       Caffeine.newBuilder()
           .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)
           .expireAfterAccess(expireAfterAccessDuration, TimeUnit.MINUTES)

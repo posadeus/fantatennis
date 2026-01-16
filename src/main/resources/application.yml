@@ -57,6 +57,10 @@ client:
 # 7d  = 10080m
 caches:
   caffeine:
+    tournaments-cache:
+      expire-after-write-duration: 1440
+      expire-after-access-duration: 1440
+      maximum-size: 300
     tournament-cache:
       expire-after-write-duration: 1440
       expire-after-access-duration: 1440
