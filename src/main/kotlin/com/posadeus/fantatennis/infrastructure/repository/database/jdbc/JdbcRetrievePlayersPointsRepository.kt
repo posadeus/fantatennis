@@ -4,17 +4,31 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepos
 import com.posadeus.fantatennis.domain.model.PlayersPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
 import org.slf4j.LoggerFactory
 
-class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPointsDao) : RetrievePlayersPointsRepository {
+class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPointsDao,
+                                          private val playerDao: PlayerDao) : RetrievePlayersPointsRepository {
 
   override fun retrieveBy(tournamentId: Int): PlayersPoints {
 
     try {
 
-      if (playerPointsDao.retrieveByTournamentId(tournamentId).isEmpty()) return FoundPlayersPoints(emptyList())
-      else TODO()
+      val playersPointsResult = playerPointsDao.retrieveByTournamentId(tournamentId)
+
+      if (playersPointsResult.isEmpty()) return FoundPlayersPoints(playersPoints = emptyList())
+      else {
+        try {
+          val allPlayers = playerDao.retrieveAll()
+          return TODO()
+        }
+        catch (e: RuntimeException) {
+
+          LOGGER.error(e.message)
+          return InternalErrorPlayersPoints
+        }
+      }
     }
     catch (e: RuntimeException) {
 
