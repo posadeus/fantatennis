@@ -3,9 +3,12 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.PlayersPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
+import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints.PlayerPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 import org.slf4j.LoggerFactory
 
 class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPointsDao,
@@ -21,7 +24,13 @@ class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPoi
       else {
         try {
           val allPlayers = playerDao.retrieveAll()
-          return TODO()
+          return playersPointsResult.map { playerPoints ->
+            val jdbcPlayerDto = allPlayers.first { it.playerId == playerPoints.playerId }
+
+            toPlayerPoints(playerPoints, jdbcPlayerDto)
+
+          }
+              .let { FoundPlayersPoints(it) }
         }
         catch (e: RuntimeException) {
 
@@ -36,6 +45,11 @@ class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPoi
       return InternalErrorPlayersPoints
     }
   }
+
+  private fun toPlayerPoints(playerPoints: JdbcPlayerPointsDto, jdbcPlayerDto: JdbcPlayerDto): PlayerPoints =
+      PlayerPoints(playerId = playerPoints.playerId,
+                   playerName = jdbcPlayerDto.fullName,
+                   totalPoints = playerPoints.fantaPoints)
 
   companion object {
 
