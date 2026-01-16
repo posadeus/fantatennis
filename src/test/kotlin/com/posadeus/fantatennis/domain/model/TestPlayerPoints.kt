@@ -1,5 +1,7 @@
 package com.posadeus.fantatennis.domain.model
 
+import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints.PlayerPoints
+
 object TestPlayerPoints {
 
   fun aPlayerPoints(playerId: String = "A_PLAYER_ID",
