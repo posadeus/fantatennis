@@ -25,4 +25,10 @@ class AusOpenTournamentEventIdServiceTest {
 
     assertThat(service.retrieveEventId(2025)).isEqualTo(251300)
   }
+
+  @Test
+  fun `year 2026`() {
+
+    assertThat(service.retrieveEventId(2026)).isEqualTo(257391)
+  }
 }
