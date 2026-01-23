@@ -53,6 +53,7 @@ client:
       connection-request-timeout: 2000
 
 # Duration is always in minutes
+# 6h = 360m
 # 24h = 1440m
 # 7d  = 10080m
 caches:
@@ -69,5 +70,9 @@ caches:
       expire-after-write-duration: 10080
       maximum-size: 1000
     players-points-by-tournament-id-cache:
+      expire-after-write-duration: 360
+      maximum-size: 1000
+    fanta-team-cache:
       expire-after-write-duration: 10080
+      expire-after-access-duration: 10080
       maximum-size: 1000
