@@ -26,7 +26,7 @@ class JdbcTournamentDao(private val namedParameterJdbcTemplate: NamedParameterJd
     private val RETRIEVE_TOURNAMENT_QUERY = """
       SELECT *
       FROM TOURNAMENTS
-      WHERE ID = :id;
+      WHERE TOURNAMENT_ID = :id;
     """.trimIndent()
   }
 }

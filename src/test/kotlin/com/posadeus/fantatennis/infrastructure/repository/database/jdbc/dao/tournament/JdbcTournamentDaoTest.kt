@@ -173,7 +173,7 @@ class JdbcTournamentDaoTest {
     private val RETRIEVE_TOURNAMENT_QUERY = """
       SELECT *
       FROM TOURNAMENTS
-      WHERE ID = :id;
+      WHERE TOURNAMENT_ID = :id;
     """.trimIndent()
   }
 }
