@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration
 class RetrievePlayersPointsRepositoryConfiguration {
 
   @Bean
-  fun jdbcRetrievePlayersPointsRepository(jdbcPlayerPointsDao: PlayerPointsDao, // TODO use CachedPlayerPointsDao
+  fun jdbcRetrievePlayersPointsRepository(cachedPlayerPointsDao: PlayerPointsDao,
                                           cachedPlayerDao: PlayerDao): RetrievePlayersPointsRepository =
-      JdbcRetrievePlayersPointsRepository(jdbcPlayerPointsDao,
+      JdbcRetrievePlayersPointsRepository(cachedPlayerPointsDao,
                                           cachedPlayerDao)
 }
