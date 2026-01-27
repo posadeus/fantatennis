@@ -1,8 +1,8 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
-import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.AddPlayersToTeamRepositoryConfiguration
+import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistTeamPlayersRepositoryConfiguration
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
-import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
+import com.posadeus.fantatennis.domain.infrastructure.PersistTeamPlayersRepository
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto
 import org.assertj.core.api.Assertions.assertThat
@@ -18,14 +18,14 @@ import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@Import(IntegrationTestConfiguration::class, AddPlayersToTeamRepositoryConfiguration::class)
-class JdbcAddPlayersToTeamRepositoryIT {
+@Import(IntegrationTestConfiguration::class, PersistTeamPlayersRepositoryConfiguration::class)
+class JdbcPersistTeamPlayersRepositoryIT {
 
   @Autowired
   private lateinit var namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 
   @Autowired
-  private lateinit var repository: AddPlayersToTeamRepository
+  private lateinit var repository: PersistTeamPlayersRepository
 
   @SqlGroup(
       Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
@@ -49,7 +49,7 @@ class JdbcAddPlayersToTeamRepositoryIT {
       VALUES(?, ?, ?);]; Duplicate entry '1-A0B1-1' for key 'TEAMS.PRIMARY'
     """.trimIndent()
 
-    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
+    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.persist(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
 
     val queryParams = mapOf("teamId" to 1, "playerId" to "C0D1")
 
@@ -65,7 +65,7 @@ class JdbcAddPlayersToTeamRepositoryIT {
 
     val playerIds = setOf("E2F8", "C0D1")
 
-    assertThat(repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID)).isEqualTo(Unit)
+    assertThat(repository.persist(A_TEAM_ID, playerIds, A_TOURNAMENT_ID)).isEqualTo(Unit)
   }
 
   private val teamRowMapper = RowMapper { rs, _ ->

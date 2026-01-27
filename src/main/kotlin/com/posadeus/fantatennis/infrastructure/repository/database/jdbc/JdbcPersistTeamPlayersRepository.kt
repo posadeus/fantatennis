@@ -2,16 +2,16 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
-import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
+import com.posadeus.fantatennis.domain.infrastructure.PersistTeamPlayersRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 
 @OpenForSpring
-class JdbcAddPlayersToTeamRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : AddPlayersToTeamRepository {
+class JdbcPersistTeamPlayersRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : PersistTeamPlayersRepository {
 
   @Transactional
-  override fun add(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) {
+  override fun persist(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) {
 
     try {
 

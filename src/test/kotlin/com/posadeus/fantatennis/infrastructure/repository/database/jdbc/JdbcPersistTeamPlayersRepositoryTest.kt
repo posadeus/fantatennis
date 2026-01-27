@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
-import com.posadeus.fantatennis.domain.infrastructure.AddPlayersToTeamRepository
+import com.posadeus.fantatennis.domain.infrastructure.PersistTeamPlayersRepository
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import io.mockk.every
 import io.mockk.mockk
@@ -9,11 +9,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
-class JdbcAddPlayersToTeamRepositoryTest {
+class JdbcPersistTeamPlayersRepositoryTest {
 
   private val jdbcTemplate: NamedParameterJdbcTemplate = mockk()
 
-  private val repository: AddPlayersToTeamRepository = JdbcAddPlayersToTeamRepository(jdbcTemplate)
+  private val repository: PersistTeamPlayersRepository = JdbcPersistTeamPlayersRepository(jdbcTemplate)
 
   @Test
   fun `not all players have been added to the team`() {
@@ -28,7 +28,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
 
     every { jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } returns intArrayOf(1, 0)
 
-    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
+    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.persist(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
   }
 
   @Test
@@ -44,7 +44,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
 
     every { jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } throws RuntimeException("Error")
 
-    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
+    assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.persist(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
   }
 
   @Test
@@ -58,7 +58,7 @@ class JdbcAddPlayersToTeamRepositoryTest {
 
     every { jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, paramSource) } returns intArrayOf(1, 1)
 
-    assertThat(repository.add(A_TEAM_ID, playerIds, A_TOURNAMENT_ID)).isEqualTo(Unit)
+    assertThat(repository.persist(A_TEAM_ID, playerIds, A_TOURNAMENT_ID)).isEqualTo(Unit)
   }
 
   companion object {

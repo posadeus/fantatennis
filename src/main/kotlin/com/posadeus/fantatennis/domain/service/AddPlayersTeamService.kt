@@ -8,7 +8,7 @@ import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Tournament.*
 import org.slf4j.LoggerFactory
 
-class AddPlayersTeamService(private val addPlayerToTeamRepository: AddPlayersToTeamRepository,
+class AddPlayersTeamService(private val persistTeamPlayersRepository: PersistTeamPlayersRepository,
                             private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
                             private val retrieveTournamentsRepository: RetrieveTournamentsRepository,
                             private val retrievePlayersRepository: RetrievePlayersRepository) {
@@ -41,7 +41,7 @@ class AddPlayersTeamService(private val addPlayerToTeamRepository: AddPlayersToT
         }
         else {
 
-          addPlayerToTeamRepository.add(teamId, playerIds, startingTournamentId)
+          persistTeamPlayersRepository.persist(teamId, playerIds, startingTournamentId)
 
           allPlayers
               .filter { it.id in foundPlayerIds }

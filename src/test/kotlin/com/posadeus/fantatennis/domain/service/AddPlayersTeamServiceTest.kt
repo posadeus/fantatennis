@@ -16,12 +16,12 @@ import org.junit.jupiter.api.Test
 
 class AddPlayersTeamServiceTest {
 
-  private val addPlayersToTeamRepository: AddPlayersToTeamRepository = mockk()
+  private val persistTeamPlayersRepository: PersistTeamPlayersRepository = mockk()
   private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
   private val retrieveTournamentsRepository: RetrieveTournamentsRepository = mockk()
   private val retrievePlayersRepository: RetrievePlayersRepository = mockk()
 
-  private val service = AddPlayersTeamService(addPlayersToTeamRepository,
+  private val service = AddPlayersTeamService(persistTeamPlayersRepository,
                                               retrieveFantaTeamRepository,
                                               retrieveTournamentsRepository,
                                               retrievePlayersRepository)
@@ -101,7 +101,7 @@ class AddPlayersTeamServiceTest {
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns team
     every { retrieveTournamentsRepository.retrieveBy(A_STARTING_TOURNAMENT_ID) } returns tournament
     every { retrievePlayersRepository.retrieve() } returns domainPlayers
-    every { addPlayersToTeamRepository.add(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } throws addPlayersError
+    every { persistTeamPlayersRepository.persist(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } throws addPlayersError
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
   }
@@ -122,11 +122,11 @@ class AddPlayersTeamServiceTest {
     every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns team
     every { retrieveTournamentsRepository.retrieveBy(A_STARTING_TOURNAMENT_ID) } returns tournament
     every { retrievePlayersRepository.retrieve() } returns domainPlayers
-    every { addPlayersToTeamRepository.add(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns Unit
+    every { persistTeamPlayersRepository.persist(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns Unit
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
 
-    verify(exactly = 1) { addPlayersToTeamRepository.add(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) }
+    verify(exactly = 1) { persistTeamPlayersRepository.persist(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) }
   }
 
   companion object {
