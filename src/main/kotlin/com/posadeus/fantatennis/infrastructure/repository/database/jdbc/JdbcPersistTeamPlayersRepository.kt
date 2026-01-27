@@ -3,38 +3,34 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTeamPlayersRepository
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TeamDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto
 import org.springframework.transaction.annotation.Transactional
 
 @OpenForSpring
-class JdbcPersistTeamPlayersRepository(private val jdbcTemplate: NamedParameterJdbcTemplate) : PersistTeamPlayersRepository {
+class JdbcPersistTeamPlayersRepository(private val teamDao: TeamDao) : PersistTeamPlayersRepository {
 
   @Transactional
   override fun persist(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) {
 
     try {
 
-      val batchQueryParams = playerIds.map { mapOf("teamId" to teamId, "playerId" to it, "startingTournamentId" to startingTournamentId) }
-      val batchUpdateResult = jdbcTemplate.batchUpdate(INSERT_PLAYERS_QUERY, batchQueryParams.toTypedArray())
-
-      if (batchUpdateResult.any { it != 1 }) {
-
-          throw InvalidAddPlayersException(error = "Players [${manageError(playerIds, batchUpdateResult) { it }}] not inserted, operation reverted.")
-      }
+      playerIds
+          .map { toJdbcTeamDto(teamId, it, startingTournamentId) }
+          .toSet()
+          .let(teamDao::persist)
     }
-    catch (e: RuntimeException) {
+    catch (e: InvalidAddPlayersException) {
 
-      throw InvalidAddPlayersException(error = "Unexpected error during insert: ${e.message}")
+      throw InvalidAddPlayersException(error = "Unexpected error during insert: ${e.message} - Operation reverted.")
     }
   }
 
-  companion object {
-
-    private val INSERT_PLAYERS_QUERY = """
-      INSERT INTO TEAMS
-      (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
-      VALUES(:teamId, :playerId, :startingTournamentId);
-    """.trimIndent()
-  }
+  private fun toJdbcTeamDto(teamId: Int,
+                            player: String,
+                            startingTournamentId: Int) =
+      JdbcTeamDto(teamId = teamId,
+                  playerId = player,
+                  startingTournamentId = startingTournamentId,
+                  endingTournamentId = null)
 }

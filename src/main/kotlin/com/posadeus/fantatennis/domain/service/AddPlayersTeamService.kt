@@ -21,6 +21,7 @@ class AddPlayersTeamService(private val persistTeamPlayersRepository: PersistTea
         is TeamIdNotFoundTeam, ErrorTeam -> team
       }
 
+  // TODO Refactor
   private fun process1(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) =
       when (retrieveTournamentsRepository.retrieveBy(startingTournamentId)) {
 
@@ -28,6 +29,7 @@ class AddPlayersTeamService(private val persistTeamPlayersRepository: PersistTea
         is NotFoundTournament, InternalErrorTournament -> ErrorTeam.also { LOGGER.error("Tournament not found: $startingTournamentId") } // FIXME: not a generic error
       }
 
+  // TODO Refactor
   private fun process2(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) =
       try {
 

@@ -1,6 +1,7 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistTeamPlayersRepositoryConfiguration
+import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.TeamDaoConfiguration
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTeamPlayersRepository
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
@@ -18,7 +19,7 @@ import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@Import(IntegrationTestConfiguration::class, PersistTeamPlayersRepositoryConfiguration::class)
+@Import(IntegrationTestConfiguration::class, PersistTeamPlayersRepositoryConfiguration::class, TeamDaoConfiguration::class)
 class JdbcPersistTeamPlayersRepositoryIT {
 
   @Autowired
@@ -46,7 +47,7 @@ class JdbcPersistTeamPlayersRepositoryIT {
     val expectedMessage = """
       Unexpected error during insert: PreparedStatementCallback; SQL [INSERT INTO TEAMS
       (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
-      VALUES(?, ?, ?);]; Duplicate entry '1-A0B1-1' for key 'TEAMS.PRIMARY'
+      VALUES(?, ?, ?);]; Duplicate entry '1-A0B1-1' for key 'TEAMS.PRIMARY' - Operation reverted.
     """.trimIndent()
 
     assertThrowsWithMessage<InvalidAddPlayersException>(expectedMessage) { repository.persist(A_TEAM_ID, playerIds, A_TOURNAMENT_ID) }
