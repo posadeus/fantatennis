@@ -17,43 +17,39 @@ class AddPlayersTeamService(private val persistTeamPlayersRepository: PersistTea
   fun addPlayers(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): Team =
       when (val team = retrieveFantaTeamRepository.retrieve(teamId)) {
 
-        is FoundTeam -> process1(teamId, playerIds, startingTournamentId)
+        is FoundTeam ->
+          when (retrieveTournamentsRepository.retrieveBy(startingTournamentId)) {
+
+            is FoundTournament ->
+              try {
+
+                val allPlayers = retrievePlayersRepository.retrieve()
+                val allPlayerIds = allPlayers.map { it.id }
+                val foundPlayerIds = playerIds.filter { it in allPlayerIds }
+
+                if (foundPlayerIds.size != playerIds.size) {
+
+                  ErrorTeam.also { LOGGER.error("Players not found") }
+                }
+                else {
+
+                  persistTeamPlayersRepository.persist(teamId, playerIds, startingTournamentId)
+
+                  allPlayers
+                      .filter { it.id in foundPlayerIds }
+                      .toSet()
+                      .let(::toFoundTeam)
+                }
+              }
+              catch (e: InvalidAddPlayersException) {
+
+                ErrorTeam.also { LOGGER.error(e.message) }
+              }
+
+            is NotFoundTournament, InternalErrorTournament -> ErrorTeam.also { LOGGER.error("Tournament not found: $startingTournamentId") } // FIXME: not a generic error
+          }
+
         is TeamIdNotFoundTeam, ErrorTeam -> team
-      }
-
-  // TODO Refactor
-  private fun process1(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) =
-      when (retrieveTournamentsRepository.retrieveBy(startingTournamentId)) {
-
-        is FoundTournament -> process2(teamId, playerIds, startingTournamentId)
-        is NotFoundTournament, InternalErrorTournament -> ErrorTeam.also { LOGGER.error("Tournament not found: $startingTournamentId") } // FIXME: not a generic error
-      }
-
-  // TODO Refactor
-  private fun process2(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) =
-      try {
-
-        val allPlayers = retrievePlayersRepository.retrieve()
-        val allPlayerIds = allPlayers.map { it.id }
-        val foundPlayerIds = playerIds.filter { it in allPlayerIds }
-
-        if (foundPlayerIds.size != playerIds.size) {
-
-          ErrorTeam.also { LOGGER.error("Players not found") }
-        }
-        else {
-
-          persistTeamPlayersRepository.persist(teamId, playerIds, startingTournamentId)
-
-          allPlayers
-              .filter { it.id in foundPlayerIds }
-              .toSet()
-              .let(::toFoundTeam)
-        }
-      }
-      catch (e: InvalidAddPlayersException) {
-
-        ErrorTeam.also { LOGGER.error(e.message) }
       }
 
   private fun toFoundTeam(players: Set<DomainPlayer>): FoundTeam =
