@@ -2,13 +2,13 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.fan
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTeamDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcFantaTeamDto.aJdbcFantaTeamDto
 import io.mockk.*
-import org.assertj.core.api.AssertionsForInterfaceTypes
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import org.junit.jupiter.api.*
 
 class CachedFantaTeamDaoTest {
 
@@ -17,44 +17,73 @@ class CachedFantaTeamDaoTest {
 
   private val dao: FantaTeamDao = CachedFantaTeamDao(cache, delegate)
 
-  @Test
-  fun `no results form cache and exception from the delegate not stored into cache`() {
+  @Nested
+  inner class Retrieve {
 
-    every { delegate.retrieveBy(A_TEAM_ID) } throws RuntimeException()
+    @Test
+    fun `no results form cache and exception from the delegate not stored into cache`() {
 
-    assertThrows<RuntimeException> { dao.retrieveBy(A_TEAM_ID) }
-    assertThrows<RuntimeException> { dao.retrieveBy(A_TEAM_ID) }
+      every { delegate.retrieveBy(A_TEAM_ID) } throws RuntimeException()
 
-    verify(exactly = 2) { delegate.retrieveBy(any()) }
+      assertThrows<RuntimeException> { dao.retrieveBy(A_TEAM_ID) }
+      assertThrows<RuntimeException> { dao.retrieveBy(A_TEAM_ID) }
+
+      verify(exactly = 2) { delegate.retrieveBy(any()) }
+    }
+
+    @Test
+    fun `no results from cache so it call delegate and cache the result`() {
+
+      val expected = aJdbcFantaTeamDto(teamId = A_TEAM_ID)
+
+      every { delegate.retrieveBy(A_TEAM_ID) } returns expected
+
+      assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
+      assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
+
+      verify(exactly = 1) { delegate.retrieveBy(any()) }
+    }
+
+    @Test
+    fun `no call to delegate if already in cache`() {
+
+      val expected = aJdbcFantaTeamDto(teamId = A_TEAM_ID)
+
+      cache.put(A_TEAM_ID, expected)
+
+      assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
+
+      verify { delegate wasNot called }
+    }
   }
 
-  @Test
-  fun `no results from cache so it call delegate and cache the result`() {
+  @Nested
+  inner class Persist {
 
-    val expected = aJdbcFantaTeamDto(teamId = A_TEAM_ID)
+    @Test
+    fun `throws any error from delegate`() {
 
-    every { delegate.retrieveBy(A_TEAM_ID) } returns expected
+      val expectedMessage = "Error!!"
 
-    AssertionsForInterfaceTypes.assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
-    AssertionsForInterfaceTypes.assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
+      every { delegate.persist(AN_OWNER_ID) } throws RuntimeException(expectedMessage)
 
-    verify(exactly = 1) { delegate.retrieveBy(any()) }
-  }
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.persist(AN_OWNER_ID) }
+    }
 
-  @Test
-  fun `no call to delegate if already in cache`() {
+    @Test
+    fun `persisted by delegate and flush cache`() {
 
-    val expected = aJdbcFantaTeamDto(teamId = A_TEAM_ID)
+      every { delegate.persist(AN_OWNER_ID) } returns A_TEAM_ID
 
-    cache.put(A_TEAM_ID, expected)
+      assertThat(dao.persist(AN_OWNER_ID)).isEqualTo(A_TEAM_ID)
 
-    AssertionsForInterfaceTypes.assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
-
-    verify { delegate wasNot called }
+      verify(exactly = 1) { delegate.persist(AN_OWNER_ID) }
+    }
   }
 
   companion object {
 
     private const val A_TEAM_ID = 123
+    private const val AN_OWNER_ID = "AN_OWNER_ID"
   }
 }

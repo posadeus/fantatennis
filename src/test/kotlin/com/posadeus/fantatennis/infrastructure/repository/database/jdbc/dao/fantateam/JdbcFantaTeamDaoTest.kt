@@ -4,12 +4,14 @@ import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTeamDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTeamDto.Companion.fantaTeamRowMapper
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcFantaTeamDto.aJdbcFantaTeamDto
-import io.mockk.every
-import io.mockk.mockk
+import com.posadeus.fantatennis.infrastructure.repository.exception.NoInsertException
+import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.jdbc.support.GeneratedKeyHolder
 
 class JdbcFantaTeamDaoTest {
 
@@ -17,50 +19,118 @@ class JdbcFantaTeamDaoTest {
 
   private val dao: FantaTeamDao = JdbcFantaTeamDao(jdbcTemplate)
 
-  @Test
-  fun `error on repository operation`() {
+  @Nested
+  inner class Retrieve {
 
-    val params = mapOf("teamId" to A_TEAM_ID)
+    @Test
+    fun `error on repository operation`() {
 
-    val expectedMessage = "Ops, I need help!"
+      val params = mapOf("teamId" to A_TEAM_ID)
 
-    every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, params, fantaTeamRowMapper) } throws RuntimeException(expectedMessage)
+      val expectedMessage = "Ops, I need help!"
 
-    assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveBy(A_TEAM_ID) }
+      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, params, fantaTeamRowMapper) } throws RuntimeException(expectedMessage)
+
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveBy(A_TEAM_ID) }
+    }
+
+    @Test
+    fun `no results returned by the query`() {
+
+      val params = mapOf("teamId" to A_TEAM_ID)
+
+      val expectedMessage = "No fanta team found with id $A_TEAM_ID"
+
+      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, params, fantaTeamRowMapper) } returns null
+
+      assertThrowsWithMessage<EmptyResultDataAccessException>(expectedMessage) { dao.retrieveBy(A_TEAM_ID) }
+    }
+
+    @Test
+    fun `results retrieved successfully`() {
+
+      val params = mapOf("teamId" to A_TEAM_ID)
+
+      val expected = aJdbcFantaTeamDto()
+
+      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, params, fantaTeamRowMapper) } returns expected
+
+      assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
+    }
   }
 
-  @Test
-  fun `no results returned by the query`() {
+  @Nested
+  inner class Persist {
 
-    val params = mapOf("teamId" to A_TEAM_ID)
+    @Test
+    fun `error during persist`() {
 
-    val expectedMessage = "No fanta team found with id $A_TEAM_ID"
+      val generatedKeyHolder: GeneratedKeyHolder = mockk()
 
-    every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, params, fantaTeamRowMapper) } returns null
+      val expectedMessage = "Scary error"
 
-    assertThrowsWithMessage<EmptyResultDataAccessException>(expectedMessage) { dao.retrieveBy(A_TEAM_ID) }
-  }
+      every {
+        jdbcTemplate.update(eq(CREATE_FANTA_TEAMS_QUERY),
+                            match { it.getValue("ownerId") == AN_OWNER_ID },
+                            any<GeneratedKeyHolder>(),
+                            eq(arrayOf("TEAM_ID")))
+      } throws RuntimeException(expectedMessage)
+      every { generatedKeyHolder.key } returns A_TEAM_ID
 
-  @Test
-  fun `results retrieved successfully`() {
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.persist(AN_OWNER_ID) }
+    }
 
-    val params = mapOf("teamId" to A_TEAM_ID)
+    @Test
+    fun `persist fails`() {
 
-    val expected = aJdbcFantaTeamDto()
+      val expectedMessage = "Insert failed or no key generated on FANTA_TEAMS"
 
-    every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TEAM_QUERY, params, fantaTeamRowMapper) } returns expected
+      mockkConstructor(GeneratedKeyHolder::class)
 
-    assertThat(dao.retrieveBy(A_TEAM_ID)).isEqualTo(expected)
+      every {
+        jdbcTemplate.update(eq(CREATE_FANTA_TEAMS_QUERY),
+                            match { it.getValue("ownerId") == AN_OWNER_ID },
+                            any<GeneratedKeyHolder>(),
+                            eq(arrayOf("TEAM_ID")))
+      } returns 0
+
+      assertThrowsWithMessage<NoInsertException>(expectedMessage) { dao.persist(AN_OWNER_ID) }
+    }
+
+    @Test
+    fun `persist works`() {
+
+      val expected = 42
+
+      mockkConstructor(GeneratedKeyHolder::class)
+
+      every {
+        jdbcTemplate.update(eq(CREATE_FANTA_TEAMS_QUERY),
+                            match { it.getValue("ownerId") == "AN_OWNER_ID" },
+                            any<GeneratedKeyHolder>(),
+                            eq(arrayOf("TEAM_ID")))
+      } returns 1
+      every { anyConstructed<GeneratedKeyHolder>().key } returns expected
+
+      assertThat(dao.persist("AN_OWNER_ID")).isEqualTo(expected)
+    }
   }
 
   companion object {
 
     private const val A_TEAM_ID = 123
+    private const val AN_OWNER_ID = "AN_OWNER_ID"
 
     private val RETRIEVE_FANTA_TEAM_QUERY = """
       SELECT *
       FROM FANTA_TEAMS
       WHERE TEAM_ID = :teamId;
+    """.trimIndent()
+
+    private val CREATE_FANTA_TEAMS_QUERY = """
+      INSERT INTO FANTA_TEAMS
+      (OWNER_ID)
+      VALUES(:ownerId);
     """.trimIndent()
   }
 }
