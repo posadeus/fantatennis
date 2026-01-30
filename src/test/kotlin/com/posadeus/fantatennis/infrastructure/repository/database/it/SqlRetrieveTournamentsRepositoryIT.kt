@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.TournamentDaoConfiguration
@@ -6,10 +6,11 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsReposit
 import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
 import com.posadeus.fantatennis.domain.model.Tournament
 import com.posadeus.fantatennis.domain.model.Tournament.NotFoundTournament
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveTournamentsRepository
+import com.posadeus.fantatennis.infrastructure.repository.database.SqlRetrieveTournamentsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tournament.CachedTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
   "caches.caffeine.tournament-cache.expire-after-access-duration=1440",
   "caches.caffeine.tournament-cache.maximum-size=300"
 ])
-class JdbcRetrieveTournamentsRepositoryIT {
+class SqlRetrieveTournamentsRepositoryIT {
 
   @Autowired
   private lateinit var tournamentsCache: Cache<Int, List<JdbcTournamentDto>>
@@ -49,7 +50,7 @@ class JdbcRetrieveTournamentsRepositoryIT {
 
     val cachedTournamentDao = CachedTournamentDao(tournamentsCache, tournamentCache, jdbcTournamentDao)
 
-    repository = JdbcRetrieveTournamentsRepository(cachedTournamentDao)
+    repository = SqlRetrieveTournamentsRepository(cachedTournamentDao)
 
     tournamentsCache.invalidateAll()
     tournamentCache.invalidateAll()

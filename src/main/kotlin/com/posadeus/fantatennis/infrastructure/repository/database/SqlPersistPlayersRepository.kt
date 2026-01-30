@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
@@ -10,7 +10,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.Play
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import org.slf4j.LoggerFactory
 
-class JdbcPersistPlayersRepository(private val playerDao: PlayerDao) : PersistPlayersRepository {
+class SqlPersistPlayersRepository(private val playerDao: PlayerDao) : PersistPlayersRepository {
 
   override fun persistAll(players: Set<DomainPlayer>): PlayerPersistence =
       try {
@@ -43,6 +43,6 @@ class JdbcPersistPlayersRepository(private val playerDao: PlayerDao) : PersistPl
 
   companion object {
 
-    private val LOGGER = LoggerFactory.getLogger(JdbcPersistPlayersRepository::class.java)
+    private val LOGGER = LoggerFactory.getLogger(SqlPersistPlayersRepository::class.java)
   }
 }

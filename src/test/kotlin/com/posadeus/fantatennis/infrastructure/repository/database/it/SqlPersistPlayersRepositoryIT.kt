@@ -1,13 +1,14 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
 import com.github.benmanes.caffeine.cache.Cache
-import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistPlayersRepositoryConfiguration
+import com.posadeus.fantatennis.app.configuration.infrastructure.PersistPlayersRepositoryConfiguration
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.PlayerDaoConfiguration
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -25,7 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
   "caches.caffeine.player-cache.expire-after-write-duration=10080",
   "caches.caffeine.player-cache.maximum-size=1000"
 ])
-class JdbcPersistPlayersRepositoryIT {
+class SqlPersistPlayersRepositoryIT {
 
   @Autowired
   private lateinit var playerCache: Cache<Unit, List<JdbcPlayerDto>>

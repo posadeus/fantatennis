@@ -43,6 +43,6 @@ class TournamentInfoRepositoryConfiguration {
   @Bean
   @Order(4)
   fun rolandGarrosTournamentInfoRepository(rolandGarrosClient: RolandGarrosClient,
-                                           jdbcRetrievePlayersRepository: RetrievePlayersRepository): TournamentInfoRepository =
-      RolandGarrosTournamentInfoRepository(rolandGarrosClient, jdbcRetrievePlayersRepository)
+                                           sqlRetrievePlayersRepository: RetrievePlayersRepository): TournamentInfoRepository =
+      RolandGarrosTournamentInfoRepository(rolandGarrosClient, sqlRetrievePlayersRepository)
 }

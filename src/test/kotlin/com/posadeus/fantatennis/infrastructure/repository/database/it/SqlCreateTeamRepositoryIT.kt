@@ -1,7 +1,7 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
 import com.github.benmanes.caffeine.cache.Cache
-import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.CreateTeamRepositoryConfiguration
+import com.posadeus.fantatennis.app.configuration.infrastructure.CreateTeamRepositoryConfiguration
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.*
 import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
@@ -9,7 +9,7 @@ import com.posadeus.fantatennis.domain.model.FantaTeam
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
-import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -18,8 +18,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
@@ -37,7 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
   "caches.caffeine.fanta-team-cache.expire-after-access-duration=10080",
   "caches.caffeine.fanta-team-cache.maximum-size=1000"
 ])
-class JdbcCreateTeamRepositoryIT {
+class SqlCreateTeamRepositoryIT {
 
   @Autowired
   private lateinit var fantaTournamentCache: Cache<Int, JdbcFantaTournamentDto>
@@ -60,7 +58,7 @@ class JdbcCreateTeamRepositoryIT {
   @Autowired
   private lateinit var repository: CreateTeamRepository
 
-  @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
+  @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   @Test
   fun `team creation fails due to missing fanta tournament`() {
 
@@ -68,8 +66,8 @@ class JdbcCreateTeamRepositoryIT {
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   )
   @Test
   fun `team creation fails due to insert error on first insert query`() {
@@ -80,8 +78,8 @@ class JdbcCreateTeamRepositoryIT {
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   )
   @Test
   fun `team creation works`() {
@@ -92,9 +90,10 @@ class JdbcCreateTeamRepositoryIT {
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/alter-fanta_tournaments_teams-to-have-error.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/drop-constraints.sql"], executionPhase = AFTER_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/alter-fanta_tournaments_teams-to-have-error.sql"],
+          executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/drop-constraints.sql"], executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   )
   @Test
   fun `team creation fails due to error on fantaTournamentsTeams insert and verify transaction have been rollback`() {

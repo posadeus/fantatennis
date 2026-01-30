@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersRepository
 import com.posadeus.fantatennis.domain.model.DomainPlayer
@@ -10,11 +10,11 @@ import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
-class JdbcRetrievePlayersRepositoryTest {
+class SqlRetrievePlayersRepositoryTest {
 
   private val cachedPlayerDao: PlayerDao = mockk()
 
-  private val repository: RetrievePlayersRepository = JdbcRetrievePlayersRepository(cachedPlayerDao)
+  private val repository: RetrievePlayersRepository = SqlRetrievePlayersRepository(cachedPlayerDao)
 
   @Test
   fun `retrieve fails due to exception`() {

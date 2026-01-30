@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
@@ -12,12 +12,12 @@ import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 
-class JdbcRetrievePlayersPointsRepositoryTest {
+class SqlRetrievePlayersPointsRepositoryTest {
 
   private val playerPointsDao: PlayerPointsDao = mockk()
   private val playerDao: PlayerDao = mockk()
 
-  private val repository: RetrievePlayersPointsRepository = JdbcRetrievePlayersPointsRepository(playerPointsDao, playerDao)
+  private val repository: RetrievePlayersPointsRepository = SqlRetrievePlayersPointsRepository(playerPointsDao, playerDao)
 
   @Test
   fun `no players points found for tournament`() {

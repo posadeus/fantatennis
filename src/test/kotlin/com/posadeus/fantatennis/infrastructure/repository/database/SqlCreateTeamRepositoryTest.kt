@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
@@ -13,13 +13,13 @@ import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.dao.EmptyResultDataAccessException
 
-class JdbcCreateTeamRepositoryTest {
+class SqlCreateTeamRepositoryTest {
 
   private val fantaTournamentDao: FantaTournamentDao = mockk()
   private val fantaTeamDao: FantaTeamDao = mockk()
   private val fantaTournamentTeamDao: FantaTournamentTeamDao = mockk()
 
-  private val repository: CreateTeamRepository = JdbcCreateTeamRepository(fantaTournamentDao, fantaTeamDao, fantaTournamentTeamDao)
+  private val repository: CreateTeamRepository = SqlCreateTeamRepository(fantaTournamentDao, fantaTeamDao, fantaTournamentTeamDao)
 
   @Test
   fun `create team fails due to missing fanta tournament`() {

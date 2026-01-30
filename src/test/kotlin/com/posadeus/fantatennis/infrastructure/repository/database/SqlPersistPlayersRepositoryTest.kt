@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.exception.InvalidPlayerException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersRepository
@@ -11,11 +11,11 @@ import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 
-class JdbcPersistPlayersRepositoryTest {
+class SqlPersistPlayersRepositoryTest {
 
   private val playerDao: PlayerDao = mockk()
 
-  private val repository: PersistPlayersRepository = JdbcPersistPlayersRepository(playerDao)
+  private val repository: PersistPlayersRepository = SqlPersistPlayersRepository(playerDao)
 
   @Test
   fun `playerDao throws InvalidPlayerException`() {

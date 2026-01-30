@@ -16,9 +16,9 @@ class ServiceConfiguration {
 
   @Bean
   fun fantaPointCalculatorService(tournamentInfoRepositories: List<TournamentInfoRepository>,
-                                  jdbcRetrieveTournamentsRepository: RetrieveTournamentsRepository): FantaPointCalculatorService =
+                                  sqlRetrieveTournamentsRepository: RetrieveTournamentsRepository): FantaPointCalculatorService =
       FantaPointCalculatorService(tournamentInfoRepositories,
-                                  jdbcRetrieveTournamentsRepository)
+                                  sqlRetrieveTournamentsRepository)
 
   @Bean
   fun fantaPointPersistenceService(jdbcPersistPlayersPointsRepository: PersistPlayersPointsRepository,
@@ -49,22 +49,22 @@ class ServiceConfiguration {
       RetrieveFantaTournamentsService(jdbcRetrieveAllFantaTournamentsRepository)
 
   @Bean
-  fun retrieveTournamentService(jdbcRetrieveTournamentsRepository: RetrieveTournamentsRepository,
-                                jdbcRetrievePlayersPointsRepository: RetrievePlayersPointsRepository): RetrieveTournamentService =
-      RetrieveTournamentService(jdbcRetrieveTournamentsRepository,
-                                jdbcRetrievePlayersPointsRepository)
+  fun retrieveTournamentService(sqlRetrieveTournamentsRepository: RetrieveTournamentsRepository,
+                                sqlRetrievePlayersPointsRepository: RetrievePlayersPointsRepository): RetrieveTournamentService =
+      RetrieveTournamentService(sqlRetrieveTournamentsRepository,
+                                sqlRetrievePlayersPointsRepository)
 
   @Bean
   fun retrieveTournamentsService(): RetrieveTournamentsService =
       RetrieveTournamentsService()
 
   @Bean
-  fun retrievePlayerService(jdbcRetrievePlayersRepository: RetrievePlayersRepository): RetrievePlayerService =
-      RetrievePlayerService(jdbcRetrievePlayersRepository)
+  fun retrievePlayerService(sqlRetrievePlayersRepository: RetrievePlayersRepository): RetrievePlayerService =
+      RetrievePlayerService(sqlRetrievePlayersRepository)
 
   @Bean
-  fun persistPlayerService(jdbcPersistPlayersRepository: PersistPlayersRepository): PersistPlayerService =
-      PersistPlayerService(jdbcPersistPlayersRepository)
+  fun persistPlayerService(sqlPersistPlayersRepository: PersistPlayersRepository): PersistPlayerService =
+      PersistPlayerService(sqlPersistPlayersRepository)
 
   @Bean
   fun rankingService(rankingRepository: RankingRepository): RankingService =
@@ -75,18 +75,18 @@ class ServiceConfiguration {
       RetrieveTeamService(jdbcRetrieveFantaTeamRepository)
 
   @Bean
-  fun createTeamService(jdbcCreateTeamRepository: CreateTeamRepository): CreateTeamService =
-      CreateTeamService(jdbcCreateTeamRepository)
+  fun createTeamService(sqlCreateTeamRepository: CreateTeamRepository): CreateTeamService =
+      CreateTeamService(sqlCreateTeamRepository)
 
   @Bean
-  fun addPlayersTeamService(jdbcPersistTeamPlayersRepository: PersistTeamPlayersRepository,
+  fun addPlayersTeamService(sqlPersistTeamPlayersRepository: PersistTeamPlayersRepository,
                             jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository,
-                            jdbcRetrieveTournamentsRepository: RetrieveTournamentsRepository,
-                            jdbcRetrievePlayersRepository: RetrievePlayersRepository): AddPlayersTeamService =
-      AddPlayersTeamService(jdbcPersistTeamPlayersRepository,
+                            sqlRetrieveTournamentsRepository: RetrieveTournamentsRepository,
+                            sqlRetrievePlayersRepository: RetrievePlayersRepository): AddPlayersTeamService =
+      AddPlayersTeamService(sqlPersistTeamPlayersRepository,
                             jdbcRetrieveFantaTeamRepository,
-                            jdbcRetrieveTournamentsRepository,
-                            jdbcRetrievePlayersRepository)
+                            sqlRetrieveTournamentsRepository,
+                            sqlRetrievePlayersRepository)
 
   @Bean
   fun swapPlayersTeamService(jdbcSwapPlayersRepository: SwapPlayersRepository): SwapPlayersTeamService =

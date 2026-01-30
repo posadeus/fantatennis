@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.dao.EmptyResultDataAccessException
 
-class JdbcRetrieveTournamentsRepositoryTest {
+class SqlRetrieveTournamentsRepositoryTest {
 
   private val tournamentDao: TournamentDao = mockk()
 
-  private val repository: RetrieveTournamentsRepository = JdbcRetrieveTournamentsRepository(tournamentDao)
+  private val repository: RetrieveTournamentsRepository = SqlRetrieveTournamentsRepository(tournamentDao)
 
   @Nested
   inner class RetrieveAllTournaments {

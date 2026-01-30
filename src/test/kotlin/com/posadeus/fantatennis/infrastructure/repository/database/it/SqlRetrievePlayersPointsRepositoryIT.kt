@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.PlayerDaoConfiguration
@@ -6,13 +6,14 @@ import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.Player
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints.PlayerPoints
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrievePlayersPointsRepository
+import com.posadeus.fantatennis.infrastructure.repository.database.SqlRetrievePlayersPointsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.player.CachedPlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.playerpoints.CachedPlayerPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,7 +34,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
     "caches.caffeine.player-cache.expire-after-write-duration=10080",
     "caches.caffeine.player-cache.maximum-size=1000"
 ])
-class JdbcRetrievePlayersPointsRepositoryIT {
+class SqlRetrievePlayersPointsRepositoryIT {
 
   @Autowired
   private lateinit var playersPointsCache: Cache<Int, List<JdbcPlayerPointsDto>>
@@ -55,7 +56,7 @@ class JdbcRetrievePlayersPointsRepositoryIT {
     val cachedPlayerPointsDao = CachedPlayerPointsDao(playersPointsCache, jdbcPlayerPointsDao)
     val cachedPlayerDao = CachedPlayerDao(playerCache, jdbcPlayerDao)
 
-    repository = JdbcRetrievePlayersPointsRepository(cachedPlayerPointsDao, cachedPlayerDao)
+    repository = SqlRetrievePlayersPointsRepository(cachedPlayerPointsDao, cachedPlayerDao)
 
     playersPointsCache.invalidateAll()
     playerCache.invalidateAll()

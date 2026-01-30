@@ -1,11 +1,12 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
-import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistTeamPlayersRepositoryConfiguration
+import com.posadeus.fantatennis.app.configuration.infrastructure.PersistTeamPlayersRepositoryConfiguration
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.TeamDaoConfiguration
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTeamPlayersRepository
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -20,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @Import(IntegrationTestConfiguration::class, PersistTeamPlayersRepositoryConfiguration::class, TeamDaoConfiguration::class)
-class JdbcPersistTeamPlayersRepositoryIT {
+class SqlPersistTeamPlayersRepositoryIT {
 
   @Autowired
   private lateinit var namedParameterJdbcTemplate: NamedParameterJdbcTemplate

@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Tournament
@@ -8,7 +8,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Jdbc
 import org.slf4j.LoggerFactory
 import org.springframework.dao.EmptyResultDataAccessException
 
-class JdbcRetrieveTournamentsRepository(private val tournamentDao: TournamentDao) : RetrieveTournamentsRepository {
+class SqlRetrieveTournamentsRepository(private val tournamentDao: TournamentDao) : RetrieveTournamentsRepository {
 
   override fun retrieveAllBy(year: Int): List<FoundTournament> =
       try {
@@ -46,6 +46,6 @@ class JdbcRetrieveTournamentsRepository(private val tournamentDao: TournamentDao
 
   companion object {
 
-    private val LOGGER = LoggerFactory.getLogger(JdbcRetrieveTournamentsRepository::class.java)
+    private val LOGGER = LoggerFactory.getLogger(SqlRetrieveTournamentsRepository::class.java)
   }
 }

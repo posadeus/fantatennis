@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrievePlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.PlayersPoints
@@ -11,8 +11,8 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Jdbc
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 import org.slf4j.LoggerFactory
 
-class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPointsDao,
-                                          private val playerDao: PlayerDao) : RetrievePlayersPointsRepository {
+class SqlRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPointsDao,
+                                         private val playerDao: PlayerDao) : RetrievePlayersPointsRepository {
 
   override fun retrieveBy(tournamentId: Int): PlayersPoints =
       try {
@@ -46,6 +46,6 @@ class JdbcRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPoi
 
   companion object {
 
-    private val LOGGER = LoggerFactory.getLogger(JdbcRetrievePlayersPointsRepository::class.java)
+    private val LOGGER = LoggerFactory.getLogger(SqlRetrievePlayersPointsRepository::class.java)
   }
 }

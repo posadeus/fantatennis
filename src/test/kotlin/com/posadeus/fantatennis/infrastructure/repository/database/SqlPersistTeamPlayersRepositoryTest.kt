@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTeamPlayersRepository
@@ -9,11 +9,11 @@ import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class JdbcPersistTeamPlayersRepositoryTest {
+class SqlPersistTeamPlayersRepositoryTest {
 
   private val teamDao: TeamDao = mockk()
 
-  private val repository: PersistTeamPlayersRepository = JdbcPersistTeamPlayersRepository(teamDao)
+  private val repository: PersistTeamPlayersRepository = SqlPersistTeamPlayersRepository(teamDao)
 
   @Test
   fun `not all players have been added to the team`() {

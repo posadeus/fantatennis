@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
@@ -9,9 +9,9 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Jdbc
 import org.springframework.transaction.annotation.Transactional
 
 @OpenForSpring
-class JdbcCreateTeamRepository(private val fantaTournamentDao: FantaTournamentDao,
-                               private val fantaTeamDao: FantaTeamDao,
-                               private val fantaTournamentTeamDao: FantaTournamentTeamDao) : CreateTeamRepository {
+class SqlCreateTeamRepository(private val fantaTournamentDao: FantaTournamentDao,
+                              private val fantaTeamDao: FantaTeamDao,
+                              private val fantaTournamentTeamDao: FantaTournamentTeamDao) : CreateTeamRepository {
 
   @Transactional
   override fun create(ownerId: String, fantaTournamentId: Int): FantaTeam =
