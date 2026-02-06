@@ -4,19 +4,18 @@ import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournaments.Invalid
 import com.posadeus.fantatennis.domain.model.FantaTournaments.Valid
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
 
 class JdbcRetrieveAllFantaTournamentsRepositoryTest {
 
-  private val jdbcTemplate: JdbcTemplate = mockk()
+  private val fantaTournamentDao: FantaTournamentDao = mockk()
 
-  private val repository: RetrieveAllFantaTournamentsRepository = JdbcRetrieveAllFantaTournamentsRepository(jdbcTemplate)
+  private val repository: RetrieveAllFantaTournamentsRepository = JdbcRetrieveAllFantaTournamentsRepository(fantaTournamentDao)
 
   @Test
   fun `retrieve all fanta tournaments`() {
@@ -50,7 +49,7 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
 
     val expected = Valid(setOf(validFantaTournament1, validFantaTournament2, validFantaTournament3))
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<JdbcFantaTournamentDto>>()) } returns fantaTournaments
+    every { fantaTournamentDao.retrieveAll() } returns fantaTournaments
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -60,17 +59,17 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
 
     val expected = Valid(emptySet())
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<JdbcFantaTournamentDto>>()) } returns emptyList()
+    every { fantaTournamentDao.retrieveAll() } returns emptyList()
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
 
   @Test
-  fun `error from db`() {
+  fun `error from dao`() {
 
     val expected = Invalid
 
-    every { jdbcTemplate.query(RETRIEVE_QUERY, any<RowMapper<JdbcFantaTournamentDto>>()) } throws RuntimeException("Scary error!")
+    every { fantaTournamentDao.retrieveAll() } throws RuntimeException("Scary error!")
 
     assertThat(repository.retrieve()).isEqualTo(expected)
   }
@@ -85,10 +84,5 @@ class JdbcRetrieveAllFantaTournamentsRepositoryTest {
     private const val A_THIRD_TOURNAMENT_ID = 789
     private const val AN_YEAR = 2000
     private const val ANOTHER_YEAR = 2001
-
-    private val RETRIEVE_QUERY = """
-      SELECT *
-      FROM FANTA_TOURNAMENTS
-    """.trimIndent()
   }
 }

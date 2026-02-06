@@ -5,4 +5,5 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Jdbc
 interface FantaTournamentDao {
 
   fun retrieveBy(fantaTournamentId: Int): JdbcFantaTournamentDto
+  fun retrieveAll(): List<JdbcFantaTournamentDto>
 }

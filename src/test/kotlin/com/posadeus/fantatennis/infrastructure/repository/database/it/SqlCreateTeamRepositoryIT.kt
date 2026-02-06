@@ -6,18 +6,22 @@ import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.*
 import com.posadeus.fantatennis.domain.exception.FantaTeamCreationException
 import com.posadeus.fantatennis.domain.infrastructure.CreateTeamRepository
 import com.posadeus.fantatennis.domain.model.FantaTeam
+import com.posadeus.fantatennis.infrastructure.repository.database.SqlCreateTeamRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.*
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.fantateam.CachedFantaTeamDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.fantatournament.CachedFantaTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
@@ -31,6 +35,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
   "caches.caffeine.fanta-tournament-cache.expire-after-write-duration=10080",
   "caches.caffeine.fanta-tournament-cache.expire-after-access-duration=10080",
   "caches.caffeine.fanta-tournament-cache.maximum-size=1000",
+  "caches.caffeine.fanta-tournaments-cache.expire-after-write-duration=10080",
+  "caches.caffeine.fanta-tournaments-cache.expire-after-access-duration=10080",
+  "caches.caffeine.fanta-tournaments-cache.maximum-size=1000",
   "caches.caffeine.fanta-team-cache.expire-after-write-duration=10080",
   "caches.caffeine.fanta-team-cache.expire-after-access-duration=10080",
   "caches.caffeine.fanta-team-cache.maximum-size=1000"
@@ -39,6 +46,9 @@ class SqlCreateTeamRepositoryIT {
 
   @Autowired
   private lateinit var fantaTournamentCache: Cache<Int, JdbcFantaTournamentDto>
+
+  @Autowired
+  private lateinit var fantaTournamentsCache: Cache<Unit, List<JdbcFantaTournamentDto>>
 
   @Autowired
   private lateinit var jdbcFantaTournamentDao: FantaTournamentDao
@@ -58,7 +68,18 @@ class SqlCreateTeamRepositoryIT {
   @Autowired
   private lateinit var repository: CreateTeamRepository
 
-  @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+  @BeforeEach
+  fun setUp() {
+
+    val cachedFantaTournamentDao = CachedFantaTournamentDao(fantaTournamentCache, fantaTournamentsCache, jdbcFantaTournamentDao)
+    val cachedFantaTeamDao = CachedFantaTeamDao(fantaTeamCache, jdbcFantaTeamDao)
+
+    repository = SqlCreateTeamRepository(cachedFantaTournamentDao,
+                                         cachedFantaTeamDao,
+                                         jdbcFantaTournamentTeamDao)
+  }
+
+  @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
   @Test
   fun `team creation fails due to missing fanta tournament`() {
 
@@ -66,8 +87,8 @@ class SqlCreateTeamRepositoryIT {
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
   )
   @Test
   fun `team creation fails due to insert error on first insert query`() {
@@ -78,8 +99,8 @@ class SqlCreateTeamRepositoryIT {
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
   )
   @Test
   fun `team creation works`() {
@@ -90,9 +111,8 @@ class SqlCreateTeamRepositoryIT {
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/alter-fanta_tournaments_teams-to-have-error.sql"],
-          executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/alter-fanta_tournaments_teams-to-have-error.sql"], executionPhase = BEFORE_TEST_METHOD),
       Sql(scripts = ["/test-containers/drop-constraints.sql"], executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
   )
   @Test
@@ -100,7 +120,7 @@ class SqlCreateTeamRepositoryIT {
 
     assertThrows<FantaTeamCreationException> { repository.create(AN_OWNER_ID, 1) }
 
-    val sql = "SELECT COUNT(*) FROM FANTA_TEAMS WHERE TEAM_ID = 9"
+    val sql = "SELECT COUNT(*) FROM FANTA_TEAMS WHERE TEAM_ID = 100"
     val count = jdbcTemplate.queryForObject(sql, Int::class.java)
 
     assertThat(count!!).isEqualTo(0)

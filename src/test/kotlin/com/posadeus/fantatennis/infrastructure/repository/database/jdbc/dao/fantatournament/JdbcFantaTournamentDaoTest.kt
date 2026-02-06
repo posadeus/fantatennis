@@ -7,6 +7,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Test
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -17,40 +18,72 @@ class JdbcFantaTournamentDaoTest {
 
   private val dao: FantaTournamentDao = JdbcFantaTournamentDao(jdbcTemplate)
 
-  @Test
-  fun `error on repository operation`() {
+  @Nested
+  inner class RetrieveBy {
 
-    val params = mapOf("id" to A_FANTA_TOURNAMENT_ID)
+    @Test
+    fun `error on repository operation`() {
 
-    val expectedMessage = "Ops, I need help!"
+      val params = mapOf("id" to A_FANTA_TOURNAMENT_ID)
 
-    every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, params, fantaTournamentRowMapper) } throws RuntimeException(expectedMessage)
+      val expectedMessage = "Ops, I need help!"
 
-    assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveBy(A_FANTA_TOURNAMENT_ID) }
+      every {
+        jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, params, fantaTournamentRowMapper)
+      } throws RuntimeException(expectedMessage)
+
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveBy(A_FANTA_TOURNAMENT_ID) }
+    }
+
+    @Test
+    fun `no results returned by the query`() {
+
+      val params = mapOf("id" to A_FANTA_TOURNAMENT_ID)
+
+      val expectedMessage = "No fanta tournament found with id $A_FANTA_TOURNAMENT_ID"
+
+      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, params, fantaTournamentRowMapper) } returns null
+
+      assertThrowsWithMessage<EmptyResultDataAccessException>(expectedMessage) { dao.retrieveBy(A_FANTA_TOURNAMENT_ID) }
+    }
+
+    @Test
+    fun `results retrieved successfully`() {
+
+      val params = mapOf("id" to A_FANTA_TOURNAMENT_ID)
+
+      val expected = aJdbcFantaTournamentDto()
+
+      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, params, fantaTournamentRowMapper) } returns expected
+
+      assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+    }
   }
 
-  @Test
-  fun `no results returned by the query`() {
+  @Nested
+  inner class RetrieveAll {
 
-    val params = mapOf("id" to A_FANTA_TOURNAMENT_ID)
+    @Test
+    fun `error on repository operation`() {
 
-    val expectedMessage = "No fanta tournament found with id $A_FANTA_TOURNAMENT_ID"
+      val expectedMessage = "Ops, I need help!"
 
-    every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, params, fantaTournamentRowMapper) } returns null
+      every { jdbcTemplate.query(RETRIEVE_ALL_FANTA_TOURNAMENT_QUERY, fantaTournamentRowMapper) } throws RuntimeException(expectedMessage)
 
-    assertThrowsWithMessage<EmptyResultDataAccessException>(expectedMessage) { dao.retrieveBy(A_FANTA_TOURNAMENT_ID) }
-  }
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveAll() }
+    }
 
-  @Test
-  fun `results retrieved successfully`() {
+    @Test
+    fun `results retrieved successfully`() {
 
-    val params = mapOf("id" to A_FANTA_TOURNAMENT_ID)
+      val fantaTournament1 = aJdbcFantaTournamentDto()
+      val fantaTournament2 = aJdbcFantaTournamentDto()
+      val expected = listOf(fantaTournament1, fantaTournament2)
 
-    val expected = aJdbcFantaTournamentDto()
+      every { jdbcTemplate.query(RETRIEVE_ALL_FANTA_TOURNAMENT_QUERY, fantaTournamentRowMapper) } returns expected
 
-    every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, params, fantaTournamentRowMapper) } returns expected
-
-    assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(dao.retrieveAll()).isEqualTo(expected)
+    }
   }
 
   companion object {
@@ -61,6 +94,11 @@ class JdbcFantaTournamentDaoTest {
       SELECT *
       FROM FANTA_TOURNAMENTS 
       WHERE FANTA_TOURNAMENT_ID = :id;
+    """.trimIndent()
+
+    private val RETRIEVE_ALL_FANTA_TOURNAMENT_QUERY = """
+      SELECT *
+      FROM FANTA_TOURNAMENTS; 
     """.trimIndent()
   }
 }

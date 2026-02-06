@@ -5,17 +5,16 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.*
 import com.posadeus.fantatennis.domain.model.FantaTournaments
 import com.posadeus.fantatennis.domain.model.FantaTournaments.Invalid
 import com.posadeus.fantatennis.domain.model.FantaTournaments.Valid
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto.Companion.fantaTournamentRowMapper
 import org.slf4j.LoggerFactory
-import org.springframework.jdbc.core.JdbcTemplate
 
-class JdbcRetrieveAllFantaTournamentsRepository(private val jdbcTemplate: JdbcTemplate) : RetrieveAllFantaTournamentsRepository {
+class JdbcRetrieveAllFantaTournamentsRepository(private val fantaTournamentDao: FantaTournamentDao) : RetrieveAllFantaTournamentsRepository {
 
   override fun retrieve(): FantaTournaments =
       try {
 
-        jdbcTemplate.query(RETRIEVE_QUERY, fantaTournamentRowMapper)
+        fantaTournamentDao.retrieveAll()
             .map(::toValidFantaTournament)
             .let(List<ValidFantaTournament>::toSet)
             .let(::Valid)
@@ -35,10 +34,5 @@ class JdbcRetrieveAllFantaTournamentsRepository(private val jdbcTemplate: JdbcTe
   companion object {
 
     private val LOGGER = LoggerFactory.getLogger(JdbcRetrieveAllFantaTournamentsRepository::class.java)
-
-    private val RETRIEVE_QUERY = """
-      SELECT *
-      FROM FANTA_TOURNAMENTS
-    """.trimIndent()
   }
 }

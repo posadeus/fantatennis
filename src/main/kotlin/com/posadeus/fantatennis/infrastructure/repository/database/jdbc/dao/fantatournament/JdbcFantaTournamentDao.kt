@@ -12,12 +12,20 @@ class JdbcFantaTournamentDao(private val namedParameterJdbcTemplate: NamedParame
       namedParameterJdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENT_QUERY, mapOf("id" to fantaTournamentId), fantaTournamentRowMapper)
       ?: throw EmptyResultDataAccessException("No fanta tournament found with id $fantaTournamentId", 1)
 
+  override fun retrieveAll(): List<JdbcFantaTournamentDto> =
+      namedParameterJdbcTemplate.query(RETRIEVE_ALL_FANTA_TOURNAMENT_QUERY, fantaTournamentRowMapper)
+
   companion object {
 
     private val RETRIEVE_FANTA_TOURNAMENT_QUERY = """
       SELECT *
       FROM FANTA_TOURNAMENTS 
       WHERE FANTA_TOURNAMENT_ID = :id;
+    """.trimIndent()
+
+    private val RETRIEVE_ALL_FANTA_TOURNAMENT_QUERY = """
+      SELECT *
+      FROM FANTA_TOURNAMENTS; 
     """.trimIndent()
   }
 }
