@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament.*
@@ -9,7 +9,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.Fant
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
 import org.slf4j.LoggerFactory
 
-class JdbcRetrieveAllFantaTournamentsRepository(private val fantaTournamentDao: FantaTournamentDao) : RetrieveAllFantaTournamentsRepository {
+class SqlRetrieveAllFantaTournamentsRepository(private val fantaTournamentDao: FantaTournamentDao) : RetrieveAllFantaTournamentsRepository {
 
   override fun retrieve(): FantaTournaments =
       try {
@@ -33,6 +33,6 @@ class JdbcRetrieveAllFantaTournamentsRepository(private val fantaTournamentDao: 
 
   companion object {
 
-    private val LOGGER = LoggerFactory.getLogger(JdbcRetrieveAllFantaTournamentsRepository::class.java)
+    private val LOGGER = LoggerFactory.getLogger(SqlRetrieveAllFantaTournamentsRepository::class.java)
   }
 }
