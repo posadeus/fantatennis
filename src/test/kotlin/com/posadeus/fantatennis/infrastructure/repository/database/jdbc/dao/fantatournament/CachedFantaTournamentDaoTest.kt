@@ -2,8 +2,10 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.fan
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.NewJdbcFantaTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcFantaTournamentDto.aJdbcFantaTournamentDto
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
@@ -110,8 +112,54 @@ class CachedFantaTournamentDaoTest {
     }
   }
 
+  @Nested
+  inner class Persist {
+
+    @Test
+    fun `throws any error from delegate`() {
+
+      fantaTournamentsCache.put(Unit, listOf(aJdbcFantaTournamentDto()))
+
+      assertThat(fantaTournamentsCache.getIfPresent(Unit)?.size).isEqualTo(1)
+
+      val dto = NewJdbcFantaTournamentDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                          endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                          year = A_TOURNAMENT_YEAR)
+
+      val expectedMessage = "Error!!"
+
+      every { delegate.persist(dto) } throws RuntimeException(expectedMessage)
+
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.persist(dto) }
+      assertThat(fantaTournamentsCache.getIfPresent(Unit)?.size).isEqualTo(1)
+    }
+
+    @Test
+    fun `persisted by delegate and flush cache`() {
+
+      fantaTournamentsCache.put(Unit, listOf(aJdbcFantaTournamentDto()))
+
+      assertThat(fantaTournamentsCache.getIfPresent(Unit)?.size).isEqualTo(1)
+
+      val dto = NewJdbcFantaTournamentDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                          endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                          year = A_TOURNAMENT_YEAR)
+
+      every { delegate.persist(dto) } returns A_FANTA_TOURNAMENT_ID
+
+      dao.persist(dto)
+
+      verify(exactly = 1) { delegate.persist(dto) }
+
+      assertThat(fantaTournamentsCache.getIfPresent(Unit)?.size).isEqualTo(null)
+    }
+  }
+
   companion object {
 
     private const val A_FANTA_TOURNAMENT_ID = 123
+    private const val A_STARTING_TOURNAMENT_ID = 3
+    private const val AN_ENDING_TOURNAMENT_ID = 5
+    private const val A_TOURNAMENT_YEAR = 2026
   }
 }

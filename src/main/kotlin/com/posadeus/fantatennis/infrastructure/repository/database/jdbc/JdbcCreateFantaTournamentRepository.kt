@@ -5,24 +5,18 @@ import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepos
 import com.posadeus.fantatennis.domain.model.FantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTournamentDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.NewJdbcFantaTournamentDto
 import org.slf4j.LoggerFactory
-import org.springframework.jdbc.core.JdbcTemplate
 
-class JdbcCreateFantaTournamentRepository(private val jdbcTemplate: JdbcTemplate) : CreateFantaTournamentRepository {
+class JdbcCreateFantaTournamentRepository(private val fantaTournamentDao: FantaTournamentDao) : CreateFantaTournamentRepository {
 
   override fun create(dto: FantaTournamentToCreateDto): FantaTournament =
       try {
 
-        jdbcTemplate.update(CREATE_FANTA_TOURNAMENT_QUERY,
-                            dto.startingTournamentId,
-                            dto.endingTournamentId,
-                            dto.tournamentYear)
-            .let {
-              ValidFantaTournament(id = it,
-                                   startingTournamentId = dto.startingTournamentId,
-                                   endingTournamentId = dto.endingTournamentId,
-                                   tournamentYear = dto.tournamentYear)
-            }
+        NewJdbcFantaTournamentDto(dto.startingTournamentId, dto.endingTournamentId, dto.tournamentYear)
+            .let(fantaTournamentDao::persist)
+            .let { toValidFantaTournament(it, dto) }
       }
       catch (e: RuntimeException) {
 
@@ -30,13 +24,13 @@ class JdbcCreateFantaTournamentRepository(private val jdbcTemplate: JdbcTemplate
         InvalidFantaTournament
       }
 
-  companion object {
+  private fun toValidFantaTournament(it: Int, dto: FantaTournamentToCreateDto) =
+      ValidFantaTournament(id = it,
+                           startingTournamentId = dto.startingTournamentId,
+                           endingTournamentId = dto.endingTournamentId,
+                           tournamentYear = dto.tournamentYear)
 
-    private val CREATE_FANTA_TOURNAMENT_QUERY = """
-      INSERT INTO FANTA_TOURNAMENTS
-        (STARTING_TOURNAMENT, ENDING_TOURNAMENT, TOURNAMENT_YEAR)
-      VALUES(?, ?, ?);
-    """.trimIndent()
+  companion object {
 
     private val LOGGER = LoggerFactory.getLogger(JdbcCreateFantaTournamentRepository::class.java)
   }

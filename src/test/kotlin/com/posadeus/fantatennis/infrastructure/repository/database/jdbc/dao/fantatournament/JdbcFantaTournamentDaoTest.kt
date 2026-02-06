@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.fan
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto.Companion.fantaTournamentRowMapper
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.NewJdbcFantaTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcFantaTournamentDto.aJdbcFantaTournamentDto
 import io.mockk.every
 import io.mockk.mockk
@@ -86,9 +87,48 @@ class JdbcFantaTournamentDaoTest {
     }
   }
 
+  @Nested
+  inner class Persist {
+
+    @Test
+    fun `fanta tournament created successfully`() {
+
+      val dto = NewJdbcFantaTournamentDto(startingTournamentId = 2,
+                                          endingTournamentId = 10,
+                                          year = 2022)
+
+      val params = mapOf("startingTournamentId" to 2,
+                         "endingTournamentId" to 10,
+                         "year" to 2022)
+
+      val expected = A_FANTA_TOURNAMENT_ID
+
+      every { jdbcTemplate.update(CREATE_FANTA_TOURNAMENT_QUERY, params) } returns A_FANTA_TOURNAMENT_ID
+
+      assertThat(dao.persist(dto)).isEqualTo(expected)
+    }
+
+    @Test
+    fun `creation fails due to exception from jdbc`() {
+
+      val dto = NewJdbcFantaTournamentDto(startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                          endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                          year = A_TOURNAMENT_YEAR)
+
+      val expectedMessage = "What an unlucky event, you've got an error!"
+
+      every { dao.persist(dto) } throws RuntimeException(expectedMessage)
+
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.persist(dto) }
+    }
+  }
+
   companion object {
 
     private const val A_FANTA_TOURNAMENT_ID = 123
+    private const val A_STARTING_TOURNAMENT_ID = 1
+    private const val AN_ENDING_TOURNAMENT_ID = 2
+    private const val A_TOURNAMENT_YEAR = 2026
 
     private val RETRIEVE_FANTA_TOURNAMENT_QUERY = """
       SELECT *
@@ -99,6 +139,11 @@ class JdbcFantaTournamentDaoTest {
     private val RETRIEVE_ALL_FANTA_TOURNAMENT_QUERY = """
       SELECT *
       FROM FANTA_TOURNAMENTS; 
+    """.trimIndent()
+
+    private val CREATE_FANTA_TOURNAMENT_QUERY = """
+      INSERT INTO FANTA_TOURNAMENTS (STARTING_TOURNAMENT, ENDING_TOURNAMENT, TOURNAMENT_YEAR)
+      VALUES(:startingTournamentId, :endingTournamentId, :year);
     """.trimIndent()
   }
 }
