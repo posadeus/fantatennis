@@ -1,4 +1,4 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
@@ -11,11 +11,11 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class JdbcCreateFantaTournamentRepositoryTest {
+class SqlCreateFantaTournamentRepositoryTest {
 
   private val fantaTournamentDao: FantaTournamentDao = mockk()
 
-  private val repository: CreateFantaTournamentRepository = JdbcCreateFantaTournamentRepository(fantaTournamentDao)
+  private val repository: CreateFantaTournamentRepository = SqlCreateFantaTournamentRepository(fantaTournamentDao)
 
   @Test
   fun `fanta tournament created successfully`() {

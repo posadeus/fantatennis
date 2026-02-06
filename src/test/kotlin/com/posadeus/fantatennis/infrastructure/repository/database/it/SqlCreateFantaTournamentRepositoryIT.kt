@@ -1,15 +1,16 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.FantaTournamentDaoConfiguration
 import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentToCreateDto
 import com.posadeus.fantatennis.domain.infrastructure.CreateFantaTournamentRepository
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcCreateFantaTournamentRepository
+import com.posadeus.fantatennis.infrastructure.repository.database.SqlCreateFantaTournamentRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.fantatournament.CachedFantaTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcFantaTournamentDto.aJdbcFantaTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,7 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
   "caches.caffeine.fanta-tournaments-cache.expire-after-access-duration=10080",
   "caches.caffeine.fanta-tournaments-cache.maximum-size=1000",
 ])
-class JdbcCreateFantaTournamentRepositoryIT {
+class SqlCreateFantaTournamentRepositoryIT {
 
   @Autowired
   private lateinit var fantaTournamentsCache: Cache<Unit, List<JdbcFantaTournamentDto>>
@@ -47,7 +48,7 @@ class JdbcCreateFantaTournamentRepositoryIT {
 
     val cachedFantaTournamentDao = CachedFantaTournamentDao(fantaTournamentCache, fantaTournamentsCache, jdbcFantaTournamentDao)
 
-    repository = JdbcCreateFantaTournamentRepository(cachedFantaTournamentDao)
+    repository = SqlCreateFantaTournamentRepository(cachedFantaTournamentDao)
 
     fantaTournamentCache.invalidateAll()
     fantaTournamentsCache.invalidateAll()
