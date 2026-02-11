@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
-import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
+import com.posadeus.fantatennis.domain.infrastructure.*
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceedWithErrors
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceeded
@@ -9,7 +9,6 @@ import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistence
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.model.TestAtpPlayer.anAtpPlayer
 import com.posadeus.fantatennis.domain.model.TestDomainPlayer.aDomainPlayer
-import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
@@ -17,14 +16,14 @@ import org.junit.jupiter.api.Test
 class FantaPointPersistenceServiceTest {
 
   private val persistPlayersPointsRepository: PersistPlayersPointsRepository = mockk()
-  private val retrievePlayerService: RetrievePlayerService = mockk()
-  private val rankingService: RankingService = mockk()
-  private val persistPlayerService: PersistPlayerService = mockk()
+  private val retrievePlayersRepository: RetrievePlayersRepository = mockk()
+  private val rankingRepository: RankingRepository = mockk()
+  private val persistPlayersRepository: PersistPlayersRepository = mockk()
 
   private val service = FantaPointPersistenceService(persistPlayersPointsRepository,
-                                                     retrievePlayerService,
-                                                     rankingService,
-                                                     persistPlayerService)
+                                                     retrievePlayersRepository,
+                                                     rankingRepository,
+                                                     persistPlayersRepository)
 
   @Test
   fun `persist all players when all are found`() {
@@ -36,13 +35,13 @@ class FantaPointPersistenceServiceTest {
 
     val expected = FantaPointPersistenceSucceeded
 
-    every { retrievePlayerService.allPlayers() } returns domainPlayers
+    every { retrievePlayersRepository.retrieve() } returns domainPlayers
     every { persistPlayersPointsRepository.persistAll(players) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
-    verify { rankingService wasNot called }
-    verify { persistPlayerService wasNot called }
+    verify { rankingRepository wasNot called }
+    verify { persistPlayersRepository wasNot called }
     verify(exactly = 1) { persistPlayersPointsRepository.persistAll(players) }
   }
 
@@ -68,9 +67,9 @@ class FantaPointPersistenceServiceTest {
 
     val expected = FantaPointPersistenceSucceeded
 
-    every { retrievePlayerService.allPlayers() } returns domainPlayers
-    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
+    every { retrievePlayersRepository.retrieve() } returns domainPlayers
+    every { rankingRepository.retrieveRanking(1000) } returns ranking
+    every { persistPlayersRepository.persistAll(domainPlayersToPersist) } returns playerPersistence
     every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
@@ -96,9 +95,9 @@ class FantaPointPersistenceServiceTest {
 
     val expected = FantaPointPersistenceSucceeded
 
-    every { retrievePlayerService.allPlayers() } returns domainPlayers
-    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
+    every { retrievePlayersRepository.retrieve() } returns domainPlayers
+    every { rankingRepository.retrieveRanking(1000) } returns ranking
+    every { persistPlayersRepository.persistAll(domainPlayersToPersist) } returns playerPersistence
     every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
@@ -107,7 +106,7 @@ class FantaPointPersistenceServiceTest {
   }
 
   @Test
-  fun `persist only registered players when rankingService returns EmptyRanking`() {
+  fun `persist only registered players when rankingRepository retrieveRanking()`() {
 
     val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
                         anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"))
@@ -118,13 +117,13 @@ class FantaPointPersistenceServiceTest {
 
     val expected = FantaPointPersistenceSucceeded
 
-    every { retrievePlayerService.allPlayers() } returns domainPlayers
-    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+    every { retrievePlayersRepository.retrieve() } returns domainPlayers
+    every { rankingRepository.retrieveRanking(1000) } returns ranking
     every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
-    verify { persistPlayerService wasNot called }
+    verify { persistPlayersRepository wasNot called }
     verify(exactly = 1) { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) }
   }
 
@@ -142,13 +141,13 @@ class FantaPointPersistenceServiceTest {
 
     val expected = FantaPointPersistenceSucceeded
 
-    every { retrievePlayerService.allPlayers() } returns domainPlayers
-    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
+    every { retrievePlayersRepository.retrieve() } returns domainPlayers
+    every { rankingRepository.retrieveRanking(1000) } returns ranking
     every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
-    verify { persistPlayerService wasNot called }
+    verify { persistPlayersRepository wasNot called }
     verify(exactly = 1) { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) }
   }
 
@@ -172,9 +171,9 @@ class FantaPointPersistenceServiceTest {
 
     val expected = FantaPointPersistenceSucceedWithErrors(message = "You have an error")
 
-    every { retrievePlayerService.allPlayers() } returns domainPlayers
-    every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
+    every { retrievePlayersRepository.retrieve() } returns domainPlayers
+    every { rankingRepository.retrieveRanking(1000) } returns ranking
+    every { persistPlayersRepository.persistAll(domainPlayersToPersist) } returns playerPersistence
     every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)

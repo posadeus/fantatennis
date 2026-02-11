@@ -1,23 +1,22 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
-import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
+import com.posadeus.fantatennis.domain.infrastructure.*
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceedWithErrors
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceeded
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
-import com.posadeus.fantatennis.domain.service.ranking.RankingService
 import org.slf4j.LoggerFactory
 
 class FantaPointPersistenceService(private val persistPlayersPointsRepository: PersistPlayersPointsRepository,
-                                   private val retrievePlayerService: RetrievePlayerService,
-                                   private val rankingService: RankingService,
-                                   private val persistPlayerService: PersistPlayerService) {
+                                   private val retrievePlayersRepository: RetrievePlayersRepository,
+                                   private val rankingRepository: RankingRepository,
+                                   private val persistPlayersRepository: PersistPlayersRepository) {
 
   fun persist(players: Set<AtpPlayer>): FantaPointPersistence {
 
-    val allPlayersByAtpId = retrievePlayerService.allPlayers()
+    val allPlayersByAtpId = retrievePlayersRepository.retrieve()
         .groupBy { it.atpId }
 
     val notRegisteredPlayersIds = players
@@ -34,7 +33,7 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
       val missingPlayers = retrieveMissingPlayers(notRegisteredPlayersIds)
 
       if (missingPlayers.toRegister.isNotEmpty())
-        when (val result = persistPlayerService.persistAll(missingPlayers.toRegister)) {
+        when (val result = persistPlayersRepository.persistAll(missingPlayers.toRegister)) {
 
           is PlayerPersistenceFailure -> persistFilteredPlayers(players, result.message) { it.id in missingPlayers.toSearchIds }
           is PlayerPersistenceSuccess -> persistFilteredPlayers(players) { it.id in missingPlayers.notFound }
@@ -67,7 +66,7 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
       }
 
   private fun retrieveMissingPlayers(notRegisteredPlayersIds: Set<AtpPlayerId>): MissingPlayers =
-      when (val rankedPlayers = rankingService.retrieveRankedPlayer(1000)) {
+      when (val rankedPlayers = rankingRepository.retrieveRanking(1000)) {
 
         is EmptyRanking -> MissingPlayers(toSearchIds = notRegisteredPlayersIds,
                                           toRegister = emptySet(),
