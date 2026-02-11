@@ -1,11 +1,10 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
-import com.posadeus.fantatennis.domain.exception.InvalidPlayerPointsException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceedWithErrors
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceeded
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.service.ranking.RankingService
@@ -53,24 +52,19 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
           .toSet()
           .let { persistPlayersPoints(it, errorMessage) }
 
-  private fun persistPlayersPoints(playersScoresToPersist: Set<AtpPlayer>, errorMessage: String? = null): FantaPointPersistence {
+  private fun persistPlayersPoints(playersScoresToPersist: Set<AtpPlayer>, errorMessage: String? = null): FantaPointPersistence =
+      if (errorMessage == null) {
 
-    try {
+        persistPlayersPointsRepository.persistAll(playersScoresToPersist)
+      }
+      else {
 
-      persistPlayersPointsRepository.persistAll(playersScoresToPersist) // FIXME: Behaviour changed, exception not possible and result returned by repo
-    }
-    catch (e: InvalidPlayerPointsException) {
+        when (val result = persistPlayersPointsRepository.persistAll(playersScoresToPersist)) {
 
-      LOGGER.error(e.message)
-
-      return FantaPointPersistenceFailure(PERSISTENCE_ERROR)
-    }
-
-    return if (errorMessage == null)
-      FantaPointPersistenceSucceeded
-    else
-      FantaPointPersistenceSucceedWithErrors(errorMessage)
-  }
+          FantaPointPersistenceSucceeded -> FantaPointPersistenceSucceedWithErrors(errorMessage)
+          else -> result
+        }
+      }
 
   private fun retrieveMissingPlayers(notRegisteredPlayersIds: Set<AtpPlayerId>): MissingPlayers =
       when (val rankedPlayers = rankingService.retrieveRankedPlayer(1000)) {

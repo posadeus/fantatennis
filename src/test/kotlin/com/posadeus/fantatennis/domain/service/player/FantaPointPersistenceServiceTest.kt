@@ -1,11 +1,10 @@
 package com.posadeus.fantatennis.domain.service.player
 
 import com.posadeus.fantatennis.controller.model.ranking.RankedPlayerDto
-import com.posadeus.fantatennis.domain.exception.InvalidPlayerPointsException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceedWithErrors
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceeded
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceFailure
 import com.posadeus.fantatennis.domain.model.PlayerPersistence.PlayerPersistenceSuccess
 import com.posadeus.fantatennis.domain.model.TestAtpPlayer.anAtpPlayer
@@ -176,31 +175,11 @@ class FantaPointPersistenceServiceTest {
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
     every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
-    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceFailure(PERSISTENCE_ERROR)
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
     verify(exactly = 1) { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) }
-  }
-
-  @Test
-  fun `persist fails when persistPlayersPointsRepository throws an exception`() {
-
-    val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
-                        anAtpPlayer(id = ANOTHER_ATP_PLAYER_ID))
-
-    val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID), aDomainPlayer(atpId = ANOTHER_ATP_PLAYER_ID))
-
-    val expected = FantaPointPersistenceFailure(reason = PERSISTENCE_ERROR)
-
-    every { retrievePlayerService.allPlayers() } returns domainPlayers
-    every { persistPlayersPointsRepository.persistAll(players) } throws InvalidPlayerPointsException("I'm broken!")
-
-    assertThat(service.persist(players)).isEqualTo(expected)
-
-    verify { rankingService wasNot called }
-    verify { persistPlayerService wasNot called }
-    verify(exactly = 1) { persistPlayersPointsRepository.persistAll(players) }
   }
 
   companion object {
