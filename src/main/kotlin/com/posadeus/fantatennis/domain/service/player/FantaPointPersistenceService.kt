@@ -57,7 +57,7 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
 
     try {
 
-      persistPlayersPointsRepository.persistAll(playersScoresToPersist)
+      persistPlayersPointsRepository.persistAll(playersScoresToPersist) // FIXME: Behaviour changed, exception not possible and result returned by repo
     }
     catch (e: InvalidPlayerPointsException) {
 
@@ -67,7 +67,7 @@ class FantaPointPersistenceService(private val persistPlayersPointsRepository: P
     }
 
     return if (errorMessage == null)
-      FantaPointPersistenceSuccess
+      FantaPointPersistenceSucceeded
     else
       FantaPointPersistenceSucceedWithErrors(errorMessage)
   }

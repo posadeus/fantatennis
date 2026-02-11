@@ -33,7 +33,7 @@ class JobController(private val fantaPointService: FantaPointService,
   override fun updatePlayersFantaPoints(tournamentId: Int, year: Int): ResponseEntity<JobSucceedWithErrorsDto> =
       when (val result = fantaPointService.updateFantaPointsFor(tournamentId, year)) {
 
-        is FantaPointPersistenceSuccess -> ResponseEntity.noContent().build()
+        is FantaPointPersistenceSucceeded -> ResponseEntity.noContent().build()
         is FantaPointPersistenceSucceedWithErrors ->
           ResponseEntity.ok(JobSucceedWithErrorsDto("Job succeed with following error: ${result.message}"))
         is FantaPointPersistenceFailure ->

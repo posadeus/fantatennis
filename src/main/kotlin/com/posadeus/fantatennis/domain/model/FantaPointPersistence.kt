@@ -2,7 +2,7 @@ package com.posadeus.fantatennis.domain.model
 
 sealed interface FantaPointPersistence {
 
-  data object FantaPointPersistenceSuccess: FantaPointPersistence
+  data object FantaPointPersistenceSucceeded: FantaPointPersistence
   data class FantaPointPersistenceSucceedWithErrors(val message: String): FantaPointPersistence
   data class FantaPointPersistenceFailure(val reason: FailureReason): FantaPointPersistence
 }

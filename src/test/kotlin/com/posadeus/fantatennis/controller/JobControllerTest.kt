@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.job.JobController
 import com.posadeus.fantatennis.controller.model.job.JobSucceedWithErrorsDto
 import com.posadeus.fantatennis.domain.exception.InvalidYearException
-import com.posadeus.fantatennis.domain.model.FailureReason.*
+import com.posadeus.fantatennis.domain.model.FailureReason.NO_POINTS_FOR_TOURNAMENT
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
 import com.posadeus.fantatennis.domain.service.player.FantaPointService
 import com.posadeus.fantatennis.domain.service.tournament.AddTournamentsService
@@ -15,7 +16,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class JobControllerTest {
@@ -70,7 +72,7 @@ class JobControllerTest {
     @Test
     fun `204 response`() {
 
-      every { fantaPointService.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns FantaPointPersistenceSuccess
+      every { fantaPointService.updateFantaPointsFor(A_TOURNAMENT_ID, A_YEAR) } returns FantaPointPersistenceSucceeded
 
       mvc.perform(post("$UPDATE_PLAYER_FANTA_POINTS_ENDPOINT$A_TOURNAMENT_ID/$A_YEAR"))
           .andDo(print())

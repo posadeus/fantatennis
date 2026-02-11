@@ -1,60 +1,52 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
-import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
-import com.posadeus.fantatennis.domain.exception.InvalidPlayerPointsException
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
-import com.posadeus.fantatennis.domain.model.AtpPlayer
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.transaction.annotation.Transactional
+import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
+import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceeded
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
+import org.slf4j.LoggerFactory
 
-@OpenForSpring
-class JdbcPersistPlayersPointsRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : PersistPlayersPointsRepository {
+class JdbcPersistPlayersPointsRepository(private val playerPointsDao: PlayerPointsDao) : PersistPlayersPointsRepository {
 
-  @Transactional
-  override fun persistAll(players: Set<AtpPlayer>) {
-    try {
+  override fun persistAll(players: Set<AtpPlayer>): FantaPointPersistence =
+      try {
 
-      val entryParams = players
-          .flatMap(::toEntryParams)
+        players
+            .flatMap(::toJdbcPlayersPoints)
+            .let(::persistAll)
+            .let { FantaPointPersistenceSucceeded }
+      }
+      catch (e: RuntimeException) {
 
-      val batchResult = entryParams
-          .let(::persistAll)
+        LOGGER.error(e.message)
+        FantaPointPersistenceFailure(PERSISTENCE_ERROR)
+      }
 
-      if (batchResult.any { it == 0 })
-        throw InvalidPlayerPointsException(message = "PlayersPoints for playerId-tournamentId-year [${manageError(entryParams, batchResult) { "${it["playerId"]}-${it["tournamentId"]}-${it["tournamentYear"]}" }}] not inserted, operation reverted.")
-    }
-    catch (e: RuntimeException) {
+  private fun persistAll(playersPoints: List<JdbcPlayerPointsDto>) =
+      playerPointsDao.persistAll(playersPoints)
 
-      throw InvalidPlayerPointsException(message = "Unexpected error during insert: ${e.message}")
-    }
-  }
-
-  private fun persistAll(params: List<Map<String, Any>>): IntArray =
-      namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_POINTS_QUERY, params.toTypedArray())
-
-  private fun toEntryParams(player: AtpPlayer): List<Map<String, Any>> =
+  private fun toJdbcPlayersPoints(player: AtpPlayer): List<JdbcPlayerPointsDto> =
       player.tournamentPoints
           .entries
-          .flatMap { entry ->
-            entry.value
+          .flatMap { tournamentsPointsByYear ->
+            tournamentsPointsByYear.value
                 .entries
-                .map {
-                  mapOf("tournamentYear" to entry.key,
-                        "tournamentId" to it.key,
-                        "playerId" to player.id,
-                        "fantaPoints" to it.value)
-                }
+                .map { toJdbcPlayerPointsDto(tournamentsPointsByYear.key, it, player.id) }
           }
+
+  private fun toJdbcPlayerPointsDto(year: Year,
+                                    pointsByTournament: Map.Entry<TournamentId, Double>,
+                                    playerId: AtpPlayerId) =
+      JdbcPlayerPointsDto(tournamentYear = year,
+                          tournamentId = pointsByTournament.key,
+                          playerId = playerId,
+                          fantaPoints = pointsByTournament.value)
 
   companion object {
 
-    private val INSERT_PLAYERS_POINTS_QUERY = """
-      INSERT INTO PLAYERS_POINTS
-      (TOURNAMENT_YEAR, TOURNAMENT_ID, PLAYER_ID, FANTA_POINTS)
-      VALUES(:tournamentYear, :tournamentId, :playerId, :fantaPoints)
-      ON DUPLICATE KEY UPDATE
-      FANTA_POINTS = VALUES(FANTA_POINTS);
-    """.trimIndent()
+    private val LOGGER = LoggerFactory.getLogger(JdbcPersistPlayersPointsRepository::class.java)
   }
 }

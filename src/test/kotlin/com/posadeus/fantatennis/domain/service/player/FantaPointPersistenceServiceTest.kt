@@ -35,10 +35,10 @@ class FantaPointPersistenceServiceTest {
 
     val domainPlayers = setOf(aDomainPlayer(atpId = AN_ATP_PLAYER_ID), aDomainPlayer(atpId = ANOTHER_ATP_PLAYER_ID))
 
-    val expected = FantaPointPersistenceSuccess
+    val expected = FantaPointPersistenceSucceeded
 
     every { retrievePlayerService.allPlayers() } returns domainPlayers
-    every { persistPlayersPointsRepository.persistAll(players) } returns Unit
+    every { persistPlayersPointsRepository.persistAll(players) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
@@ -67,12 +67,12 @@ class FantaPointPersistenceServiceTest {
                                     anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"),
                                     anAtpPlayer(id = "ANOTHER_MISSING_ATP_PLAYER_ID"))
 
-    val expected = FantaPointPersistenceSuccess
+    val expected = FantaPointPersistenceSucceeded
 
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
     every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
-    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns Unit
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
@@ -80,7 +80,7 @@ class FantaPointPersistenceServiceTest {
   }
 
   @Test
-  fun `persist all possible players when partial missing players are found in ranking`() {
+  fun `persist all possible players when partial missing players have been found in ranking`() {
 
     val players = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID),
                         anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"),
@@ -95,12 +95,12 @@ class FantaPointPersistenceServiceTest {
     val playerPersistence = PlayerPersistenceSuccess
     val atpPlayersToPersist = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID), anAtpPlayer(id = "A_MISSING_ATP_PLAYER_ID"))
 
-    val expected = FantaPointPersistenceSuccess
+    val expected = FantaPointPersistenceSucceeded
 
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
     every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
-    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns Unit
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
@@ -117,11 +117,11 @@ class FantaPointPersistenceServiceTest {
     val ranking = EmptyRanking
     val atpPlayersToPersist = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID))
 
-    val expected = FantaPointPersistenceSuccess
+    val expected = FantaPointPersistenceSucceeded
 
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns Unit
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
@@ -141,11 +141,11 @@ class FantaPointPersistenceServiceTest {
     val ranking = RankedPlayers(rankedPlayers)
     val atpPlayersToPersist = setOf(anAtpPlayer(id = AN_ATP_PLAYER_ID))
 
-    val expected = FantaPointPersistenceSuccess
+    val expected = FantaPointPersistenceSucceeded
 
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
-    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns Unit
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceSucceeded
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
@@ -176,7 +176,7 @@ class FantaPointPersistenceServiceTest {
     every { retrievePlayerService.allPlayers() } returns domainPlayers
     every { rankingService.retrieveRankedPlayer(1000) } returns ranking
     every { persistPlayerService.persistAll(domainPlayersToPersist) } returns playerPersistence
-    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns Unit
+    every { persistPlayersPointsRepository.persistAll(atpPlayersToPersist) } returns FantaPointPersistenceFailure(PERSISTENCE_ERROR)
 
     assertThat(service.persist(players)).isEqualTo(expected)
 
