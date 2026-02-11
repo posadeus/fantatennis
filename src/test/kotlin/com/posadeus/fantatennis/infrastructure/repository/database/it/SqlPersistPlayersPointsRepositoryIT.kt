@@ -1,17 +1,16 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistPlayersPointsRepositoryConfiguration
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.PlayerPointsDaoConfiguration
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
-import com.posadeus.fantatennis.domain.model.AtpPlayer
-import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcPersistPlayersPointsRepository
+import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.infrastructure.repository.database.SqlPersistPlayersPointsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.playerpoints.CachedPlayerPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
-import org.assertj.core.api.Assertions.assertThat
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -21,7 +20,6 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
@@ -33,7 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
   "caches.caffeine.players-points-by-tournament-id-cache.expire-after-write-duration=10080",
   "caches.caffeine.players-points-by-tournament-id-cache.maximum-size=1000"
 ])
-class JdbcPersistPlayersPointsRepositoryIT {
+class SqlPersistPlayersPointsRepositoryIT {
 
   @Autowired
   private lateinit var playerPointsCache: Cache<Int, List<JdbcPlayerPointsDto>>
@@ -52,12 +50,12 @@ class JdbcPersistPlayersPointsRepositoryIT {
 
     val cachedPlayerPointsDao = CachedPlayerPointsDao(playerPointsCache, jdbcPlayerPointsDao)
 
-    repository = JdbcPersistPlayersPointsRepository(cachedPlayerPointsDao)
+    repository = SqlPersistPlayersPointsRepository(cachedPlayerPointsDao)
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   )
   @Test
   fun `exception happens during inserts, transaction reverted`() {
@@ -66,9 +64,9 @@ class JdbcPersistPlayersPointsRepositoryIT {
     val player2 = AtpPlayer(id = "TOO_LONG_NAME", mapOf(2026 to mapOf(1 to 1.00, 2 to 20.00)))
     val players = setOf(player1, player2)
 
-    val expected = FantaPointPersistenceFailure(PERSISTENCE_ERROR)
+    val expected = FantaPointPersistence.FantaPointPersistenceFailure(FailureReason.PERSISTENCE_ERROR)
 
-    assertThat(repository.persistAll(players)).isEqualTo(expected)
+    Assertions.assertThat(repository.persistAll(players)).isEqualTo(expected)
 
     val query = """
       SELECT *
@@ -79,12 +77,12 @@ class JdbcPersistPlayersPointsRepositoryIT {
 
     val queryParams = mapOf("playerId" to listOf("C0D1", "TOO_LONG_NAME"))
 
-    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(1)
+    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(1)
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   )
   @Test
   fun `persist success for all inputs`() {
@@ -103,12 +101,12 @@ class JdbcPersistPlayersPointsRepositoryIT {
 
     val queryParams = mapOf("playerId" to listOf("QR43", "A0B1"))
 
-    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(13)
+    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(13)
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   )
   @Test
   fun `persist success for all inputs with record already present`() {
@@ -127,7 +125,7 @@ class JdbcPersistPlayersPointsRepositoryIT {
 
     val queryParams = mapOf("playerId" to listOf("QR43", "A0B1"))
 
-    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(9)
+    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(9)
   }
 
   private val playerPointsRowMapper = RowMapper { rs, _ ->

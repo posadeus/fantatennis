@@ -1,15 +1,12 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.PersistPlayersPointsRepository
 import com.posadeus.fantatennis.domain.model.*
-import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceFailure
-import com.posadeus.fantatennis.domain.model.FantaPointPersistence.FantaPointPersistenceSucceeded
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 import org.slf4j.LoggerFactory
 
-class JdbcPersistPlayersPointsRepository(private val playerPointsDao: PlayerPointsDao) : PersistPlayersPointsRepository {
+class SqlPersistPlayersPointsRepository(private val playerPointsDao: PlayerPointsDao) : PersistPlayersPointsRepository {
 
   override fun persistAll(players: Set<AtpPlayer>): FantaPointPersistence =
       try {
@@ -17,12 +14,12 @@ class JdbcPersistPlayersPointsRepository(private val playerPointsDao: PlayerPoin
         players
             .flatMap(::toJdbcPlayersPoints)
             .let(::persistAll)
-            .let { FantaPointPersistenceSucceeded }
+            .let { FantaPointPersistence.FantaPointPersistenceSucceeded }
       }
       catch (e: RuntimeException) {
 
         LOGGER.error(e.message)
-        FantaPointPersistenceFailure(PERSISTENCE_ERROR)
+        FantaPointPersistence.FantaPointPersistenceFailure(FailureReason.PERSISTENCE_ERROR)
       }
 
   private fun persistAll(playersPoints: List<JdbcPlayerPointsDto>) =
@@ -47,6 +44,6 @@ class JdbcPersistPlayersPointsRepository(private val playerPointsDao: PlayerPoin
 
   companion object {
 
-    private val LOGGER = LoggerFactory.getLogger(JdbcPersistPlayersPointsRepository::class.java)
+    private val LOGGER = LoggerFactory.getLogger(SqlPersistPlayersPointsRepository::class.java)
   }
 }
