@@ -1,20 +1,26 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
-import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.PersistTournamentsRepositoryConfiguration
+import com.github.benmanes.caffeine.cache.Cache
+import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.TournamentDaoConfiguration
 import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcPersistTournamentsRepository
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tournament.CachedTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
@@ -22,14 +28,41 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDate
 
 @ExtendWith(SpringExtension::class)
-@Import(IntegrationTestConfiguration::class, PersistTournamentsRepositoryConfiguration::class)
+@Import(IntegrationTestConfiguration::class, TournamentDaoConfiguration::class)
+@TestPropertySource(properties = [
+  "caches.caffeine.tournaments-cache.expire-after-write-duration=1440",
+  "caches.caffeine.tournaments-cache.expire-after-access-duration=1440",
+  "caches.caffeine.tournaments-cache.maximum-size=300",
+  "caches.caffeine.tournament-cache.expire-after-write-duration=1440",
+  "caches.caffeine.tournament-cache.expire-after-access-duration=1440",
+  "caches.caffeine.tournament-cache.maximum-size=300"
+])
 class JdbcPersistTournamentsRepositoryIT {
+
+  @Autowired
+  private lateinit var tournamentsCache: Cache<Int, List<JdbcTournamentDto>>
+
+  @Autowired
+  private lateinit var tournamentCache: Cache<Int, JdbcTournamentDto>
+
+  @Autowired
+  private lateinit var jdbcTournamentDao: TournamentDao
 
   @Autowired
   private lateinit var namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 
-  @Autowired
   private lateinit var repository: PersistTournamentsRepository
+
+  @BeforeEach
+  fun setUp() {
+
+    val cachedTournamentDao = CachedTournamentDao(tournamentsCache, tournamentCache, jdbcTournamentDao)
+
+    repository = JdbcPersistTournamentsRepository(cachedTournamentDao)
+
+    tournamentsCache.invalidateAll()
+    tournamentCache.invalidateAll()
+  }
 
   @SqlGroup(
       Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
