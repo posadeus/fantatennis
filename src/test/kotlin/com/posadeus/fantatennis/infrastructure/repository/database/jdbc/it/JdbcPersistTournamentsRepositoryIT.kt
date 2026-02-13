@@ -2,12 +2,12 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.TournamentDaoConfiguration
-import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.ErrorTournamentsCreation
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.SuccessTournamentsCreated
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
-import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcPersistTournamentsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tournament.CachedTournamentDao
@@ -97,7 +97,9 @@ class JdbcPersistTournamentsRepositoryIT {
       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);]; Duplicate entry '123-123-FIRST_TOURNAMENT-2025' for key 'TOURNAMENTS.TOURNAMENTS_UNIQUE'
     """.trimIndent()
 
-    assertThrowsWithMessage<InvalidTournamentException>(expectedMessage) { repository.persistNewTournaments(tournaments) }
+    val expected = ErrorTournamentsCreation(expectedMessage)
+
+    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     val query = """
       SELECT TOURNAMENT_ID, ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE
@@ -137,7 +139,9 @@ class JdbcPersistTournamentsRepositoryIT {
                                          location = ANOTHER_LOCATION)
     val tournaments = FoundTournamentsRegistry(tournaments = listOf(tournament1, tournament2))
 
-    repository.persistNewTournaments(tournaments)
+    val expected = SuccessTournamentsCreated
+
+    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     val query = """
       SELECT TOURNAMENT_ID, ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE

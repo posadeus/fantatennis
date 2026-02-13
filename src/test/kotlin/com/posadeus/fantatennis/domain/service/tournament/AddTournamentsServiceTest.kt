@@ -1,15 +1,16 @@
 package com.posadeus.fantatennis.domain.service.tournament
 
-import com.posadeus.fantatennis.domain.exception.InvalidYearException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.infrastructure.TournamentsRegistryRepository
 import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.ErrorTournamentsCreation
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.SuccessTournamentsCreated
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.NotFoundTournamentsRegistry
 import io.mockk.*
+import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class AddTournamentsServiceTest {
 
@@ -42,7 +43,7 @@ class AddTournamentsServiceTest {
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
     every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns tournaments
-    every { persistTournamentsRepository.persistNewTournaments(tournaments) } just runs
+    every { persistTournamentsRepository.persistNewTournaments(tournaments) } returns SuccessTournamentsCreated
 
     service.addTournamentsFor(A_YEAR)
 
@@ -53,16 +54,18 @@ class AddTournamentsServiceTest {
   @Test
   fun `tournamentRegistryRepository returns no results`() {
 
+    val expected = ErrorTournamentsCreation("No Tournament found for year $A_YEAR")
+
     every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns NotFoundTournamentsRegistry
 
-    assertThrows<InvalidYearException> { service.addTournamentsFor (A_YEAR) }
+    assertThat(service.addTournamentsFor(A_YEAR)).isEqualTo(expected)
 
     verify(exactly = 1) { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) }
     verify { persistTournamentsRepository wasNot called }
   }
 
   @Test
-  fun `tournamentsRepository throws exception`() {
+  fun `persistence returns error`() {
 
     val tournament1 = TournamentRegistry(atpTourId = AN_ATP_ID,
                                          tennisTvId = A_TENNIS_TV_ID,
@@ -84,10 +87,14 @@ class AddTournamentsServiceTest {
                                          location = ANOTHER_LOCATION)
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
-    every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns tournaments
-    every { persistTournamentsRepository.persistNewTournaments(tournaments) } throws RuntimeException()
+    val errorMessage = "An error! Here! Run!"
 
-    assertThrows<RuntimeException> { service.addTournamentsFor(A_YEAR) }
+    val expected = ErrorTournamentsCreation(errorMessage)
+
+    every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns tournaments
+    every { persistTournamentsRepository.persistNewTournaments(tournaments) } returns ErrorTournamentsCreation(errorMessage)
+
+    assertThat(service.addTournamentsFor(A_YEAR)).isEqualTo(expected)
 
     verify(exactly = 1) { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) }
     verify(exactly = 1) { persistTournamentsRepository.persistNewTournaments(tournaments) }

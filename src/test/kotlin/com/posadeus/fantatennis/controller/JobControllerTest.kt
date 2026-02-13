@@ -4,13 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.job.JobController
 import com.posadeus.fantatennis.controller.model.job.JobSucceedWithErrorsDto
-import com.posadeus.fantatennis.domain.exception.InvalidYearException
 import com.posadeus.fantatennis.domain.model.FailureReason.NO_POINTS_FOR_TOURNAMENT
 import com.posadeus.fantatennis.domain.model.FailureReason.PERSISTENCE_ERROR
 import com.posadeus.fantatennis.domain.model.FantaPointPersistence.*
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.ErrorTournamentsCreation
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.SuccessTournamentsCreated
 import com.posadeus.fantatennis.domain.service.player.FantaPointService
 import com.posadeus.fantatennis.domain.service.tournament.AddTournamentsService
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
@@ -38,7 +40,7 @@ class JobControllerTest {
     @Test
     fun `204 response`() {
 
-      every { addTournamentsService.addTournamentsFor(A_YEAR) } just runs
+      every { addTournamentsService.addTournamentsFor(A_YEAR) } returns SuccessTournamentsCreated
 
       mvc.perform(post("$ADD_TOURNAMENTS_ENDPOINT$A_YEAR"))
           .andDo(print())
@@ -48,7 +50,7 @@ class JobControllerTest {
     @Test
     fun `400 response`() {
 
-      every { addTournamentsService.addTournamentsFor(A_YEAR) } throws InvalidYearException(A_YEAR.toString())
+      every { addTournamentsService.addTournamentsFor(A_YEAR) } returns ErrorTournamentsCreation("ERROR")
 
       mvc.perform(post("$ADD_TOURNAMENTS_ENDPOINT$A_YEAR"))
           .andDo(print())

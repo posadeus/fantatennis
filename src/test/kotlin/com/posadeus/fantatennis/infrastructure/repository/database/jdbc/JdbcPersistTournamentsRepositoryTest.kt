@@ -4,11 +4,13 @@ import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.ErrorTournamentsCreation
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.SuccessTournamentsCreated
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
-import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestNewJdbcTournamentDto.aNewJdbcTournamentDto
 import io.mockk.*
+import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -63,9 +65,11 @@ class JdbcPersistTournamentsRepositoryTest {
 
     val errorMessage = "It's Friday, bro!"
 
+    val expected = ErrorTournamentsCreation(errorMessage)
+
     every { tournamentDao.persistNewTournaments(tournamentsDao) } throws InvalidTournamentException(errorMessage)
 
-    assertThrowsWithMessage<InvalidTournamentException>(errorMessage) { repository.persistNewTournaments(tournaments) }
+    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     verify(exactly = 1) { tournamentDao.persistNewTournaments(tournamentsDao) }
   }
@@ -113,9 +117,11 @@ class JdbcPersistTournamentsRepositoryTest {
                                                location = ANOTHER_LOCATION)
     val tournamentsDao = listOf(tournamentDao1, tournamentDao2)
 
+    val expected = SuccessTournamentsCreated
+
     every { tournamentDao.persistNewTournaments(tournamentsDao) } just runs
 
-    repository.persistNewTournaments(tournaments)
+    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     verify(exactly = 1) { tournamentDao.persistNewTournaments(tournamentsDao) }
   }

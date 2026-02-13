@@ -1,8 +1,10 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
-import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
+import com.posadeus.fantatennis.domain.model.TournamentsCreated
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.ErrorTournamentsCreation
+import com.posadeus.fantatennis.domain.model.TournamentsCreated.SuccessTournamentsCreated
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.NewJdbcTournamentDto
@@ -11,18 +13,18 @@ import java.time.format.DateTimeFormatter
 
 class JdbcPersistTournamentsRepository(private val tournamentDao: TournamentDao) : PersistTournamentsRepository {
 
-  override fun persistNewTournaments(tournaments: FoundTournamentsRegistry) {
+  override fun persistNewTournaments(tournaments: FoundTournamentsRegistry): TournamentsCreated =
     try {
 
       tournaments.tournaments
           .map(::toJdbcTournamentDto)
           .let(tournamentDao::persistNewTournaments)
+          .let { SuccessTournamentsCreated }
     }
     catch (e: RuntimeException) {
 
-      throw InvalidTournamentException(error = "${e.message}")
+      ErrorTournamentsCreation(error = "${e.message}")
     }
-  }
 
   private fun toJdbcTournamentDto(tournamentRegistry: TournamentRegistry): NewJdbcTournamentDto =
       NewJdbcTournamentDto(atpTourId = tournamentRegistry.atpTourId,
