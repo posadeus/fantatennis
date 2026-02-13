@@ -64,7 +64,7 @@ class JdbcPersistTournamentsRepositoryIT {
       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);]; Duplicate entry '123-123-FIRST_TOURNAMENT-2025' for key 'TOURNAMENTS.TOURNAMENTS_UNIQUE'
     """.trimIndent()
 
-    assertThrowsWithMessage<InvalidTournamentException>(expectedMessage) { repository.persistAll(tournaments) }
+    assertThrowsWithMessage<InvalidTournamentException>(expectedMessage) { repository.persistNewTournaments(tournaments) }
 
     val query = """
       SELECT TOURNAMENT_ID, ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE
@@ -104,7 +104,7 @@ class JdbcPersistTournamentsRepositoryIT {
                                          location = ANOTHER_LOCATION)
     val tournaments = FoundTournamentsRegistry(tournaments = listOf(tournament1, tournament2))
 
-    repository.persistAll(tournaments)
+    repository.persistNewTournaments(tournaments)
 
     val query = """
       SELECT TOURNAMENT_ID, ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE

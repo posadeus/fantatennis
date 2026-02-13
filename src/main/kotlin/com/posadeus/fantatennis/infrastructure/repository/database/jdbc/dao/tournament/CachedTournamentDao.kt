@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tou
 import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.NewJdbcTournamentDto
 
 class CachedTournamentDao(private val tournamentsCache: Cache<Int, List<JdbcTournamentDto>>,
                           private val tournamentCache: Cache<Int, JdbcTournamentDto>,
@@ -14,7 +15,7 @@ class CachedTournamentDao(private val tournamentsCache: Cache<Int, List<JdbcTour
   override fun retrieveBy(id: Int): JdbcTournamentDto =
       tournamentCache.get(id) { delegate.retrieveBy(id) }
 
-  override fun persistNewTournaments(tournaments: List<JdbcTournamentDto>) {
+  override fun persistNewTournaments(tournaments: List<NewJdbcTournamentDto>) {
 
     delegate.persistNewTournaments(tournaments)
 

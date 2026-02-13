@@ -1,54 +1,40 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
-import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
-import org.springframework.transaction.annotation.Transactional
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.NewJdbcTournamentDto
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-@OpenForSpring
-class JdbcPersistTournamentsRepository(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : PersistTournamentsRepository {
+class JdbcPersistTournamentsRepository(private val tournamentDao: TournamentDao) : PersistTournamentsRepository {
 
-  @Transactional
-  override fun persistAll(tournaments: FoundTournamentsRegistry) {
+  override fun persistNewTournaments(tournaments: FoundTournamentsRegistry) {
     try {
 
-      val batchResult = tournaments.tournaments
-          .map(::toEntryParams)
-          .let(::persistAll)
-
-      if (batchResult.any { it != 1 })
-        throw InvalidTournamentException(error = "Tournaments [${manageError(tournaments.tournaments, batchResult) { it.atpTourId.toString() }}] not inserted, operation reverted.")
+      tournaments.tournaments
+          .map(::toJdbcTournamentDto)
+          .let(tournamentDao::persistNewTournaments)
     }
     catch (e: RuntimeException) {
 
-      throw InvalidTournamentException(error = "Unexpected error during insert: ${e.message}")
+      throw InvalidTournamentException(error = "${e.message}")
     }
   }
 
-  private fun persistAll(params: List<Map<String, Any>>): IntArray =
-      namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, params.toTypedArray())
+  private fun toJdbcTournamentDto(tournamentRegistry: TournamentRegistry): NewJdbcTournamentDto =
+      NewJdbcTournamentDto(atpTourId = tournamentRegistry.atpTourId,
+                           tennisTvId = tournamentRegistry.tennisTvId,
+                           name = tournamentRegistry.name,
+                           points = tournamentRegistry.points,
+                           location = tournamentRegistry.location,
+                           surface = tournamentRegistry.surface.name,
+                           year = tournamentRegistry.year,
+                           startDate = tournamentRegistry.startDate.let(::toLocalDate),
+                           endDate = tournamentRegistry.endDate.let(::toLocalDate))
 
-  private fun toEntryParams(tournamentRegistry: TournamentRegistry): Map<String, Any> =
-      mapOf("atpTourId" to tournamentRegistry.atpTourId,
-            "tennisTvId" to tournamentRegistry.tennisTvId,
-            "name" to tournamentRegistry.name,
-            "points" to tournamentRegistry.points,
-            "location" to tournamentRegistry.location,
-            "surface" to tournamentRegistry.surface.name,
-            "year" to tournamentRegistry.year,
-            "startDate" to tournamentRegistry.startDate,
-            "endDate" to tournamentRegistry.endDate)
-
-  companion object {
-
-    private val INSERT_TOURNAMENTS_QUERY = """
-      INSERT INTO TOURNAMENTS
-      (ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE)
-      VALUES(:atpTourId, :tennisTvId, :name, :points, :location, :surface, :year, :startDate, :endDate);
-    """.trimIndent()
-  }
+  private fun toLocalDate(date: String): LocalDate =
+      LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE)
 }

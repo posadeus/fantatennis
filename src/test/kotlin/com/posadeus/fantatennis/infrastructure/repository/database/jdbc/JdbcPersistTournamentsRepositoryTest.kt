@@ -6,18 +6,20 @@ import com.posadeus.fantatennis.domain.model.Surface
 import com.posadeus.fantatennis.domain.model.TournamentRegistry
 import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestNewJdbcTournamentDto.aNewJdbcTournamentDto
 import io.mockk.*
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import java.time.LocalDate
 
 class JdbcPersistTournamentsRepositoryTest {
 
-  private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = mockk()
+  private val tournamentDao: TournamentDao = mockk()
 
-  private val repository: PersistTournamentsRepository = JdbcPersistTournamentsRepository(namedParameterJdbcTemplate)
+  private val repository: PersistTournamentsRepository = JdbcPersistTournamentsRepository(tournamentDao)
 
   @Test
-  fun `not all tournaments are persisted`() {
+  fun `error from dao`() {
 
     val tournament1 = TournamentRegistry(atpTourId = AN_ATP_TOUR_ID,
                                          tennisTvId = A_TENNIS_TV_ID,
@@ -39,137 +41,33 @@ class JdbcPersistTournamentsRepositoryTest {
                                          location = ANOTHER_LOCATION)
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
-    val batchElement1 = mapOf("atpTourId" to AN_ATP_TOUR_ID,
-                              "tennisTvId" to A_TENNIS_TV_ID,
-                              "name" to A_NAME,
-                              "points" to A_POINTS,
-                              "location" to A_LOCATION,
-                              "surface" to A_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to A_START_DATE,
-                              "endDate" to AN_END_DATE)
-    val batchElement2 = mapOf("atpTourId" to ANOTHER_ATP_TOUR_ID,
-                              "tennisTvId" to ANOTHER_TENNIS_TV_ID,
-                              "name" to ANOTHER_NAME,
-                              "points" to ANOTHER_POINTS,
-                              "location" to ANOTHER_LOCATION,
-                              "surface" to ANOTHER_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to ANOTHER_START_DATE,
-                              "endDate" to ANOTHER_END_DATE)
-    val paramSource = arrayOf(batchElement1, batchElement2)
+    val tournamentDao1 = aNewJdbcTournamentDto(atpTourId = AN_ATP_TOUR_ID,
+                                               tennisTvId = A_TENNIS_TV_ID,
+                                               name = A_NAME,
+                                               startDate = A_START_DATE_LOCAL_DATE,
+                                               endDate = AN_END_DATE_LOCAL_DATE,
+                                               year = A_YEAR,
+                                               points = A_POINTS,
+                                               surface = A_SURFACE,
+                                               location = A_LOCATION)
+    val tournamentDao2 = aNewJdbcTournamentDto(atpTourId = ANOTHER_ATP_TOUR_ID,
+                                               tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                               name = ANOTHER_NAME,
+                                               startDate = ANOTHER_START_DATE_LOCAL_DATE,
+                                               endDate = ANOTHER_END_DATE_LOCAL_DATE,
+                                               year = A_YEAR,
+                                               points = ANOTHER_POINTS,
+                                               surface = ANOTHER_SURFACE,
+                                               location = ANOTHER_LOCATION)
+    val tournamentsDao = listOf(tournamentDao1, tournamentDao2)
 
-    val expectedMessage = "Unexpected error during insert: Tournaments [98765] not inserted, operation reverted."
+    val errorMessage = "It's Friday, bro!"
 
-    every { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) } returns intArrayOf(1, 0)
+    every { tournamentDao.persistNewTournaments(tournamentsDao) } throws InvalidTournamentException(errorMessage)
 
-    assertThrowsWithMessage<InvalidTournamentException>(expectedMessage) { repository.persistAll(tournaments) }
+    assertThrowsWithMessage<InvalidTournamentException>(errorMessage) { repository.persistNewTournaments(tournaments) }
 
-    verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) }
-  }
-
-  @Test
-  fun `multiple tournaments are not persisted`() {
-
-    val tournament1 = TournamentRegistry(atpTourId = AN_ATP_TOUR_ID,
-                                         tennisTvId = A_TENNIS_TV_ID,
-                                         name = A_NAME,
-                                         startDate = A_START_DATE,
-                                         endDate = AN_END_DATE,
-                                         year = A_YEAR,
-                                         points = A_POINTS,
-                                         surface = A_SURFACE_ENUM,
-                                         location = A_LOCATION)
-    val tournament2 = TournamentRegistry(atpTourId = ANOTHER_ATP_TOUR_ID,
-                                         tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                         name = ANOTHER_NAME,
-                                         startDate = ANOTHER_START_DATE,
-                                         endDate = ANOTHER_END_DATE,
-                                         year = A_YEAR,
-                                         points = ANOTHER_POINTS,
-                                         surface = ANOTHER_SURFACE_ENUM,
-                                         location = ANOTHER_LOCATION)
-    val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
-
-    val batchElement1 = mapOf("atpTourId" to AN_ATP_TOUR_ID,
-                              "tennisTvId" to A_TENNIS_TV_ID,
-                              "name" to A_NAME,
-                              "points" to A_POINTS,
-                              "location" to A_LOCATION,
-                              "surface" to A_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to A_START_DATE,
-                              "endDate" to AN_END_DATE)
-    val batchElement2 = mapOf("atpTourId" to ANOTHER_ATP_TOUR_ID,
-                              "tennisTvId" to ANOTHER_TENNIS_TV_ID,
-                              "name" to ANOTHER_NAME,
-                              "points" to ANOTHER_POINTS,
-                              "location" to ANOTHER_LOCATION,
-                              "surface" to ANOTHER_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to ANOTHER_START_DATE,
-                              "endDate" to ANOTHER_END_DATE)
-    val paramSource = arrayOf(batchElement1, batchElement2)
-
-    val expectedMessage = "Unexpected error during insert: Tournaments [12345, 98765] not inserted, operation reverted."
-
-    every { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) } returns intArrayOf(0, 0)
-
-    assertThrowsWithMessage<InvalidTournamentException>(expectedMessage) { repository.persistAll(tournaments) }
-
-    verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) }
-  }
-
-  @Test
-  fun `exception during operation`() {
-
-    val tournament1 = TournamentRegistry(atpTourId = AN_ATP_TOUR_ID,
-                                         tennisTvId = A_TENNIS_TV_ID,
-                                         name = A_NAME,
-                                         startDate = A_START_DATE,
-                                         endDate = AN_END_DATE,
-                                         year = A_YEAR,
-                                         points = A_POINTS,
-                                         surface = A_SURFACE_ENUM,
-                                         location = A_LOCATION)
-    val tournament2 = TournamentRegistry(atpTourId = ANOTHER_ATP_TOUR_ID,
-                                         tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                         name = ANOTHER_NAME,
-                                         startDate = ANOTHER_START_DATE,
-                                         endDate = ANOTHER_END_DATE,
-                                         year = A_YEAR,
-                                         points = ANOTHER_POINTS,
-                                         surface = ANOTHER_SURFACE_ENUM,
-                                         location = ANOTHER_LOCATION)
-    val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
-
-    val batchElement1 = mapOf("atpTourId" to AN_ATP_TOUR_ID,
-                              "tennisTvId" to A_TENNIS_TV_ID,
-                              "name" to A_NAME,
-                              "points" to A_POINTS,
-                              "location" to A_LOCATION,
-                              "surface" to A_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to A_START_DATE,
-                              "endDate" to AN_END_DATE)
-    val batchElement2 = mapOf("atpTourId" to ANOTHER_ATP_TOUR_ID,
-                              "tennisTvId" to ANOTHER_TENNIS_TV_ID,
-                              "name" to ANOTHER_NAME,
-                              "points" to ANOTHER_POINTS,
-                              "location" to ANOTHER_LOCATION,
-                              "surface" to ANOTHER_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to ANOTHER_START_DATE,
-                              "endDate" to ANOTHER_END_DATE)
-    val paramSource = arrayOf(batchElement1, batchElement2)
-
-    val expectedMessage = "Unexpected error during insert: I'm an error."
-
-    every { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) } throws RuntimeException("I'm an error.")
-
-    assertThrowsWithMessage<InvalidTournamentException>(expectedMessage) { repository.persistAll(tournaments) }
-
-    verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) }
+    verify(exactly = 1) { tournamentDao.persistNewTournaments(tournamentsDao) }
   }
 
   @Test
@@ -195,31 +93,31 @@ class JdbcPersistTournamentsRepositoryTest {
                                          location = ANOTHER_LOCATION)
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
-    val batchElement1 = mapOf("atpTourId" to AN_ATP_TOUR_ID,
-                              "tennisTvId" to A_TENNIS_TV_ID,
-                              "name" to A_NAME,
-                              "points" to A_POINTS,
-                              "location" to A_LOCATION,
-                              "surface" to A_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to A_START_DATE,
-                              "endDate" to AN_END_DATE)
-    val batchElement2 = mapOf("atpTourId" to ANOTHER_ATP_TOUR_ID,
-                              "tennisTvId" to ANOTHER_TENNIS_TV_ID,
-                              "name" to ANOTHER_NAME,
-                              "points" to ANOTHER_POINTS,
-                              "location" to ANOTHER_LOCATION,
-                              "surface" to ANOTHER_SURFACE,
-                              "year" to A_YEAR,
-                              "startDate" to ANOTHER_START_DATE,
-                              "endDate" to ANOTHER_END_DATE)
-    val paramSource = arrayOf(batchElement1, batchElement2)
+    val tournamentDao1 = aNewJdbcTournamentDto(atpTourId = AN_ATP_TOUR_ID,
+                                               tennisTvId = A_TENNIS_TV_ID,
+                                               name = A_NAME,
+                                               startDate = A_START_DATE_LOCAL_DATE,
+                                               endDate = AN_END_DATE_LOCAL_DATE,
+                                               year = A_YEAR,
+                                               points = A_POINTS,
+                                               surface = A_SURFACE,
+                                               location = A_LOCATION)
+    val tournamentDao2 = aNewJdbcTournamentDto(atpTourId = ANOTHER_ATP_TOUR_ID,
+                                               tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                               name = ANOTHER_NAME,
+                                               startDate = ANOTHER_START_DATE_LOCAL_DATE,
+                                               endDate = ANOTHER_END_DATE_LOCAL_DATE,
+                                               year = A_YEAR,
+                                               points = ANOTHER_POINTS,
+                                               surface = ANOTHER_SURFACE,
+                                               location = ANOTHER_LOCATION)
+    val tournamentsDao = listOf(tournamentDao1, tournamentDao2)
 
-    every { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) } returns intArrayOf(1, 1)
+    every { tournamentDao.persistNewTournaments(tournamentsDao) } just runs
 
-    repository.persistAll(tournaments)
+    repository.persistNewTournaments(tournaments)
 
-    verify(exactly = 1) { namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, paramSource) }
+    verify(exactly = 1) { tournamentDao.persistNewTournaments(tournamentsDao) }
   }
 
   companion object {
@@ -244,11 +142,9 @@ class JdbcPersistTournamentsRepositoryTest {
 
     private val A_SURFACE_ENUM = Surface.HARD
     private val ANOTHER_SURFACE_ENUM = Surface.CLAY
-
-    private val INSERT_TOURNAMENTS_QUERY = """
-      INSERT INTO TOURNAMENTS
-      (ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE)
-      VALUES(:atpTourId, :tennisTvId, :name, :points, :location, :surface, :year, :startDate, :endDate);
-    """.trimIndent()
+    private val A_START_DATE_LOCAL_DATE = LocalDate.of(2025, 1, 1)
+    private val AN_END_DATE_LOCAL_DATE = LocalDate.of(2025, 1, 2)
+    private val ANOTHER_START_DATE_LOCAL_DATE = LocalDate.of(2025, 1, 3)
+    private val ANOTHER_END_DATE_LOCAL_DATE = LocalDate.of(2025, 1, 4)
   }
 }

@@ -13,7 +13,7 @@ class AddTournamentsService(private val tournamentsRegistryRepository: Tournamen
 
     when (val tournamentsRegistry = tournamentsRegistryRepository.retrieveAllTournamentsFor(year)) {
 
-      is FoundTournamentsRegistry -> persistTournamentsRepository.persistAll(tournamentsRegistry)
+      is FoundTournamentsRegistry -> persistTournamentsRepository.persistNewTournaments(tournamentsRegistry)
       is NotFoundTournamentsRegistry -> throw InvalidYearException(year.toString())
     }
   }

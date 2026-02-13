@@ -4,5 +4,5 @@ import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournament
 
 interface PersistTournamentsRepository {
 
-  fun persistAll(tournaments: FoundTournamentsRegistry)
+  fun persistNewTournaments(tournaments: FoundTournamentsRegistry)
 }

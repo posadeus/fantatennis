@@ -6,6 +6,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBase
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto.Companion.tournamentRowMapper
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.NewJdbcTournamentDto
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
@@ -21,7 +22,7 @@ class JdbcTournamentDao(private val namedParameterJdbcTemplate: NamedParameterJd
       ?: throw EmptyResultDataAccessException("No tournament found with id $id", 1)
 
   @Transactional
-  override fun persistNewTournaments(tournaments: List<JdbcTournamentDto>) {
+  override fun persistNewTournaments(tournaments: List<NewJdbcTournamentDto>) {
     try {
 
       val batchResult = tournaments
@@ -40,7 +41,7 @@ class JdbcTournamentDao(private val namedParameterJdbcTemplate: NamedParameterJd
   private fun persistNewTournaments(params: List<Map<String, Any>>): IntArray =
       namedParameterJdbcTemplate.batchUpdate(INSERT_TOURNAMENTS_QUERY, params.toTypedArray())
 
-  private fun toEntryParams(dto: JdbcTournamentDto): Map<String, Any> =
+  private fun toEntryParams(dto: NewJdbcTournamentDto): Map<String, Any> =
       mapOf("atpTourId" to dto.atpTourId,
             "tennisTvId" to dto.tennisTvId,
             "name" to dto.name,

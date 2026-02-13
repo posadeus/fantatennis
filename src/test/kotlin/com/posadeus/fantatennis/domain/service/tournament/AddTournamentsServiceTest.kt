@@ -42,12 +42,12 @@ class AddTournamentsServiceTest {
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
     every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns tournaments
-    every { persistTournamentsRepository.persistAll(tournaments) } just runs
+    every { persistTournamentsRepository.persistNewTournaments(tournaments) } just runs
 
     service.addTournamentsFor(A_YEAR)
 
     verify(exactly = 1) { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) }
-    verify(exactly = 1) { persistTournamentsRepository.persistAll(tournaments) }
+    verify(exactly = 1) { persistTournamentsRepository.persistNewTournaments(tournaments) }
   }
 
   @Test
@@ -85,12 +85,12 @@ class AddTournamentsServiceTest {
     val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
     every { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) } returns tournaments
-    every { persistTournamentsRepository.persistAll(tournaments) } throws RuntimeException()
+    every { persistTournamentsRepository.persistNewTournaments(tournaments) } throws RuntimeException()
 
     assertThrows<RuntimeException> { service.addTournamentsFor(A_YEAR) }
 
     verify(exactly = 1) { tournamentsRegistryRepository.retrieveAllTournamentsFor(A_YEAR) }
-    verify(exactly = 1) { persistTournamentsRepository.persistAll(tournaments) }
+    verify(exactly = 1) { persistTournamentsRepository.persistNewTournaments(tournaments) }
   }
 
   companion object {

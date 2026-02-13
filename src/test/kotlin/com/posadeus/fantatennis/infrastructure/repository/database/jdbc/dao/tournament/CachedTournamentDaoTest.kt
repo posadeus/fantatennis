@@ -7,6 +7,7 @@ import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestNewJdbcTournamentDto.aNewJdbcTournamentDto
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.*
@@ -111,7 +112,7 @@ class CachedTournamentDaoTest {
     @Test
     fun `persisted by delegate and flush tournamentsCache if int the same year`() {
 
-      val tournaments = listOf(aJdbcTournamentDto(year = A_YEAR), aJdbcTournamentDto(year = A_YEAR))
+      val tournaments = listOf(aNewJdbcTournamentDto(year = A_YEAR), aNewJdbcTournamentDto(year = A_YEAR))
 
       tournamentsCache.put(A_YEAR, listOf(aJdbcTournamentDto(year = A_YEAR)))
       tournamentsCache.put(ANOTHER_YEAR, listOf(aJdbcTournamentDto(year = ANOTHER_YEAR)))
@@ -139,6 +140,6 @@ class CachedTournamentDaoTest {
     private const val ANOTHER_YEAR = 2026
     private const val AN_ID = 123
 
-    private val TOURNAMENTS = listOf(aJdbcTournamentDto(), aJdbcTournamentDto())
+    private val TOURNAMENTS = listOf(aNewJdbcTournamentDto(), aNewJdbcTournamentDto())
   }
 }
