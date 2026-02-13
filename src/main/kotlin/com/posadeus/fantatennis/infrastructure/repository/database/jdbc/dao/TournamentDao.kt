@@ -6,4 +6,5 @@ interface TournamentDao {
 
   fun retrieveAllBy(year: Int): List<JdbcTournamentDto>
   fun retrieveBy(id: Int): JdbcTournamentDto
+  fun persistNewTournaments(tournaments: List<JdbcTournamentDto>)
 }

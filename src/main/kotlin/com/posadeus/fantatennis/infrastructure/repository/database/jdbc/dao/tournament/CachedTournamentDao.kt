@@ -13,4 +13,13 @@ class CachedTournamentDao(private val tournamentsCache: Cache<Int, List<JdbcTour
 
   override fun retrieveBy(id: Int): JdbcTournamentDto =
       tournamentCache.get(id) { delegate.retrieveBy(id) }
+
+  override fun persistNewTournaments(tournaments: List<JdbcTournamentDto>) {
+
+    delegate.persistNewTournaments(tournaments)
+
+    tournaments
+        .groupBy { it.year }
+        .forEach { (year, _) -> tournamentsCache.invalidate(year) }
+  }
 }

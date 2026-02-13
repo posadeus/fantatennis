@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @OpenForSpring
 class SqlPersistTeamPlayersRepository(private val teamDao: TeamDao) : PersistTeamPlayersRepository {
 
-  @Transactional
+  @Transactional // TODO Move transactional into JdbcTeamDao
   override fun persist(teamId: Int, playerIds: Set<String>, startingTournamentId: Int) {
 
     try {

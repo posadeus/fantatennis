@@ -2,12 +2,15 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tou
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
+import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
 import io.mockk.*
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.*
+import kotlin.test.assertNotNull
 
 class CachedTournamentDaoTest {
 
@@ -18,7 +21,7 @@ class CachedTournamentDaoTest {
   private val dao: TournamentDao = CachedTournamentDao(tournamentsCache, tournamentCache, delegate)
 
   @Nested
-  inner class ByYear {
+  inner class RetrieveByYear {
 
     @Test
     fun `no results from cache so it call delegate and cache the result`() {
@@ -47,7 +50,7 @@ class CachedTournamentDaoTest {
   }
 
   @Nested
-  inner class ById {
+  inner class RetrieveById {
 
     @Test
     fun `no results form cache and exception from the delegate not stored into cache`() {
@@ -86,9 +89,56 @@ class CachedTournamentDaoTest {
     }
   }
 
+  @Nested
+  inner class PersistNewTournaments {
+
+    @Test
+    fun `throws any error from delegate`() {
+
+      tournamentsCache.put(A_YEAR, listOf(aJdbcTournamentDto(year = A_YEAR)))
+
+      assertThat(tournamentsCache.getIfPresent(A_YEAR)!!.size).isEqualTo(1)
+
+      val expectedMessage = "Error!!"
+
+      every { delegate.persistNewTournaments(TOURNAMENTS) } throws InvalidTournamentException(expectedMessage)
+
+      assertThat(tournamentsCache.getIfPresent(A_YEAR)!!.size).isEqualTo(1)
+
+      assertThrowsWithMessage<InvalidTournamentException>(expectedMessage) { dao.persistNewTournaments(TOURNAMENTS) }
+    }
+
+    @Test
+    fun `persisted by delegate and flush tournamentsCache if int the same year`() {
+
+      val tournaments = listOf(aJdbcTournamentDto(year = A_YEAR), aJdbcTournamentDto(year = A_YEAR))
+
+      tournamentsCache.put(A_YEAR, listOf(aJdbcTournamentDto(year = A_YEAR)))
+      tournamentsCache.put(ANOTHER_YEAR, listOf(aJdbcTournamentDto(year = ANOTHER_YEAR)))
+      tournamentCache.put(AN_ID, aJdbcTournamentDto(tournamentId = AN_ID))
+
+      assertThat(tournamentsCache.getIfPresent(A_YEAR)!!.size).isEqualTo(1)
+      assertThat(tournamentsCache.getIfPresent(ANOTHER_YEAR)!!.size).isEqualTo(1)
+      assertNotNull(tournamentCache.getIfPresent(AN_ID))
+
+      every { delegate.persistNewTournaments(tournaments) } returns Unit
+
+      dao.persistNewTournaments(tournaments)
+
+      verify(exactly = 1) { delegate.persistNewTournaments(tournaments) }
+
+      assertThat(tournamentsCache.getIfPresent(A_YEAR)?.size).isEqualTo(null)
+      assertThat(tournamentsCache.getIfPresent(ANOTHER_YEAR)?.size).isEqualTo(1)
+      assertNotNull(tournamentCache.getIfPresent(AN_ID))
+    }
+  }
+
   companion object {
 
     private const val A_YEAR = 2025
+    private const val ANOTHER_YEAR = 2026
     private const val AN_ID = 123
+
+    private val TOURNAMENTS = listOf(aJdbcTournamentDto(), aJdbcTournamentDto())
   }
 }
