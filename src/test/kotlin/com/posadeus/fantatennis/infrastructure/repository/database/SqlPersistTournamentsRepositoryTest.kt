@@ -1,24 +1,20 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
+package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.exception.InvalidTournamentException
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
-import com.posadeus.fantatennis.domain.model.Surface
-import com.posadeus.fantatennis.domain.model.TournamentRegistry
-import com.posadeus.fantatennis.domain.model.TournamentsCreated.ErrorTournamentsCreation
-import com.posadeus.fantatennis.domain.model.TournamentsCreated.SuccessTournamentsCreated
-import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestNewJdbcTournamentDto.aNewJdbcTournamentDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestNewJdbcTournamentDto
 import io.mockk.*
-import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
+import org.assertj.core.api.AssertionsForClassTypes
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
-class JdbcPersistTournamentsRepositoryTest {
+class SqlPersistTournamentsRepositoryTest {
 
   private val tournamentDao: TournamentDao = mockk()
 
-  private val repository: PersistTournamentsRepository = JdbcPersistTournamentsRepository(tournamentDao)
+  private val repository: PersistTournamentsRepository = SqlPersistTournamentsRepository(tournamentDao)
 
   @Test
   fun `error from dao`() {
@@ -41,35 +37,35 @@ class JdbcPersistTournamentsRepositoryTest {
                                          points = ANOTHER_POINTS,
                                          surface = ANOTHER_SURFACE_ENUM,
                                          location = ANOTHER_LOCATION)
-    val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
+    val tournaments = TournamentsRegistry.FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
-    val tournamentDao1 = aNewJdbcTournamentDto(atpTourId = AN_ATP_TOUR_ID,
-                                               tennisTvId = A_TENNIS_TV_ID,
-                                               name = A_NAME,
-                                               startDate = A_START_DATE_LOCAL_DATE,
-                                               endDate = AN_END_DATE_LOCAL_DATE,
-                                               year = A_YEAR,
-                                               points = A_POINTS,
-                                               surface = A_SURFACE,
-                                               location = A_LOCATION)
-    val tournamentDao2 = aNewJdbcTournamentDto(atpTourId = ANOTHER_ATP_TOUR_ID,
-                                               tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                               name = ANOTHER_NAME,
-                                               startDate = ANOTHER_START_DATE_LOCAL_DATE,
-                                               endDate = ANOTHER_END_DATE_LOCAL_DATE,
-                                               year = A_YEAR,
-                                               points = ANOTHER_POINTS,
-                                               surface = ANOTHER_SURFACE,
-                                               location = ANOTHER_LOCATION)
+    val tournamentDao1 = TestNewJdbcTournamentDto.aNewJdbcTournamentDto(atpTourId = AN_ATP_TOUR_ID,
+                                                                        tennisTvId = A_TENNIS_TV_ID,
+                                                                        name = A_NAME,
+                                                                        startDate = A_START_DATE_LOCAL_DATE,
+                                                                        endDate = AN_END_DATE_LOCAL_DATE,
+                                                                        year = A_YEAR,
+                                                                        points = A_POINTS,
+                                                                        surface = A_SURFACE,
+                                                                        location = A_LOCATION)
+    val tournamentDao2 = TestNewJdbcTournamentDto.aNewJdbcTournamentDto(atpTourId = ANOTHER_ATP_TOUR_ID,
+                                                                        tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                                                        name = ANOTHER_NAME,
+                                                                        startDate = ANOTHER_START_DATE_LOCAL_DATE,
+                                                                        endDate = ANOTHER_END_DATE_LOCAL_DATE,
+                                                                        year = A_YEAR,
+                                                                        points = ANOTHER_POINTS,
+                                                                        surface = ANOTHER_SURFACE,
+                                                                        location = ANOTHER_LOCATION)
     val tournamentsDao = listOf(tournamentDao1, tournamentDao2)
 
     val errorMessage = "It's Friday, bro!"
 
-    val expected = ErrorTournamentsCreation(errorMessage)
+    val expected = TournamentsCreated.ErrorTournamentsCreation(errorMessage)
 
     every { tournamentDao.persistNewTournaments(tournamentsDao) } throws InvalidTournamentException(errorMessage)
 
-    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
+    AssertionsForClassTypes.assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     verify(exactly = 1) { tournamentDao.persistNewTournaments(tournamentsDao) }
   }
@@ -95,33 +91,33 @@ class JdbcPersistTournamentsRepositoryTest {
                                          points = ANOTHER_POINTS,
                                          surface = ANOTHER_SURFACE_ENUM,
                                          location = ANOTHER_LOCATION)
-    val tournaments = FoundTournamentsRegistry(listOf(tournament1, tournament2))
+    val tournaments = TournamentsRegistry.FoundTournamentsRegistry(listOf(tournament1, tournament2))
 
-    val tournamentDao1 = aNewJdbcTournamentDto(atpTourId = AN_ATP_TOUR_ID,
-                                               tennisTvId = A_TENNIS_TV_ID,
-                                               name = A_NAME,
-                                               startDate = A_START_DATE_LOCAL_DATE,
-                                               endDate = AN_END_DATE_LOCAL_DATE,
-                                               year = A_YEAR,
-                                               points = A_POINTS,
-                                               surface = A_SURFACE,
-                                               location = A_LOCATION)
-    val tournamentDao2 = aNewJdbcTournamentDto(atpTourId = ANOTHER_ATP_TOUR_ID,
-                                               tennisTvId = ANOTHER_TENNIS_TV_ID,
-                                               name = ANOTHER_NAME,
-                                               startDate = ANOTHER_START_DATE_LOCAL_DATE,
-                                               endDate = ANOTHER_END_DATE_LOCAL_DATE,
-                                               year = A_YEAR,
-                                               points = ANOTHER_POINTS,
-                                               surface = ANOTHER_SURFACE,
-                                               location = ANOTHER_LOCATION)
+    val tournamentDao1 = TestNewJdbcTournamentDto.aNewJdbcTournamentDto(atpTourId = AN_ATP_TOUR_ID,
+                                                                        tennisTvId = A_TENNIS_TV_ID,
+                                                                        name = A_NAME,
+                                                                        startDate = A_START_DATE_LOCAL_DATE,
+                                                                        endDate = AN_END_DATE_LOCAL_DATE,
+                                                                        year = A_YEAR,
+                                                                        points = A_POINTS,
+                                                                        surface = A_SURFACE,
+                                                                        location = A_LOCATION)
+    val tournamentDao2 = TestNewJdbcTournamentDto.aNewJdbcTournamentDto(atpTourId = ANOTHER_ATP_TOUR_ID,
+                                                                        tennisTvId = ANOTHER_TENNIS_TV_ID,
+                                                                        name = ANOTHER_NAME,
+                                                                        startDate = ANOTHER_START_DATE_LOCAL_DATE,
+                                                                        endDate = ANOTHER_END_DATE_LOCAL_DATE,
+                                                                        year = A_YEAR,
+                                                                        points = ANOTHER_POINTS,
+                                                                        surface = ANOTHER_SURFACE,
+                                                                        location = ANOTHER_LOCATION)
     val tournamentsDao = listOf(tournamentDao1, tournamentDao2)
 
-    val expected = SuccessTournamentsCreated
+    val expected = TournamentsCreated.SuccessTournamentsCreated
 
     every { tournamentDao.persistNewTournaments(tournamentsDao) } just runs
 
-    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
+    AssertionsForClassTypes.assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     verify(exactly = 1) { tournamentDao.persistNewTournaments(tournamentsDao) }
   }

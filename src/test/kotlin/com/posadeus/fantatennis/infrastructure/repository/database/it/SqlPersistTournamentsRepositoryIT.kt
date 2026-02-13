@@ -1,18 +1,15 @@
-package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it
+package com.posadeus.fantatennis.infrastructure.repository.database.it
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.jdbc.dao.TournamentDaoConfiguration
 import com.posadeus.fantatennis.domain.infrastructure.PersistTournamentsRepository
-import com.posadeus.fantatennis.domain.model.Surface
-import com.posadeus.fantatennis.domain.model.TournamentRegistry
-import com.posadeus.fantatennis.domain.model.TournamentsCreated.ErrorTournamentsCreation
-import com.posadeus.fantatennis.domain.model.TournamentsCreated.SuccessTournamentsCreated
-import com.posadeus.fantatennis.domain.model.TournamentsRegistry.FoundTournamentsRegistry
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcPersistTournamentsRepository
+import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.infrastructure.repository.database.SqlPersistTournamentsRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.tournament.CachedTournamentDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto
-import org.assertj.core.api.Assertions.assertThat
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -22,7 +19,6 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import java.time.LocalDate
@@ -37,7 +33,7 @@ import java.time.LocalDate
   "caches.caffeine.tournament-cache.expire-after-access-duration=1440",
   "caches.caffeine.tournament-cache.maximum-size=300"
 ])
-class JdbcPersistTournamentsRepositoryIT {
+class SqlPersistTournamentsRepositoryIT {
 
   @Autowired
   private lateinit var tournamentsCache: Cache<Int, List<JdbcTournamentDto>>
@@ -58,15 +54,15 @@ class JdbcPersistTournamentsRepositoryIT {
 
     val cachedTournamentDao = CachedTournamentDao(tournamentsCache, tournamentCache, jdbcTournamentDao)
 
-    repository = JdbcPersistTournamentsRepository(cachedTournamentDao)
+    repository = SqlPersistTournamentsRepository(cachedTournamentDao)
 
     tournamentsCache.invalidateAll()
     tournamentCache.invalidateAll()
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   )
   @Test
   fun `exception happens during inserts, transaction reverted`() {
@@ -89,7 +85,7 @@ class JdbcPersistTournamentsRepositoryIT {
                                          points = ANOTHER_POINTS,
                                          surface = ANOTHER_SURFACE_ENUM,
                                          location = ANOTHER_LOCATION)
-    val tournaments = FoundTournamentsRegistry(tournaments = listOf(tournament1, tournament2))
+    val tournaments = TournamentsRegistry.FoundTournamentsRegistry(tournaments = listOf(tournament1, tournament2))
 
     val expectedMessage = """
       Unexpected error during insert: PreparedStatementCallback; SQL [INSERT INTO TOURNAMENTS
@@ -97,9 +93,9 @@ class JdbcPersistTournamentsRepositoryIT {
       VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);]; Duplicate entry '123-123-FIRST_TOURNAMENT-2025' for key 'TOURNAMENTS.TOURNAMENTS_UNIQUE'
     """.trimIndent()
 
-    val expected = ErrorTournamentsCreation(expectedMessage)
+    val expected = TournamentsCreated.ErrorTournamentsCreation(expectedMessage)
 
-    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
+    Assertions.assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     val query = """
       SELECT TOURNAMENT_ID, ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE
@@ -109,12 +105,12 @@ class JdbcPersistTournamentsRepositoryIT {
 
     val queryParams = mapOf("atpTourId" to AN_ATP_TOUR_ID)
 
-    assertThat(namedParameterJdbcTemplate.query(query, queryParams, tournamentRowMapper).size).isEqualTo(0)
+    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, tournamentRowMapper).size).isEqualTo(0)
   }
 
   @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
   )
   @Test
   fun `persist success for all inputs`() {
@@ -137,11 +133,11 @@ class JdbcPersistTournamentsRepositoryIT {
                                          points = ANOTHER_POINTS,
                                          surface = ANOTHER_SURFACE_ENUM,
                                          location = ANOTHER_LOCATION)
-    val tournaments = FoundTournamentsRegistry(tournaments = listOf(tournament1, tournament2))
+    val tournaments = TournamentsRegistry.FoundTournamentsRegistry(tournaments = listOf(tournament1, tournament2))
 
-    val expected = SuccessTournamentsCreated
+    val expected = TournamentsCreated.SuccessTournamentsCreated
 
-    assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
+    Assertions.assertThat(repository.persistNewTournaments(tournaments)).isEqualTo(expected)
 
     val query = """
       SELECT TOURNAMENT_ID, ATP_TOUR_ID, TENNIS_TV_ID, NAME, POINTS, LOCATION, SURFACE, `YEAR`, START_DATE, END_DATE
@@ -151,7 +147,7 @@ class JdbcPersistTournamentsRepositoryIT {
 
     val queryParams = mapOf("atpTourIds" to listOf(AN_ATP_TOUR_ID, ANOTHER_ATP_TOUR_ID))
 
-    assertThat(namedParameterJdbcTemplate.query(query, queryParams, tournamentRowMapper).size).isEqualTo(2)
+    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, tournamentRowMapper).size).isEqualTo(2)
   }
 
   private val tournamentRowMapper = RowMapper { rs, _ ->

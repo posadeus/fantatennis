@@ -86,7 +86,7 @@ class ServiceConfiguration {
 
   @Bean
   fun addTournamentsService(tournamentsRegistryRepository: TournamentsRegistryRepository,
-                            jdbcPersistTournamentsRepository: PersistTournamentsRepository): AddTournamentsService =
+                            sqlPersistTournamentsRepository: PersistTournamentsRepository): AddTournamentsService =
       AddTournamentsService(tournamentsRegistryRepository,
-                            jdbcPersistTournamentsRepository)
+                            sqlPersistTournamentsRepository)
 }
