@@ -10,7 +10,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.Play
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.playerpoints.CachedPlayerPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -66,7 +66,7 @@ class SqlPersistPlayersPointsRepositoryIT {
 
     val expected = FantaPointPersistence.FantaPointPersistenceFailure(FailureReason.PERSISTENCE_ERROR)
 
-    Assertions.assertThat(repository.persistAll(players)).isEqualTo(expected)
+    assertThat(repository.persistAll(players)).isEqualTo(expected)
 
     val query = """
       SELECT *
@@ -77,7 +77,7 @@ class SqlPersistPlayersPointsRepositoryIT {
 
     val queryParams = mapOf("playerId" to listOf("C0D1", "TOO_LONG_NAME"))
 
-    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(1)
+    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(1)
   }
 
   @SqlGroup(
@@ -101,7 +101,7 @@ class SqlPersistPlayersPointsRepositoryIT {
 
     val queryParams = mapOf("playerId" to listOf("QR43", "A0B1"))
 
-    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(13)
+    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(13)
   }
 
   @SqlGroup(
@@ -125,7 +125,7 @@ class SqlPersistPlayersPointsRepositoryIT {
 
     val queryParams = mapOf("playerId" to listOf("QR43", "A0B1"))
 
-    Assertions.assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(9)
+    assertThat(namedParameterJdbcTemplate.query(query, queryParams, playerPointsRowMapper).size).isEqualTo(12)
   }
 
   private val playerPointsRowMapper = RowMapper { rs, _ ->

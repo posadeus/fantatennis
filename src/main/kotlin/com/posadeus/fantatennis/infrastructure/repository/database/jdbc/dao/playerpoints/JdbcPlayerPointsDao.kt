@@ -24,7 +24,7 @@ class JdbcPlayerPointsDao(private val namedParameterJdbcTemplate: NamedParameter
 
       entryParams
           .let { namedParameterJdbcTemplate.batchUpdate(INSERT_PLAYERS_POINTS_QUERY, it.toTypedArray()) }
-          .takeIf { batchResult -> batchResult.any { it != 1 } }
+          .takeIf { batchResult -> batchResult.any { it == 0 } }
           ?.let { throw exceptionManagement(entryParams, it) }
     }
     catch (e: RuntimeException) {
