@@ -61,7 +61,7 @@ class JdbcPlayerPointsDaoTest {
   }
 
   @Nested
-  inner class RetrieveByYear {
+  inner class RetrieveByTournamentYear {
 
     @Test
     fun `error on repository operation`() {

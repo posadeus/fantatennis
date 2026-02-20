@@ -20,15 +20,27 @@ class PlayerPointsDaoConfiguration {
       JdbcPlayerPointsDao(namedParameterJdbcTemplate)
 
   @Bean
-  fun cachedPlayerPointsDao(playerPointsCache: Cache<Int, List<JdbcPlayerPointsDto>>,
+  fun cachedPlayerPointsDao(playersPointsByTournamentIdCache: Cache<Int, List<JdbcPlayerPointsDto>>,
+                            playersPointsByTournamentYearCache: Cache<Int, List<JdbcPlayerPointsDto>>,
                             jdbcPlayerPointsDao: PlayerPointsDao): PlayerPointsDao =
-      CachedPlayerPointsDao(playerPointsCache,
+      CachedPlayerPointsDao(playersPointsByTournamentIdCache,
+                            playersPointsByTournamentYearCache,
                             jdbcPlayerPointsDao)
 
   @Bean
-  fun playerPointsCache(
+  fun playersPointsByTournamentIdCache(
       @Value("\${caches.caffeine.players-points-by-tournament-id-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
       @Value("\${caches.caffeine.players-points-by-tournament-id-cache.maximum-size}") maximumSize: Long
+  ): Cache<Int, List<JdbcPlayerPointsDto>> =
+      Caffeine.newBuilder()
+          .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)
+          .maximumSize(maximumSize)
+          .build()
+
+  @Bean
+  fun playersPointsByTournamentYearCache(
+      @Value("\${caches.caffeine.players-points-by-tournament-year-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
+      @Value("\${caches.caffeine.players-points-by-tournament-year-cache.maximum-size}") maximumSize: Long
   ): Cache<Int, List<JdbcPlayerPointsDto>> =
       Caffeine.newBuilder()
           .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)

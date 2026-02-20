@@ -4,19 +4,20 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 
-class CachedPlayerPointsDao(private val cache: Cache<Int, List<JdbcPlayerPointsDto>>,
+class CachedPlayerPointsDao(private val cacheById: Cache<Int, List<JdbcPlayerPointsDto>>,
+                            private val cacheByYear: Cache<Int, List<JdbcPlayerPointsDto>>,
                             private val delegate: PlayerPointsDao) : PlayerPointsDao {
 
   override fun retrieveByTournamentId(tournamentId: Int): List<JdbcPlayerPointsDto> =
-      cache.get(tournamentId) { delegate.retrieveByTournamentId(tournamentId) }
+      cacheById.get(tournamentId) { delegate.retrieveByTournamentId(tournamentId) }
 
-  override fun retrieveByTournamentYear(year: Int): List<JdbcPlayerPointsDto> {
-    TODO("Not yet implemented")
-  }
+  override fun retrieveByTournamentYear(year: Int): List<JdbcPlayerPointsDto> =
+      cacheByYear.get(year) { delegate.retrieveByTournamentYear(year) }
 
   override fun persistAll(players: List<JdbcPlayerPointsDto>) {
 
     delegate.persistAll(players)
-    cache.invalidateAll()
+    cacheById.invalidateAll()
+    cacheByYear.invalidateAll()
   }
 }

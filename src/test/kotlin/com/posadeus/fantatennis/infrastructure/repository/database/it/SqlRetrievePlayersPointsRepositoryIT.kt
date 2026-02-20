@@ -31,13 +31,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @TestPropertySource(properties = [
     "caches.caffeine.players-points-by-tournament-id-cache.expire-after-write-duration=10080",
     "caches.caffeine.players-points-by-tournament-id-cache.maximum-size=1000",
+    "caches.caffeine.players-points-by-tournament-year-cache.expire-after-write-duration=10080",
+    "caches.caffeine.players-points-by-tournament-year-cache.maximum-size=1000",
     "caches.caffeine.player-cache.expire-after-write-duration=10080",
     "caches.caffeine.player-cache.maximum-size=1000"
 ])
 class SqlRetrievePlayersPointsRepositoryIT {
 
   @Autowired
-  private lateinit var playersPointsCache: Cache<Int, List<JdbcPlayerPointsDto>>
+  private lateinit var playersPointsByTournamentIdCache: Cache<Int, List<JdbcPlayerPointsDto>>
+
+  @Autowired
+  private lateinit var playersPointsByTournamentYearCache: Cache<Int, List<JdbcPlayerPointsDto>>
 
   @Autowired
   private lateinit var jdbcPlayerPointsDao: PlayerPointsDao
@@ -53,12 +58,12 @@ class SqlRetrievePlayersPointsRepositoryIT {
   @BeforeEach
   fun setUp() {
 
-    val cachedPlayerPointsDao = CachedPlayerPointsDao(playersPointsCache, jdbcPlayerPointsDao)
+    val cachedPlayerPointsDao = CachedPlayerPointsDao(playersPointsByTournamentIdCache, playersPointsByTournamentYearCache, jdbcPlayerPointsDao)
     val cachedPlayerDao = CachedPlayerDao(playerCache, jdbcPlayerDao)
 
     repository = SqlRetrievePlayersPointsRepository(cachedPlayerPointsDao, cachedPlayerDao)
 
-    playersPointsCache.invalidateAll()
+    playersPointsByTournamentIdCache.invalidateAll()
     playerCache.invalidateAll()
   }
 
