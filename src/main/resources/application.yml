@@ -87,3 +87,6 @@ caches:
       expire-after-write-duration: 10080
       expire-after-access-duration: 10080
       maximum-size: 1000
+    fanta-tournament-team-by-tournament-id-cache:
+      expire-after-write-duration: 10080
+      maximum-size: 1000
