@@ -112,6 +112,19 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
         TOTAL_SCORE DESC;
     """.trimIndent()
 
+//    FantaTournamentDao.retrieveBy(fantaTournamentId)
+//          SELECT
+//            ft.STARTING_TOURNAMENT,
+//            ft.ENDING_TOURNAMENT,
+//            ft.TOURNAMENT_YEAR
+//          FROM FANTA_TOURNAMENTS ft
+//          WHERE ft.FANTA_TOURNAMENT_ID = :fantaTournamentId
+
+//    FantaTournamentTeamDao.retrieveBy(fantaTournamentId)
+//          SELECT ftts.TEAM_ID
+//          FROM FANTA_TOURNAMENTS_TEAMS as ftts
+//          WHERE ftts.FANTA_TOURNAMENT_ID = :fantaTournamentId
+
     private val LOGGER = LoggerFactory.getLogger(JdbcRetrieveFantaTournamentResultsRepository::class.java)
   }
 }
