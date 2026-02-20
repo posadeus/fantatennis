@@ -28,7 +28,9 @@ class JdbcPlayerPointsDaoTest {
 
       val expectedMessage = "Ops, I need help!"
 
-      every { jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_QUERY, params, playersPointsRowMapper) } throws RuntimeException(expectedMessage)
+      every {
+        jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_ID_QUERY, params, playersPointsRowMapper)
+      } throws RuntimeException(expectedMessage)
 
       assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveByTournamentId(A_TOURNAMENT_ID) }
     }
@@ -40,7 +42,7 @@ class JdbcPlayerPointsDaoTest {
 
       val expected = emptyList<JdbcPlayerPointsDto>()
 
-      every { jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_QUERY, params, playersPointsRowMapper) } returns expected
+      every { jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_ID_QUERY, params, playersPointsRowMapper) } returns expected
 
       assertThat(dao.retrieveByTournamentId(A_TOURNAMENT_ID)).isEqualTo(expected)
     }
@@ -52,9 +54,51 @@ class JdbcPlayerPointsDaoTest {
 
       val expected = listOf(aJdbcPlayerPointsDto(), aJdbcPlayerPointsDto(), aJdbcPlayerPointsDto())
 
-      every { jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_QUERY, params, playersPointsRowMapper) } returns expected
+      every { jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_ID_QUERY, params, playersPointsRowMapper) } returns expected
 
       assertThat(dao.retrieveByTournamentId(A_TOURNAMENT_ID)).isEqualTo(expected)
+    }
+  }
+
+  @Nested
+  inner class RetrieveByYear {
+
+    @Test
+    fun `error on repository operation`() {
+
+      val params = mapOf("tournamentYear" to A_YEAR)
+
+      val expectedMessage = "Ops, I need help!"
+
+      every {
+        jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_YEAR_QUERY, params, playersPointsRowMapper)
+      } throws RuntimeException(expectedMessage)
+
+      assertThrowsWithMessage<RuntimeException>(expectedMessage) { dao.retrieveByTournamentYear(A_YEAR) }
+    }
+
+    @Test
+    fun `no results returned by the query`() {
+
+      val params = mapOf("tournamentYear" to A_YEAR)
+
+      val expected = emptyList<JdbcPlayerPointsDto>()
+
+      every { jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_YEAR_QUERY, params, playersPointsRowMapper) } returns expected
+
+      assertThat(dao.retrieveByTournamentYear(A_YEAR)).isEqualTo(expected)
+    }
+
+    @Test
+    fun `results retrieved successfully`() {
+
+      val params = mapOf("tournamentYear" to A_YEAR)
+
+      val expected = listOf(aJdbcPlayerPointsDto(tournamentYear = A_YEAR), aJdbcPlayerPointsDto(tournamentYear = A_YEAR))
+
+      every { jdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_YEAR_QUERY, params, playersPointsRowMapper) } returns expected
+
+      assertThat(dao.retrieveByTournamentYear(A_YEAR)).isEqualTo(expected)
     }
   }
 
@@ -223,10 +267,16 @@ class JdbcPlayerPointsDaoTest {
     private const val ANOTHER_YEAR = 2024
     private const val ANOTHER_TOURNAMENT = 222
 
-    private val RETRIEVE_PLAYERS_POINTS_QUERY = """
+    private val RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_ID_QUERY = """
       SELECT *
       FROM PLAYERS_POINTS
       WHERE TOURNAMENT_ID = :tournamentId
+    """.trimIndent()
+
+    private val RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_YEAR_QUERY = """
+      SELECT *
+      FROM PLAYERS_POINTS
+      WHERE 'YEAR' = :tournamentYear
     """.trimIndent()
 
     private val INSERT_PLAYERS_POINTS_QUERY = """

@@ -10,6 +10,10 @@ class CachedPlayerPointsDao(private val cache: Cache<Int, List<JdbcPlayerPointsD
   override fun retrieveByTournamentId(tournamentId: Int): List<JdbcPlayerPointsDto> =
       cache.get(tournamentId) { delegate.retrieveByTournamentId(tournamentId) }
 
+  override fun retrieveByTournamentYear(year: Int): List<JdbcPlayerPointsDto> {
+    TODO("Not yet implemented")
+  }
+
   override fun persistAll(players: List<JdbcPlayerPointsDto>) {
 
     delegate.persistAll(players)
