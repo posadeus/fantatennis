@@ -1,9 +1,11 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.team
 
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
+import com.posadeus.fantatennis.domain.model.TeamId
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TeamDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto.Companion.teamRowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcTeamDao(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : TeamDao {
@@ -25,6 +27,9 @@ class JdbcTeamDao(private val namedParameterJdbcTemplate: NamedParameterJdbcTemp
     }
   }
 
+  override fun retrieveBy(teamIds: Set<TeamId>): List<JdbcTeamDto> =
+      namedParameterJdbcTemplate.query(RETRIEVE_TEAMS_QUERY, mapOf("teamIds" to teamIds), teamRowMapper)
+
   private fun toQueryParams(team: JdbcTeamDto): Map<String, Any> =
       mapOf("teamId" to team.teamId, "playerId" to team.playerId, "startingTournamentId" to team.startingTournamentId)
 
@@ -34,6 +39,12 @@ class JdbcTeamDao(private val namedParameterJdbcTemplate: NamedParameterJdbcTemp
       INSERT INTO TEAMS
       (TEAM_ID, PLAYER_ID, STARTING_TOURNAMENT)
       VALUES(:teamId, :playerId, :startingTournamentId);
+    """.trimIndent()
+
+    private val RETRIEVE_TEAMS_QUERY = """
+      SELECT *
+      FROM TEAMS 
+      WHERE TEAM_ID IN (:teamIds)
     """.trimIndent()
   }
 }

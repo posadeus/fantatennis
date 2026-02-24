@@ -125,6 +125,44 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 //          FROM FANTA_TOURNAMENTS_TEAMS as ftts
 //          WHERE ftts.FANTA_TOURNAMENT_ID = :fantaTournamentId
 
+//    PlayerPointsDao.retrieveByTournamentYear(year)
+//          SELECT
+//                pp.PLAYER_ID,
+//                pl.FULL_NAME,
+//                pp.TOURNAMENT_ID,
+//                pp.FANTA_POINTS
+//              FROM PLAYERS_POINTS pp
+//              LEFT JOIN PLAYERS pl ON pl.PLAYER_ID = pp.PLAYER_ID,
+//              (
+//                SELECT
+//                  ft.STARTING_TOURNAMENT,
+//                  ft.ENDING_TOURNAMENT,
+//                  ft.TOURNAMENT_YEAR
+//                FROM FANTA_TOURNAMENTS ft
+//                WHERE ft.FANTA_TOURNAMENT_ID = :fantaTournamentId
+//              ) AS fttt
+//              WHERE pp.TOURNAMENT_YEAR = fttt.TOURNAMENT_YEAR
+//              AND pp.TOURNAMENT_ID >= fttt.STARTING_TOURNAMENT
+//              AND pp.TOURNAMENT_ID <= fttt.ENDING_TOURNAMENT
+//              ORDER BY
+//                pp.PLAYER_ID ASC,
+//                pp.TOURNAMENT_ID ASC
+//            ) as playerPointsByTournament,
+
+//    TeamDao.retrieveBy(teamIds)
+//          SELECT
+//                tm.TEAM_ID,
+//                tm.PLAYER_ID,
+//                tm.STARTING_TOURNAMENT,
+//                tm.ENDING_TOURNAMENT
+//              FROM TEAMS tm
+//              WHERE tm.TEAM_ID IN (
+//                SELECT ftts.TEAM_ID
+//                FROM FANTA_TOURNAMENTS_TEAMS as ftts
+//                WHERE ftts.FANTA_TOURNAMENT_ID = :fantaTournamentId
+//              ) ORDER BY tm.TEAM_ID
+//            ) as playerStandsForTeam
+
     private val LOGGER = LoggerFactory.getLogger(JdbcRetrieveFantaTournamentResultsRepository::class.java)
   }
 }
