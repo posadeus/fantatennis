@@ -6,4 +6,5 @@ interface FantaTournamentTeamDao {
 
   fun persist(fantaTournamentTeam: JdbcFantaTournamentTeamDto)
   fun retrieveBy(fantaTournamentId: Int): JdbcFantaTournamentTeamDto
+  fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto
 }

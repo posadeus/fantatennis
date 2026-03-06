@@ -14,4 +14,8 @@ class CachedFantaTournamentTeamDao(private val cache: Cache<Int, JdbcFantaTourna
 
   override fun retrieveBy(fantaTournamentId: Int): JdbcFantaTournamentTeamDto =
       cache.get(fantaTournamentId) { delegate.retrieveBy(fantaTournamentId) }
+
+  override fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto {
+    TODO("Not yet implemented")
+  }
 }

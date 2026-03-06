@@ -1,10 +1,11 @@
 package com.posadeus.fantatennis.infrastructure.repository.database
 
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
-import com.posadeus.fantatennis.domain.model.DomainTeam
+import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.DomainTeam.FoundDomainTeam
 import com.posadeus.fantatennis.domain.model.DomainTeam.NotFoundDomainTeam
-import com.posadeus.fantatennis.domain.model.Team
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.*
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import org.springframework.dao.EmptyResultDataAccessException
 
 class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
@@ -15,19 +16,35 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
     TODO("Not yet implemented")
   }
 
-  override fun retrieveByTeamId(teamId: Int): DomainTeam {
+  override fun retrieveByTeamId(teamId: Int): DomainTeam =
+      try {
 
-    try {
+        val fantaTeam = fantaTeamDao.retrieveBy(teamId)
+        val teams = teamDao.retrieveBy(setOf(teamId))
 
-      fantaTeamDao.retrieveBy(teamId)
+        if (teams.isEmpty()) {
 
-      if (teamDao.retrieveBy(setOf(teamId)).isEmpty()) return NotFoundDomainTeam
-    }
-    catch (_: EmptyResultDataAccessException) {
+          NotFoundDomainTeam
+        }
+        else {
 
-      return NotFoundDomainTeam
-    }
+          val fantaTournamentTeam = fantaTournamentTeamDao.retrieveByTeamId(teamId)
 
-    return TODO()
-  }
+          toTeam(fantaTeam, fantaTournamentTeam, teams)
+        }
+      }
+      catch (_: EmptyResultDataAccessException) {
+
+        NotFoundDomainTeam
+      }
+
+  private fun toTeam(fantaTeam: JdbcFantaTeamDto,
+                     fantaTournamentTeam: JdbcFantaTournamentTeamDto,
+                     teams: List<JdbcTeamDto>): FoundDomainTeam =
+      FoundDomainTeam(teamId = fantaTeam.teamId,
+                      ownerId = fantaTeam.ownerId,
+                      fantaTournamentId = fantaTournamentTeam.fantaTournamentId,
+                      players = teams.associate {
+                        it.playerId to TournamentRange(start = it.startingTournamentId, end = it.endingTournamentId)
+                      })
 }

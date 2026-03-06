@@ -26,6 +26,10 @@ class JdbcFantaTournamentTeamDao(private val namedParameterJdbcTemplate: NamedPa
           }
       ?: throw EmptyResultDataAccessException(1)
 
+  override fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto {
+    TODO("Not yet implemented")
+  }
+
   companion object {
 
     private val CREATE_FANTA_TOURNAMENTS_TEAMS_QUERY = """
