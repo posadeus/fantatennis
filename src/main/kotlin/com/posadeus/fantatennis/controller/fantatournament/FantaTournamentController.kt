@@ -3,6 +3,7 @@ package com.posadeus.fantatennis.controller.fantatournament
 import com.posadeus.fantatennis.controller.FantaTournamentApi
 import com.posadeus.fantatennis.controller.model.fantatournament.*
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults.*
 import com.posadeus.fantatennis.domain.service.fantatournament.*
 import org.springframework.http.ResponseEntity
 

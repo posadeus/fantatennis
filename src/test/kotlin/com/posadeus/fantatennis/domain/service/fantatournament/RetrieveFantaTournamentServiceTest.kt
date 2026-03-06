@@ -3,7 +3,7 @@ package com.posadeus.fantatennis.domain.service.fantatournament
 import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
-import com.posadeus.fantatennis.domain.model.FoundFantaTournamentResults
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults.FoundFantaTournamentResults
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

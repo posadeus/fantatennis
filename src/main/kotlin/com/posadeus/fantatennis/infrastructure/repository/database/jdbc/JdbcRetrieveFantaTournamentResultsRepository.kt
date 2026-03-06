@@ -4,7 +4,8 @@ import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournament
 import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
 import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentResultsDto.Companion.tournamentResultsRowMapper
 import org.slf4j.LoggerFactory
