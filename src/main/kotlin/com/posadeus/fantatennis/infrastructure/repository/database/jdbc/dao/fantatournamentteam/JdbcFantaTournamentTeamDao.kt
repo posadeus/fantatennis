@@ -22,13 +22,16 @@ class JdbcFantaTournamentTeamDao(private val namedParameterJdbcTemplate: NamedPa
   override fun retrieveBy(fantaTournamentId: Int): JdbcFantaTournamentTeamDto =
       mapOf("fantaTournamentId" to fantaTournamentId)
           .let {
-            namedParameterJdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_QUERY, it, fantaTournamentTeamRowMapper)
+            namedParameterJdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, it, fantaTournamentTeamRowMapper)
           }
       ?: throw EmptyResultDataAccessException(1)
 
-  override fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto {
-    TODO("Not yet implemented")
-  }
+  override fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto =
+      mapOf("teamId" to teamId)
+          .let {
+            namedParameterJdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TEAM_ID_QUERY, it, fantaTournamentTeamRowMapper)
+          }
+      ?: throw EmptyResultDataAccessException(1)
 
   companion object {
 
@@ -38,10 +41,16 @@ class JdbcFantaTournamentTeamDao(private val namedParameterJdbcTemplate: NamedPa
       VALUES(:fantaTournamentId, :teamId);
     """.trimIndent()
 
-    private val RETRIEVE_FANTA_TOURNAMENTS_TEAMS_QUERY = """
+    private val RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY = """
       SELECT *
       FROM FANTA_TOURNAMENTS_TEAMS
       WHERE FANTA_TOURNAMENT_ID = :fantaTournamentId
+    """.trimIndent()
+
+    private val RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TEAM_ID_QUERY = """
+      SELECT *
+      FROM FANTA_TOURNAMENTS_TEAMS
+      WHERE TEAM_ID = :teamId
     """.trimIndent()
   }
 }

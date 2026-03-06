@@ -20,15 +20,27 @@ class FantaTournamentTeamDaoConfiguration {
       JdbcFantaTournamentTeamDao(namedParameterJdbcTemplate)
 
   @Bean
-  fun cachedFantaTournamentTeamDao(fantaTournamentTeamCache: Cache<Int, JdbcFantaTournamentTeamDto>,
+  fun cachedFantaTournamentTeamDao(fantaTournamentTeamCacheByTournamentId: Cache<Int, JdbcFantaTournamentTeamDto>,
+                                   fantaTournamentTeamCacheByTeamId: Cache<Int, JdbcFantaTournamentTeamDto>,
                                    jdbcFantaTournamentTeamDao: FantaTournamentTeamDao): FantaTournamentTeamDao =
-      CachedFantaTournamentTeamDao(fantaTournamentTeamCache,
+      CachedFantaTournamentTeamDao(fantaTournamentTeamCacheByTournamentId,
+                                   fantaTournamentTeamCacheByTeamId,
                                    jdbcFantaTournamentTeamDao)
 
   @Bean
-  fun fantaTournamentTeamCache(
+  fun fantaTournamentTeamCacheByTournamentId(
       @Value("\${caches.caffeine.fanta-tournament-team-by-tournament-id-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
       @Value("\${caches.caffeine.fanta-tournament-team-by-tournament-id-cache.maximum-size}") maximumSize: Long
+  ): Cache<Int, JdbcFantaTournamentTeamDto> =
+      Caffeine.newBuilder()
+          .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)
+          .maximumSize(maximumSize)
+          .build()
+
+  @Bean
+  fun fantaTournamentTeamCacheByTeamId(
+      @Value("\${caches.caffeine.fanta-tournament-team-by-team-id-cache.expire-after-write-duration}") expireAfterWriteDuration: Long,
+      @Value("\${caches.caffeine.fanta-tournament-team-by-team-id-cache.maximum-size}") maximumSize: Long
   ): Cache<Int, JdbcFantaTournamentTeamDto> =
       Caffeine.newBuilder()
           .expireAfterWrite(expireAfterWriteDuration, TimeUnit.MINUTES)

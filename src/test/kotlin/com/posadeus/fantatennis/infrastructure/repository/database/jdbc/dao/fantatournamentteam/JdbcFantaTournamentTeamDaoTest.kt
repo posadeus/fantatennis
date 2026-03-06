@@ -64,7 +64,7 @@ class JdbcFantaTournamentTeamDaoTest {
   }
 
   @Nested
-  inner class RetrieveBy {
+  inner class RetrieveByFantaTournamentId {
 
     @Test
     fun `no results throws EmptyResultDataAccessException`() {
@@ -72,7 +72,7 @@ class JdbcFantaTournamentTeamDaoTest {
       val params = mapOf("fantaTournamentId" to A_FANTA_TOURNAMENT_ID)
 
       every {
-        jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_QUERY, params, fantaTournamentTeamRowMapper)
+        jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper)
       } throws EmptyResultDataAccessException(1)
 
       assertThrows<EmptyResultDataAccessException> { dao.retrieveBy(A_FANTA_TOURNAMENT_ID) }
@@ -85,9 +85,37 @@ class JdbcFantaTournamentTeamDaoTest {
 
       val expected = aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID)
 
-      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_QUERY, params, fantaTournamentTeamRowMapper) } returns expected
+      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper) } returns expected
 
       assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+    }
+  }
+
+  @Nested
+  inner class RetrieveByFantaTeamId {
+
+    @Test
+    fun `no results throws EmptyResultDataAccessException`() {
+
+      val params = mapOf("teamId" to A_TEAM_ID)
+
+      every {
+        jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TEAM_ID_QUERY, params, fantaTournamentTeamRowMapper)
+      } throws EmptyResultDataAccessException(1)
+
+      assertThrows<EmptyResultDataAccessException> { dao.retrieveByTeamId(A_TEAM_ID) }
+    }
+
+    @Test
+    fun `tournament returned`() {
+
+      val params = mapOf("teamId" to A_TEAM_ID)
+
+      val expected = aJdbcFantaTournamentTeamDto(teamId = A_TEAM_ID)
+
+      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TEAM_ID_QUERY, params, fantaTournamentTeamRowMapper) } returns expected
+
+      assertThat(dao.retrieveByTeamId(A_TEAM_ID)).isEqualTo(expected)
     }
   }
 
@@ -102,10 +130,16 @@ class JdbcFantaTournamentTeamDaoTest {
       VALUES(:fantaTournamentId, :teamId);
     """.trimIndent()
 
-    private val RETRIEVE_FANTA_TOURNAMENTS_TEAMS_QUERY = """
+    private val RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY = """
       SELECT *
       FROM FANTA_TOURNAMENTS_TEAMS
       WHERE FANTA_TOURNAMENT_ID = :fantaTournamentId
+    """.trimIndent()
+
+    private val RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TEAM_ID_QUERY = """
+      SELECT *
+      FROM FANTA_TOURNAMENTS_TEAMS
+      WHERE TEAM_ID = :teamId
     """.trimIndent()
   }
 }
