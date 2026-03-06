@@ -20,6 +20,8 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
     try {
 
       fantaTeamDao.retrieveBy(teamId)
+
+      if (teamDao.retrieveBy(setOf(teamId)).isEmpty()) return NotFoundDomainTeam
     }
     catch (_: EmptyResultDataAccessException) {
 
