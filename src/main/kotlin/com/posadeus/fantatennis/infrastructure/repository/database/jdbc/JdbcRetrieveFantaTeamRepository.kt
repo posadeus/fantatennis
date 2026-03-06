@@ -41,6 +41,10 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
     }
   }
 
+  override fun retrieveByTeamId(teamId: Int): DomainTeam {
+    TODO("Not yet implemented")
+  }
+
   companion object {
 
     private val RETRIEVE_FANTA_TEAM_QUERY = """
