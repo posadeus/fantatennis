@@ -7,21 +7,24 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.dao.EmptyResultDataAccessException
 
 class SqlRetrieveFantaTeamRepositoryTest {
 
   private val teamDao: TeamDao = mockk()
-  private val fantaTournamentDao: FantaTournamentDao = mockk()
+  private val fantaTeamDao: FantaTeamDao = mockk()
   private val fantaTournamentTeamDao: FantaTournamentTeamDao = mockk()
 
-  private val repository: RetrieveFantaTeamRepository = SqlRetrieveFantaTeamRepository(teamDao, fantaTournamentDao, fantaTournamentTeamDao)
+  private val repository: RetrieveFantaTeamRepository = SqlRetrieveFantaTeamRepository(teamDao, fantaTeamDao, fantaTournamentTeamDao)
 
   @Test
-  fun `retrieve fails due to team not found`() {
+  fun `retrieve fails due to fanta team not found`() {
+
+    val message = "Where is the fanta team?"
 
     val expected = NotFoundDomainTeam
 
-    every { teamDao.retrieveBy(setOf(A_TEAM_ID)) } returns emptyList()
+    every { fantaTeamDao.retrieveBy(A_TEAM_ID) } throws EmptyResultDataAccessException(message, 1)
 
     assertThat(repository.retrieveByTeamId(A_TEAM_ID)).isEqualTo(expected)
   }
