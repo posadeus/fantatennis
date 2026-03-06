@@ -2,6 +2,7 @@ package com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.fan
 
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.FantaTournamentTeamDao
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcFantaTournamentTeamDto.Companion.fantaTournamentTeamRowMapper
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcFantaTournamentTeamDto.aJdbcFantaTournamentTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.exception.NoInsertException
@@ -67,25 +68,31 @@ class JdbcFantaTournamentTeamDaoTest {
   inner class RetrieveByFantaTournamentId {
 
     @Test
-    fun `no results throws EmptyResultDataAccessException`() {
+    fun `no results`() {
 
       val params = mapOf("fantaTournamentId" to A_FANTA_TOURNAMENT_ID)
 
-      every {
-        jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper)
-      } throws EmptyResultDataAccessException(1)
+      val expected = emptyList<JdbcFantaTournamentTeamDto>()
 
-      assertThrows<EmptyResultDataAccessException> { dao.retrieveBy(A_FANTA_TOURNAMENT_ID) }
+      every {
+        jdbcTemplate.query(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper)
+      } returns expected
+
+      assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
     }
 
     @Test
-    fun `tournament returned`() {
+    fun `tournament's teams returned`() {
 
       val params = mapOf("fantaTournamentId" to A_FANTA_TOURNAMENT_ID)
 
-      val expected = aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID)
+      val fantaTournamentTeam1 = aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID, teamId = A_TEAM_ID)
+      val fantaTournamentTeam2 = aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID, teamId = ANOTHER_TEAM_ID)
+      val expected = listOf(fantaTournamentTeam1, fantaTournamentTeam2)
 
-      every { jdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper) } returns expected
+      every {
+        jdbcTemplate.query(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper)
+      } returns expected
 
       assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
     }
@@ -122,6 +129,7 @@ class JdbcFantaTournamentTeamDaoTest {
   companion object {
 
     private const val A_TEAM_ID = 123
+    private const val ANOTHER_TEAM_ID = 123
     private const val A_FANTA_TOURNAMENT_ID = 1566
 
     private val CREATE_FANTA_TOURNAMENTS_TEAMS_QUERY = """

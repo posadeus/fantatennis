@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 class CachedFantaTournamentTeamDaoTest {
 
-  private val cacheByTournamentId: Cache<Int, JdbcFantaTournamentTeamDto> = Caffeine.newBuilder().build()
+  private val cacheByTournamentId: Cache<Int, List<JdbcFantaTournamentTeamDto>> = Caffeine.newBuilder().build()
   private val cacheByTeamId: Cache<Int, JdbcFantaTournamentTeamDto> = Caffeine.newBuilder().build()
   private val delegate: FantaTournamentTeamDao = mockk()
 
@@ -41,10 +41,10 @@ class CachedFantaTournamentTeamDaoTest {
       val fantaTournamentTeam = aJdbcFantaTournamentTeamDto(teamId = A_TEAM_ID, fantaTournamentId = A_FANTA_TOURNAMENT_ID)
 
       val cacheData = aJdbcFantaTournamentTeamDto(teamId = A_TEAM_ID, fantaTournamentId = ANOTHER_FANTA_TOURNAMENT_ID)
-      cacheByTournamentId.put(ANOTHER_FANTA_TOURNAMENT_ID, cacheData)
+      cacheByTournamentId.put(ANOTHER_FANTA_TOURNAMENT_ID, listOf(cacheData))
       cacheByTeamId.put(A_TEAM_ID, cacheData)
 
-      assertThat(cacheByTournamentId.getIfPresent(ANOTHER_FANTA_TOURNAMENT_ID)).isEqualTo(cacheData)
+      assertThat(cacheByTournamentId.getIfPresent(ANOTHER_FANTA_TOURNAMENT_ID)).isEqualTo(listOf(cacheData))
       assertThat(cacheByTeamId.getIfPresent(A_TEAM_ID)).isEqualTo(cacheData)
 
       every { delegate.persist(fantaTournamentTeam) } returns Unit
@@ -53,7 +53,7 @@ class CachedFantaTournamentTeamDaoTest {
 
       verify(exactly = 1) { delegate.persist(fantaTournamentTeam) }
 
-      assertThat(cacheByTournamentId.getIfPresent(ANOTHER_FANTA_TOURNAMENT_ID)).isEqualTo(cacheData)
+      assertThat(cacheByTournamentId.getIfPresent(ANOTHER_FANTA_TOURNAMENT_ID)).isEqualTo(listOf(cacheData))
       assertThat(cacheByTeamId.getIfPresent(A_TEAM_ID)).isEqualTo(cacheData)
     }
   }
@@ -64,7 +64,7 @@ class CachedFantaTournamentTeamDaoTest {
     @Test
     fun `no result from cache so it call delegate and cache the result`() {
 
-      val expected = aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID)
+      val expected = listOf(aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID))
 
       every { delegate.retrieveBy(A_FANTA_TOURNAMENT_ID) } returns expected
 
@@ -77,7 +77,7 @@ class CachedFantaTournamentTeamDaoTest {
     @Test
     fun `no call to delegate if already in cache`() {
 
-      val expected = aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID)
+      val expected = listOf(aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID))
 
       cacheByTournamentId.put(A_FANTA_TOURNAMENT_ID, expected)
 

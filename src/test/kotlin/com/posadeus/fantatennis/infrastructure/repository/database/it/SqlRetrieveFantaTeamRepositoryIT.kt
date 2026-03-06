@@ -51,7 +51,7 @@ class SqlRetrieveFantaTeamRepositoryIT {
   private lateinit var fantaTeamCache: Cache<Int, JdbcFantaTeamDto>
 
   @Autowired
-  private lateinit var fantaTournamentTeamCacheByTournamentId: Cache<Int, JdbcFantaTournamentTeamDto>
+  private lateinit var fantaTournamentTeamCacheByTournamentId: Cache<Int, List<JdbcFantaTournamentTeamDto>>
 
   @Autowired
   private lateinit var fantaTournamentTeamCacheByTeamId: Cache<Int, JdbcFantaTournamentTeamDto>

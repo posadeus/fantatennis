@@ -40,7 +40,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
   "caches.caffeine.fanta-tournaments-cache.maximum-size=1000",
   "caches.caffeine.fanta-team-cache.expire-after-write-duration=10080",
   "caches.caffeine.fanta-team-cache.expire-after-access-duration=10080",
-  "caches.caffeine.fanta-team-cache.maximum-size=1000"
+  "caches.caffeine.fanta-team-cache.maximum-size=1000",
+  "caches.caffeine.fanta-tournament-team-by-tournament-id-cache.expire-after-write-duration=10080",
+  "caches.caffeine.fanta-tournament-team-by-tournament-id-cache.maximum-size=1000",
+  "caches.caffeine.fanta-tournament-team-by-team-id-cache.expire-after-write-duration=10080",
+  "caches.caffeine.fanta-tournament-team-by-team-id-cache.maximum-size=1000"
 ])
 class SqlCreateTeamRepositoryIT {
 

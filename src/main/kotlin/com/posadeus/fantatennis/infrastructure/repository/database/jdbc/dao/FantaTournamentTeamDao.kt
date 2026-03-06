@@ -5,6 +5,6 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Jdbc
 interface FantaTournamentTeamDao {
 
   fun persist(fantaTournamentTeam: JdbcFantaTournamentTeamDto)
-  fun retrieveBy(fantaTournamentId: Int): JdbcFantaTournamentTeamDto
+  fun retrieveBy(fantaTournamentId: Int): List<JdbcFantaTournamentTeamDto>
   fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto
 }
