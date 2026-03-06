@@ -30,7 +30,7 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
 
           val fantaTournamentTeam = fantaTournamentTeamDao.retrieveByTeamId(id)
 
-          toTeam(fantaTeam, fantaTournamentTeam, teams)
+          toFoundTeam(fantaTeam, fantaTournamentTeam, teams)
         }
       }
       catch (_: EmptyResultDataAccessException) {
@@ -40,37 +40,55 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
 
   override fun retrieveByFantaTournamentId(id: TournamentId): Teams {
 
-    return try {
+    val fantaTournamentTeams =
+        fantaTournamentTeamDao.retrieveByFantaTournamentId(id)
+            .associateBy { it.teamId }
+            .takeIf { it.isNotEmpty() }
+        ?: return Teams(emptyList())
 
-      val fantaTournamentTeams = fantaTournamentTeamDao.retrieveByFantaTournamentId(id).associateBy { it.teamId }
+      val fantaTeams =
+          try {
 
-      if (fantaTournamentTeams.isEmpty())
-        return Teams(emptyList())
+            fantaTournamentTeams.keys.associateWith { fantaTeamDao.retrieveBy(it) }
+          }
+          catch (_: EmptyResultDataAccessException) {
 
-      val fantaTeams = fantaTournamentTeams.keys.associateWith { fantaTeamDao.retrieveBy(it) }
+            return Teams(emptyList())
+          }
 
-      if (fantaTournamentTeams.keys.size != fantaTeams.keys.size)
-        return Teams(emptyList())
+      return if (fantaTournamentTeams.keys.size != fantaTeams.keys.size) {
 
-      val teams = fantaTournamentTeams.let { teamDao.retrieveBy(it.keys) }.groupBy { it.teamId }
+        Teams(emptyList())
+      }
+      else {
 
-      val foundTeams = teams.map { toTeam(fantaTeams[it.key]!!, fantaTournamentTeams[it.key]!!, it.value) }
-
-      val xor = (teams.keys - fantaTournamentTeams.keys) + (fantaTournamentTeams.keys - teams.keys)
-
-      val notFoundTeams = xor.map { NotFoundDomainTeam(it) }
-
-      return (foundTeams + notFoundTeams).let(::Teams)
-    }
-    catch (_: EmptyResultDataAccessException) {
-
-      Teams(emptyList())
-    }
+        fantaTournamentTeams
+            .let { teamDao.retrieveBy(it.keys) }
+            .groupBy { it.teamId }
+            .let { teamsDto -> toTeams(teamsDto, fantaTeams, fantaTournamentTeams) }
+      }
   }
 
-  private fun toTeam(fantaTeam: JdbcFantaTeamDto,
-                     fantaTournamentTeam: JdbcFantaTournamentTeamDto,
-                     teams: List<JdbcTeamDto>): FoundDomainTeam =
+  private fun toTeams(teams: Map<Int, List<JdbcTeamDto>>,
+                      fantaTeams: Map<Int, JdbcFantaTeamDto>,
+                      fantaTournamentTeams: Map<Int, JdbcFantaTournamentTeamDto>): Teams =
+      (teams.map {
+        toFoundTeam(fantaTeams[it.key]!!, fantaTournamentTeams[it.key]!!, it.value)
+      } to toNotFoundTeams(teams.keys, fantaTournamentTeams.keys))
+          .let { (foundTeams, notFoundTeams) ->
+            (foundTeams + notFoundTeams)
+                .let(::Teams)
+          }
+
+  private fun toNotFoundTeams(teamIds: Set<Int>, fantaTournamentTeamIds: Set<Int>): List<NotFoundDomainTeam> =
+      xor(teamIds, fantaTournamentTeamIds).map { NotFoundDomainTeam(it) }
+
+  private fun xor(teamIds: Set<Int>, fantaTournamentTeamIds: Set<Int>): Set<Int> =
+      ((teamIds - fantaTournamentTeamIds) + (fantaTournamentTeamIds - teamIds))
+
+  private fun toFoundTeam(fantaTeam: JdbcFantaTeamDto,
+                          fantaTournamentTeam: JdbcFantaTournamentTeamDto,
+                          teams: List<JdbcTeamDto>): FoundDomainTeam =
       FoundDomainTeam(teamId = fantaTeam.teamId,
                       ownerId = fantaTeam.ownerId,
                       fantaTournamentId = fantaTournamentTeam.fantaTournamentId,
