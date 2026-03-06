@@ -7,5 +7,5 @@ sealed interface DomainTeam {
                              val fantaTournamentId: Int,
                              val players: Map<PlayerId, TournamentRange>): DomainTeam
 
-  data object NotFoundDomainTeam : DomainTeam
+  data class NotFoundDomainTeam(val teamId: TeamId) : DomainTeam
 }

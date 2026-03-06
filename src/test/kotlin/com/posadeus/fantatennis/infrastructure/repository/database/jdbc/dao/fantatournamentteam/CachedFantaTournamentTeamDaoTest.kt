@@ -66,12 +66,12 @@ class CachedFantaTournamentTeamDaoTest {
 
       val expected = listOf(aJdbcFantaTournamentTeamDto(fantaTournamentId = A_FANTA_TOURNAMENT_ID))
 
-      every { delegate.retrieveBy(A_FANTA_TOURNAMENT_ID) } returns expected
+      every { delegate.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID) } returns expected
 
-      assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
-      assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(dao.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(dao.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
 
-      verify(exactly = 1) { delegate.retrieveBy(A_FANTA_TOURNAMENT_ID) }
+      verify(exactly = 1) { delegate.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID) }
     }
 
     @Test
@@ -81,7 +81,7 @@ class CachedFantaTournamentTeamDaoTest {
 
       cacheByTournamentId.put(A_FANTA_TOURNAMENT_ID, expected)
 
-      assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(dao.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
 
       verify { delegate wasNot called }
     }

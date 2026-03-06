@@ -148,6 +148,7 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 //      ) as playerPointsByTournament,
 //--------------- PlayerPointsDao
 //      (
+// SqlRetrieveFantaTeamRepository.retrieveByFantaTournamentId(fantaTournamentId)
 // TeamDao.retrieveBy(teamIds)
 //        SELECT
 //          tm.TEAM_ID,
@@ -164,7 +165,8 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 //        ) ORDER BY tm.TEAM_ID
 //      ) as playerStandsForTeam
 //-------------- TeamDao
-//      LEFT JOIN FANTA_TEAMS ft2 ON playerStandsForTeam.TEAM_ID = ft2.TEAM_ID
+//      LEFT JOIN FANTA_TEAMS ft2 ON playerStandsForTeam.TEAM_ID = ft2.TEAM_ID --> FantaTeamDao.retrieveBy(teamId)
+//-------------- SqlRetrieveFantaTeamRepository
 //      WHERE playerStandsForTeam.PLAYER_ID = playerPointsByTournament.PLAYER_ID
 //      AND
 //      (

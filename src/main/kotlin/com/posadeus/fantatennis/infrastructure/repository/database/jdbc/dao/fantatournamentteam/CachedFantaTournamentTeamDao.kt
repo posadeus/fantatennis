@@ -13,9 +13,9 @@ class CachedFantaTournamentTeamDao(private val cacheByTournamentId: Cache<Int, L
     delegate.persist(fantaTournamentTeam)
   }
 
-  override fun retrieveBy(fantaTournamentId: Int): List<JdbcFantaTournamentTeamDto> =
-      cacheByTournamentId.get(fantaTournamentId) { delegate.retrieveBy(fantaTournamentId) }
+  override fun retrieveByFantaTournamentId(id: Int): List<JdbcFantaTournamentTeamDto> =
+      cacheByTournamentId.get(id) { delegate.retrieveByFantaTournamentId(id) }
 
-  override fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto =
-      cacheByTeamId.get(teamId) { delegate.retrieveByTeamId(teamId) }
+  override fun retrieveByTeamId(id: Int): JdbcFantaTournamentTeamDto =
+      cacheByTeamId.get(id) { delegate.retrieveByTeamId(id) }
 }

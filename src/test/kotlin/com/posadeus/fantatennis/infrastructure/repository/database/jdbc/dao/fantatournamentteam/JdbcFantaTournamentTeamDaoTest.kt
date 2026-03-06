@@ -78,7 +78,7 @@ class JdbcFantaTournamentTeamDaoTest {
         jdbcTemplate.query(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper)
       } returns expected
 
-      assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(dao.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
     }
 
     @Test
@@ -94,7 +94,7 @@ class JdbcFantaTournamentTeamDaoTest {
         jdbcTemplate.query(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, params, fantaTournamentTeamRowMapper)
       } returns expected
 
-      assertThat(dao.retrieveBy(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(dao.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID)).isEqualTo(expected)
     }
   }
 

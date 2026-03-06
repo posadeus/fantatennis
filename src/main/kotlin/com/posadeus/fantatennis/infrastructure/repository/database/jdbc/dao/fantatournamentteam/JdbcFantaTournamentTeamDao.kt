@@ -19,14 +19,14 @@ class JdbcFantaTournamentTeamDao(private val namedParameterJdbcTemplate: NamedPa
       throw NoInsertException("Insert failed on FANTA_TOURNAMENTS_TEAMS")
   }
 
-  override fun retrieveBy(fantaTournamentId: Int): List<JdbcFantaTournamentTeamDto> =
-      mapOf("fantaTournamentId" to fantaTournamentId)
+  override fun retrieveByFantaTournamentId(id: Int): List<JdbcFantaTournamentTeamDto> =
+      mapOf("fantaTournamentId" to id)
           .let {
             namedParameterJdbcTemplate.query(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TOURNAMENT_ID_QUERY, it, fantaTournamentTeamRowMapper)
           }
 
-  override fun retrieveByTeamId(teamId: Int): JdbcFantaTournamentTeamDto =
-      mapOf("teamId" to teamId)
+  override fun retrieveByTeamId(id: Int): JdbcFantaTournamentTeamDto =
+      mapOf("teamId" to id)
           .let {
             namedParameterJdbcTemplate.queryForObject(RETRIEVE_FANTA_TOURNAMENTS_TEAMS_BY_TEAM_ID_QUERY, it, fantaTournamentTeamRowMapper)
           }

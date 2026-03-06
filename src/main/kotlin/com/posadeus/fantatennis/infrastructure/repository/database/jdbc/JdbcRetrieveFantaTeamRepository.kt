@@ -41,7 +41,11 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
     }
   }
 
-  override fun retrieveByTeamId(teamId: Int): DomainTeam {
+  override fun retrieveByTeamId(id: TeamId): DomainTeam {
+    TODO("Not yet implemented")
+  }
+
+  override fun retrieveByFantaTournamentId(id: TournamentId): Teams {
     TODO("Not yet implemented")
   }
 

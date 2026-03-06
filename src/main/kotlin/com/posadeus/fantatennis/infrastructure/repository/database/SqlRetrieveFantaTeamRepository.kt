@@ -16,27 +16,57 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
     TODO("Not yet implemented")
   }
 
-  override fun retrieveByTeamId(teamId: Int): DomainTeam =
+  override fun retrieveByTeamId(id: TeamId): DomainTeam =
       try {
 
-        val fantaTeam = fantaTeamDao.retrieveBy(teamId)
-        val teams = teamDao.retrieveBy(setOf(teamId))
+        val fantaTeam = fantaTeamDao.retrieveBy(id)
+        val teams = teamDao.retrieveBy(setOf(id))
 
         if (teams.isEmpty()) {
 
-          NotFoundDomainTeam
+          NotFoundDomainTeam(id)
         }
         else {
 
-          val fantaTournamentTeam = fantaTournamentTeamDao.retrieveByTeamId(teamId)
+          val fantaTournamentTeam = fantaTournamentTeamDao.retrieveByTeamId(id)
 
           toTeam(fantaTeam, fantaTournamentTeam, teams)
         }
       }
       catch (_: EmptyResultDataAccessException) {
 
-        NotFoundDomainTeam
+        NotFoundDomainTeam(id)
       }
+
+  override fun retrieveByFantaTournamentId(id: TournamentId): Teams {
+
+    return try {
+
+      val fantaTournamentTeams = fantaTournamentTeamDao.retrieveByFantaTournamentId(id).associateBy { it.teamId }
+
+      if (fantaTournamentTeams.isEmpty())
+        return Teams(emptyList())
+
+      val fantaTeams = fantaTournamentTeams.keys.associateWith { fantaTeamDao.retrieveBy(it) }
+
+      if (fantaTournamentTeams.keys.size != fantaTeams.keys.size)
+        return Teams(emptyList())
+
+      val teams = fantaTournamentTeams.let { teamDao.retrieveBy(it.keys) }.groupBy { it.teamId }
+
+      val foundTeams = teams.map { toTeam(fantaTeams[it.key]!!, fantaTournamentTeams[it.key]!!, it.value) }
+
+      val xor = (teams.keys - fantaTournamentTeams.keys) + (fantaTournamentTeams.keys - teams.keys)
+
+      val notFoundTeams = xor.map { NotFoundDomainTeam(it) }
+
+      return (foundTeams + notFoundTeams).let(::Teams)
+    }
+    catch (_: EmptyResultDataAccessException) {
+
+      Teams(emptyList())
+    }
+  }
 
   private fun toTeam(fantaTeam: JdbcFantaTeamDto,
                      fantaTournamentTeam: JdbcFantaTournamentTeamDto,

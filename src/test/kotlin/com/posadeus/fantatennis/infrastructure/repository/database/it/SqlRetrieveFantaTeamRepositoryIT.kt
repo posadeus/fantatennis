@@ -87,7 +87,7 @@ class SqlRetrieveFantaTeamRepositoryIT {
   @Test
   fun `no team found`() {
 
-    val expected = NotFoundDomainTeam
+    val expected = NotFoundDomainTeam(A_TEAM_ID)
 
     assertThat(repository.retrieveByTeamId(A_TEAM_ID)).isEqualTo(expected)
   }
