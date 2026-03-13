@@ -43,6 +43,8 @@ Fantasy tennis league management system built with Spring Boot + Kotlin, followi
 
 **Caching**: Caffeine cache is configured for tournaments, players, fanta teams, and rankings. Cache beans are defined in configuration classes and injected into DAOs/repositories.
 
+**Hexagonal architecture**: Keep domain logic out of repositories. Repositories are thin DAO wrappers — they translate DTOs to domain models and handle errors. Composition logic (e.g. joining data from multiple DAOs) belongs in services, not repositories.
+
 **Testing**: Unit tests use MockK for mocking. Integration tests (suffix `IT`) use Testcontainers with a MySQL container. WireMock is used for mocking external HTTP clients in tests.
 
 ### Technology Stack
