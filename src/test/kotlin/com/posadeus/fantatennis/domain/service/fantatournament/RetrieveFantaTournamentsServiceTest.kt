@@ -1,7 +1,7 @@
 package com.posadeus.fantatennis.domain.service.fantatournament
 
 import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentsDto
-import com.posadeus.fantatennis.domain.infrastructure.RetrieveAllFantaTournamentsRepository
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentsRepository
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournaments.Invalid
@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test
 
 class RetrieveFantaTournamentsServiceTest {
 
-  private val retrieveAllFantaTournamentsRepository: RetrieveAllFantaTournamentsRepository = mockk()
+  private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository = mockk()
 
-  private val service = RetrieveFantaTournamentsService(retrieveAllFantaTournamentsRepository)
+  private val service = RetrieveFantaTournamentsService(retrieveFantaTournamentsRepository)
 
   @Test
   fun `tournaments retrieved`() {
@@ -27,7 +27,7 @@ class RetrieveFantaTournamentsServiceTest {
     val tournaments = FantaTournamentsDto(ids = listOf(1, 2, 3))
     val expected = FoundFantaTournamentsResults(tournaments = tournaments)
 
-    every { retrieveAllFantaTournamentsRepository.retrieve() } returns fantaTournaments
+    every { retrieveFantaTournamentsRepository.retrieve() } returns fantaTournaments
 
     assertThat(service.retrieveAll()).isEqualTo(expected)
   }
@@ -39,7 +39,7 @@ class RetrieveFantaTournamentsServiceTest {
 
     val expected = NotFoundFantaTournaments
 
-    every { retrieveAllFantaTournamentsRepository.retrieve() } returns fantaTournaments
+    every { retrieveFantaTournamentsRepository.retrieve() } returns fantaTournaments
 
     assertThat(service.retrieveAll()).isEqualTo(expected)
   }
@@ -51,7 +51,7 @@ class RetrieveFantaTournamentsServiceTest {
 
     val expected = ErrorFantaTournamentsResults
 
-    every { retrieveAllFantaTournamentsRepository.retrieve() } returns fantaTournaments
+    every { retrieveFantaTournamentsRepository.retrieve() } returns fantaTournaments
 
     assertThat(service.retrieveAll()).isEqualTo(expected)
   }
