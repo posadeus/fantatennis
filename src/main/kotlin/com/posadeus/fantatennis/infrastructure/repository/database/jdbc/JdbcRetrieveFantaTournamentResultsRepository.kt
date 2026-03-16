@@ -121,7 +121,7 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 //        SUM(playerPointsByTournament.FANTA_POINTS) AS TOTAL_SCORE
 //      FROM
 //      (
-// PlayerPointsDao.retrieveByTournamentYear(year)
+// SqlRetrievePlayersPointsRepository.retrieveByYear(year)
 //        SELECT
 //          pp.PLAYER_ID,
 //          pl.FULL_NAME,
@@ -130,14 +130,14 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 //        FROM PLAYERS_POINTS pp
 //        LEFT JOIN PLAYERS pl ON pl.PLAYER_ID = pp.PLAYER_ID,
 //        (
-// FantaTournamentDao.retrieveBy(fantaTournamentId)
+// SqlRetrieveFantaTournamentsRepository.retrieveBy(fantaTournamentId)
 //          SELECT
 //            ft.STARTING_TOURNAMENT,
 //            ft.ENDING_TOURNAMENT,
 //            ft.TOURNAMENT_YEAR
 //          FROM FANTA_TOURNAMENTS ft
 //          WHERE ft.FANTA_TOURNAMENT_ID = :fantaTournamentId
-//--------------- FantaTournamentDao
+//--------------- SqlRetrieveFantaTournamentsRepository
 //        ) AS fttt
 //        WHERE pp.TOURNAMENT_YEAR = fttt.TOURNAMENT_YEAR
 //        AND pp.TOURNAMENT_ID >= fttt.STARTING_TOURNAMENT
@@ -146,10 +146,9 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 //          pp.PLAYER_ID ASC,
 //          pp.TOURNAMENT_ID ASC
 //      ) as playerPointsByTournament,
-//--------------- PlayerPointsDao
+//--------------- SqlRetrievePlayersPointsRepository
 //      (
 // SqlRetrieveFantaTeamRepository.retrieveByFantaTournamentId(fantaTournamentId)
-// TeamDao.retrieveBy(teamIds)
 //        SELECT
 //          tm.TEAM_ID,
 //          tm.PLAYER_ID,
@@ -157,15 +156,12 @@ class JdbcRetrieveFantaTournamentResultsRepository(private val namedParameterJdb
 //          tm.ENDING_TOURNAMENT
 //        FROM TEAMS tm
 //        WHERE tm.TEAM_ID IN (
-// FantaTournamentTeamDao.retrieveBy(fantaTournamentId)
 //          SELECT ftts.TEAM_ID
 //          FROM FANTA_TOURNAMENTS_TEAMS as ftts
 //          WHERE ftts.FANTA_TOURNAMENT_ID = :fantaTournamentId
-//-------------- FantaTournamentTeamDao
 //        ) ORDER BY tm.TEAM_ID
 //      ) as playerStandsForTeam
-//-------------- TeamDao
-//      LEFT JOIN FANTA_TEAMS ft2 ON playerStandsForTeam.TEAM_ID = ft2.TEAM_ID --> FantaTeamDao.retrieveBy(teamId)
+//      LEFT JOIN FANTA_TEAMS ft2 ON playerStandsForTeam.TEAM_ID = ft2.TEAM_ID
 //-------------- SqlRetrieveFantaTeamRepository
 //      WHERE playerStandsForTeam.PLAYER_ID = playerPointsByTournament.PLAYER_ID
 //      AND

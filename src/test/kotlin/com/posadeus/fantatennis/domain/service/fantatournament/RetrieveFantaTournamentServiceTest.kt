@@ -1,35 +1,63 @@
 package com.posadeus.fantatennis.domain.service.fantatournament
 
-import com.posadeus.fantatennis.controller.model.fantatournament.FantaTournamentDto
-import com.posadeus.fantatennis.controller.model.team.TeamDto
-import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTournamentResultsRepository
-import com.posadeus.fantatennis.domain.model.FantaTournamentResults.FoundFantaTournamentResults
-import io.mockk.every
-import io.mockk.mockk
+import com.posadeus.fantatennis.domain.infrastructure.*
+import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
+import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults.ErrorFantaTournamentResults
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults.NotFoundFantaTournamentId
+import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
+import io.mockk.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class RetrieveFantaTournamentServiceTest {
 
   private val retrieveFantaTournamentResultsRepository: RetrieveFantaTournamentResultsRepository = mockk()
+  private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository = mockk()
+  private val retrievePlayersPointsRepository: RetrievePlayersPointsRepository = mockk()
+  private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
 
-  private val service = RetrieveFantaTournamentService(retrieveFantaTournamentResultsRepository)
+  private val service = RetrieveFantaTournamentService(retrieveFantaTournamentResultsRepository,
+                                                       retrieveFantaTournamentsRepository,
+                                                       retrievePlayersPointsRepository,
+                                                       retrieveFantaTeamRepository)
 
   @Test
-  fun `retrieve tournament successfully`() {
+  fun `retrieve fails due to missing fanta tournament`() {
 
-    val tournamentDto = FantaTournamentDto(A_LIST_OF_TEAMS)
-    val expected = FoundFantaTournamentResults(tournamentDto)
+    val expected = NotFoundFantaTournamentId
 
-    every { retrieveFantaTournamentResultsRepository.retrieve(A_TOURNAMENT_ID) } returns expected
+    every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns InvalidFantaTournament
 
     assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+
+    verify { retrievePlayersPointsRepository wasNot called }
+    verify { retrieveFantaTeamRepository wasNot called }
+  }
+
+  @Test
+  fun `retrieve fails due to error on playersPoints repository`() {
+
+    val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                               startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                               endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                               tournamentYear = A_TOURNAMENT_YEAR)
+
+    val expected = ErrorFantaTournamentResults
+
+    every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
+    every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns InternalErrorPlayersPoints
+
+    assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+
+    verify { retrieveFantaTeamRepository wasNot called }
   }
 
   companion object {
 
     private const val A_TOURNAMENT_ID = 123
-
-    private val A_LIST_OF_TEAMS = emptyList<TeamDto>()
+    private const val A_STARTING_TOURNAMENT_ID = 1
+    private const val AN_ENDING_TOURNAMENT_ID = 2
+    private const val A_TOURNAMENT_YEAR = 2000
   }
 }
