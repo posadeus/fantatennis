@@ -14,35 +14,15 @@ class SqlRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPoin
                                          private val playerDao: PlayerDao) : RetrievePlayersPointsRepository {
 
   override fun retrieveByTournamentId(tournamentId: Int): PlayersPoints =
-      try {
-
-        playerPointsDao.retrieveByTournamentId(tournamentId)
-            .groupBy { it.playerId }
-            .takeIf { it.isNotEmpty() }
-            ?.let { playersPoints ->
-
-              val allPlayersByPlayerId = playerDao.retrieveAll().associateBy { it.playerId }
-
-              playersPoints
-                  .map { (playerId, playerPoints) ->
-                    allPlayersByPlayerId[playerId]
-                        ?.let { toPlayerPoints(it.playerId, it.fullName, playerPoints) }
-                    ?: throw RuntimeException("Player not found: $playerId")
-                  }
-                  .let(::FoundPlayersPoints)
-            }
-        ?: FoundPlayersPoints(playersPoints = emptyList())
-      }
-      catch (e: RuntimeException) {
-
-        LOGGER.error(e.message)
-        InternalErrorPlayersPoints
-      }
+      retrieve { playerPointsDao.retrieveByTournamentId(tournamentId) }
 
   override fun retrieveByYear(year: Int): PlayersPoints =
+      retrieve { playerPointsDao.retrieveByTournamentYear(year) }
+
+  private fun retrieve(retrieveFromDao: () -> List<JdbcPlayerPointsDto>): PlayersPoints =
       try {
 
-        playerPointsDao.retrieveByTournamentYear(year)
+        retrieveFromDao()
             .groupBy { it.playerId }
             .takeIf { it.isNotEmpty() }
             ?.let { playerPointsByPlayerId ->
