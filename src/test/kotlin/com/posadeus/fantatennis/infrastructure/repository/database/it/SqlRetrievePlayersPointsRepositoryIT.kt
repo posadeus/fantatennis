@@ -15,8 +15,7 @@ import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.Jdbc
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.it.IntegrationTestConfiguration
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -64,51 +63,160 @@ class SqlRetrievePlayersPointsRepositoryIT {
     repository = SqlRetrievePlayersPointsRepository(cachedPlayerPointsDao, cachedPlayerDao)
 
     playersPointsByTournamentIdCache.invalidateAll()
+    playersPointsByTournamentYearCache.invalidateAll()
     playerCache.invalidateAll()
   }
 
-  @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
-  @Test
-  fun `players points not found`() {
+  @Nested
+  inner class RetrieveByTournamentId {
 
-    val expected = FoundPlayersPoints(playersPoints = emptyList())
+    @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
+    @Test
+    fun `players points not found`() {
 
-    assertThat(repository.retrieveBy(A_TOURNAMENT_ID)).isEqualTo(expected)
+      val expected = FoundPlayersPoints(playersPoints = emptyList())
+
+      assertThat(repository.retrieveByTournamentId(A_TOURNAMENT_ID)).isEqualTo(expected)
+    }
+
+    @SqlGroup(
+        Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+        Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+    )
+    @Test
+    fun `players found`() {
+
+      val playerPoints1 = PlayerPoints(playerId = "A0B1",
+                                       playerName = "AAA BBB",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 8.00),
+                                       totalPoints = 8.00)
+      val playerPoints2 = PlayerPoints(playerId = "C0D1",
+                                       playerName = "CCC DDD",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 2.00),
+                                       totalPoints = 2.00)
+      val playerPoints3 = PlayerPoints(playerId = "E2F8",
+                                       playerName = "EEE FFF",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 0.00),
+                                       totalPoints = 0.00)
+      val playerPoints4 = PlayerPoints(playerId = "GH00",
+                                       playerName = "GGG HHH",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 1.00),
+                                       totalPoints = 1.00)
+      val playerPoints5 = PlayerPoints(playerId = "I0J7",
+                                       playerName = "III JJJ",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 1.00),
+                                       totalPoints = 1.00)
+      val playerPoints6 = PlayerPoints(playerId = "K5L8",
+                                       playerName = "KKK LLL",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 10.00),
+                                       totalPoints = 10.00)
+      val playerPoints7 = PlayerPoints(playerId = "MN98",
+                                       playerName = "MMM NNN",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 2.00),
+                                       totalPoints = 2.00)
+      val playerPoints8 = PlayerPoints(playerId = "O7P6",
+                                       playerName = "OOO PPP",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 4.00),
+                                       totalPoints = 4.00)
+      val playerPoints9 = PlayerPoints(playerId = "QR43",
+                                       playerName = "QQQ RRR",
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 0.00),
+                                       totalPoints = 0.00)
+      val playerPoints10 = PlayerPoints(playerId = "S7T5",
+                                        playerName = "SSS TTT",
+                                        pointsByTournament = mapOf(A_TOURNAMENT_ID to 8.00),
+                                        totalPoints = 8.00)
+      val expected = FoundPlayersPoints(playersPoints = listOf(playerPoints1,
+                                                               playerPoints2,
+                                                               playerPoints3,
+                                                               playerPoints4,
+                                                               playerPoints5,
+                                                               playerPoints6,
+                                                               playerPoints7,
+                                                               playerPoints8,
+                                                               playerPoints9,
+                                                               playerPoints10))
+
+      assertThat(repository.retrieveByTournamentId(A_TOURNAMENT_ID)).isEqualTo(expected)
+    }
   }
 
-  @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
-  )
-  @Test
-  fun `players found`() {
+  @Nested
+  inner class RetrieveByYear {
 
-    val playerPoints1 = PlayerPoints(playerId = "A0B1", playerName = "AAA BBB", totalPoints = 8.00)
-    val playerPoints2 = PlayerPoints(playerId = "C0D1", playerName = "CCC DDD", totalPoints = 2.00)
-    val playerPoints3 = PlayerPoints(playerId = "E2F8", playerName = "EEE FFF", totalPoints = 0.00)
-    val playerPoints4 = PlayerPoints(playerId = "GH00", playerName = "GGG HHH", totalPoints = 1.00)
-    val playerPoints5 = PlayerPoints(playerId = "I0J7", playerName = "III JJJ", totalPoints = 1.00)
-    val playerPoints6 = PlayerPoints(playerId = "K5L8", playerName = "KKK LLL", totalPoints = 10.00)
-    val playerPoints7 = PlayerPoints(playerId = "MN98", playerName = "MMM NNN", totalPoints = 2.00)
-    val playerPoints8 = PlayerPoints(playerId = "O7P6", playerName = "OOO PPP", totalPoints = 4.00)
-    val playerPoints9 = PlayerPoints(playerId = "QR43", playerName = "QQQ RRR", totalPoints = 0.00)
-    val playerPoints10 = PlayerPoints(playerId = "S7T5", playerName = "SSS TTT", totalPoints = 8.00)
-    val expected = FoundPlayersPoints(playersPoints = listOf(playerPoints1,
-                                                             playerPoints2,
-                                                             playerPoints3,
-                                                             playerPoints4,
-                                                             playerPoints5,
-                                                             playerPoints6,
-                                                             playerPoints7,
-                                                             playerPoints8,
-                                                             playerPoints9,
-                                                             playerPoints10))
+    @Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD)
+    @Test
+    fun `no player points found for year`() {
 
-    assertThat(repository.retrieveBy(A_TOURNAMENT_ID)).isEqualTo(expected)
+      assertThat(repository.retrieveByYear(A_YEAR)).isEqualTo(FoundPlayersPoints(emptyList()))
+    }
+
+    @SqlGroup(
+        Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+        Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
+    )
+    @Test
+    fun `player points found for year`() {
+
+      val playerPoints1 = PlayerPoints(playerId = "A0B1",
+                                       playerName = "AAA BBB",
+                                       pointsByTournament = mapOf(1 to 0.00, 2 to 8.00, 3 to 4.00, 4 to 2.00),
+                                       totalPoints = 14.00)
+      val playerPoints2 = PlayerPoints(playerId = "C0D1",
+                                       playerName = "CCC DDD",
+                                       pointsByTournament = mapOf(1 to 1.00, 2 to 2.00, 3 to 4.00, 4 to 0.00),
+                                       totalPoints = 7.00)
+      val playerPoints3 = PlayerPoints(playerId = "E2F8",
+                                       playerName = "EEE FFF",
+                                       pointsByTournament = mapOf(1 to 2.00, 2 to 0.00, 3 to 2.00, 4 to 1.00),
+                                       totalPoints = 5.00)
+      val playerPoints4 = PlayerPoints(playerId = "GH00",
+                                       playerName = "GGG HHH",
+                                       pointsByTournament = mapOf(1 to 4.00, 2 to 1.00, 3 to 1.00, 4 to 1.00),
+                                       totalPoints = 7.00)
+      val playerPoints5 = PlayerPoints(playerId = "I0J7",
+                                       playerName = "III JJJ",
+                                       pointsByTournament = mapOf(1 to 4.00, 2 to 1.00, 3 to 0.00, 4 to 2.00),
+                                       totalPoints = 7.00)
+      val playerPoints6 = PlayerPoints(playerId = "K5L8",
+                                       playerName = "KKK LLL",
+                                       pointsByTournament = mapOf(1 to 16.00, 2 to 10.00, 3 to 8.00, 4 to 4.00),
+                                       totalPoints = 38.00)
+      val playerPoints7 = PlayerPoints(playerId = "MN98",
+                                       playerName = "MMM NNN",
+                                       pointsByTournament = mapOf(1 to 0.00, 2 to 2.00, 3 to 1.00, 4 to 10.00),
+                                       totalPoints = 13.00)
+      val playerPoints8 = PlayerPoints(playerId = "O7P6",
+                                       playerName = "OOO PPP",
+                                       pointsByTournament = mapOf(1 to 32.00, 2 to 4.00, 3 to 2.00, 4 to 1.00),
+                                       totalPoints = 39.00)
+      val playerPoints9 = PlayerPoints(playerId = "QR43",
+                                       playerName = "QQQ RRR",
+                                       pointsByTournament = mapOf(1 to 40.00, 2 to 0.00, 3 to 1.00),
+                                       totalPoints = 41.00)
+      val playerPoints10 = PlayerPoints(playerId = "S7T5",
+                                        playerName = "SSS TTT",
+                                        pointsByTournament = mapOf(1 to 2.00, 2 to 8.00, 3 to 4.00, 4 to 8.00),
+                                        totalPoints = 22.00)
+
+      val expected = FoundPlayersPoints(playersPoints = listOf(playerPoints1,
+                                                               playerPoints2,
+                                                               playerPoints3,
+                                                               playerPoints4,
+                                                               playerPoints5,
+                                                               playerPoints6,
+                                                               playerPoints7,
+                                                               playerPoints8,
+                                                               playerPoints9,
+                                                               playerPoints10))
+
+      assertThat(repository.retrieveByYear(2025)).isEqualTo(expected)
+    }
   }
 
   companion object {
 
     private const val A_TOURNAMENT_ID = 2
+    private const val A_YEAR = 2025
   }
 }

@@ -6,6 +6,7 @@ sealed interface PlayersPoints {
 
     data class PlayerPoints(val playerId: String,
                             val playerName: String,
+                            val pointsByTournament: Map<Int, Double> = emptyMap(),
                             val totalPoints: Double)
   }
 

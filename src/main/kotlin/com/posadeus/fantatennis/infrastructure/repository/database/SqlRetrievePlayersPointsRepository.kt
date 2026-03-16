@@ -7,27 +7,27 @@ import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints.Pl
 import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.PlayerPointsDao
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerPointsDto
 import org.slf4j.LoggerFactory
 
 class SqlRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPointsDao,
                                          private val playerDao: PlayerDao) : RetrievePlayersPointsRepository {
 
-  override fun retrieveBy(tournamentId: Int): PlayersPoints =
+  override fun retrieveByTournamentId(tournamentId: Int): PlayersPoints =
       try {
 
         playerPointsDao.retrieveByTournamentId(tournamentId)
-            .takeIf(List<JdbcPlayerPointsDto>::isNotEmpty)
+            .groupBy { it.playerId }
+            .takeIf { it.isNotEmpty() }
             ?.let { playersPoints ->
 
-              val allPlayers = playerDao.retrieveAll()
+              val allPlayersByPlayerId = playerDao.retrieveAll().associateBy { it.playerId }
 
               playersPoints
-                  .mapNotNull { playerPoints ->
-                    allPlayers
-                        .firstOrNull { it.playerId == playerPoints.playerId }
-                        ?.let { toPlayerPoints(playerPoints, it) }
+                  .map { (playerId, playerPoints) ->
+                    allPlayersByPlayerId[playerId]
+                        ?.let { toPlayerPoints(it.playerId, it.fullName, playerPoints) }
+                    ?: throw RuntimeException("Player not found: $playerId")
                   }
                   .let(::FoundPlayersPoints)
             }
@@ -39,10 +39,39 @@ class SqlRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPoin
         InternalErrorPlayersPoints
       }
 
-  private fun toPlayerPoints(playerPoints: JdbcPlayerPointsDto, jdbcPlayerDto: JdbcPlayerDto): PlayerPoints =
-      PlayerPoints(playerId = playerPoints.playerId,
-                   playerName = jdbcPlayerDto.fullName,
-                   totalPoints = playerPoints.fantaPoints)
+  override fun retrieveByYear(year: Int): PlayersPoints =
+      try {
+
+        playerPointsDao.retrieveByTournamentYear(year)
+            .groupBy { it.playerId }
+            .takeIf { it.isNotEmpty() }
+            ?.let { playerPointsByPlayerId ->
+
+              val allPlayersByPlayerId = playerDao.retrieveAll().associateBy { it.playerId }
+
+              playerPointsByPlayerId
+                  .map { (playerId, playerPoints) ->
+                    allPlayersByPlayerId[playerId]
+                        ?.let { toPlayerPoints(playerId, it.fullName, playerPoints) }
+                    ?: throw RuntimeException("Player not found: $playerId")
+                  }
+                  .let(::FoundPlayersPoints)
+            }
+        ?: FoundPlayersPoints(playersPoints = emptyList())
+      }
+      catch (e: RuntimeException) {
+
+        LOGGER.error(e.message)
+        InternalErrorPlayersPoints
+      }
+
+  private fun toPlayerPoints(playerId: String,
+                             playerFullName: String,
+                             playerPoints: List<JdbcPlayerPointsDto>): PlayerPoints =
+      PlayerPoints(playerId = playerId,
+                   playerName = playerFullName,
+                   pointsByTournament = playerPoints.associate { it.tournamentId to it.fantaPoints },
+                   totalPoints = playerPoints.sumOf { it.fantaPoints })
 
   companion object {
 

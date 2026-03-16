@@ -66,7 +66,7 @@ class JdbcPlayerPointsDao(private val namedParameterJdbcTemplate: NamedParameter
     private val RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_YEAR_QUERY = """
       SELECT *
       FROM PLAYERS_POINTS
-      WHERE 'YEAR' = :tournamentYear
+      WHERE TOURNAMENT_YEAR = :tournamentYear
     """.trimIndent()
 
     private val INSERT_PLAYERS_POINTS_QUERY = """

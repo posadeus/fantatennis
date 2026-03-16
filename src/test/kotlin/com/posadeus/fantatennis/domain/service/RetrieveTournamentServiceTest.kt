@@ -55,7 +55,7 @@ class RetrieveTournamentServiceTest {
     val expected = ErrorTournamentResults
 
     every { retrieveTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns tournament
-    every { retrievePlayersPointsRepository.retrieveBy(A_TOURNAMENT_ID) } returns playersPoints
+    every { retrievePlayersPointsRepository.retrieveByTournamentId(A_TOURNAMENT_ID) } returns playersPoints
 
     assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
   }
@@ -80,7 +80,7 @@ class RetrieveTournamentServiceTest {
                                                                                            playerPointsDto3)))
 
     every { retrieveTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns tournament
-    every { retrievePlayersPointsRepository.retrieveBy(A_TOURNAMENT_ID) } returns foundPlayersPoints
+    every { retrievePlayersPointsRepository.retrieveByTournamentId(A_TOURNAMENT_ID) } returns foundPlayersPoints
 
     assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
   }
