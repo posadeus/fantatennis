@@ -155,7 +155,7 @@ class RetrieveFantaTournamentServiceTest {
     val player4 = PlayerPointsDto(fullName = A_FOURTH_PLAYER_NAME, fantaPoints = 4.0)
     val teamDto1 = TeamDto(owner = AN_OWNER_ID, players = listOf(player1, player2), totalScore = 3.0)
     val teamDto2 = TeamDto(owner = ANOTHER_OWNER_ID, players = listOf(player4, player3), totalScore = 4.0)
-    val expected = FoundFantaTournamentResults(tournament = FantaTournamentDto(listOf(teamDto1, teamDto2)))
+    val expected = FoundFantaTournamentResults(tournament = FantaTournamentDto(listOf(teamDto2, teamDto1)))
 
     every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
     every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints
