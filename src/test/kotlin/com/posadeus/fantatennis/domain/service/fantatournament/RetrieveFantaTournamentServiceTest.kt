@@ -25,8 +25,7 @@ class RetrieveFantaTournamentServiceTest {
   private val retrievePlayersPointsRepository: RetrievePlayersPointsRepository = mockk()
   private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
 
-  private val service = RetrieveFantaTournamentService(retrieveFantaTournamentResultsRepository,
-                                                       retrieveFantaTournamentsRepository,
+  private val service = RetrieveFantaTournamentService(retrieveFantaTournamentsRepository,
                                                        retrievePlayersPointsRepository,
                                                        retrieveFantaTeamRepository)
 

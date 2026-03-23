@@ -13,8 +13,7 @@ import com.posadeus.fantatennis.domain.model.FantaTournamentResults.*
 import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
 
-class RetrieveFantaTournamentService(private val retrieveFantaTournamentResultsRepository: RetrieveFantaTournamentResultsRepository,
-                                     private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository,
+class RetrieveFantaTournamentService(private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository,
                                      private val retrievePlayersPointsRepository: RetrievePlayersPointsRepository,
                                      private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository) {
 
