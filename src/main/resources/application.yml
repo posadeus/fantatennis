@@ -90,7 +90,7 @@ caches:
     fanta-tournament-team-by-tournament-id-cache:
       expire-after-write-duration: 10080
       maximum-size: 1000
-    fanta-tournament-team-by-team-id:
+    fanta-tournament-team-by-team-id-cache:
       expire-after-write-duration: 10080
       maximum-size: 1000
     team-cache:
