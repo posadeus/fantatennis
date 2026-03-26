@@ -26,13 +26,17 @@ class SqlRetrievePlayersPointsRepositoryTest {
     @Test
     fun `no players points found for tournament`() {
 
-      val expected = FoundPlayersPoints(playersPoints = emptyList())
+      val player = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_NAME)
+
+      val players = listOf(player)
+
+      val playerPoints = PlayerPoints(playerId = A_PLAYER_ID, playerName = A_PLAYER_NAME, pointsByTournament = emptyMap(), totalPoints = 0.0)
+      val expected = FoundPlayersPoints(listOf(playerPoints))
 
       every { playerPointsDao.retrieveByTournamentId(A_TOURNAMENT_ID) } returns emptyList()
+      every { playerDao.retrieveAll() } returns players
 
       assertThat(repository.retrieveByTournamentId(A_TOURNAMENT_ID)).isEqualTo(expected)
-
-      verify { playerDao wasNot called }
     }
 
     @Test
@@ -63,16 +67,24 @@ class SqlRetrievePlayersPointsRepositoryTest {
     }
 
     @Test
-    fun `playerPoints playerId not found among allPlayers throws an exception`() {
+    fun `player points for unknown player are ignored`() {
 
       val playerPointsDto1 = aJdbcPlayerPointsDto(tournamentId = A_TOURNAMENT_ID, playerId = A_PLAYER_ID, fantaPoints = 10.0)
       val playerPointsDto2 = aJdbcPlayerPointsDto(tournamentId = A_TOURNAMENT_ID, playerId = A_THIRD_PLAYER_ID)
       val playersPointsDto = listOf(playerPointsDto1, playerPointsDto2)
       val player1 = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_NAME)
-      val player2 = aJdbcPlayerDto(playerId = ANOTHER_PLAYER_ID)
+      val player2 = aJdbcPlayerDto(playerId = ANOTHER_PLAYER_ID, fullName = ANOTHER_PLAYER_NAME)
       val players = listOf(player1, player2)
 
-      val expected = InternalErrorPlayersPoints
+      val playerPoints1 = PlayerPoints(playerId = A_PLAYER_ID,
+                                       playerName = A_PLAYER_NAME,
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 10.0),
+                                       totalPoints = 10.0)
+      val playerPoints2 = PlayerPoints(playerId = ANOTHER_PLAYER_ID,
+                                       playerName = ANOTHER_PLAYER_NAME,
+                                       pointsByTournament = emptyMap(),
+                                       totalPoints = 0.0)
+      val expected = FoundPlayersPoints(playersPoints = listOf(playerPoints1, playerPoints2))
 
       every { playerPointsDao.retrieveByTournamentId(A_TOURNAMENT_ID) } returns playersPointsDto
       every { playerDao.retrieveAll() } returns players
@@ -91,11 +103,19 @@ class SqlRetrievePlayersPointsRepositoryTest {
       val player3 = aJdbcPlayerDto(playerId = A_THIRD_PLAYER_ID, fullName = A_THIRD_PLAYER_NAME)
       val players = listOf(player1, player2, player3)
 
-      val playerPoints1 = PlayerPoints(playerId = A_PLAYER_ID, playerName = A_PLAYER_NAME, totalPoints = 10.0,
-                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 10.0))
-      val playerPoints2 = PlayerPoints(playerId = A_THIRD_PLAYER_ID, playerName = A_THIRD_PLAYER_NAME, totalPoints = 12.0,
-                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 12.0))
-      val expected = FoundPlayersPoints(playersPoints = listOf(playerPoints1, playerPoints2))
+      val playerPoints1 = PlayerPoints(playerId = A_PLAYER_ID,
+                                       playerName = A_PLAYER_NAME,
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 10.0),
+                                       totalPoints = 10.0)
+      val playerPoints2 = PlayerPoints(playerId = ANOTHER_PLAYER_ID,
+                                       playerName = ANOTHER_PLAYER_NAME,
+                                       pointsByTournament = emptyMap(),
+                                       totalPoints = 0.0)
+      val playerPoints3 = PlayerPoints(playerId = A_THIRD_PLAYER_ID,
+                                       playerName = A_THIRD_PLAYER_NAME,
+                                       pointsByTournament = mapOf(A_TOURNAMENT_ID to 12.0),
+                                       totalPoints = 12.0)
+      val expected = FoundPlayersPoints(playersPoints = listOf(playerPoints1, playerPoints2, playerPoints3))
 
       every { playerPointsDao.retrieveByTournamentId(A_TOURNAMENT_ID) } returns playersPointsDto
       every { playerDao.retrieveAll() } returns players
@@ -120,15 +140,20 @@ class SqlRetrievePlayersPointsRepositoryTest {
     @Test
     fun `no player points found for year`() {
 
+      val player = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_NAME)
+      val players = listOf(player)
+
+      val playerPoints = PlayerPoints(playerId = A_PLAYER_ID, playerName = A_PLAYER_NAME, pointsByTournament = emptyMap(), totalPoints = 0.0)
+      val expected = FoundPlayersPoints(listOf(playerPoints))
+
       every { playerPointsDao.retrieveByTournamentYear(A_YEAR) } returns emptyList()
+      every { playerDao.retrieveAll() } returns players
 
-      assertThat(repository.retrieveByYear(A_YEAR)).isEqualTo(FoundPlayersPoints(emptyList()))
-
-      verify { playerDao wasNot called }
+      assertThat(repository.retrieveByYear(A_YEAR)).isEqualTo(expected)
     }
 
     @Test
-    fun `player not found in playerDao`() {
+    fun `player points for unknown player are ignored`() {
 
       val pointsDto1 = aJdbcPlayerPointsDto(tournamentYear = A_YEAR,
                                             tournamentId = A_TOURNAMENT_ID,
@@ -142,7 +167,11 @@ class SqlRetrievePlayersPointsRepositoryTest {
       val player = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_NAME)
       val players = listOf(player)
 
-      val expected = InternalErrorPlayersPoints
+      val playerPoints = PlayerPoints(playerId = A_PLAYER_ID,
+                                      playerName = A_PLAYER_NAME,
+                                      pointsByTournament = mapOf(A_TOURNAMENT_ID to 10.0),
+                                      totalPoints = 10.0)
+      val expected = FoundPlayersPoints(listOf(playerPoints))
 
       every { playerPointsDao.retrieveByTournamentYear(A_YEAR) } returns playersPoints
       every { playerDao.retrieveAll() } returns players
@@ -168,7 +197,8 @@ class SqlRetrievePlayersPointsRepositoryTest {
       val playersPoints = listOf(pointsDto1, pointsDto2, pointsDto3)
       val player1 = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_NAME)
       val player2 = aJdbcPlayerDto(playerId = ANOTHER_PLAYER_ID, fullName = ANOTHER_PLAYER_NAME)
-      val players = listOf(player1, player2)
+      val player3 = aJdbcPlayerDto(playerId = A_THIRD_PLAYER_ID, fullName = A_THIRD_PLAYER_NAME)
+      val players = listOf(player1, player2, player3)
 
       val playerPoints1 = PlayerPoints(playerId = A_PLAYER_ID,
                                        playerName = A_PLAYER_NAME,
@@ -178,7 +208,11 @@ class SqlRetrievePlayersPointsRepositoryTest {
                                        playerName = ANOTHER_PLAYER_NAME,
                                        pointsByTournament = mapOf(A_TOURNAMENT_ID to 3.0),
                                        totalPoints = 3.0)
-      val expected = FoundPlayersPoints(listOf(playerPoints1, playerPoints2))
+      val playerPoints3 = PlayerPoints(playerId = A_THIRD_PLAYER_ID,
+                                       playerName = A_THIRD_PLAYER_NAME,
+                                       pointsByTournament = emptyMap(),
+                                       totalPoints = 0.0)
+      val expected = FoundPlayersPoints(listOf(playerPoints1, playerPoints2, playerPoints3))
 
       every { playerPointsDao.retrieveByTournamentYear(A_YEAR) } returns playersPoints
       every { playerDao.retrieveAll() } returns players

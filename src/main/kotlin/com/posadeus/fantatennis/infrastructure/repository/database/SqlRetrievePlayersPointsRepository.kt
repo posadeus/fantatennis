@@ -22,22 +22,18 @@ class SqlRetrievePlayersPointsRepository(private val playerPointsDao: PlayerPoin
   private fun retrieve(retrieveFromDao: () -> List<JdbcPlayerPointsDto>): PlayersPoints =
       try {
 
-        retrieveFromDao()
-            .groupBy { it.playerId }
-            .takeIf { it.isNotEmpty() }
-            ?.let { playerPointsByPlayerId ->
+        val playerPointsByPlayerId = retrieveFromDao().groupBy { it.playerId }
 
-              val allPlayersByPlayerId = playerDao.retrieveAll().associateBy { it.playerId }
-
-              playerPointsByPlayerId
-                  .map { (playerId, playerPoints) ->
-                    allPlayersByPlayerId[playerId]
-                        ?.let { toPlayerPoints(playerId, it.fullName, playerPoints) }
-                    ?: throw RuntimeException("Player not found: $playerId")
-                  }
-                  .let(::FoundPlayersPoints)
+        playerDao.retrieveAll()
+            .map { player ->
+              playerPointsByPlayerId[player.playerId]
+                  ?.let { toPlayerPoints(player.playerId, player.fullName, it) }
+                  ?: PlayerPoints(playerId = player.playerId,
+                                  playerName = player.fullName,
+                                  pointsByTournament = emptyMap(),
+                                  totalPoints = 0.0)
             }
-        ?: FoundPlayersPoints(playersPoints = emptyList())
+            .let(::FoundPlayersPoints)
       }
       catch (e: RuntimeException) {
 
