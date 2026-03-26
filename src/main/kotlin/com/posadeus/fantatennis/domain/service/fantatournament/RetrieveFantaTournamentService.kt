@@ -11,6 +11,7 @@ import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournam
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournamentResults.*
 import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
+import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints.PlayerPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
 
 class RetrieveFantaTournamentService(private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository,
@@ -32,51 +33,57 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
               retrieveFantaTeamRepository.retrieveByFantaTournamentId(tournamentId)
                   .teams
                   .let { teams ->
-                    if (teams.isEmpty() || teams.any { it is NotFoundDomainTeam }) 
+                    if (areTeamsInvalid(teams, playersPointsByPlayerId.keys)) {
+
                       ErrorFantaTournamentResults
+                    }
                     else {
 
-                      val domainTeams = teams.map { it as FoundDomainTeam }
-
-                      if (areTeamsPlayersPresentInTheList(domainTeams, playersPointsByPlayerId.keys)) {
-
-                        domainTeams
-                            .map { team ->
-                              team.players
-                                  .flatMap { entry ->
-                                    playersPointsByPlayerId[entry.key]!!
-                                        .map { toPlayerPointsDto(it, entry, fantaTournament) }
-                                  }
-                                  .let { toTeamDto(team.ownerId, it.sortedByDescending { it.fantaPoints }) }
-                            }
-                            .sortedByDescending { it.totalScore }
-                            .let(::FantaTournamentDto)
-                            .let(::FoundFantaTournamentResults)
-                      }
-                      else 
-                        ErrorFantaTournamentResults
+                      teams
+                          .map { it as FoundDomainTeam }
+                          .map { team ->
+                            team.players
+                                .flatMap { tournamentRangeByPlayerId ->
+                                  playersPointsByPlayerId[tournamentRangeByPlayerId.key]!!
+                                      .map { playerPoints ->
+                                        calculateFantaPoints(playerPoints.pointsByTournament, tournamentRangeByPlayerId, fantaTournament)
+                                            .let { toPlayerPoints(playerPoints, it) }
+                                      }
+                                }
+                                .let { toTeamDto(team.ownerId, it.sortedByDescending { it.fantaPoints }) }
+                          }
+                          .sortedByDescending { it.totalScore }
+                          .let(::FantaTournamentDto)
+                          .let(::FoundFantaTournamentResults)
                     }
                   }
             }
           }
       }
 
-  private fun toTeamDto(ownerId: String,
-                        sortedPlayers: List<PlayerPointsDto>): TeamDto =
+  private fun areTeamsInvalid(teams: List<DomainTeam>, playerIds: Set<String>): Boolean =
+      teams.isEmpty()
+      || teams.any { it is NotFoundDomainTeam }
+      || !teams.map { it as FoundDomainTeam }.all { team -> team.players.keys.all { it in playerIds } }
+
+  private fun toPlayerPoints(playerPoints: PlayerPoints, fantaPoints: Double): PlayerPointsDto =
+      PlayerPointsDto(fullName = playerPoints.playerName, fantaPoints = fantaPoints)
+
+  private fun toTeamDto(ownerId: String, sortedPlayers: List<PlayerPointsDto>): TeamDto =
       TeamDto(owner = ownerId,
               players = sortedPlayers,
               totalScore = sortedPlayers.map { it.fantaPoints }.reduce { acc, points -> acc + points })
 
-  private fun toPlayerPointsDto(playerPointsByPlayerId: FoundPlayersPoints.PlayerPoints,
-                                tournamentRangeByPlayerId: Map.Entry<PlayerId, TournamentRange>,
-                                fantaTournament: ValidFantaTournament): PlayerPointsDto =
-      playerPointsByPlayerId.pointsByTournament
+  private fun calculateFantaPoints(playerPoints: Map<TournamentId, Double>,
+                                   tournamentRangeByPlayerId: Map.Entry<PlayerId, TournamentRange>,
+                                   fantaTournament: ValidFantaTournament): Double =
+      playerPoints
           .filterKeys { isTournamentIdAfterOrEqualToStartingTournament(it, tournamentRangeByPlayerId.value.start, fantaTournament.startingTournamentId) }
           .filterKeys { isTournamentIdBeforeOrEqualToEndingTournament(it, tournamentRangeByPlayerId.value.end, fantaTournament.endingTournamentId) }
           .map { it.value }
           .takeIf { it.isNotEmpty() }
           ?.reduce { acc, points -> acc + points }
-          .let { PlayerPointsDto(fullName = playerPointsByPlayerId.playerName, fantaPoints = it ?: 0.0) }
+      ?: 0.0
 
   private fun isTournamentIdAfterOrEqualToStartingTournament(tournamentId: Int,
                                                              tournamentIdRangeStart: Int,
@@ -94,7 +101,4 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
 
         fantaTournamentIdEnd >= tournamentId
       }
-
-  private fun areTeamsPlayersPresentInTheList(teams: List<FoundDomainTeam>, playerIds: Set<String>): Boolean =
-      teams.all { team -> team.players.keys.all { it in playerIds } }
 }
