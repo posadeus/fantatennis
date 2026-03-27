@@ -43,10 +43,10 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
                           .map { it as FoundDomainTeam }
                           .map { team ->
                             team.players
-                                .flatMap { tournamentRangeByPlayerId ->
-                                  playersPointsByPlayerId[tournamentRangeByPlayerId.key]!!
+                                .flatMap { (playerId, tournamentRanges) ->
+                                  playersPointsByPlayerId[playerId]!!
                                       .map { playerPoints ->
-                                        calculateFantaPoints(playerPoints.pointsByTournament, tournamentRangeByPlayerId, fantaTournament)
+                                        calculateFantaPoints(playerPoints.pointsByTournament, tournamentRanges, fantaTournament)
                                             .let { toPlayerPoints(playerPoints, it) }
                                       }
                                 }
@@ -75,30 +75,34 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
               totalScore = sortedPlayers.map { it.fantaPoints }.reduce { acc, points -> acc + points })
 
   private fun calculateFantaPoints(playerPoints: Map<TournamentId, Double>,
-                                   tournamentRangeByPlayerId: Map.Entry<PlayerId, TournamentRange>,
+                                   tournamentRanges: Set<TournamentRange>,
                                    fantaTournament: ValidFantaTournament): Double =
       playerPoints
-          .filterKeys { isTournamentIdAfterOrEqualToStartingTournament(it, tournamentRangeByPlayerId.value.start, fantaTournament.startingTournamentId) }
-          .filterKeys { isTournamentIdBeforeOrEqualToEndingTournament(it, tournamentRangeByPlayerId.value.end, fantaTournament.endingTournamentId) }
+          .filterKeys { tournamentId ->
+              tournamentRanges.any { range ->
+                  isTournamentIdAfterOrEqualToStartingTournament(tournamentId, range.start, fantaTournament.startingTournamentId)
+                  && isTournamentIdBeforeOrEqualToEndingTournament(tournamentId, range.end, fantaTournament.endingTournamentId)
+              }
+          }
           .map { it.value }
           .takeIf { it.isNotEmpty() }
           ?.reduce { acc, points -> acc + points }
       ?: 0.0
 
   private fun isTournamentIdAfterOrEqualToStartingTournament(tournamentId: Int,
-                                                             tournamentIdRangeStart: Int,
-                                                             fantaTournamentIdStart: Int): Boolean =
-      tournamentId >= tournamentIdRangeStart && tournamentId >= fantaTournamentIdStart
+                                                             rangeStart: Int,
+                                                             fantaTournamentStart: Int): Boolean =
+      tournamentId >= rangeStart && tournamentId >= fantaTournamentStart
 
   private fun isTournamentIdBeforeOrEqualToEndingTournament(tournamentId: Int,
-                                                            tournamentIdRangeEnd: Int?,
-                                                            fantaTournamentIdEnd: Int): Boolean =
-      if (tournamentIdRangeEnd != null && tournamentIdRangeEnd <= fantaTournamentIdEnd) {
+                                                            rangeEnd: Int?,
+                                                            fantaTournamentEnd: Int): Boolean =
+      if (rangeEnd != null && rangeEnd <= fantaTournamentEnd) {
 
-        tournamentIdRangeEnd >= tournamentId
+        rangeEnd >= tournamentId
       }
       else {
 
-        fantaTournamentIdEnd >= tournamentId
+        fantaTournamentEnd >= tournamentId
       }
 }

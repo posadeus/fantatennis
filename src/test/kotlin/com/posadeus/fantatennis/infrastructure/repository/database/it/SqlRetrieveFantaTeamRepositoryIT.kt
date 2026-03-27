@@ -102,11 +102,10 @@ class SqlRetrieveFantaTeamRepositoryIT {
     val expected = FoundDomainTeam(teamId = 1,
                                    ownerId = "AN_OWNER",
                                    fantaTournamentId = 1,
-                                   players = mapOf("A0B1" to TournamentRange(start = 1, end = null),
-                                                   "MN98" to TournamentRange(start = 1, end = 1),
-                                                   "K5L8" to TournamentRange(start = 1, end = null),
-                                                   "S7T5" to TournamentRange(start = 2, end = 2),
-                                                   "MN98" to TournamentRange(start = 3, end = null)))
+                                   players = mapOf("A0B1" to setOf(TournamentRange(start = 1, end = null)),
+                                                   "MN98" to setOf(TournamentRange(start = 1, end = 1), TournamentRange(start = 3, end = null)),
+                                                   "K5L8" to setOf(TournamentRange(start = 1, end = null)),
+                                                   "S7T5" to setOf(TournamentRange(start = 2, end = 2))))
 
     assertThat(repository.retrieveByTeamId(1)).isEqualTo(expected)
   }

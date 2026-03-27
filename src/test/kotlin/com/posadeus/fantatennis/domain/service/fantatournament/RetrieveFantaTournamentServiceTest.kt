@@ -61,26 +61,6 @@ class RetrieveFantaTournamentServiceTest {
   }
 
   @Test
-  fun `retrieve fails due to no teams found in FantaTeamRepository`() {
-
-    val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
-                                               startingTournamentId = A_STARTING_TOURNAMENT_ID,
-                                               endingTournamentId = AN_ENDING_TOURNAMENT_ID,
-                                               tournamentYear = A_TOURNAMENT_YEAR)
-    val playerPoints = aPlayerPoints()
-    val foundPlayersPoints = FoundPlayersPoints(listOf(playerPoints))
-    val teams = Teams(emptyList())
-
-    val expected = ErrorFantaTournamentResults
-
-    every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
-    every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints
-    every { retrieveFantaTeamRepository.retrieveByFantaTournamentId(A_TOURNAMENT_ID) } returns teams
-
-    assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
-  }
-
-  @Test
   fun `retrieve fails due to not all team found in FantaTeamRepository`() {
 
     val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
@@ -109,7 +89,7 @@ class RetrieveFantaTournamentServiceTest {
                                                tournamentYear = A_TOURNAMENT_YEAR)
     val playerPoints = aPlayerPoints(playerId = A_PLAYER_ID)
     val foundPlayersPoints = FoundPlayersPoints(listOf(playerPoints))
-    val teams = Teams(listOf(aDomainTeam(players = mapOf(ANOTHER_PLAYER_ID to TournamentRange(A_STARTING_TOURNAMENT_ID, null)))))
+    val teams = Teams(listOf(aDomainTeam(players = mapOf(ANOTHER_PLAYER_ID to setOf(TournamentRange(A_STARTING_TOURNAMENT_ID, null))))))
 
     val expected = ErrorFantaTournamentResults
 
@@ -121,7 +101,27 @@ class RetrieveFantaTournamentServiceTest {
   }
 
   @Test
-  fun `retrieve returns only the players and points inside the tournament range`() {
+  fun `retrieve returns empty teams due to not found in FantaTeamRepository`() {
+
+    val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                               startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                               endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                               tournamentYear = A_TOURNAMENT_YEAR)
+    val playerPoints = aPlayerPoints()
+    val foundPlayersPoints = FoundPlayersPoints(listOf(playerPoints))
+    val teams = Teams(emptyList())
+
+    val expected = ErrorFantaTournamentResults // FIXME should return FoundFantaTournamentResults(tournament = FantaTournamentDto(teams = emptyList()))
+
+    every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
+    every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints
+    every { retrieveFantaTeamRepository.retrieveByFantaTournamentId(A_TOURNAMENT_ID) } returns teams
+
+    assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `retrieve returns only the players and points inside the tournament range, ordered by fantaPoints`() {
 
     val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
                                                startingTournamentId = 1,
@@ -141,11 +141,11 @@ class RetrieveFantaTournamentServiceTest {
                                       pointsByTournament = mapOf(1 to 4.0, 2 to 0.0))
     val foundPlayersPoints = FoundPlayersPoints(listOf(playerPoints1, playerPoints2, playerPoints3, playerPoints4))
     val domainTeam1 = aDomainTeam(ownerId = AN_OWNER_ID,
-                                  players = mapOf(A_PLAYER_ID to TournamentRange(1, 1),
-                                                  ANOTHER_PLAYER_ID to TournamentRange(2, 4)))
+                                  players = mapOf(A_PLAYER_ID to setOf(TournamentRange(1, 1)),
+                                                  ANOTHER_PLAYER_ID to setOf(TournamentRange(2, 4))))
     val domainTeam2 = aDomainTeam(ownerId = ANOTHER_OWNER_ID,
-                                  players = mapOf(A_THIRD_PLAYER_ID to TournamentRange(1, null),
-                                                  A_FOURTH_PLAYER_ID to TournamentRange(1, null)))
+                                  players = mapOf(A_THIRD_PLAYER_ID to setOf(TournamentRange(1, null)),
+                                                  A_FOURTH_PLAYER_ID to setOf(TournamentRange(1, null))))
     val teams = Teams(listOf(domainTeam1, domainTeam2))
 
     val player1 = PlayerPointsDto(fullName = A_PLAYER_NAME, fantaPoints = 3.0)
@@ -155,6 +155,37 @@ class RetrieveFantaTournamentServiceTest {
     val teamDto1 = TeamDto(owner = AN_OWNER_ID, players = listOf(player1, player2), totalScore = 3.0)
     val teamDto2 = TeamDto(owner = ANOTHER_OWNER_ID, players = listOf(player4, player3), totalScore = 4.0)
     val expected = FoundFantaTournamentResults(tournament = FantaTournamentDto(listOf(teamDto2, teamDto1)))
+
+    every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
+    every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints
+    every { retrieveFantaTeamRepository.retrieveByFantaTournamentId(A_TOURNAMENT_ID) } returns teams
+
+    assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
+
+  @Test
+  fun `retrieve returns the sum of points for players with a hole in tournaments`() {
+
+    val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                               startingTournamentId = 1,
+                                               endingTournamentId = 6,
+                                               tournamentYear = A_TOURNAMENT_YEAR)
+    val playerPoints1 = aPlayerPoints(playerId = A_PLAYER_ID,
+                                      playerName = A_PLAYER_NAME,
+                                      pointsByTournament = mapOf(1 to 3.0, 2 to 6.0, 3 to 10.0, 4 to 6.0, 5 to 3.0, 6 to 2.0))
+    val playerPoints2 = aPlayerPoints(playerId = ANOTHER_PLAYER_ID,
+                                      playerName = ANOTHER_PLAYER_NAME,
+                                      pointsByTournament = mapOf(1 to 10.0, 4 to 7.0, 5 to 1.0, 6 to 10.0))
+    val foundPlayersPoints = FoundPlayersPoints(listOf(playerPoints1, playerPoints2))
+    val domainTeam1 = aDomainTeam(ownerId = AN_OWNER_ID,
+                                  players = mapOf(A_PLAYER_ID to setOf(TournamentRange(1, 3), TournamentRange(5, null)),
+                                  ANOTHER_PLAYER_ID to setOf(TournamentRange(2, 4))))
+    val teams = Teams(listOf(domainTeam1))
+
+    val player1 = PlayerPointsDto(fullName = A_PLAYER_NAME, fantaPoints = 24.0)
+    val player2 = PlayerPointsDto(fullName = ANOTHER_PLAYER_NAME, fantaPoints = 7.0)
+    val teamDto1 = TeamDto(owner = AN_OWNER_ID, players = listOf(player1, player2), totalScore = 31.0)
+    val expected = FoundFantaTournamentResults(tournament = FantaTournamentDto(listOf(teamDto1)))
 
     every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
     every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints

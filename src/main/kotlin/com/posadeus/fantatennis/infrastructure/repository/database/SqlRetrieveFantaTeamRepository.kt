@@ -92,7 +92,9 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
       FoundDomainTeam(teamId = fantaTeam.teamId,
                       ownerId = fantaTeam.ownerId,
                       fantaTournamentId = fantaTournamentTeam.fantaTournamentId,
-                      players = teams.associate {
-                        it.playerId to TournamentRange(start = it.startingTournamentId, end = it.endingTournamentId)
-                      })
+                      players = teams
+                          .groupBy { it.playerId }
+                          .mapValues { (_, rows) ->
+                            rows.map { TournamentRange(start = it.startingTournamentId, end = it.endingTournamentId) }.toSet()
+                          })
 }

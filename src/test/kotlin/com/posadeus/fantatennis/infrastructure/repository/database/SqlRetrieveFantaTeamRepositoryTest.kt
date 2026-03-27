@@ -89,9 +89,37 @@ class SqlRetrieveFantaTeamRepositoryTest {
       val expected = FoundDomainTeam(teamId = A_TEAM_ID,
                                      ownerId = AN_OWNER_ID,
                                      fantaTournamentId = A_FANTA_TOURNAMENT_ID,
-                                     players = mapOf(A_PLAYER_ID to TournamentRange(start = A_STARTING_TOURNAMENT, end = null),
-                                                     ANOTHER_PLAYER_ID to TournamentRange(start = A_STARTING_TOURNAMENT,
-                                                                                          end = AN_ENDING_TOURNAMENT)))
+                                     players = mapOf(A_PLAYER_ID to setOf(TournamentRange(start = A_STARTING_TOURNAMENT, end = null)),
+                                                     ANOTHER_PLAYER_ID to setOf(TournamentRange(start = A_STARTING_TOURNAMENT,
+                                                                                                end = AN_ENDING_TOURNAMENT))))
+
+      every { fantaTeamDao.retrieveBy(A_TEAM_ID) } returns fantaTeam
+      every { teamDao.retrieveBy(setOf(A_TEAM_ID)) } returns teams
+      every { fantaTournamentTeamDao.retrieveByTeamId(A_TEAM_ID) } returns fantaTournamentTeam
+
+      assertThat(repository.retrieveByTeamId(A_TEAM_ID)).isEqualTo(expected)
+    }
+
+    @Test
+    fun `retrieve groups same player multiple ranges`() {
+
+      val fantaTeam = JdbcFantaTeamDto(teamId = A_TEAM_ID, ownerId = AN_OWNER_ID)
+      val team1 = aJdbcTeamDto(teamId = A_TEAM_ID,
+                               playerId = A_PLAYER_ID,
+                               startingTournamentId = A_STARTING_TOURNAMENT,
+                               endingTournamentId = AN_ENDING_TOURNAMENT)
+      val team2 = aJdbcTeamDto(teamId = A_TEAM_ID,
+                               playerId = A_PLAYER_ID,
+                               startingTournamentId = A_STARTING_TOURNAMENT + 2,
+                               endingTournamentId = null)
+      val teams = listOf(team1, team2)
+      val fantaTournamentTeam = JdbcFantaTournamentTeamDto(teamId = A_TEAM_ID, fantaTournamentId = A_FANTA_TOURNAMENT_ID)
+
+      val expected = FoundDomainTeam(teamId = A_TEAM_ID,
+                                     ownerId = AN_OWNER_ID,
+                                     fantaTournamentId = A_FANTA_TOURNAMENT_ID,
+                                     players = mapOf(A_PLAYER_ID to setOf(TournamentRange(start = A_STARTING_TOURNAMENT, end = AN_ENDING_TOURNAMENT),
+                                                                           TournamentRange(start = A_STARTING_TOURNAMENT + 2, end = null))))
 
       every { fantaTeamDao.retrieveBy(A_TEAM_ID) } returns fantaTeam
       every { teamDao.retrieveBy(setOf(A_TEAM_ID)) } returns teams
@@ -177,9 +205,9 @@ class SqlRetrieveFantaTeamRepositoryTest {
       val domainTeam = FoundDomainTeam(teamId = A_TEAM_ID,
                                        ownerId = AN_OWNER_ID,
                                        fantaTournamentId = A_FANTA_TOURNAMENT_ID,
-                                       players = mapOf(A_PLAYER_ID to TournamentRange(start = A_STARTING_TOURNAMENT, end = null),
-                                                       ANOTHER_PLAYER_ID to TournamentRange(start = A_STARTING_TOURNAMENT,
-                                                                                            end = AN_ENDING_TOURNAMENT)))
+                                       players = mapOf(A_PLAYER_ID to setOf(TournamentRange(start = A_STARTING_TOURNAMENT, end = null)),
+                                                       ANOTHER_PLAYER_ID to setOf(TournamentRange(start = A_STARTING_TOURNAMENT,
+                                                                                                  end = AN_ENDING_TOURNAMENT))))
       val expected = Teams(listOf(domainTeam, NotFoundDomainTeam(ANOTHER_TEAM_ID)))
 
       every { fantaTournamentTeamDao.retrieveByFantaTournamentId(A_FANTA_TOURNAMENT_ID) } returns fantaTournamentTeams
