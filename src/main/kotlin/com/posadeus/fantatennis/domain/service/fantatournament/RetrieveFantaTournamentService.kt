@@ -81,27 +81,10 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
       playerPoints
           .filterKeys { tournamentId ->
               tournamentRanges.any { range ->
-                  isTournamentIdAfterOrEqualToStartingTournament(tournamentId, range.start, fantaTournament.startingTournamentId)
-                  && isTournamentIdBeforeOrEqualToEndingTournament(tournamentId, range.end, fantaTournament.endingTournamentId)
+                range.contains(tournamentId)
+                && TournamentRange(fantaTournament.startingTournamentId, fantaTournament.endingTournamentId).contains(tournamentId)
               }
           }
           .values
           .sum()
-
-  private fun isTournamentIdAfterOrEqualToStartingTournament(tournamentId: Int,
-                                                             rangeStart: Int,
-                                                             fantaTournamentStart: Int): Boolean =
-      tournamentId >= rangeStart && tournamentId >= fantaTournamentStart
-
-  private fun isTournamentIdBeforeOrEqualToEndingTournament(tournamentId: Int,
-                                                            rangeEnd: Int?,
-                                                            fantaTournamentEnd: Int): Boolean =
-      if (rangeEnd != null && rangeEnd <= fantaTournamentEnd) {
-
-        rangeEnd >= tournamentId
-      }
-      else {
-
-        fantaTournamentEnd >= tournamentId
-      }
 }
