@@ -40,13 +40,15 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
                     else {
 
                       teams
-                          .map { it as FoundDomainTeam }
+                          .filterIsInstance<FoundDomainTeam>()
                           .map { team ->
                             team.players
                                 .flatMap { (playerId, tournamentRanges) ->
                                   playersPointsByPlayerId[playerId]!!
                                       .map { playerPoints ->
-                                        calculateFantaPoints(playerPoints.pointsByTournament, tournamentRanges, fantaTournament)
+                                        playerPoints
+                                            .pointsByTournament
+                                            .let { calculateFantaPoints(it, tournamentRanges, fantaTournament) }
                                             .let { toPlayerPoints(playerPoints, it) }
                                       }
                                 }
@@ -71,7 +73,7 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
   private fun toTeamDto(ownerId: String, sortedPlayers: List<PlayerPointsDto>): TeamDto =
       TeamDto(owner = ownerId,
               players = sortedPlayers,
-              totalScore = sortedPlayers.map { it.fantaPoints }.reduce { acc, points -> acc + points })
+              totalScore = sortedPlayers.sumOf { it.fantaPoints })
 
   private fun calculateFantaPoints(playerPoints: Map<TournamentId, Double>,
                                    tournamentRanges: Set<TournamentRange>,
@@ -83,10 +85,8 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
                   && isTournamentIdBeforeOrEqualToEndingTournament(tournamentId, range.end, fantaTournament.endingTournamentId)
               }
           }
-          .map { it.value }
-          .takeIf { it.isNotEmpty() }
-          ?.reduce { acc, points -> acc + points }
-      ?: 0.0
+          .values
+          .sum()
 
   private fun isTournamentIdAfterOrEqualToStartingTournament(tournamentId: Int,
                                                              rangeStart: Int,
