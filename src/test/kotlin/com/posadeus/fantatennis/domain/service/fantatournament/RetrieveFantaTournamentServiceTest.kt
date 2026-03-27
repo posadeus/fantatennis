@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 
 class RetrieveFantaTournamentServiceTest {
 
-  private val retrieveFantaTournamentResultsRepository: RetrieveFantaTournamentResultsRepository = mockk()
   private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository = mockk()
   private val retrievePlayersPointsRepository: RetrievePlayersPointsRepository = mockk()
   private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
@@ -111,7 +110,7 @@ class RetrieveFantaTournamentServiceTest {
     val foundPlayersPoints = FoundPlayersPoints(listOf(playerPoints))
     val teams = Teams(emptyList())
 
-    val expected = ErrorFantaTournamentResults // FIXME should return FoundFantaTournamentResults(tournament = FantaTournamentDto(teams = emptyList()))
+    val expected = FoundFantaTournamentResults(tournament = FantaTournamentDto(teams = emptyList()))
 
     every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
     every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints

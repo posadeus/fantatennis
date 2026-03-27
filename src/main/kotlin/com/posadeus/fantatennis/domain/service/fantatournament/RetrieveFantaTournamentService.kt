@@ -62,9 +62,8 @@ class RetrieveFantaTournamentService(private val retrieveFantaTournamentsReposit
       }
 
   private fun areTeamsInvalid(teams: List<DomainTeam>, playerIds: Set<String>): Boolean =
-      teams.isEmpty()
-      || teams.any { it is NotFoundDomainTeam }
-      || !teams.map { it as FoundDomainTeam }.all { team -> team.players.keys.all { it in playerIds } }
+      teams.any { it is NotFoundDomainTeam }
+      || teams.filterIsInstance<FoundDomainTeam>().any { team -> team.players.keys.any { it !in playerIds } }
 
   private fun toPlayerPoints(playerPoints: PlayerPoints, fantaPoints: Double): PlayerPointsDto =
       PlayerPointsDto(fullName = playerPoints.playerName, fantaPoints = fantaPoints)
