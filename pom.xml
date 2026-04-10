@@ -212,6 +212,7 @@
         <configuration>
           <compilerPlugins>
             <plugin>spring</plugin>
+            <plugin>all-open</plugin>
           </compilerPlugins>
           <pluginOptions>
             <!-- Each annotation is placed on its own line -->
@@ -418,6 +419,32 @@
             </configuration>
           </execution>
 
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>fix-players-swap-dto-defaults</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <replaceregexp
+                  file="${project.build.directory}/generated-sources/openapi/src/main/kotlin/com/posadeus/fantatennis/controller/model/team/PlayersToSwapDto.kt"
+                  match="val remove: PlayersToRemoveDto"
+                  replace="val remove: PlayersToRemoveDto = PlayersToRemoveDto()"/>
+                <replaceregexp
+                  file="${project.build.directory}/generated-sources/openapi/src/main/kotlin/com/posadeus/fantatennis/controller/model/team/PlayersToSwapDto.kt"
+                  match="val add: PlayersToAddDto"
+                  replace="val add: PlayersToAddDto = PlayersToAddDto()"/>
+              </target>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 
