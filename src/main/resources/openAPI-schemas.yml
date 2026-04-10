@@ -133,6 +133,7 @@ components:
 
     PlayersToSwapDto:
       type: object
+      x-class-extra-annotation: "@com.fasterxml.jackson.databind.annotation.JsonDeserialize(using = com.posadeus.fantatennis.app.configuration.controller.PlayersToSwapDtoDeserializer::class)"
       properties:
         remove:
           $ref: '#/components/schemas/PlayersToRemoveDto'
