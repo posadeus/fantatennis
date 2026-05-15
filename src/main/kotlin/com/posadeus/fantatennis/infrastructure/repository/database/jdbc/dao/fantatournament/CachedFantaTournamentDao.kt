@@ -13,7 +13,9 @@ class CachedFantaTournamentDao(private val fantaTournamentCache: Cache<Int, Jdbc
       fantaTournamentCache.get(fantaTournamentId) { delegate.retrieveBy(fantaTournamentId) }
 
   override fun retrieveAll(): List<JdbcFantaTournamentDto> =
-      fantaTournamentsCache.get(Unit) { delegate.retrieveAll().takeIf { it.isNotEmpty() } }
+      fantaTournamentsCache.getIfPresent(Unit)
+      ?: delegate.retrieveAll().takeIf { it.isNotEmpty() }
+          ?.also { fantaTournamentsCache.put(Unit, it) }
       ?: emptyList()
 
   override fun persist(fantaTournamentDto: NewJdbcFantaTournamentDto): Int =
