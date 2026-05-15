@@ -11,6 +11,7 @@ class CachedFantaTournamentTeamDao(private val cacheByTournamentId: Cache<Int, L
   override fun persist(fantaTournamentTeam: JdbcFantaTournamentTeamDto) {
 
     delegate.persist(fantaTournamentTeam)
+    cacheByTournamentId.invalidate(fantaTournamentTeam.fantaTournamentId)
   }
 
   override fun retrieveByFantaTournamentId(id: Int): List<JdbcFantaTournamentTeamDto> =

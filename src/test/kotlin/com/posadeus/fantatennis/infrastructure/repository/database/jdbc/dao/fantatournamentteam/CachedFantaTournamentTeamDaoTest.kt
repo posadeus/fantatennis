@@ -36,16 +36,16 @@ class CachedFantaTournamentTeamDaoTest {
     }
 
     @Test
-    fun `persisted by delegate and cache untouched`() {
+    fun `persisted by delegate and invalidate only the affected tournament cache entry`() {
 
       val fantaTournamentTeam = aJdbcFantaTournamentTeamDto(teamId = A_TEAM_ID, fantaTournamentId = A_FANTA_TOURNAMENT_ID)
 
-      val cacheData = aJdbcFantaTournamentTeamDto(teamId = A_TEAM_ID, fantaTournamentId = ANOTHER_FANTA_TOURNAMENT_ID)
-      cacheByTournamentId.put(ANOTHER_FANTA_TOURNAMENT_ID, listOf(cacheData))
-      cacheByTeamId.put(A_TEAM_ID, cacheData)
+      val staleData = aJdbcFantaTournamentTeamDto(teamId = ANOTHER_TEAM_ID, fantaTournamentId = A_FANTA_TOURNAMENT_ID)
+      val unrelatedTournamentData = aJdbcFantaTournamentTeamDto(teamId = A_TEAM_ID, fantaTournamentId = ANOTHER_FANTA_TOURNAMENT_ID)
 
-      assertThat(cacheByTournamentId.getIfPresent(ANOTHER_FANTA_TOURNAMENT_ID)).isEqualTo(listOf(cacheData))
-      assertThat(cacheByTeamId.getIfPresent(A_TEAM_ID)).isEqualTo(cacheData)
+      cacheByTournamentId.put(A_FANTA_TOURNAMENT_ID, listOf(staleData))
+      cacheByTournamentId.put(ANOTHER_FANTA_TOURNAMENT_ID, listOf(unrelatedTournamentData))
+      cacheByTeamId.put(A_TEAM_ID, unrelatedTournamentData)
 
       every { delegate.persist(fantaTournamentTeam) } returns Unit
 
@@ -53,8 +53,9 @@ class CachedFantaTournamentTeamDaoTest {
 
       verify(exactly = 1) { delegate.persist(fantaTournamentTeam) }
 
-      assertThat(cacheByTournamentId.getIfPresent(ANOTHER_FANTA_TOURNAMENT_ID)).isEqualTo(listOf(cacheData))
-      assertThat(cacheByTeamId.getIfPresent(A_TEAM_ID)).isEqualTo(cacheData)
+      assertThat(cacheByTournamentId.getIfPresent(A_FANTA_TOURNAMENT_ID)).isNull()
+      assertThat(cacheByTournamentId.getIfPresent(ANOTHER_FANTA_TOURNAMENT_ID)).isEqualTo(listOf(unrelatedTournamentData))
+      assertThat(cacheByTeamId.getIfPresent(A_TEAM_ID)).isEqualTo(unrelatedTournamentData)
     }
   }
 
@@ -119,6 +120,7 @@ class CachedFantaTournamentTeamDaoTest {
   companion object {
 
     private const val A_TEAM_ID = 123
+    private const val ANOTHER_TEAM_ID = 456
     private const val A_FANTA_TOURNAMENT_ID = 1566
     private const val ANOTHER_FANTA_TOURNAMENT_ID = 345
   }
