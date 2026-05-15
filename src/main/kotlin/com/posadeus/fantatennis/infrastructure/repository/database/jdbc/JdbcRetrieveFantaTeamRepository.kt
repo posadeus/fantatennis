@@ -41,6 +41,14 @@ class JdbcRetrieveFantaTeamRepository(private val jdbcTemplate: NamedParameterJd
     }
   }
 
+  override fun retrieveByTeamId(id: TeamId): DomainTeam {
+    TODO("This class should be removed, so this method shouldn't be implemented")
+  }
+
+  override fun retrieveByFantaTournamentId(id: TournamentId): Teams {
+    TODO("This class should be removed, so this method shouldn't be implemented")
+  }
+
   companion object {
 
     private val RETRIEVE_FANTA_TEAM_QUERY = """

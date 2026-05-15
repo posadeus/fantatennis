@@ -4,18 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.posadeus.fantatennis.controller.fantatournament.FantaTournamentController
 import com.posadeus.fantatennis.controller.model.fantatournament.*
-import com.posadeus.fantatennis.controller.model.team.*
+import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.FantaTournamentResults.*
 import com.posadeus.fantatennis.domain.service.fantatournament.*
-import com.posadeus.fantatennis.domain.service.tournament.*
 import io.mockk.*
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 class FantaTournamentControllerTest {

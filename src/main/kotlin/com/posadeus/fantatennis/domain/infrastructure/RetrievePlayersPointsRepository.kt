@@ -4,5 +4,6 @@ import com.posadeus.fantatennis.domain.model.PlayersPoints
 
 interface RetrievePlayersPointsRepository {
 
-  fun retrieveBy(tournamentId: Int): PlayersPoints
+  fun retrieveByTournamentId(tournamentId: Int): PlayersPoints
+  fun retrieveByYear(year: Int): PlayersPoints
 }

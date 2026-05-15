@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD
 import org.springframework.test.context.jdbc.SqlGroup
@@ -21,6 +22,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @Import(IntegrationTestConfiguration::class, PersistTeamPlayersRepositoryConfiguration::class, TeamDaoConfiguration::class)
+@TestPropertySource(properties = [
+  "caches.caffeine.team-cache.expire-after-write-duration=10080",
+  "caches.caffeine.team-cache.maximum-size=1000"
+])
 class SqlPersistTeamPlayersRepositoryIT {
 
   @Autowired

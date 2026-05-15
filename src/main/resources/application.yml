@@ -72,6 +72,9 @@ caches:
     players-points-by-tournament-id-cache:
       expire-after-write-duration: 360
       maximum-size: 1000
+    players-points-by-tournament-year-cache:
+      expire-after-write-duration: 360
+      maximum-size: 1000
     fanta-team-cache:
       expire-after-write-duration: 10080
       expire-after-access-duration: 10080
@@ -83,4 +86,13 @@ caches:
     fanta-tournaments-cache:
       expire-after-write-duration: 10080
       expire-after-access-duration: 10080
+      maximum-size: 1000
+    fanta-tournament-team-by-tournament-id-cache:
+      expire-after-write-duration: 10080
+      maximum-size: 1000
+    fanta-tournament-team-by-team-id-cache:
+      expire-after-write-duration: 10080
+      maximum-size: 1000
+    team-cache:
+      expire-after-write-duration: 10080
       maximum-size: 1000

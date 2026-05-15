@@ -13,7 +13,17 @@ import org.springframework.transaction.annotation.Transactional
 class JdbcPlayerPointsDao(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : PlayerPointsDao {
 
   override fun retrieveByTournamentId(tournamentId: Int): List<JdbcPlayerPointsDto> =
-      namedParameterJdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_QUERY, mapOf("tournamentId" to tournamentId), playersPointsRowMapper)
+      mapOf("tournamentId" to tournamentId)
+          .let {
+            namedParameterJdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_ID_QUERY, it, playersPointsRowMapper)
+          }
+
+  override fun retrieveByTournamentYear(year: Int): List<JdbcPlayerPointsDto> =
+      mapOf("tournamentYear" to year)
+          .let {
+            namedParameterJdbcTemplate.query(RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_YEAR_QUERY, it, playersPointsRowMapper)
+          }
+
 
   @Transactional
   override fun persistAll(players: List<JdbcPlayerPointsDto>) {
@@ -47,10 +57,16 @@ class JdbcPlayerPointsDao(private val namedParameterJdbcTemplate: NamedParameter
 
   companion object {
 
-    private val RETRIEVE_PLAYERS_POINTS_QUERY = """
+    private val RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_ID_QUERY = """
       SELECT *
       FROM PLAYERS_POINTS
       WHERE TOURNAMENT_ID = :tournamentId
+    """.trimIndent()
+
+    private val RETRIEVE_PLAYERS_POINTS_BY_TOURNAMENT_YEAR_QUERY = """
+      SELECT *
+      FROM PLAYERS_POINTS
+      WHERE TOURNAMENT_YEAR = :tournamentYear
     """.trimIndent()
 
     private val INSERT_PLAYERS_POINTS_QUERY = """

@@ -29,12 +29,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
         PlayerPointsDaoConfiguration::class)
 @TestPropertySource(properties = [
   "caches.caffeine.players-points-by-tournament-id-cache.expire-after-write-duration=10080",
-  "caches.caffeine.players-points-by-tournament-id-cache.maximum-size=1000"
+  "caches.caffeine.players-points-by-tournament-id-cache.maximum-size=1000",
+  "caches.caffeine.players-points-by-tournament-year-cache.expire-after-write-duration=10080",
+  "caches.caffeine.players-points-by-tournament-year-cache.maximum-size=1000"
 ])
 class SqlPersistPlayersPointsRepositoryIT {
 
   @Autowired
-  private lateinit var playerPointsCache: Cache<Int, List<JdbcPlayerPointsDto>>
+  private lateinit var playersPointsByTournamentIdCache: Cache<Int, List<JdbcPlayerPointsDto>>
+
+  @Autowired
+  private lateinit var playersPointsByTournamentYearCache: Cache<Int, List<JdbcPlayerPointsDto>>
 
   @Autowired
   private lateinit var jdbcPlayerPointsDao: PlayerPointsDao
@@ -48,7 +53,7 @@ class SqlPersistPlayersPointsRepositoryIT {
   @BeforeEach
   fun setUp() {
 
-    val cachedPlayerPointsDao = CachedPlayerPointsDao(playerPointsCache, jdbcPlayerPointsDao)
+    val cachedPlayerPointsDao = CachedPlayerPointsDao(playersPointsByTournamentIdCache, playersPointsByTournamentYearCache, jdbcPlayerPointsDao)
 
     repository = SqlPersistPlayersPointsRepository(cachedPlayerPointsDao)
   }
