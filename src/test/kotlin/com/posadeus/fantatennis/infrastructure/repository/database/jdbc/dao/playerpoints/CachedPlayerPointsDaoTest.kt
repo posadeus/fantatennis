@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test
 
 class CachedPlayerPointsDaoTest {
 
-  private val cacheById: Cache<Int, List<JdbcPlayerPointsDto>> = Caffeine.newBuilder().build()
+  private val cacheByTournamentId: Cache<Int, List<JdbcPlayerPointsDto>> = Caffeine.newBuilder().build()
   private val cacheByYear: Cache<Int, List<JdbcPlayerPointsDto>> = Caffeine.newBuilder().build()
   private val delegate: PlayerPointsDao = mockk()
 
-  private val dao: PlayerPointsDao = CachedPlayerPointsDao(cacheById, cacheByYear, delegate)
+  private val dao: PlayerPointsDao = CachedPlayerPointsDao(cacheByTournamentId, cacheByYear, delegate)
 
   @Nested
   inner class RetrieveByTournamentId {
@@ -40,7 +40,7 @@ class CachedPlayerPointsDaoTest {
 
       val expected = listOf(aJdbcPlayerPointsDto())
 
-      cacheById.put(A_TOURNAMENT_ID, expected)
+      cacheByTournamentId.put(A_TOURNAMENT_ID, expected)
 
       assertThat(dao.retrieveByTournamentId(A_TOURNAMENT_ID)).isEqualTo(expected)
 
@@ -93,10 +93,10 @@ class CachedPlayerPointsDaoTest {
     @Test
     fun `persisted by delegate and flush cache`() {
 
-      cacheById.put(A_TOURNAMENT_ID, listOf(aJdbcPlayerPointsDto()))
+      cacheByTournamentId.put(A_TOURNAMENT_ID, listOf(aJdbcPlayerPointsDto()))
       cacheByYear.put(A_YEAR, listOf(aJdbcPlayerPointsDto()))
 
-      assertThat(cacheById.getIfPresent(A_TOURNAMENT_ID)!!.size).isEqualTo(1)
+      assertThat(cacheByTournamentId.getIfPresent(A_TOURNAMENT_ID)!!.size).isEqualTo(1)
       assertThat(cacheByYear.getIfPresent(A_YEAR)!!.size).isEqualTo(1)
 
       every { delegate.persistAll(PLAYERS) } returns Unit
@@ -105,7 +105,7 @@ class CachedPlayerPointsDaoTest {
 
       verify(exactly = 1) { delegate.persistAll(PLAYERS) }
 
-      assertThat(cacheById.getIfPresent(A_TOURNAMENT_ID)?.size).isEqualTo(null)
+      assertThat(cacheByTournamentId.getIfPresent(A_TOURNAMENT_ID)?.size).isEqualTo(null)
       assertThat(cacheByYear.getIfPresent(A_YEAR)?.size).isEqualTo(null)
     }
   }
