@@ -106,6 +106,37 @@ class RetrieveTeamServiceTest {
   }
 
   @Test
+  fun `team found applies per-player range filter when endingTournamentId is set`() {
+
+    val foundDomainTeam = FoundDomainTeam(teamId = A_TEAM_ID,
+                                          ownerId = AN_OWNER_ID,
+                                          fantaTournamentId = A_FANTA_TOURNAMENT_ID,
+                                          players = mapOf(A_PLAYER_ID to setOf(TournamentRange(start = A_STARTING_TOURNAMENT_ID,
+                                                                                               end = A_PLAYER_ENDING_TOURNAMENT_ID))))
+    val validFantaTournament = ValidFantaTournament(id = A_FANTA_TOURNAMENT_ID,
+                                                    startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                    endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                    tournamentYear = A_TOURNAMENT_YEAR)
+    val foundPlayersPoints = FoundPlayersPoints(listOf(PlayerPoints(playerId = A_PLAYER_ID,
+                                                                    playerName = A_PLAYER_NAME,
+                                                                    pointsByTournament = mapOf(100 to 5.0,
+                                                                                               103 to 10.0,
+                                                                                               107 to 100.0,
+                                                                                               109 to 200.0),
+                                                                    totalPoints = 0.0)))
+
+    val expected = FoundTeam(TeamDto(owner = AN_OWNER_ID,
+                                     players = listOf(PlayerPointsDto(fullName = A_PLAYER_NAME, fantaPoints = 15.0)),
+                                     totalScore = 15.0))
+
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns foundDomainTeam
+    every { retrieveFantaTournamentsRepository.retrieveBy(A_FANTA_TOURNAMENT_ID) } returns validFantaTournament
+    every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints
+
+    assertThat(service.retrieve(A_TEAM_ID)).isEqualTo(expected)
+  }
+
+  @Test
   fun `team found with single player without points appears with zero score`() {
 
     val foundDomainTeam = FoundDomainTeam(teamId = A_TEAM_ID,
@@ -138,6 +169,7 @@ class RetrieveTeamServiceTest {
     private const val A_FANTA_TOURNAMENT_ID = 42
     private const val A_STARTING_TOURNAMENT_ID = 100
     private const val AN_ENDING_TOURNAMENT_ID = 110
+    private const val A_PLAYER_ENDING_TOURNAMENT_ID = 104
     private const val A_TOURNAMENT_YEAR = 2026
     private const val AN_OWNER_ID = "AN_OWNER_ID"
     private const val A_PLAYER_ID = "A_PLAYER_ID"

@@ -31,7 +31,7 @@ class RetrieveTeamService(private val retrieveFantaTeamRepository: RetrieveFanta
                   playersPoints.playersPoints
                       .associateBy { it.playerId }
                       .let { pointsByPlayerId ->
-                        team.players.keys.map { playerId -> toPlayerPoints(pointsByPlayerId[playerId], fantaTournament) }
+                        team.players.map { (playerId, ranges) -> toPlayerPoints(pointsByPlayerId[playerId], ranges, fantaTournament) }
                       }
                       .sortedByDescending { it.fantaPoints }
                       .let { players -> TeamDto(owner = team.ownerId, players = players, totalScore = players.sumOf { it.fantaPoints }) }
@@ -40,10 +40,15 @@ class RetrieveTeamService(private val retrieveFantaTeamRepository: RetrieveFanta
           }
       }
 
-  private fun toPlayerPoints(playerPoints: FoundPlayersPoints.PlayerPoints?, fantaTournament: ValidFantaTournament): PlayerPointsDto =
+  private fun toPlayerPoints(playerPoints: FoundPlayersPoints.PlayerPoints?,
+                             ranges: Set<TournamentRange>,
+                             fantaTournament: ValidFantaTournament): PlayerPointsDto =
       PlayerPointsDto(fullName = playerPoints?.playerName ?: "",
                       fantaPoints = playerPoints
                           ?.pointsByTournament
-                          ?.filterKeys { it in fantaTournament.startingTournamentId..fantaTournament.endingTournamentId }
+                          ?.filterKeys { tournamentId ->
+                            tournamentId in fantaTournament.startingTournamentId..fantaTournament.endingTournamentId
+                                && ranges.any { it.contains(tournamentId) }
+                          }
                           ?.values?.sum() ?: 0.0)
 }
