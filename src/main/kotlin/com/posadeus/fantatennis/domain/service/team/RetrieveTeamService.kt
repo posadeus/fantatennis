@@ -28,14 +28,22 @@ class RetrieveTeamService(private val retrieveFantaTeamRepository: RetrieveFanta
 
                 is InternalErrorPlayersPoints -> ErrorTeam
                 is FoundPlayersPoints ->
-                  team.players.keys
-                      .map { playerId ->
-                        PlayerPointsDto(fullName = playersPoints.playersPoints.firstOrNull { it.playerId == playerId }?.playerName ?: "",
-                                        fantaPoints = 0.0)
+                  playersPoints.playersPoints
+                      .associateBy { it.playerId }
+                      .let { pointsByPlayerId ->
+                        team.players.keys.map { playerId -> toPlayerPoints(pointsByPlayerId[playerId], fantaTournament) }
                       }
-                      .let { TeamDto(owner = team.ownerId, players = it, totalScore = 0.0) }
+                      .sortedByDescending { it.fantaPoints }
+                      .let { players -> TeamDto(owner = team.ownerId, players = players, totalScore = players.sumOf { it.fantaPoints }) }
                       .let(::FoundTeam)
               }
           }
       }
+
+  private fun toPlayerPoints(playerPoints: FoundPlayersPoints.PlayerPoints?, fantaTournament: ValidFantaTournament): PlayerPointsDto =
+      PlayerPointsDto(fullName = playerPoints?.playerName ?: "",
+                      fantaPoints = playerPoints
+                          ?.pointsByTournament
+                          ?.filterKeys { it in fantaTournament.startingTournamentId..fantaTournament.endingTournamentId }
+                          ?.values?.sum() ?: 0.0)
 }
