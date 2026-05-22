@@ -1,13 +1,16 @@
 package com.posadeus.fantatennis.domain.service.team
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
+import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.domain.infrastructure.*
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.DomainTeam.FoundDomainTeam
 import com.posadeus.fantatennis.domain.model.DomainTeam.NotFoundDomainTeam
-import com.posadeus.fantatennis.domain.model.ErrorTeam
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
+import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints.PlayerPoints
 import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
-import com.posadeus.fantatennis.domain.model.TeamIdNotFoundTeam
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -64,6 +67,33 @@ class RetrieveTeamServiceTest {
     assertThat(service.retrieve(A_TEAM_ID)).isEqualTo(ErrorTeam)
   }
 
+  @Test
+  fun `team found with single player without points appears with zero score`() {
+
+    val foundDomainTeam = FoundDomainTeam(teamId = A_TEAM_ID,
+                                          ownerId = AN_OWNER_ID,
+                                          fantaTournamentId = A_FANTA_TOURNAMENT_ID,
+                                          players = mapOf(A_PLAYER_ID to setOf(TournamentRange(start = A_STARTING_TOURNAMENT_ID))))
+    val validFantaTournament = ValidFantaTournament(id = A_FANTA_TOURNAMENT_ID,
+                                                    startingTournamentId = A_STARTING_TOURNAMENT_ID,
+                                                    endingTournamentId = AN_ENDING_TOURNAMENT_ID,
+                                                    tournamentYear = A_TOURNAMENT_YEAR)
+    val foundPlayersPoints = FoundPlayersPoints(listOf(PlayerPoints(playerId = A_PLAYER_ID,
+                                                                    playerName = A_PLAYER_NAME,
+                                                                    pointsByTournament = emptyMap(),
+                                                                    totalPoints = 0.0)))
+
+    val expected = FoundTeam(TeamDto(owner = AN_OWNER_ID,
+                                     players = listOf(PlayerPointsDto(fullName = A_PLAYER_NAME, fantaPoints = 0.0)),
+                                     totalScore = 0.0))
+
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns foundDomainTeam
+    every { retrieveFantaTournamentsRepository.retrieveBy(A_FANTA_TOURNAMENT_ID) } returns validFantaTournament
+    every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints
+
+    assertThat(service.retrieve(A_TEAM_ID)).isEqualTo(expected)
+  }
+
   companion object {
 
     private const val A_TEAM_ID = 1
@@ -72,5 +102,7 @@ class RetrieveTeamServiceTest {
     private const val A_STARTING_TOURNAMENT_ID = 100
     private const val AN_ENDING_TOURNAMENT_ID = 110
     private const val A_TOURNAMENT_YEAR = 2026
+    private const val A_PLAYER_ID = "A_PLAYER_ID"
+    private const val A_PLAYER_NAME = "A_PLAYER_NAME"
   }
 }

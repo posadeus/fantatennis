@@ -1,5 +1,7 @@
 package com.posadeus.fantatennis.domain.service.team
 
+import com.posadeus.fantatennis.controller.model.team.PlayerPointsDto
+import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.domain.infrastructure.*
 import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.DomainTeam.FoundDomainTeam
@@ -22,10 +24,17 @@ class RetrieveTeamService(private val retrieveFantaTeamRepository: RetrieveFanta
 
             is InvalidFantaTournament -> ErrorTeam
             is ValidFantaTournament ->
-              when (retrievePlayersPointsRepository.retrieveByYear(fantaTournament.tournamentYear)) {
+              when (val playersPoints = retrievePlayersPointsRepository.retrieveByYear(fantaTournament.tournamentYear)) {
 
                 is InternalErrorPlayersPoints -> ErrorTeam
-                is FoundPlayersPoints -> ErrorTeam
+                is FoundPlayersPoints ->
+                  team.players.keys
+                      .map { playerId ->
+                        PlayerPointsDto(fullName = playersPoints.playersPoints.firstOrNull { it.playerId == playerId }?.playerName ?: "",
+                                        fantaPoints = 0.0)
+                      }
+                      .let { TeamDto(owner = team.ownerId, players = it, totalScore = 0.0) }
+                      .let(::FoundTeam)
               }
           }
       }
