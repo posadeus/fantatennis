@@ -6,6 +6,8 @@ import com.posadeus.fantatennis.domain.model.DomainTeam.FoundDomainTeam
 import com.posadeus.fantatennis.domain.model.DomainTeam.NotFoundDomainTeam
 import com.posadeus.fantatennis.domain.model.FantaTournament.InvalidFantaTournament
 import com.posadeus.fantatennis.domain.model.FantaTournament.ValidFantaTournament
+import com.posadeus.fantatennis.domain.model.PlayersPoints.FoundPlayersPoints
+import com.posadeus.fantatennis.domain.model.PlayersPoints.InternalErrorPlayersPoints
 
 class RetrieveTeamService(private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
                           private val retrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository,
@@ -16,10 +18,15 @@ class RetrieveTeamService(private val retrieveFantaTeamRepository: RetrieveFanta
 
         is NotFoundDomainTeam -> TeamIdNotFoundTeam
         is FoundDomainTeam ->
-          when (retrieveFantaTournamentsRepository.retrieveBy(team.fantaTournamentId)) {
+          when (val fantaTournament = retrieveFantaTournamentsRepository.retrieveBy(team.fantaTournamentId)) {
 
             is InvalidFantaTournament -> ErrorTeam
-            is ValidFantaTournament -> ErrorTeam
+            is ValidFantaTournament ->
+              when (retrievePlayersPointsRepository.retrieveByYear(fantaTournament.tournamentYear)) {
+
+                is InternalErrorPlayersPoints -> ErrorTeam
+                is FoundPlayersPoints -> ErrorTeam
+              }
           }
       }
 }
