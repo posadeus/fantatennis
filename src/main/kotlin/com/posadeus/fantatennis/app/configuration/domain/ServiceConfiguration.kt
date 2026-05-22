@@ -67,8 +67,12 @@ class ServiceConfiguration {
       RankingService(rankingRepository)
 
   @Bean
-  fun retrieveTeamService(jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository): RetrieveTeamService =
-      RetrieveTeamService(jdbcRetrieveFantaTeamRepository)
+  fun retrieveTeamService(sqlRetrieveFantaTeamRepository: RetrieveFantaTeamRepository,
+                          sqlRetrieveFantaTournamentsRepository: RetrieveFantaTournamentsRepository,
+                          sqlRetrievePlayersPointsRepository: RetrievePlayersPointsRepository): RetrieveTeamService =
+      RetrieveTeamService(sqlRetrieveFantaTeamRepository,
+                          sqlRetrieveFantaTournamentsRepository,
+                          sqlRetrievePlayersPointsRepository)
 
   @Bean
   fun createTeamService(sqlCreateTeamRepository: CreateTeamRepository): CreateTeamService =
