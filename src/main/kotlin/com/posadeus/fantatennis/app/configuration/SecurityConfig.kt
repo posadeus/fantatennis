@@ -14,15 +14,23 @@ class SecurityConfig {
 
     http {
       authorizeHttpRequests {
-        authorize("/", permitAll) // Grants the access to page "/"
-        authorize("/login", permitAll) // Grants the access to page "/login"
-        authorize("/login/oauth2/**", permitAll) // Needed for Google callback
-//        authorize(anyRequest, authenticated) // FIXME remove the comment to require the Auth for every url not permitted
-        authorize(anyRequest, permitAll) // FIXME Authorise everything: remove when login is in place
+        // Public endpoints: landing page and the OAuth2 login/callback machinery.
+        authorize("/", permitAll)
+        authorize("/error", permitAll)
+        authorize("/login/**", permitAll)
+        authorize("/oauth2/**", permitAll)
+        // Everything else requires an authenticated Google user.
+        authorize(anyRequest, authenticated)
       }
+      // CSRF is disabled because this service is consumed as a stateless REST API.
+      // Re-enable it if you start serving state-changing forms from server-rendered pages.
       csrf { disable() }
       oauth2Login {
-        defaultSuccessUrl("/home", true) // Redirect to "/home" after Google login
+        // Where the user lands after a successful Google login.
+        defaultSuccessUrl("/home", true)
+      }
+      logout {
+        logoutSuccessUrl = "/"
       }
     }
 

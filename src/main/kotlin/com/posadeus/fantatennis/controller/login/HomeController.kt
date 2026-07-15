@@ -29,6 +29,6 @@ class HomeController {
       else -> println("Tipo di utente non supportato")
     }
 
-    return "/tournament/3" // Redirect to url
+    return "redirect:/tournament/3" // Redirect to the app after a successful login
   }
 }
