@@ -71,8 +71,10 @@ class ServiceConfiguration {
       RetrieveTeamService(jdbcRetrieveFantaTeamRepository)
 
   @Bean
-  fun createTeamService(sqlCreateTeamRepository: CreateTeamRepository): CreateTeamService =
-      CreateTeamService(sqlCreateTeamRepository)
+  fun createTeamService(sqlCreateTeamRepository: CreateTeamRepository,
+                        currentUser: CurrentUser): CreateTeamService =
+      CreateTeamService(sqlCreateTeamRepository,
+                        currentUser)
 
   @Bean
   fun addPlayersTeamService(sqlPersistTeamPlayersRepository: PersistTeamPlayersRepository,

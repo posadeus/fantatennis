@@ -42,3 +42,6 @@ build/
 ### Firebase Credentials ###
 /src/main/resources/firebase-adminsdk.json
 /src/main/resources/firebase-config.properties
+
+### Local, uncommitted config (secrets / per-developer overrides) ###
+/config/

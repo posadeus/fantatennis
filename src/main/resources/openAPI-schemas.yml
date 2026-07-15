@@ -80,15 +80,10 @@ components:
     TeamToCreateDto:
       type: object
       properties:
-        ownerId:
-          type: string
-          default: ""
-          example: OWNER_ID
         tournamentId:
           type: integer
           default: 0
       required:
-        - ownerId
         - tournamentId
 
     PlayersToAddDto:
