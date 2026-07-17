@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="com.posadeus.fantatennis.app.ApplicationKt" />
     <module name="fantatennis" />
     <shortenClasspath name="NONE" />
-    <option name="VM_PARAMETERS" value="-Dspring.config.additional-location=config/application-dev.yml" />
+    <option name="VM_PARAMETERS" value="-Dspring.profiles.active=dev" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
