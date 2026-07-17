@@ -13,7 +13,7 @@ class CreateTeamService(private val createTeamRepository: CreateTeamRepository,
 
   fun create(dto: TeamToCreateDto): TeamCreation =
       try {
-        createTeamRepository.create(currentUser.email(), dto.tournamentId)
+        createTeamRepository.create(currentUser.ownerId(), dto.tournamentId)
           .let(::toTeamCreated)
       }
       catch (e: FantaTeamCreationException) {

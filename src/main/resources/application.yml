@@ -20,6 +20,7 @@ spring:
 app:
   security:
     admin-email: ${ADMIN_EMAIL:}
+    owner-id-pepper: ${OWNER_ID_PEPPER:}
 
 logging:
   level:

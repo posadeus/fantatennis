@@ -15,18 +15,18 @@ class HomeController {
     when (val user = authentication.principal) {
 
       is OidcUser -> {
-
-        println("Email: ${user.email}")
-        println("User Info: ${user.attributes}")
+//
+//        println("Email: ${user.email}")
+//        println("User Info: ${user.attributes}")
       }
-
+//
       is OAuth2User -> {
-
-        println("Email: ${user.attributes["email"]}")
-        println("User Info: ${user.attributes}")
+//
+//        println("Email: ${user.attributes["email"]}")
+//        println("User Info: ${user.attributes}")
       }
 
-      else -> println("Tipo di utente non supportato")
+      else -> println("Unsupported user")
     }
 
     return "redirect:/tournament/3" // Redirect to the app after a successful login

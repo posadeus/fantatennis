@@ -2,5 +2,5 @@ package com.posadeus.fantatennis.domain.infrastructure
 
 interface CurrentUser {
 
-  fun email(): String
+  fun ownerId(): String
 }

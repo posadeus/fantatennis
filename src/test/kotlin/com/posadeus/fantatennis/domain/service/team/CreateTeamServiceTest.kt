@@ -26,7 +26,7 @@ class CreateTeamServiceTest {
 
     val expected: TeamCreation = TeamCreated(team = TeamCreatedDto(id = 1, ownerId = AN_OWNER_ID))
 
-    every { currentUser.email() } returns AN_OWNER_ID
+    every { currentUser.ownerId() } returns AN_OWNER_ID
     every { createTeamRepository.create(AN_OWNER_ID, 100) } returns fantaTeam
 
     assertThat(service.create(dto)).isEqualTo(expected)
@@ -41,7 +41,7 @@ class CreateTeamServiceTest {
 
     val expected = ErrorTeamCreation
 
-    every { currentUser.email() } returns AN_OWNER_ID
+    every { currentUser.ownerId() } returns AN_OWNER_ID
     every { createTeamRepository.create(AN_OWNER_ID, A_TOURNAMENT_ID) } throws FantaTeamCreationException("Scary error")
 
     assertThat(service.create(request)).isEqualTo(expected)
@@ -54,7 +54,7 @@ class CreateTeamServiceTest {
 
     val expected = ErrorTeamCreation
 
-    every { currentUser.email() } throws IllegalStateException("No authenticated user with an email in the security context")
+    every { currentUser.ownerId() } throws IllegalStateException("No authenticated user with an email in the security context")
 
     assertThat(service.create(request)).isEqualTo(expected)
 

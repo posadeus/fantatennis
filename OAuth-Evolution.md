@@ -13,10 +13,14 @@ increment, roughly in priority order.
   `application.yml`, with `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` supplied via env vars.
 - **Who can log in at all:** currently gated by the **Test users** list on the Google OAuth
   consent screen (a Google-console setting, *not* app logic).
-- **Identity → domain owner:** the authenticated **email is used as `ownerId`**. Services read
-  it from the security context through the `CurrentUser` port
-  (`domain/infrastructure/CurrentUser.kt`, impl `infrastructure/security/SecurityContextCurrentUser.kt`).
-  `CreateTeamService` now ignores any client-supplied `ownerId` and always uses `currentUser.email()`.
+- **Identity → domain owner:** the authenticated email is turned into a **pseudonymous `ownerId`**
+  at the outermost layer, so the raw email never enters the domain. `SecurityContextCurrentUser`
+  reads the email from the security context, normalizes it (`trim().lowercase()`) and anonymizes it
+  via `Anonymizer` (`infrastructure/security/Sha256Anonymizer.kt`: deterministic SHA-256 + a secret
+  `app.security.owner-id-pepper` / `OWNER_ID_PEPPER`) before exposing it through the `CurrentUser`
+  port as `ownerId(): String`. `CreateTeamService` ignores any client-supplied `ownerId` and always
+  uses `currentUser.ownerId()`. **Note:** this is *pseudonymization*, not anonymization — the value
+  is still personal data under GDPR (see Evolution 5).
 - **Roles:** a single admin address (`app.security.admin-email`, default from `ADMIN_EMAIL`) is
   granted `ROLE_ADMIN` at login by `SecurityConfig.adminAwareOidcUserService`; everyone else gets
   `ROLE_USER`. Only `/job/**` (data-import jobs) requires `ROLE_ADMIN`.
@@ -94,3 +98,45 @@ setting and caps at 100 users while the app is unpublished.
 - Publish the OAuth consent screen and enforce membership in-app (Evolution 1's `users` table as
   an allow-list, rejecting unknown accounts at login), **or**
 - Keep an explicit allow-list (config or DB) checked in the `OidcUserService`.
+
+---
+
+## Evolution 5 — GDPR compliance
+
+**Why:** hashing the email into `ownerId` (SHA-256 + pepper) is a good data-minimization and
+security measure, but it is **pseudonymization, not anonymization**. The hash is deterministic (a
+stable per-person identifier) and reversible with additional information (the pepper + a list of
+known emails), so under GDPR (Recital 26, art. 4(5)) `ownerId` **remains personal data** and the
+regulation still applies in full. Compliance is a property of the whole system and its processes,
+not of a single hashed field. *(This is engineering guidance, not legal advice — validate with a
+DPO / lawyer.)*
+
+**What the current pseudonymization already gives us:** it supports *privacy by design* (art. 25)
+and *security of processing* (art. 32) — the raw email no longer flows into the domain, the DB, or
+API responses.
+
+**What still needs to be in place (technical/product work):**
+- **Don't log raw PII.** ✅ Done in `HomeController` — the login `println`s of the email and OIDC
+  attributes were removed (logs are a form of processing and often leave the system). Keep auditing
+  for any other PII that might reach the logs, and prefer logging the pseudonymous `ownerId`.
+- **Treat the pepper as a secret (art. 32).** It is the key of the pseudonymization: keep it out of
+  the repo and DB, restrict access, use a distinct value per environment, and have a rotation plan
+  (note: rotating the pepper invalidates all existing `ownerId`s — needs a re-mapping strategy,
+  easier once Evolution 1's `users` table exists).
+- **Right to erasure (art. 17).** Design a way to delete a user's data on request — remove their
+  teams and any `users` row (Evolution 1). Deleting rows suffices; the hash itself is not separately
+  erasable.
+- **Right of access / portability (art. 15, 20).** Be able to export the data tied to a user.
+- **Retention policy.** Define how long team/identity data is kept and enforce it.
+- **Consider using the Google `sub`** (opaque, non-PII subject id) as the internal identity instead
+  of a hashed email once Evolution 1 lands — it avoids deriving the identifier from an email
+  altogether.
+
+**What is organizational (outside the codebase) but required for actual compliance:**
+- A lawful basis for processing the email (consent / contract / legitimate interest) and a
+  **privacy policy / informativa** describing what is collected and why.
+- A **record of processing activities**, **DPAs** with processors (Google for OAuth, the DB host),
+  and a **data-breach notification** procedure (72h).
+
+**Touches:** ~~`HomeController` (remove PII logging)~~ ✅ done, secret management for the pepper,
+and — for erasure/access — the `users` table and DAO from Evolution 1.
