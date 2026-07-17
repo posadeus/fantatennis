@@ -91,6 +91,17 @@
       <artifactId>kotlin-reflect</artifactId>
       <version>${kotlin.version}</version>
     </dependency>
+
+    <!-- FLYWAY -->
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-mysql</artifactId>
+    </dependency>
+
     <!-- CAFFEINE -->
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>
