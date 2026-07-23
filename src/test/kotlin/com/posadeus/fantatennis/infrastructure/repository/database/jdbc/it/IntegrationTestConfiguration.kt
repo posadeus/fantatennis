@@ -48,8 +48,8 @@ class IntegrationTestConfiguration {
           withUsername("test_user")
           withPassword("test_password")
           withCopyFileToContainer(
-              MountableFile.forClasspathResource("test-containers/init-db.sql"),
-              "/docker-entrypoint-initdb.d/init-db.sql"
+              MountableFile.forClasspathResource("db/migration/V1__init.sql"),
+              "/docker-entrypoint-initdb.d/V1__init.sql"
           )
           withPrivilegedMode(true)
           withReuse(false)

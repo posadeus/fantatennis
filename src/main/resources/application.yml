@@ -1,6 +1,9 @@
 spring:
   application:
     name: fanta-tennis
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 logging:
   level:
