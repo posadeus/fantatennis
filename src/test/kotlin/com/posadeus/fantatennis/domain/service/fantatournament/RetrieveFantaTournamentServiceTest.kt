@@ -163,6 +163,36 @@ class RetrieveFantaTournamentServiceTest {
   }
 
   @Test
+  fun `retrieve includes teams without players with zero score`() {
+
+    val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
+                                               startingTournamentId = 1,
+                                               endingTournamentId = 2,
+                                               tournamentYear = A_TOURNAMENT_YEAR)
+    val playerPoints = aPlayerPoints(playerId = A_PLAYER_ID,
+                                     playerName = A_PLAYER_NAME,
+                                     pointsByTournament = mapOf(1 to 3.0, 2 to 6.0))
+    val foundPlayersPoints = FoundPlayersPoints(listOf(playerPoints))
+    val domainTeam1 = aDomainTeam(ownerId = AN_OWNER_ID,
+                                  players = mapOf(A_PLAYER_ID to setOf(TournamentRange(1, null))))
+    val domainTeam2 = aDomainTeam(ownerId = ANOTHER_OWNER_ID,
+                                  players = emptyMap())
+    val teams = Teams(listOf(domainTeam1, domainTeam2))
+
+    val teamDto1 = TeamDto(owner = AN_OWNER_ID,
+                           players = listOf(PlayerPointsDto(fullName = A_PLAYER_NAME, fantaPoints = 9.0)),
+                           totalScore = 9.0)
+    val teamDto2 = TeamDto(owner = ANOTHER_OWNER_ID, players = emptyList(), totalScore = 0.0)
+    val expected = FoundFantaTournamentResults(tournament = FantaTournamentDto(listOf(teamDto1, teamDto2)))
+
+    every { retrieveFantaTournamentsRepository.retrieveBy(A_TOURNAMENT_ID) } returns fantaTournament
+    every { retrievePlayersPointsRepository.retrieveByYear(A_TOURNAMENT_YEAR) } returns foundPlayersPoints
+    every { retrieveFantaTeamRepository.retrieveByFantaTournamentId(A_TOURNAMENT_ID) } returns teams
+
+    assertThat(service.retrieve(A_TOURNAMENT_ID)).isEqualTo(expected)
+  }
+
+  @Test
   fun `retrieve returns the sum of points for players with a hole in tournaments`() {
 
     val fantaTournament = ValidFantaTournament(id = A_TOURNAMENT_ID,
