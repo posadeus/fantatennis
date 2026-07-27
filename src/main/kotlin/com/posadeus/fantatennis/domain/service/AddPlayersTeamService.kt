@@ -5,6 +5,8 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.*
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.DomainTeam.FoundDomainTeam
+import com.posadeus.fantatennis.domain.model.DomainTeam.NotFoundDomainTeam
 import com.posadeus.fantatennis.domain.model.Tournament.*
 import org.slf4j.LoggerFactory
 
@@ -15,9 +17,9 @@ class AddPlayersTeamService(private val persistTeamPlayersRepository: PersistTea
 
   // TODO Add validation: if a player is already present and without an endingTournamentId before the new startingTournamentId, it cannot be added
   fun addPlayers(teamId: Int, playerIds: Set<String>, startingTournamentId: Int): Team =
-      when (val team = retrieveFantaTeamRepository.retrieve(teamId)) {
+      when (retrieveFantaTeamRepository.retrieveByTeamId(teamId)) {
 
-        is FoundTeam ->
+        is FoundDomainTeam ->
           when (retrieveTournamentsRepository.retrieveBy(startingTournamentId)) {
 
             is FoundTournament ->
@@ -49,7 +51,7 @@ class AddPlayersTeamService(private val persistTeamPlayersRepository: PersistTea
             is NotFoundTournament, InternalErrorTournament -> ErrorTeam.also { LOGGER.error("Tournament not found: $startingTournamentId") } // FIXME: not a generic error
           }
 
-        is TeamIdNotFoundTeam, ErrorTeam -> team
+        is NotFoundDomainTeam -> TeamIdNotFoundTeam
       }
 
   private fun toFoundTeam(players: Set<DomainPlayer>): FoundTeam =

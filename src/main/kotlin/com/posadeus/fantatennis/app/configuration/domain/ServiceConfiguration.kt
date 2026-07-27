@@ -80,11 +80,11 @@ class ServiceConfiguration {
 
   @Bean
   fun addPlayersTeamService(sqlPersistTeamPlayersRepository: PersistTeamPlayersRepository,
-                            jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository,
+                            sqlRetrieveFantaTeamRepository: RetrieveFantaTeamRepository,
                             sqlRetrieveTournamentsRepository: RetrieveTournamentsRepository,
                             sqlRetrievePlayersRepository: RetrievePlayersRepository): AddPlayersTeamService =
       AddPlayersTeamService(sqlPersistTeamPlayersRepository,
-                            jdbcRetrieveFantaTeamRepository,
+                            sqlRetrieveFantaTeamRepository,
                             sqlRetrieveTournamentsRepository,
                             sqlRetrievePlayersRepository)
 
