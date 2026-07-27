@@ -1,13 +1,14 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
-import com.posadeus.fantatennis.domain.model.FoundTeam
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
-import com.posadeus.fantatennis.domain.model.TeamIdNotFoundTeam
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
@@ -25,10 +26,12 @@ class JdbcSwapPlayersRepositoryTest {
   private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
   private val jdbcTemplate: JdbcTemplate = mockk()
   private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = mockk()
+  private val teamCache: Cache<Set<TeamId>, List<JdbcTeamDto>> = Caffeine.newBuilder().build()
 
   private val repository: SwapPlayersRepository = JdbcSwapPlayersRepository(retrieveFantaTeamRepository,
                                                                             jdbcTemplate,
-                                                                            namedParameterJdbcTemplate)
+                                                                            namedParameterJdbcTemplate,
+                                                                            teamCache)
 
   @Test
   fun `swap fails due to team not found`() {
@@ -37,9 +40,13 @@ class JdbcSwapPlayersRepositoryTest {
 
     every { retrieveFantaTeamRepository.retrieve(A_NOT_EXISTING_TEAM_ID) } returns TeamIdNotFoundTeam
 
+    teamCache.put(setOf(A_NOT_EXISTING_TEAM_ID), listOf(aJdbcTeamDto(teamId = A_NOT_EXISTING_TEAM_ID)))
+
     assertThat(repository.swap(A_NOT_EXISTING_TEAM_ID, ANY_SWAP_PLAYERS)).isEqualTo(expected)
 
     verify { jdbcTemplate wasNot called }
+
+    assertThat(teamCache.getIfPresent(setOf(A_NOT_EXISTING_TEAM_ID))).isNotNull()
   }
 
   @Test
@@ -322,13 +329,22 @@ class JdbcSwapPlayersRepositoryTest {
     every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, insertParamSource) } returns intArrayOf(1, 1)
     every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } returns intArrayOf(1, 1)
 
+    teamCache.put(setOf(A_TEAM_ID), listOf(aJdbcTeamDto(teamId = A_TEAM_ID)))
+    teamCache.put(setOf(A_TEAM_ID, ANOTHER_TEAM_ID), listOf(aJdbcTeamDto(teamId = A_TEAM_ID), aJdbcTeamDto(teamId = ANOTHER_TEAM_ID)))
+    teamCache.put(setOf(ANOTHER_TEAM_ID), listOf(aJdbcTeamDto(teamId = ANOTHER_TEAM_ID)))
+
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+
+    assertThat(teamCache.getIfPresent(setOf(A_TEAM_ID))).isNull()
+    assertThat(teamCache.getIfPresent(setOf(A_TEAM_ID, ANOTHER_TEAM_ID))).isNull()
+    assertThat(teamCache.getIfPresent(setOf(ANOTHER_TEAM_ID))).isNotNull()
   }
 
   companion object {
 
     private const val A_NOT_EXISTING_TEAM_ID = 1
     private const val A_TEAM_ID = 1
+    private const val ANOTHER_TEAM_ID = 2
     private const val A_TOURNAMENT_ID = 1
     private const val ANOTHER_TOURNAMENT_ID = 2
     private const val A_THIRD_TOURNAMENT_ID = 3

@@ -1,16 +1,18 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
 import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
-import com.posadeus.fantatennis.domain.model.FoundTeam
-import com.posadeus.fantatennis.domain.model.Swap
+import com.posadeus.fantatennis.domain.model.*
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.team.CachedTeamDao.Companion.invalidateKeysContaining
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto.Companion.playerRowMapper
+import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTeamDto.Companion.teamRowMapper
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcTournamentDto.Companion.tournamentRowMapper
 import org.slf4j.LoggerFactory
@@ -21,7 +23,8 @@ import org.springframework.transaction.annotation.Transactional
 @OpenForSpring
 class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
                                 private val jdbcTemplate: JdbcTemplate,
-                                private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate) : SwapPlayersRepository {
+                                private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
+                                private val teamCache: Cache<Set<TeamId>, List<JdbcTeamDto>>) : SwapPlayersRepository {
 
   /* TODO add following checks
   * - startingTournamentId must refer to a tournament in the future (right after the end of endingTournament)
@@ -81,6 +84,7 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
 
           if (batchUpdateResult.all { it == 1 })
             SwapCompleted
+                .also { invalidateKeysContaining(teamCache, setOf(teamId)) }
           else
             throw InvalidPlayersSwapException(
                 error = "Players [${manageError(playersToSwap.remove.playerIds, batchUpdateResult) { it }}] not updated, operation reverted.")

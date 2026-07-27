@@ -68,6 +68,24 @@ class CachedTeamDaoTest {
     }
 
     @Test
+    fun `persisted by delegate and flush all cached entries containing a persisted team`() {
+
+      val jdbcTeams = setOf(aJdbcTeamDto(teamId = A_TEAM_ID))
+
+      cache.put(setOf(A_TEAM_ID), listOf(aJdbcTeamDto(teamId = A_TEAM_ID)))
+      cache.put(setOf(A_TEAM_ID, ANOTHER_TEAM_ID), listOf(aJdbcTeamDto(teamId = A_TEAM_ID), aJdbcTeamDto(teamId = ANOTHER_TEAM_ID)))
+      cache.put(setOf(ANOTHER_TEAM_ID), listOf(aJdbcTeamDto(teamId = ANOTHER_TEAM_ID)))
+
+      every { delegate.persist(jdbcTeams) } returns Unit
+
+      dao.persist(jdbcTeams)
+
+      assertThat(cache.getIfPresent(setOf(A_TEAM_ID))).isNull()
+      assertThat(cache.getIfPresent(setOf(A_TEAM_ID, ANOTHER_TEAM_ID))).isNull()
+      assertThat(cache.getIfPresent(setOf(ANOTHER_TEAM_ID))).isNotNull()
+    }
+
+    @Test
     fun `persisted by delegate and flush cache`() {
 
       val teamIds = setOf(A_TEAM_ID, ANOTHER_TEAM_ID)

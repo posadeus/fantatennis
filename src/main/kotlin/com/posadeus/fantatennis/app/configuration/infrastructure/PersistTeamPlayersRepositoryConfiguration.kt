@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Configuration
 class PersistTeamPlayersRepositoryConfiguration {
 
   @Bean
-  fun sqlPersistTeamPlayersRepository(jdbcTeamDao: TeamDao): PersistTeamPlayersRepository =
-      SqlPersistTeamPlayersRepository(jdbcTeamDao)
+  fun sqlPersistTeamPlayersRepository(cachedTeamDao: TeamDao): PersistTeamPlayersRepository =
+      SqlPersistTeamPlayersRepository(cachedTeamDao)
 }
