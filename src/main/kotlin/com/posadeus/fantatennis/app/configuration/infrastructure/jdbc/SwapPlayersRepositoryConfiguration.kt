@@ -1,7 +1,6 @@
 package com.posadeus.fantatennis.app.configuration.infrastructure.jdbc
 
 import com.github.benmanes.caffeine.cache.Cache
-import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.TeamId
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcSwapPlayersRepository
@@ -15,12 +14,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 class SwapPlayersRepositoryConfiguration {
 
   @Bean
-  fun jdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository: RetrieveFantaTeamRepository,
-                                jdbcTemplate: JdbcTemplate,
+  fun jdbcSwapPlayersRepository(jdbcTemplate: JdbcTemplate,
                                 namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
                                 teamCache: Cache<Set<TeamId>, List<JdbcTeamDto>>): SwapPlayersRepository =
-      JdbcSwapPlayersRepository(jdbcRetrieveFantaTeamRepository,
-                                jdbcTemplate,
+      JdbcSwapPlayersRepository(jdbcTemplate,
                                 namedParameterJdbcTemplate,
                                 teamCache)
 }

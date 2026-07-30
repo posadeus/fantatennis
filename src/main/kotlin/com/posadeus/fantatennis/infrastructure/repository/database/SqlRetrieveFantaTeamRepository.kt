@@ -12,10 +12,6 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
                                      private val fantaTeamDao: FantaTeamDao,
                                      private val fantaTournamentTeamDao: FantaTournamentTeamDao) : RetrieveFantaTeamRepository {
 
-  override fun retrieve(teamId: Int): Team {
-    TODO("To be removed after the migration of JdbcRetrieveFantaTeamRepository")
-  }
-
   override fun retrieveByTeamId(id: TeamId): DomainTeam =
       try {
 

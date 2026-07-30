@@ -4,11 +4,11 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.posadeus.fantatennis.app.configuration.infrastructure.OpenForSpring
 import com.posadeus.fantatennis.controller.model.team.PlayersToSwapDto
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
-import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
-import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.Swap
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
+import com.posadeus.fantatennis.domain.model.TeamId
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.DataBaseErrorManager.manageError
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.team.CachedTeamDao.Companion.invalidateKeysContaining
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.JdbcPlayerDto.Companion.playerRowMapper
@@ -21,8 +21,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 
 @OpenForSpring
-class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository,
-                                private val jdbcTemplate: JdbcTemplate,
+class JdbcSwapPlayersRepository(private val jdbcTemplate: JdbcTemplate,
                                 private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
                                 private val teamCache: Cache<Set<TeamId>, List<JdbcTeamDto>>) : SwapPlayersRepository {
 
@@ -34,40 +33,33 @@ class JdbcSwapPlayersRepository(private val retrieveFantaTeamRepository: Retriev
   */
   // TODO Refactor: move operations inside sub-repositories directly connected to a table
   @Transactional
-  override fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Swap =
-      when (retrieveFantaTeamRepository.retrieve(teamId)) {
+  override fun swap(teamId: Int, playersToSwap: PlayersToSwapDto): Swap {
 
-        is FoundTeam -> {
+    val allPlayers = jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, playerRowMapper)
 
-          val allPlayers = jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, playerRowMapper)
+    return if (areAllRequestedPlayersPresent(allPlayers.map { it.playerId }, playersToSwap)) {
 
-          if (areAllRequestedPlayersPresent(allPlayers.map { it.playerId }, playersToSwap)) {
+      val allTournaments = jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, tournamentRowMapper)
 
-            val allTournaments = jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, tournamentRowMapper)
+      if (areAllRequestedTournamentsPresent(allTournaments.map { it.tournamentId }, playersToSwap)) {
 
-            if (areAllRequestedTournamentsPresent(allTournaments.map { it.tournamentId }, playersToSwap)) {
+        val teamQueryParams = mapOf("teamId" to teamId, "playerIds" to playersToSwap.remove.playerIds)
+        val team = namedParameterJdbcTemplate.query(RETRIEVE_TEAM_PK_ID_QUERY, teamQueryParams, teamRowMapper)
 
-              val teamQueryParams = mapOf("teamId" to teamId, "playerIds" to playersToSwap.remove.playerIds)
-              val team = namedParameterJdbcTemplate.query(RETRIEVE_TEAM_PK_ID_QUERY, teamQueryParams, teamRowMapper)
-
-              if (team.size != playersToSwap.remove.playerIds.size)
-                SwapFailed
-                    .also { LOGGER.error("One or more team players not found") } // TODO add players
-              else
-                updateTeam(playersToSwap, teamId)
-            }
-            else
-              SwapFailed
-                .also { LOGGER.error("One or more requested tournaments not found.") } // TODO add tournaments
-          }
-          else
-            SwapFailed
-                .also { LOGGER.error("One or more requested players not found.") } // TODO add players
-        }
-
-        else -> SwapFailed
-            .also { LOGGER.error("Team not found: $teamId.") }
+        if (team.size != playersToSwap.remove.playerIds.size)
+          SwapFailed
+              .also { LOGGER.error("One or more team players not found") } // TODO add players
+        else
+          updateTeam(playersToSwap, teamId)
       }
+      else
+        SwapFailed
+            .also { LOGGER.error("One or more requested tournaments not found.") } // TODO add tournaments
+    }
+    else
+      SwapFailed
+          .also { LOGGER.error("One or more requested players not found.") } // TODO add players
+  }
 
   private fun updateTeam(playersToSwap: PlayersToSwapDto, teamId: Int): Swap =
       try {

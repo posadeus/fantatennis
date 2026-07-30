@@ -89,8 +89,10 @@ class ServiceConfiguration {
                             sqlRetrievePlayersRepository)
 
   @Bean
-  fun swapPlayersTeamService(jdbcSwapPlayersRepository: SwapPlayersRepository): SwapPlayersTeamService =
-      SwapPlayersTeamService(jdbcSwapPlayersRepository)
+  fun swapPlayersTeamService(jdbcSwapPlayersRepository: SwapPlayersRepository,
+                             sqlRetrieveFantaTeamRepository: RetrieveFantaTeamRepository): SwapPlayersTeamService =
+      SwapPlayersTeamService(jdbcSwapPlayersRepository,
+                             sqlRetrieveFantaTeamRepository)
 
   @Bean
   fun addTournamentsService(tournamentsRegistryRepository: TournamentsRegistryRepository,

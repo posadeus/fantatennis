@@ -7,7 +7,6 @@ import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
 import com.posadeus.fantatennis.domain.model.TeamId
-import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcRetrieveFantaTeamRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.JdbcSwapPlayersRepository
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.TeamDao
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dao.team.CachedTeamDao
@@ -46,24 +45,11 @@ class JdbcSwapPlayersRepositoryIT {
 
     cachedTeamDao = CachedTeamDao(teamCache, JdbcTeamDao(namedParameterJdbcTemplate))
 
-    repository = JdbcSwapPlayersRepository(JdbcRetrieveFantaTeamRepository(namedParameterJdbcTemplate),
-                                           jdbcTemplate,
+    repository = JdbcSwapPlayersRepository(jdbcTemplate,
                                            namedParameterJdbcTemplate,
                                            teamCache)
 
     teamCache.invalidateAll()
-  }
-
-  @SqlGroup(
-      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
-      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD)
-  )
-  @Test
-  fun `no team found`() {
-
-    val expected = SwapFailed
-
-    assertThat(repository.swap(100, ANY_PLAYERS_TO_SWAP)).isEqualTo(expected)
   }
 
   @SqlGroup(
@@ -142,7 +128,5 @@ class JdbcSwapPlayersRepositoryIT {
     private const val AN_EXISTING_TOURNAMENT = 1
     private const val AN_EXISTING_PLAYER = "K5L8"
     private const val AN_EXISTING_PLAYER_NOT_IN_THE_TEAM = "C0D1"
-
-    private val ANY_PLAYERS_TO_SWAP = PlayersToSwapDto(remove = PlayersToRemoveDto(), add = PlayersToAddDto())
   }
 }
