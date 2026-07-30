@@ -5,8 +5,9 @@ import com.posadeus.fantatennis.controller.model.team.TeamDto
 import com.posadeus.fantatennis.domain.exception.InvalidAddPlayersException
 import com.posadeus.fantatennis.domain.infrastructure.*
 import com.posadeus.fantatennis.domain.model.*
+import com.posadeus.fantatennis.domain.model.DomainTeam.NotFoundDomainTeam
 import com.posadeus.fantatennis.domain.model.TestDomainPlayer.aDomainPlayer
-import com.posadeus.fantatennis.domain.model.TestTeam.aTeam
+import com.posadeus.fantatennis.domain.model.TestDomainTeam.aDomainTeam
 import com.posadeus.fantatennis.domain.model.TestTournament.aTournament
 import com.posadeus.fantatennis.domain.model.Tournament.InternalErrorTournament
 import com.posadeus.fantatennis.domain.model.Tournament.NotFoundTournament
@@ -31,17 +32,7 @@ class AddPlayersTeamServiceTest {
 
     val expected = TeamIdNotFoundTeam
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns expected
-
-    assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
-  }
-
-  @Test
-  fun `add players fails - team error`() {
-
-    val expected = ErrorTeam
-
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns expected
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns NotFoundDomainTeam(A_TEAM_ID)
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
   }
@@ -49,11 +40,11 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players fails - tournament not found`() {
 
-    val team = aTeam()
+    val team = aDomainTeam(teamId = A_TEAM_ID)
     val tournament = NotFoundTournament
     val expected = ErrorTeam
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns team
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns team
     every { retrieveTournamentsRepository.retrieveBy(A_STARTING_TOURNAMENT_ID) } returns tournament
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
@@ -62,11 +53,11 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players fails - tournament error`() {
 
-    val team = aTeam()
+    val team = aDomainTeam(teamId = A_TEAM_ID)
     val tournament = InternalErrorTournament
     val expected = ErrorTeam
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns team
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns team
     every { retrieveTournamentsRepository.retrieveBy(A_STARTING_TOURNAMENT_ID) } returns tournament
 
     assertThat(service.addPlayers(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID)).isEqualTo(expected)
@@ -75,12 +66,12 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players fails - one or more players not found`() {
 
-    val team = aTeam()
+    val team = aDomainTeam(teamId = A_TEAM_ID)
     val tournament = aTournament()
     val domainPlayers = setOf(aDomainPlayer(id = A_PLAYER_ID))
     val expected = ErrorTeam
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns team
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns team
     every { retrieveTournamentsRepository.retrieveBy(A_STARTING_TOURNAMENT_ID) } returns tournament
     every { retrievePlayersRepository.retrieve() } returns domainPlayers
 
@@ -90,7 +81,7 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players fails - internal error`() {
 
-    val team = aTeam()
+    val team = aDomainTeam(teamId = A_TEAM_ID)
     val tournament = aTournament()
     val domainPlayers = setOf(DomainPlayer(id = A_PLAYER_ID,
                                            atpId = AN_ATP_PLAYER_ID,
@@ -98,7 +89,7 @@ class AddPlayersTeamServiceTest {
     val addPlayersError = InvalidAddPlayersException("")
     val expected = ErrorTeam
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns team
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns team
     every { retrieveTournamentsRepository.retrieveBy(A_STARTING_TOURNAMENT_ID) } returns tournament
     every { retrievePlayersRepository.retrieve() } returns domainPlayers
     every { persistTeamPlayersRepository.persist(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } throws addPlayersError
@@ -109,7 +100,7 @@ class AddPlayersTeamServiceTest {
   @Test
   fun `add players correctly`() {
 
-    val team = aTeam()
+    val team = aDomainTeam(teamId = A_TEAM_ID)
     val tournament = aTournament()
     val domainPlayers = setOf(DomainPlayer(id = A_PLAYER_ID,
                                            atpId = AN_ATP_PLAYER_ID,
@@ -119,7 +110,7 @@ class AddPlayersTeamServiceTest {
                                                                              fantaPoints = 0.0)),
                                             totalScore = 0.0))
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns team
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns team
     every { retrieveTournamentsRepository.retrieveBy(A_STARTING_TOURNAMENT_ID) } returns tournament
     every { retrievePlayersRepository.retrieve() } returns domainPlayers
     every { persistTeamPlayersRepository.persist(A_TEAM_ID, setOf(A_PLAYER_ID), A_STARTING_TOURNAMENT_ID) } returns Unit

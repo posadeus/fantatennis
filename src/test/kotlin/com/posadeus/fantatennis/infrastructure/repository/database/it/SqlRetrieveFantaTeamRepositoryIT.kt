@@ -80,6 +80,7 @@ class SqlRetrieveFantaTeamRepositoryIT {
 
     teamCache.invalidateAll()
     fantaTeamCache.invalidateAll()
+    fantaTournamentTeamCacheByTournamentId.invalidateAll()
     fantaTournamentTeamCacheByTeamId.invalidateAll()
   }
 
@@ -108,6 +109,56 @@ class SqlRetrieveFantaTeamRepositoryIT {
                                                    "S7T5" to setOf(TournamentRange(start = 2, end = 2))))
 
     assertThat(repository.retrieveByTeamId(1)).isEqualTo(expected)
+  }
+
+  @SqlGroup(
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/empty-team-added.sql"], executionPhase = BEFORE_TEST_METHOD)
+  )
+  @Test
+  fun `retrieve works with team without players`() {
+
+    val expected = FoundDomainTeam(teamId = 9,
+                                   ownerId = "SEVENTH_OWNER",
+                                   fantaTournamentId = 3,
+                                   players = emptyMap())
+
+    assertThat(repository.retrieveByTeamId(9)).isEqualTo(expected)
+  }
+
+  @SqlGroup(
+      Sql(scripts = ["/test-containers/clear-db.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/populate-database.sql"], executionPhase = BEFORE_TEST_METHOD),
+      Sql(scripts = ["/test-containers/empty-team-added.sql"], executionPhase = BEFORE_TEST_METHOD)
+  )
+  @Test
+  fun `retrieve by fanta tournament includes team without players`() {
+
+    val expected = setOf(FoundDomainTeam(teamId = 6,
+                                         ownerId = "ANOTHER_OWNER",
+                                         fantaTournamentId = 3,
+                                         players = mapOf("A0B1" to setOf(TournamentRange(start = 1, end = null)),
+                                                         "E2F8" to setOf(TournamentRange(start = 1, end = null)),
+                                                         "K5L8" to setOf(TournamentRange(start = 1, end = null)))),
+                         FoundDomainTeam(teamId = 7,
+                                         ownerId = "FIFTH_OWNER",
+                                         fantaTournamentId = 3,
+                                         players = mapOf("QR43" to setOf(TournamentRange(start = 1, end = null)),
+                                                         "I0J7" to setOf(TournamentRange(start = 1, end = null)),
+                                                         "S7T5" to setOf(TournamentRange(start = 1, end = null)))),
+                         FoundDomainTeam(teamId = 8,
+                                         ownerId = "SIXTH_OWNER",
+                                         fantaTournamentId = 3,
+                                         players = mapOf("MN98" to setOf(TournamentRange(start = 1, end = null)),
+                                                         "GH00" to setOf(TournamentRange(start = 1, end = null)),
+                                                         "C0D1" to setOf(TournamentRange(start = 1, end = null)))),
+                         FoundDomainTeam(teamId = 9,
+                                         ownerId = "SEVENTH_OWNER",
+                                         fantaTournamentId = 3,
+                                         players = emptyMap()))
+
+    assertThat(repository.retrieveByFantaTournamentId(3).teams.toSet()).isEqualTo(expected)
   }
 
   companion object {

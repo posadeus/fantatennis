@@ -2,25 +2,42 @@ package com.posadeus.fantatennis.domain.service
 
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
+import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
+import com.posadeus.fantatennis.domain.model.DomainTeam.NotFoundDomainTeam
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
-import io.mockk.every
-import io.mockk.mockk
+import com.posadeus.fantatennis.domain.model.TestDomainTeam.aDomainTeam
+import io.mockk.*
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
 import org.junit.jupiter.api.Test
 
 class SwapPlayersTeamServiceTest {
 
   private val swapPlayersRepository: SwapPlayersRepository = mockk()
+  private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
 
-  private val service = SwapPlayersTeamService(swapPlayersRepository)
+  private val service = SwapPlayersTeamService(swapPlayersRepository,
+                                               retrieveFantaTeamRepository)
+
+  @Test
+  fun `swap fails due to team not found`() {
+
+    val expected = SwapFailed
+
+    every { retrieveFantaTeamRepository.retrieveByTeamId(ANY_TEAM_ID) } returns NotFoundDomainTeam(ANY_TEAM_ID)
+
+    assertThat(service.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
+
+    verify { swapPlayersRepository wasNot Called }
+  }
 
   @Test
   fun `swap fails due to generic error`() {
 
      val expected = SwapFailed
 
+    every { retrieveFantaTeamRepository.retrieveByTeamId(ANY_TEAM_ID) } returns aDomainTeam(teamId = ANY_TEAM_ID)
     every { swapPlayersRepository.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP) } returns SwapFailed
 
     assertThat(service.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
@@ -31,6 +48,7 @@ class SwapPlayersTeamServiceTest {
 
      val expected = SwapFailed
 
+    every { retrieveFantaTeamRepository.retrieveByTeamId(ANY_TEAM_ID) } returns aDomainTeam(teamId = ANY_TEAM_ID)
     every { swapPlayersRepository.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP) } throws InvalidPlayersSwapException("OMG an error")
 
     assertThat(service.swap(ANY_TEAM_ID, ANY_PLAYER_TO_SWAP)).isEqualTo(expected)
@@ -45,6 +63,7 @@ class SwapPlayersTeamServiceTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
+    every { retrieveFantaTeamRepository.retrieveByTeamId(A_TEAM_ID) } returns aDomainTeam(teamId = A_TEAM_ID)
     every { swapPlayersRepository.swap(A_TEAM_ID, playersToSwap) } returns SwapCompleted
 
     assertThat(service.swap(A_TEAM_ID, playersToSwap)).isEqualTo(SwapCompleted)

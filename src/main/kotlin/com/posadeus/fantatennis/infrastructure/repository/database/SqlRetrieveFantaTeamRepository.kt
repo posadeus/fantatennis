@@ -12,26 +12,14 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
                                      private val fantaTeamDao: FantaTeamDao,
                                      private val fantaTournamentTeamDao: FantaTournamentTeamDao) : RetrieveFantaTeamRepository {
 
-  override fun retrieve(teamId: Int): Team {
-    TODO("To be removed after the migration of JdbcRetrieveFantaTeamRepository")
-  }
-
   override fun retrieveByTeamId(id: TeamId): DomainTeam =
       try {
 
         val fantaTeam = fantaTeamDao.retrieveBy(id)
+        val fantaTournamentTeam = fantaTournamentTeamDao.retrieveByTeamId(id)
         val teams = teamDao.retrieveBy(setOf(id))
 
-        if (teams.isEmpty()) {
-
-          NotFoundDomainTeam(id)
-        }
-        else {
-
-          val fantaTournamentTeam = fantaTournamentTeamDao.retrieveByTeamId(id)
-
-          toFoundTeam(fantaTeam, fantaTournamentTeam, teams)
-        }
+        toFoundTeam(fantaTeam, fantaTournamentTeam, teams)
       }
       catch (_: EmptyResultDataAccessException) {
 
@@ -72,19 +60,9 @@ class SqlRetrieveFantaTeamRepository(private val teamDao: TeamDao,
   private fun toTeams(teams: Map<Int, List<JdbcTeamDto>>,
                       fantaTeams: Map<Int, JdbcFantaTeamDto>,
                       fantaTournamentTeams: Map<Int, JdbcFantaTournamentTeamDto>): Teams =
-      (teams.map {
-        toFoundTeam(fantaTeams[it.key]!!, fantaTournamentTeams[it.key]!!, it.value)
-      } to toNotFoundTeams(teams.keys, fantaTournamentTeams.keys))
-          .let { (foundTeams, notFoundTeams) ->
-            (foundTeams + notFoundTeams)
-                .let(::Teams)
-          }
-
-  private fun toNotFoundTeams(teamIds: Set<Int>, fantaTournamentTeamIds: Set<Int>): List<NotFoundDomainTeam> =
-      xor(teamIds, fantaTournamentTeamIds).map { NotFoundDomainTeam(it) }
-
-  private fun xor(teamIds: Set<Int>, fantaTournamentTeamIds: Set<Int>): Set<Int> =
-      ((teamIds - fantaTournamentTeamIds) + (fantaTournamentTeamIds - teamIds))
+      fantaTournamentTeams.keys
+          .map { teamId -> toFoundTeam(fantaTeams[teamId]!!, fantaTournamentTeams[teamId]!!, teams[teamId].orEmpty()) }
+          .let(::Teams)
 
   private fun toFoundTeam(fantaTeam: JdbcFantaTeamDto,
                           fantaTournamentTeam: JdbcFantaTournamentTeamDto,

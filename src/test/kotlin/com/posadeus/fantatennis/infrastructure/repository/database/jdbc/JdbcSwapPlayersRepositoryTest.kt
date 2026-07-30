@@ -1,19 +1,20 @@
 package com.posadeus.fantatennis.infrastructure.repository.database.jdbc
 
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.posadeus.fantatennis.controller.model.team.*
 import com.posadeus.fantatennis.domain.exception.InvalidPlayersSwapException
-import com.posadeus.fantatennis.domain.infrastructure.RetrieveFantaTeamRepository
 import com.posadeus.fantatennis.domain.infrastructure.SwapPlayersRepository
-import com.posadeus.fantatennis.domain.model.FoundTeam
 import com.posadeus.fantatennis.domain.model.Swap.SwapCompleted
 import com.posadeus.fantatennis.domain.model.Swap.SwapFailed
-import com.posadeus.fantatennis.domain.model.TeamIdNotFoundTeam
+import com.posadeus.fantatennis.domain.model.TeamId
 import com.posadeus.fantatennis.infrastructure.assertThrowsWithMessage
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.*
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcPlayerDto.aJdbcPlayerDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTeamDto.aJdbcTeamDto
 import com.posadeus.fantatennis.infrastructure.repository.database.jdbc.dto.TestJdbcTournamentDto.aJdbcTournamentDto
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcTemplate
@@ -22,25 +23,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class JdbcSwapPlayersRepositoryTest {
 
-  private val retrieveFantaTeamRepository: RetrieveFantaTeamRepository = mockk()
   private val jdbcTemplate: JdbcTemplate = mockk()
   private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate = mockk()
+  private val teamCache: Cache<Set<TeamId>, List<JdbcTeamDto>> = Caffeine.newBuilder().build()
 
-  private val repository: SwapPlayersRepository = JdbcSwapPlayersRepository(retrieveFantaTeamRepository,
-                                                                            jdbcTemplate,
-                                                                            namedParameterJdbcTemplate)
-
-  @Test
-  fun `swap fails due to team not found`() {
-
-    val expected = SwapFailed
-
-    every { retrieveFantaTeamRepository.retrieve(A_NOT_EXISTING_TEAM_ID) } returns TeamIdNotFoundTeam
-
-    assertThat(repository.swap(A_NOT_EXISTING_TEAM_ID, ANY_SWAP_PLAYERS)).isEqualTo(expected)
-
-    verify { jdbcTemplate wasNot called }
-  }
+  private val repository: SwapPlayersRepository = JdbcSwapPlayersRepository(jdbcTemplate,
+                                                                            namedParameterJdbcTemplate,
+                                                                            teamCache)
 
   @Test
   fun `swap fails due to one or more players not found`() {
@@ -51,11 +40,6 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 8.0)),
-                             totalScore = 40.0,
-                             owner = AN_OWNER)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val anotherOldPlayer = aJdbcPlayerDto(playerId = ANOTHER_OLD_PLAYER_ID, fullName = ANOTHER_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -63,7 +47,6 @@ class JdbcSwapPlayersRepositoryTest {
 
     val expected = SwapFailed
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns notAllPlayersFound
 
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
@@ -78,10 +61,6 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0)),
-                             totalScore = 40.0,
-                             owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -91,7 +70,6 @@ class JdbcSwapPlayersRepositoryTest {
 
     val expected = SwapFailed
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns notAllTournamentsFound
 
@@ -107,11 +85,6 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
-                             totalScore = 34.0,
-                             owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -127,7 +100,6 @@ class JdbcSwapPlayersRepositoryTest {
 
     val expected = SwapFailed
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
     every {
@@ -146,11 +118,6 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
-                             totalScore = 34.0,
-                             owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -170,7 +137,6 @@ class JdbcSwapPlayersRepositoryTest {
 
     val expectedMessage = "Unexpected error during insert/update: Players [ANOTHER_NEW_PLAYER_ID] not inserted, operation reverted."
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
     every {
@@ -190,11 +156,6 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
-                             totalScore = 34.0,
-                             owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -217,7 +178,6 @@ class JdbcSwapPlayersRepositoryTest {
 
     val expectedMessage = "Unexpected error during insert/update: Players [ANOTHER_OLD_PLAYER_ID] not updated, operation reverted."
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
     every {
@@ -238,11 +198,6 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
-                             totalScore = 34.0,
-                             owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -265,7 +220,6 @@ class JdbcSwapPlayersRepositoryTest {
 
     val expectedMessage = "Unexpected error during insert/update: Scary Error"
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
     every {
@@ -286,11 +240,6 @@ class JdbcSwapPlayersRepositoryTest {
     val playersToAddDto = PlayersToAddDto(playerIds = playerToAddIds, startingTournamentId = ANOTHER_TOURNAMENT_ID)
     val playersToSwap = PlayersToSwapDto(remove = playersToRemoveDto, add = playersToAddDto)
 
-    val oldTeamDto = TeamDto(players = listOf(PlayerPointsDto(fullName = A_PLAYER_FULL_NAME, fantaPoints = 22.0),
-                                              PlayerPointsDto(fullName = AN_OLD_PLAYER_FULL_NAME, fantaPoints = 10.0),
-                                              PlayerPointsDto(fullName = ANOTHER_OLD_PLAYER_FULL_NAME, fantaPoints = 2.0)),
-                             totalScore = 34.0,
-                             owner = AN_OWNER)
     val aPlayer = aJdbcPlayerDto(playerId = A_PLAYER_ID, fullName = A_PLAYER_FULL_NAME)
     val anOldPlayer = aJdbcPlayerDto(playerId = AN_OLD_PLAYER_ID, fullName = AN_OLD_PLAYER_FULL_NAME)
     val aNewPlayer = aJdbcPlayerDto(playerId = A_NEW_PLAYER_ID, fullName = A_NEW_PLAYER_FULL_NAME)
@@ -313,7 +262,6 @@ class JdbcSwapPlayersRepositoryTest {
 
     val expected = SwapCompleted
 
-    every { retrieveFantaTeamRepository.retrieve(A_TEAM_ID) } returns FoundTeam(oldTeamDto)
     every { jdbcTemplate.query(RETRIEVE_ALL_PLAYERS_QUERY, any<RowMapper<JdbcPlayerDto>>()) } returns allPlayers
     every { jdbcTemplate.query(RETRIEVE_ALL_TOURNAMENTS_QUERY, any<RowMapper<JdbcTournamentDto>>()) } returns allTournaments
     every {
@@ -322,13 +270,22 @@ class JdbcSwapPlayersRepositoryTest {
     every { namedParameterJdbcTemplate.batchUpdate(INSERT_TEAM_PLAYERS_QUERY, insertParamSource) } returns intArrayOf(1, 1)
     every { namedParameterJdbcTemplate.batchUpdate(UPDATE_TEAM_PLAYERS_QUERY, updateParamSource) } returns intArrayOf(1, 1)
 
+    teamCache.put(setOf(A_TEAM_ID), listOf(aJdbcTeamDto(teamId = A_TEAM_ID)))
+    teamCache.put(setOf(A_TEAM_ID, ANOTHER_TEAM_ID), listOf(aJdbcTeamDto(teamId = A_TEAM_ID), aJdbcTeamDto(teamId = ANOTHER_TEAM_ID)))
+    teamCache.put(setOf(ANOTHER_TEAM_ID), listOf(aJdbcTeamDto(teamId = ANOTHER_TEAM_ID)))
+
     assertThat(repository.swap(A_TEAM_ID, playersToSwap)).isEqualTo(expected)
+
+    assertThat(teamCache.getIfPresent(setOf(A_TEAM_ID))).isNull()
+    assertThat(teamCache.getIfPresent(setOf(A_TEAM_ID, ANOTHER_TEAM_ID))).isNull()
+    assertThat(teamCache.getIfPresent(setOf(ANOTHER_TEAM_ID))).isNotNull()
   }
 
   companion object {
 
     private const val A_NOT_EXISTING_TEAM_ID = 1
     private const val A_TEAM_ID = 1
+    private const val ANOTHER_TEAM_ID = 2
     private const val A_TOURNAMENT_ID = 1
     private const val ANOTHER_TOURNAMENT_ID = 2
     private const val A_THIRD_TOURNAMENT_ID = 3
